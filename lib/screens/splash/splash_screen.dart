@@ -22,10 +22,17 @@ class _ScreenSplashState extends State<ScreenSplash> {
   Widget build(BuildContext context) {
     _size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: mainColor,
       body: Container(
-        width: _size.width,
-        height: _size.height,
-        decoration: BoxDecoration(color: mainColor),
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [
+            Colors.lightBlue,
+            mainColor,
+          ],
+        )),
         child: Center(
           child: Image.asset(
             'assets/images/2.png',
