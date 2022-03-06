@@ -26,16 +26,16 @@ class _ScreenSplashState extends State<ScreenSplash> {
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
           colors: [
-            Colors.lightBlue,
             mainColor,
+            gradiantColor,
           ],
         )),
         child: Center(
           child: Image.asset(
-            'assets/images/2.png',
+            'assets/images/pos.png',
             width: _size.width / 2,
             height: _size.width / 2,
           ),
