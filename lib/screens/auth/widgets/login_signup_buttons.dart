@@ -109,6 +109,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
       await UserDatabase.instance.createUser(_user, _username);
       showSnackBar(context: context, content: "User Registered Successfuly!");
       Navigator.pushReplacementNamed(context, routeLogin);
+      return;
     } catch (e) {
       showSnackBar(context: context, content: "Username Already Exist!");
       return;

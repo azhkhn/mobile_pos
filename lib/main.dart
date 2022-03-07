@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/route_generator.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/db/user_database.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await UserDatabase.instance.initDB();
   runApp(const MyApp());
 }
 
