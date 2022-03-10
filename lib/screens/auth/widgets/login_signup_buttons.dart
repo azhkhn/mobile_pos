@@ -8,17 +8,35 @@ import 'package:shop_ez/db/user_database.dart';
 import 'package:shop_ez/model/user_model.dart';
 
 class LoginAndSignUpButtons extends StatelessWidget {
-  const LoginAndSignUpButtons({
+  LoginAndSignUpButtons.logIn({
     Key? key,
     required this.type,
     required this.username,
-    this.email,
     required this.password,
+    required this.formKey,
   }) : super(key: key);
-  final int type;
-  final String username;
-  final String? email;
-  final String password;
+  LoginAndSignUpButtons.signUp({
+    Key? key,
+    required this.type,
+    required this.mobileNumber,
+    required this.password,
+    required this.email,
+    required this.shopName,
+    required this.countryName,
+    required this.shopCategory,
+    required this.formKey,
+  }) : super(key: key);
+
+  int type;
+  late final String username,
+      password,
+      mobileNumber,
+      email,
+      shopName,
+      countryName,
+      shopCategory;
+
+  GlobalKey<FormState> formKey;
 
   @override
   Widget build(BuildContext context) {
@@ -75,13 +93,14 @@ class LoginAndSignUpButtons extends StatelessWidget {
     );
   }
 
+//========== Login and Verification ==========
   Future<void> onLogin(BuildContext context) async {
     log('username == $username');
     log('password == $password');
 
     try {
       final result = await UserDatabase.instance.loginUser(username, password);
-      log('isUser logged? = $result');
+      log('User found! = $result');
       Navigator.pushReplacementNamed(context, routeHome);
     } catch (e) {
       log(e.toString());
@@ -91,28 +110,34 @@ class LoginAndSignUpButtons extends StatelessWidget {
     }
   }
 
+//========== SignUp and Verification ==========
   Future<void> onSignUp(BuildContext context) async {
-    final _username = username;
-    final _email = email;
-    final _password = password;
+    final String _username = username;
+    final String? _email = email;
+    final String _password = password;
 
-    if (_username.isEmpty || _email!.isEmpty || _password.isEmpty) {
-      log('Feilds cannot be empty!');
-      showSnackBar(context: context, content: "Feilds Can't Be Empty!");
-      return;
-    }
     log('username = $_username, email = $_email, password = $_password');
 
-    final _user =
-        UserModel(username: _username, password: _password, email: _email);
-    try {
-      await UserDatabase.instance.createUser(_user, _username);
-      showSnackBar(context: context, content: "User Registered Successfuly!");
-      Navigator.pushReplacementNamed(context, routeLogin);
-      return;
-    } catch (e) {
-      showSnackBar(context: context, content: "Username Already Exist!");
-      return;
+    final isValid = formKey.currentState!.validate();
+
+    if (isValid) {
+      final _user =
+          UserModel(username: _username, password: _password, email: _email);
+      try {
+        await UserDatabase.instance.createUser(_user, _username);
+        showSnackBar(context: context, content: "User Registered Successfuly!");
+        Navigator.pushReplacementNamed(context, routeHome);
+        return;
+      } catch (e) {
+        showSnackBar(context: context, content: "Username Already Exist!");
+        return;
+      }
+    } else {
+      // if (_username.isEmpty || _email!.isEmpty || _password.isEmpty) {
+      //   log('Feilds cannot be empty!');
+      //   showSnackBar(context: context, content: "Feilds Can't Be Empty!");
+      //   return;
+      // }
     }
   }
 
@@ -121,7 +146,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
       SnackBar(
         content: Text(content),
         // backgroundColor: Colors.black,
-        // behavior: SnackBarBehavior.floating,
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }

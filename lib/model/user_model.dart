@@ -12,7 +12,7 @@ class UserModel {
   final int? id;
   final String username;
   final String password;
-  final String email;
+  final String? email;
 
   UserModel({
     this.id,

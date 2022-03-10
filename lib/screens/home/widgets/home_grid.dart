@@ -27,8 +27,9 @@ class HomeGrid extends StatelessWidget {
   const HomeGrid({
     Key? key,
     required this.index,
+    required this.screenSize,
   }) : super(key: key);
-
+  final Size screenSize;
   final int index;
 
   @override
@@ -44,11 +45,16 @@ class HomeGrid extends StatelessWidget {
             onTap: () => Navigator.pushNamed(context, routeManageUsers),
             child: GridTile(
                 footer: Padding(
-                  padding: const EdgeInsets.only(bottom: 5.0),
+                  padding: const EdgeInsets.all(5.0),
                   child: Text(
                     homeGridName[index],
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: screenSize.width / 45,
+                      // fontSize: screenSize.width * 0.025,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 child: Image(
