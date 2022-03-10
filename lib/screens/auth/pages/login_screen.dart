@@ -1,0 +1,150 @@
+import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/color.dart';
+import 'package:shop_ez/db/user_database.dart';
+import 'package:shop_ez/screens/auth/widgets/login_signup_buttons.dart';
+import 'package:shop_ez/widgets/wave_clip.dart';
+
+class ScreenLogin extends StatelessWidget {
+  ScreenLogin({Key? key}) : super(key: key);
+  late Size _screenSise;
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    UserDatabase.instance.getAllUsers();
+    _screenSise = MediaQuery.of(context).size;
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            ClipPath(
+              clipper: WaveClip(),
+              child: Container(
+                width: _screenSise.width,
+                height: _screenSise.height,
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    mainColor,
+                    gradiantColor,
+                  ],
+                )),
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                //========== Top Image ==========
+                SizedBox(
+                  child: Center(
+                    child: Image.asset(
+                      'assets/images/pos.png',
+                      width: _screenSise.width / 2.5,
+                      // height: _screenSise.width / 3,
+                    ),
+                  ),
+                  height: _screenSise.height / 2,
+                ),
+
+                //========== SignUp Feilds ==========
+                SignUpFeilds(
+                    screenSise: _screenSise,
+                    usernameController: _usernameController,
+                    passwordController: _passwordController)
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SignUpFeilds extends StatelessWidget {
+  const SignUpFeilds({
+    Key? key,
+    required Size screenSise,
+    required TextEditingController usernameController,
+    required TextEditingController passwordController,
+  })  : _screenSise = screenSise,
+        _usernameController = usernameController,
+        _passwordController = passwordController,
+        super(key: key);
+
+  final Size _screenSise;
+  final TextEditingController _usernameController;
+  final TextEditingController _passwordController;
+  static final _formStateKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: _screenSise.height / 2,
+      child: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formStateKey,
+            child: Flex(
+              direction: Axis.vertical,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: _screenSise.height / 2 / 10,
+                ),
+                TextFormField(
+                  controller: _usernameController,
+                  decoration: const InputDecoration(
+                    label: Text(
+                      'Username',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.person,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                TextFormField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    label: Text(
+                      'Password',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'Forgot Password?',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    )
+                  ],
+                ),
+                LoginAndSignUpButtons.logIn(
+                  type: 1,
+                  username: _usernameController.text,
+                  password: _passwordController.text,
+                  formKey: _formStateKey,
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

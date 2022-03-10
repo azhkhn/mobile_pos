@@ -7,5 +7,5 @@ Color gradiantColor = const Color(0xFF197B9B);
 Color appBarColor = const Color(0xFF05A0B0);
 
 //========= Const Color ==========
-
 const kWhite = Colors.white;
+const kButtonTextWhite = Colors.white;

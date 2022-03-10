@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:shop_ez/model/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -60,6 +61,10 @@ class UserDatabase {
     } else {
       log('User registered!');
       final id = await db.insert(tableUser, userModel.toJson());
+      final newUser = await db
+          .rawQuery("select * from $tableUser where username = '$username'");
+      final userCred = UserModel.fromJson(newUser.first);
+      db.insert(tableLogin, userCred.toJson());
       return userModel.copy(id: id);
     }
   }
