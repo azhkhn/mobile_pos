@@ -13,11 +13,12 @@ class UserDatabase {
   Future<Database> get database async {
     if (_database != null) return _database!;
 
-    _database = await _initDB('user.db');
+    _database = await initDB();
     return _database!;
   }
 
-  Future<Database> _initDB(String filePath) async {
+  Future<Database> initDB() async {
+    const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path, version: 1, onCreate: _createDB);
@@ -57,7 +58,7 @@ class UserDatabase {
       log('user already exist!');
       throw Exception('User Already Exist!');
     } else {
-      log('user registered!');
+      log('User registered!');
       final id = await db.insert(tableUser, userModel.toJson());
       return userModel.copy(id: id);
     }
@@ -87,10 +88,24 @@ class UserDatabase {
     return login.length;
   }
 
-  Future<List<UserModel>> getAllUsers() async {
+  Future<UserModel> getUser() async {
     final db = await instance.database;
-    final _result = await db.query(tableUser);
-    log('results === $_result');
-    return _result.map((json) => UserModel.fromJson(json)).toList();
+    final _userList = await db.query(tableLogin);
+    log('userList =  $_userList');
+    final _user = _userList.map((json) => UserModel.fromJson(json)).toList();
+    return _user[0];
+  }
+
+  Future logout() async {
+    final db = await instance.database;
+    db.delete(tableLogin);
+  }
+
+  Future getAllUsers() async {
+    final db = await instance.database;
+    // final _result = await db.query(tableUser);
+    // log('results === $_result');
+    // return _result.map((json) => UserModel.fromJson(json)).toList();
+    db.delete(tableLogin);
   }
 }

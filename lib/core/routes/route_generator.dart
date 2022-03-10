@@ -3,6 +3,7 @@ import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/screens/auth/page/login_screen.dart';
 import 'package:shop_ez/screens/auth/page/signup_screen.dart';
 import 'package:shop_ez/screens/home/home_screen.dart';
+import 'package:shop_ez/screens/home_items/manage_users.dart';
 import 'package:shop_ez/screens/splash/splash_screen.dart';
 
 class RouteGenerator {
@@ -13,12 +14,13 @@ class RouteGenerator {
       case routeRoot:
         return MaterialPageRoute(builder: (_) => const ScreenSplash());
       case routeHome:
-        return MaterialPageRoute(builder: (_) => const ScreenHome());
+        return MaterialPageRoute(builder: (_) => ScreenHome());
       case routeLogin:
         return MaterialPageRoute(builder: (_) => ScreenLogin());
       case routeSignUp:
         return MaterialPageRoute(builder: (_) => ScreenSignUp());
-
+      case routeManageUsers:
+        return MaterialPageRoute(builder: (_) => ManageUsers());
       default:
         return _errorRoute();
     }
