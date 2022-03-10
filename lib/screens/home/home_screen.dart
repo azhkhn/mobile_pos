@@ -14,6 +14,7 @@ class ScreenHome extends StatelessWidget {
   final isDialOpen = ValueNotifier(false);
   @override
   Widget build(BuildContext context) {
+    UserDatabase.instance.getAllUsers();
     _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {

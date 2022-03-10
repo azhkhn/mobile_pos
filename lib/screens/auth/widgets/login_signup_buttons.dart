@@ -112,19 +112,32 @@ class LoginAndSignUpButtons extends StatelessWidget {
 
 //========== SignUp and Verification ==========
   Future<void> onSignUp(BuildContext context) async {
-    final String _username = username;
+    final String _shopName = shopName,
+        _countryName = countryName,
+        _shopCategory = shopCategory,
+        _mobileNumber = mobileNumber,
+        _password = password;
     final String? _email = email;
-    final String _password = password;
 
-    log('username = $_username, email = $_email, password = $_password');
+    log(
+      'shopName = $_shopName, countryName = $_countryName, shopCategory = $_shopCategory, phoneNumber = $_mobileNumber, email = $_email, password = $_password',
+    );
 
-    final isValid = formKey.currentState!.validate();
+    final isValid = formKey.currentState!;
 
-    if (isValid) {
-      final _user =
-          UserModel(username: _username, password: _password, email: _email);
+    if (isValid.validate()) {
+      isValid.save();
+
+      final _user = UserModel(
+        shopName: _shopName,
+        countryName: _countryName,
+        shopCategory: _shopCategory,
+        mobileNumber: _mobileNumber,
+        email: _email,
+        password: _password,
+      );
       try {
-        await UserDatabase.instance.createUser(_user, _username);
+        await UserDatabase.instance.createUser(_user, _mobileNumber);
         showSnackBar(context: context, content: "User Registered Successfuly!");
         Navigator.pushReplacementNamed(context, routeHome);
         return;

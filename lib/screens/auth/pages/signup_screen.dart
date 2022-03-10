@@ -59,7 +59,7 @@ class ScreenSignUp extends StatelessWidget {
   }
 }
 
-class SignUpFeilds extends StatelessWidget {
+class SignUpFeilds extends StatefulWidget {
   static const items = [
     'Hyper Market',
     'Stationary',
@@ -72,15 +72,27 @@ class SignUpFeilds extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  static final _formStateKey = GlobalKey<FormState>();
+
+  @override
+  State<SignUpFeilds> createState() => _SignUpFeildsState();
+}
+
+class _SignUpFeildsState extends State<SignUpFeilds> {
   late Size _screenSise;
+
   final _shopNameController = TextEditingController();
+
   final _emailController = TextEditingController();
+
   final _passwordController = TextEditingController();
+
   // final _cPpasswordController = TextEditingController();
   final _mobileNumberController = TextEditingController();
+
   final _countryNameController = TextEditingController();
-  final _shopCategoryController = TextEditingController();
-  static final _formStateKey = GlobalKey<FormState>();
+
+  String _shopCategoryController = 'null';
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +108,7 @@ class SignUpFeilds extends StatelessWidget {
       ),
       child: SingleChildScrollView(
         child: Form(
-          key: _formStateKey,
+          key: SignUpFeilds._formStateKey,
           child: Flex(
             direction: Axis.vertical,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -135,10 +147,6 @@ class SignUpFeilds extends StatelessWidget {
                   if (value == null || value.trim().isEmpty) {
                     return 'This field is required*';
                   }
-                  // if (value.trim().length < 4) {
-                  //   return 'Username must be at least 4 characters in length';
-                  // }
-                  // Return null if the entered username is valid
                   return null;
                 },
               ),
@@ -156,20 +164,35 @@ class SignUpFeilds extends StatelessWidget {
                   ),
                 ),
                 isExpanded: true,
-                items: items.map((String item) {
+                items: SignUpFeilds.items.map((String item) {
                   return DropdownMenuItem<String>(
                     value: item,
                     child: Text(item),
                   );
                 }).toList(),
-                onChanged: (_) {},
+                onChanged: (value) {
+                  setState(() {
+                    _shopCategoryController = value.toString();
+                  });
+                },
+                validator: (value) {
+                  if (value == null || _shopCategoryController == 'null') {
+                    return 'This field is required*';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  setState(() {
+                    _shopCategoryController = value.toString();
+                  });
+                },
               ),
 
               //========== Mobile Number Field ==========
               TextFeildWidget(
                 textEditingController: _mobileNumberController,
                 labelText: 'Mobile Number *',
-                textInputType: TextInputType.text,
+                textInputType: TextInputType.phone,
                 prefixIcon: const Icon(
                   Icons.smartphone,
                   color: Colors.black,
@@ -236,11 +259,11 @@ class SignUpFeilds extends StatelessWidget {
                 type: 0,
                 shopName: _shopNameController.text.trim(),
                 countryName: _countryNameController.text.trim(),
-                shopCategory: _shopCategoryController.text.trim(),
+                shopCategory: _shopCategoryController,
                 mobileNumber: _mobileNumberController.text.trim(),
                 email: _emailController.text.trim(),
                 password: _passwordController.text.trim(),
-                formKey: _formStateKey,
+                formKey: SignUpFeilds._formStateKey,
               )
             ],
           ),
