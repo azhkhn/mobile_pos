@@ -20,13 +20,13 @@ class RouteGenerator {
       case routeLogin:
         return MaterialPageRoute(builder: (_) => ScreenLogin());
       case routeSignUp:
-        return MaterialPageRoute(builder: (_) => ScreenSignUp());
+        return MaterialPageRoute(builder: (_) => const ScreenSignUp());
       case routeManageUsers:
-        return MaterialPageRoute(builder: (_) => ManageUsers());
+        return MaterialPageRoute(builder: (_) => const ManageUsers());
       case routeItemMaster:
-        return MaterialPageRoute(builder: (_) => ScreenItemMaster());
+        return MaterialPageRoute(builder: (_) => const ScreenItemMaster());
       case routeManageSupplier:
-        return MaterialPageRoute(builder: (_) => ScreenManageSupplier());
+        return MaterialPageRoute(builder: (_) => const ScreenManageSupplier());
       default:
         return _errorRoute();
     }

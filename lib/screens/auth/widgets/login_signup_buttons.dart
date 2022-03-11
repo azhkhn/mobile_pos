@@ -98,33 +98,51 @@ class LoginAndSignUpButtons extends StatelessWidget {
     log('username == $username');
     log('password == $password');
 
-    try {
-      final result = await UserDatabase.instance.loginUser(username, password);
-      log('User found! = $result');
-      Navigator.pushReplacementNamed(context, routeHome);
-    } catch (e) {
-      log(e.toString());
-      showSnackBar(
-          context: context, content: 'Incorrect username or password!');
-      return;
+    final isFormValid = formKey.currentState!;
+
+    if (isFormValid.validate()) {
+      try {
+        final result =
+            await UserDatabase.instance.loginUser(username, password);
+        log('User found! = $result');
+        Navigator.pushReplacementNamed(context, routeHome);
+      } catch (e) {
+        log(e.toString());
+        showSnackBar(
+            context: context, content: 'Incorrect username or password!');
+        return;
+      }
     }
   }
 
 //========== SignUp and Verification ==========
   Future<void> onSignUp(BuildContext context) async {
-    final String _username = username;
+    final String _shopName = shopName,
+        _countryName = countryName,
+        _shopCategory = shopCategory,
+        _mobileNumber = mobileNumber,
+        _password = password;
     final String? _email = email;
-    final String _password = password;
 
-    log('username = $_username, email = $_email, password = $_password');
+    log(
+      'shopName = $_shopName, countryName = $_countryName, shopCategory = $_shopCategory, phoneNumber = $_mobileNumber, email = $_email, password = $_password',
+    );
 
-    final isValid = formKey.currentState!.validate();
+    final isFormValid = formKey.currentState!;
 
-    if (isValid) {
-      final _user =
-          UserModel(username: _username, password: _password, email: _email);
+    if (isFormValid.validate()) {
+      isFormValid.save();
+
+      final _user = UserModel(
+        shopName: _shopName,
+        countryName: _countryName,
+        shopCategory: _shopCategory,
+        mobileNumber: _mobileNumber,
+        email: _email,
+        password: _password,
+      );
       try {
-        await UserDatabase.instance.createUser(_user, _username);
+        await UserDatabase.instance.createUser(_user, _mobileNumber);
         showSnackBar(context: context, content: "User Registered Successfuly!");
         Navigator.pushReplacementNamed(context, routeHome);
         return;

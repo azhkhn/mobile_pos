@@ -6,8 +6,8 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import 'package:shop_ez/widgets/wave_clip.dart';
 
 class ScreenSignUp extends StatelessWidget {
-  ScreenSignUp({Key? key}) : super(key: key);
-  late Size _screenSise;
+  const ScreenSignUp({Key? key}) : super(key: key);
+  static late Size _screenSise;
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +48,8 @@ class ScreenSignUp extends StatelessWidget {
               ),
 
               //========== SignUp Feilds ==========
-              Expanded(
-                child: SignUpFeilds(),
+              const Expanded(
+                child: SignUpFields(),
               ),
             ],
           ),
@@ -59,7 +59,7 @@ class ScreenSignUp extends StatelessWidget {
   }
 }
 
-class SignUpFeilds extends StatelessWidget {
+class SignUpFields extends StatefulWidget {
   static const items = [
     'Hyper Market',
     'Stationary',
@@ -68,19 +68,24 @@ class SignUpFeilds extends StatelessWidget {
     'Restaurent',
     'Pharmacy'
   ];
-  SignUpFeilds({
+  const SignUpFields({
     Key? key,
   }) : super(key: key);
-
-  late Size _screenSise;
-  final _shopNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  // final _cPpasswordController = TextEditingController();
-  final _mobileNumberController = TextEditingController();
-  final _countryNameController = TextEditingController();
-  final _shopCategoryController = TextEditingController();
   static final _formStateKey = GlobalKey<FormState>();
+  static final shopNameController = TextEditingController();
+  static final emailController = TextEditingController();
+  static final passwordController = TextEditingController();
+  static final mobileNumberController = TextEditingController();
+  static final countryNameController = TextEditingController();
+  // final cPpasswordController = TextEditingController();
+  static String shopCategoryController = 'null';
+  static bool obscureState = false;
+  @override
+  State<SignUpFields> createState() => _SignUpFieldsState();
+}
+
+class _SignUpFieldsState extends State<SignUpFields> {
+  late Size _screenSise;
 
   @override
   Widget build(BuildContext context) {
@@ -96,14 +101,14 @@ class SignUpFeilds extends StatelessWidget {
       ),
       child: SingleChildScrollView(
         child: Form(
-          key: _formStateKey,
+          key: SignUpFields._formStateKey,
           child: Flex(
             direction: Axis.vertical,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               //========== Shop Name Field ==========
               TextFeildWidget(
-                textEditingController: _shopNameController,
+                controller: SignUpFields.shopNameController,
                 labelText: 'Shop Name *',
                 textInputType: TextInputType.text,
                 prefixIcon: const Icon(
@@ -124,7 +129,7 @@ class SignUpFeilds extends StatelessWidget {
 
               //========== Country Name Field ==========
               TextFeildWidget(
-                textEditingController: _countryNameController,
+                controller: SignUpFields.countryNameController,
                 labelText: 'Country *',
                 textInputType: TextInputType.text,
                 prefixIcon: const Icon(
@@ -135,10 +140,6 @@ class SignUpFeilds extends StatelessWidget {
                   if (value == null || value.trim().isEmpty) {
                     return 'This field is required*';
                   }
-                  // if (value.trim().length < 4) {
-                  //   return 'Username must be at least 4 characters in length';
-                  // }
-                  // Return null if the entered username is valid
                   return null;
                 },
               ),
@@ -156,20 +157,36 @@ class SignUpFeilds extends StatelessWidget {
                   ),
                 ),
                 isExpanded: true,
-                items: items.map((String item) {
+                items: SignUpFields.items.map((String item) {
                   return DropdownMenuItem<String>(
                     value: item,
                     child: Text(item),
                   );
                 }).toList(),
-                onChanged: (_) {},
+                onChanged: (value) {
+                  setState(() {
+                    SignUpFields.shopCategoryController = value.toString();
+                  });
+                },
+                validator: (value) {
+                  if (value == null ||
+                      SignUpFields.shopCategoryController == 'null') {
+                    return 'This field is required*';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  setState(() {
+                    SignUpFields.shopCategoryController = value.toString();
+                  });
+                },
               ),
 
               //========== Mobile Number Field ==========
               TextFeildWidget(
-                textEditingController: _mobileNumberController,
+                controller: SignUpFields.mobileNumberController,
                 labelText: 'Mobile Number *',
-                textInputType: TextInputType.text,
+                textInputType: TextInputType.phone,
                 prefixIcon: const Icon(
                   Icons.smartphone,
                   color: Colors.black,
@@ -177,18 +194,22 @@ class SignUpFeilds extends StatelessWidget {
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'This field is required*';
+                  } else if (!RegExp(r'^(?:[+0][1-9])?[0-9]{10,12}$')
+                      .hasMatch(value)) {
+                    if (value.length != 10) {
+                      return 'Mobile number must 10 digits';
+                    } else {
+                      return 'Please enter a valid Phone Number';
+                    }
                   }
-                  // if (value.trim().length < 4) {
-                  //   return 'Username must be at least 4 characters in length';
-                  // }
-                  // Return null if the entered username is valid
+
                   return null;
                 },
               ),
 
               //========== Email Field ==========
               TextFeildWidget(
-                textEditingController: _emailController,
+                controller: SignUpFields.emailController,
                 labelText: 'Email',
                 textInputType: TextInputType.text,
                 prefixIcon: const Icon(
@@ -211,12 +232,30 @@ class SignUpFeilds extends StatelessWidget {
 
               //========== Password Field ==========
               TextFeildWidget(
-                textEditingController: _passwordController,
+                controller: SignUpFields.passwordController,
                 labelText: 'Password *',
                 textInputType: TextInputType.text,
+                obscureText: !SignUpFields.obscureState,
                 prefixIcon: const Icon(
                   Icons.security,
                   color: Colors.black,
+                ),
+                suffixIcon: IconButton(
+                  color: Colors.black,
+                  onPressed: () {
+                    if (SignUpFields.obscureState) {
+                      setState(() {
+                        SignUpFields.obscureState = false;
+                      });
+                    } else {
+                      setState(() {
+                        SignUpFields.obscureState = true;
+                      });
+                    }
+                  },
+                  icon: SignUpFields.obscureState == false
+                      ? const Icon(Icons.visibility_off)
+                      : const Icon(Icons.visibility),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -234,18 +273,28 @@ class SignUpFeilds extends StatelessWidget {
               //========== Login Buttons and Actions ==========
               LoginAndSignUpButtons.signUp(
                 type: 0,
-                shopName: _shopNameController.text.trim(),
-                countryName: _countryNameController.text.trim(),
-                shopCategory: _shopCategoryController.text.trim(),
-                mobileNumber: _mobileNumberController.text.trim(),
-                email: _emailController.text.trim(),
-                password: _passwordController.text.trim(),
-                formKey: _formStateKey,
+                shopName: SignUpFields.shopNameController.text.trim(),
+                countryName: SignUpFields.countryNameController.text.trim(),
+                shopCategory: SignUpFields.shopCategoryController,
+                mobileNumber: SignUpFields.mobileNumberController.text.trim(),
+                email: SignUpFields.emailController.text.trim(),
+                password: SignUpFields.passwordController.text.trim(),
+                formKey: SignUpFields._formStateKey,
               )
             ],
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    SignUpFields.shopNameController.text = '';
+    SignUpFields.countryNameController.text = '';
+    SignUpFields.mobileNumberController.text = '';
+    SignUpFields.emailController.text = '';
+    SignUpFields.passwordController.text = '';
+    super.dispose();
   }
 }

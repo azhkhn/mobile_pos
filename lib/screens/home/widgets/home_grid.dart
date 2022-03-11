@@ -13,14 +13,14 @@ const List homeGridIcons = [
 ];
 
 const List homeGridName = [
-  'MANAGE USERS',
+  'USER MODULE',
   'PURCHASE',
-  'STOCK MODULE',
-  'SALES MODULE',
+  'STOCK',
+  'SALES',
   'ITEM MASTER',
-  'SETTTINGS MODULE',
-  'OFFERS',
-  'TRANSPORTATION',
+  'SETTTINGS',
+  'EXPENSE',
+  'REPORTS',
 ];
 
 class HomeGrid extends StatelessWidget {

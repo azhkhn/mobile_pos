@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-
-import 'package:flutter/material.dart';
 import 'package:shop_ez/model/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -39,30 +37,36 @@ class UserDatabase {
 //========== Table for Users ==========
     await db.execute('''CREATE TABLE $tableUser (
   ${UserFeilds.id} $idType,
-  ${UserFeilds.username} $textType,
+  ${UserFeilds.shopName} $textType,
+  ${UserFeilds.countryName} $textType,
+  ${UserFeilds.shopCategory} $textType,
+  ${UserFeilds.mobileNumber} $textType,
   ${UserFeilds.email} $textType,
   ${UserFeilds.password} $textType)''');
 
 //========== Table for Login ==========
     await db.execute('''CREATE TABLE $tableLogin (
   ${UserFeilds.id} $idLogin,
-  ${UserFeilds.username} $textType,
+  ${UserFeilds.shopName} $textType,
+  ${UserFeilds.countryName} $textType,
+  ${UserFeilds.shopCategory} $textType,
+  ${UserFeilds.mobileNumber} $textType,
   ${UserFeilds.email} $textType,
   ${UserFeilds.password} $textType)''');
   }
 
   Future<UserModel> createUser(UserModel userModel, String username) async {
     final db = await instance.database;
-    final user = await db
-        .rawQuery("select * from $tableUser where username = '$username'");
+    final user = await db.rawQuery(
+        "select * from $tableUser where ${UserFeilds.mobileNumber} = '$username'");
     if (user.isNotEmpty) {
       log('user already exist!');
       throw Exception('User Already Exist!');
     } else {
       log('User registered!');
       final id = await db.insert(tableUser, userModel.toJson());
-      final newUser = await db
-          .rawQuery("select * from $tableUser where username = '$username'");
+      final newUser = await db.rawQuery(
+          "select * from $tableUser where ${UserFeilds.mobileNumber} = '$username'");
       final userCred = UserModel.fromJson(newUser.first);
       db.insert(tableLogin, userCred.toJson());
       return userModel.copy(id: id);
@@ -72,7 +76,7 @@ class UserDatabase {
   Future<UserModel?> loginUser(String username, String password) async {
     final db = await instance.database;
     final response = await db.rawQuery(
-        "select * from $tableUser where username = '$username' and password = '$password'");
+        "select * from $tableUser where ${UserFeilds.mobileNumber} = '$username' and ${UserFeilds.password} = '$password' or  ${UserFeilds.email} = '$username' and ${UserFeilds.password} = '$password'");
     if (response.isNotEmpty) {
       final user = UserModel.fromJson(response.first);
       log('user== $user');
@@ -108,9 +112,9 @@ class UserDatabase {
 
   Future getAllUsers() async {
     final db = await instance.database;
-    // final _result = await db.query(tableUser);
-    // log('results === $_result');
-    // return _result.map((json) => UserModel.fromJson(json)).toList();
-    db.delete(tableLogin);
+    final _result = await db.query(tableUser);
+    log('results === $_result');
+    return _result.map((json) => UserModel.fromJson(json)).toList();
+    // db.delete(tableLogin);
   }
 }

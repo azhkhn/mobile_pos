@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/color.dart';
 
 class ManageUsers extends StatelessWidget {
-  ManageUsers({Key? key}) : super(key: key);
-  late Size _screenSize;
+  const ManageUsers({Key? key}) : super(key: key);
+  static late Size _screenSize;
   @override
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;

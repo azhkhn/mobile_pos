@@ -5,62 +5,89 @@ import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 class ScreenItemMaster extends StatelessWidget {
-  ScreenItemMaster({Key? key}) : super(key: key);
+  const ScreenItemMaster({Key? key}) : super(key: key);
   static const items = ['Standard', 'Service'];
-  late Size _screenSize;
+  static late Size _screenSize;
   @override
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;
     return Scaffold(
-        body: SafeArea(
-            child: Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 15),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey, width: 1),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton(
-                hint: const Text(
-                  'Choose',
-                  // style: TextStyle(color: Colors.black),
+        appBar: AppBar(
+          backgroundColor: appBarColor,
+          elevation: 0,
+          title: const Text('Item Master'),
+        ),
+        body: Container(
+            width: _screenSize.width,
+            height: _screenSize.height,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage(
+                  'assets/images/home_items.jpg',
                 ),
-                isExpanded: true,
-                items: items.map((String item) {
-                  return DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(item),
-                  );
-                }).toList(),
-                onChanged: (_) {},
               ),
             ),
-          ),
-          kHeight15,
-          const TextFeildWidget(
-            labelText: 'Item Name',
-            textInputType: TextInputType.text,
-          ),
-          kHeight15,
-          const TextFeildWidget(
-            labelText: 'Item Name in Arabic',
-            textInputType: TextInputType.text,
-          ),
-          kHeight25,
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: _screenSize.width / 10),
-            child: CustomMaterialBtton(
-              buttonText: 'Submit',
-              textColor: kButtonTextWhite,
-              buttonColor: mainColor,
-            ),
-          )
-        ],
-      ),
-    )));
+            child: Padding(
+              padding: EdgeInsets.only(
+                  top: _screenSize.height / 15,
+                  right: _screenSize.width * 0.05,
+                  left: _screenSize.width * 0.05),
+              child: Column(
+                children: [
+                  DropdownButtonFormField(
+                    decoration: const InputDecoration(
+                      label: Text(
+                        'Choose Item',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      // prefixIcon: Icon(
+                      //   Icons.store,
+                      //   color: Colors.black,
+                      // ),
+                    ),
+                    isExpanded: true,
+                    items: items.map((String item) {
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(item),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      // setState(() {
+                      //   SignUpFields.shopCategoryController = value.toString();
+                      // });
+                    },
+                    validator: (value) {
+                      // if (value == null ||
+                      //     SignUpFields.shopCategoryController == 'null') {
+                      //   return 'This field is required*';
+                      // }
+                      return null;
+                    },
+                  ),
+                  kHeight15,
+                  const TextFeildWidget(
+                    labelText: 'Item Name',
+                    textInputType: TextInputType.text,
+                  ),
+                  kHeight15,
+                  const TextFeildWidget(
+                    labelText: 'Item Name in Arabic',
+                    textInputType: TextInputType.text,
+                  ),
+                  kHeight25,
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: _screenSize.width / 10),
+                    child: CustomMaterialBtton(
+                      buttonText: 'Submit',
+                      textColor: kButtonTextWhite,
+                      buttonColor: mainColor,
+                    ),
+                  )
+                ],
+              ),
+            )));
   }
 }
