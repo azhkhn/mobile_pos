@@ -76,7 +76,7 @@ class UserDatabase {
   Future<UserModel?> loginUser(String username, String password) async {
     final db = await instance.database;
     final response = await db.rawQuery(
-        "select * from $tableUser where ${UserFeilds.mobileNumber} = '$username' and ${UserFeilds.password} = '$password'");
+        "select * from $tableUser where ${UserFeilds.mobileNumber} = '$username' and ${UserFeilds.password} = '$password' or  ${UserFeilds.email} = '$username' and ${UserFeilds.password} = '$password'");
     if (response.isNotEmpty) {
       final user = UserModel.fromJson(response.first);
       log('user== $user');

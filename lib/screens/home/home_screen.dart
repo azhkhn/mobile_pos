@@ -9,7 +9,7 @@ import 'package:shop_ez/widgets/floating_add_options.dart';
 class ScreenHome extends StatelessWidget {
   ScreenHome({this.initialEntry, Key? key}) : super(key: key);
   final int? initialEntry;
-  late Size _screenSize;
+  static late Size _screenSize;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final isDialOpen = ValueNotifier(false);
   @override

@@ -98,15 +98,20 @@ class LoginAndSignUpButtons extends StatelessWidget {
     log('username == $username');
     log('password == $password');
 
-    try {
-      final result = await UserDatabase.instance.loginUser(username, password);
-      log('User found! = $result');
-      Navigator.pushReplacementNamed(context, routeHome);
-    } catch (e) {
-      log(e.toString());
-      showSnackBar(
-          context: context, content: 'Incorrect username or password!');
-      return;
+    final isFormValid = formKey.currentState!;
+
+    if (isFormValid.validate()) {
+      try {
+        final result =
+            await UserDatabase.instance.loginUser(username, password);
+        log('User found! = $result');
+        Navigator.pushReplacementNamed(context, routeHome);
+      } catch (e) {
+        log(e.toString());
+        showSnackBar(
+            context: context, content: 'Incorrect username or password!');
+        return;
+      }
     }
   }
 
@@ -123,10 +128,10 @@ class LoginAndSignUpButtons extends StatelessWidget {
       'shopName = $_shopName, countryName = $_countryName, shopCategory = $_shopCategory, phoneNumber = $_mobileNumber, email = $_email, password = $_password',
     );
 
-    final isValid = formKey.currentState!;
+    final isFormValid = formKey.currentState!;
 
-    if (isValid.validate()) {
-      isValid.save();
+    if (isFormValid.validate()) {
+      isFormValid.save();
 
       final _user = UserModel(
         shopName: _shopName,
