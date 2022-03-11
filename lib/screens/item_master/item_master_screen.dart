@@ -35,39 +35,36 @@ class ScreenItemMaster extends StatelessWidget {
                   left: _screenSize.width * 0.05),
               child: Column(
                 children: [
-                  Container(
-                    width: _screenSize.width - 0.15,
-                    child: DropdownButtonFormField(
-                      decoration: const InputDecoration(
-                        label: Text(
-                          'Choose Item',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        // prefixIcon: Icon(
-                        //   Icons.store,
-                        //   color: Colors.black,
-                        // ),
+                  DropdownButtonFormField(
+                    decoration: const InputDecoration(
+                      label: Text(
+                        'Choose Item',
+                        style: TextStyle(color: Colors.black),
                       ),
-                      isExpanded: true,
-                      items: items.map((String item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        // setState(() {
-                        //   SignUpFields.shopCategoryController = value.toString();
-                        // });
-                      },
-                      validator: (value) {
-                        // if (value == null ||
-                        //     SignUpFields.shopCategoryController == 'null') {
-                        //   return 'This field is required*';
-                        // }
-                        return null;
-                      },
+                      // prefixIcon: Icon(
+                      //   Icons.store,
+                      //   color: Colors.black,
+                      // ),
                     ),
+                    isExpanded: true,
+                    items: items.map((String item) {
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(item),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      // setState(() {
+                      //   SignUpFields.shopCategoryController = value.toString();
+                      // });
+                    },
+                    validator: (value) {
+                      // if (value == null ||
+                      //     SignUpFields.shopCategoryController == 'null') {
+                      //   return 'This field is required*';
+                      // }
+                      return null;
+                    },
                   ),
                   kHeight15,
                   const TextFeildWidget(

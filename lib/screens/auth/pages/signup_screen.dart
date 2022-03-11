@@ -48,7 +48,7 @@ class ScreenSignUp extends StatelessWidget {
               ),
 
               //========== SignUp Feilds ==========
-              Expanded(
+              const Expanded(
                 child: SignUpFields(),
               ),
             ],
