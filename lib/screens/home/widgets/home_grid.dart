@@ -2,25 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
 
 const List homeGridIcons = [
-  'assets/images/manage_user.png',
-  'assets/images/purchase.png',
   'assets/images/stock_module.png',
   'assets/images/sales_module.png',
   'assets/images/item_master.png',
-  'assets/images/settings_module.png',
+  'assets/images/manage_user.png',
+  'assets/images/purchase.png',
   'assets/images/offers.png',
+  'assets/images/stock_module.png',
   'assets/images/transportation.png',
+  'assets/images/settings_module.png',
 ];
 
 const List homeGridName = [
-  'USER MODULE',
-  'PURCHASE',
-  'STOCK',
+  'POS',
   'SALES',
   'ITEM MASTER',
-  'SETTTINGS',
+  'USER MODULE',
+  'PURCHASE',
   'EXPENSE',
+  'STOCK',
   'REPORTS',
+  'SETTTINGS',
 ];
 
 class HomeGrid extends StatelessWidget {
@@ -42,7 +44,14 @@ class HomeGrid extends StatelessWidget {
               color: Colors.grey.withOpacity(0.2),
               borderRadius: BorderRadius.circular(20.0)),
           child: InkWell(
-            onTap: () => Navigator.pushNamed(context, routeManageUsers),
+            onTap: () {
+              switch (index) {
+                case 2:
+                  Navigator.pushNamed(context, routeItemMaster);
+                  break;
+                default:
+              }
+            },
             child: GridTile(
                 footer: Padding(
                   padding: const EdgeInsets.all(5.0),

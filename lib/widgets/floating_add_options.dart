@@ -36,8 +36,18 @@ class FloatingAddOptions extends StatelessWidget {
           label: 'Customer',
         ),
         SpeedDialChild(
+          child: const Icon(Icons.playlist_add),
+          label: 'Sub-Category',
+          onTap: () => Navigator.pushNamed(context, routeSubCategory),
+        ),
+        SpeedDialChild(
           child: const Icon(Icons.category),
           label: 'Category',
+          onTap: () => Navigator.pushNamed(context, routeCategory),
+        ),
+        SpeedDialChild(
+          child: const Icon(Icons.numbers),
+          label: 'Unit',
         ),
         SpeedDialChild(
           child: const Icon(Icons.verified_outlined),

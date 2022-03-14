@@ -114,12 +114,11 @@ class ScreenManageSupplier extends StatelessWidget {
                 Padding(
                   padding:
                       EdgeInsets.symmetric(horizontal: _screenSize.width / 10),
-                  child: CustomMaterialBtton(
+                  child: const CustomMaterialBtton(
                     buttonText: 'Submit',
-                    textColor: kButtonTextWhite,
-                    buttonColor: mainColor,
                   ),
-                )
+                ),
+                kHeight10
               ],
             ),
           ),

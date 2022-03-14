@@ -14,7 +14,7 @@ class ScreenHome extends StatelessWidget {
   final isDialOpen = ValueNotifier(false);
   @override
   Widget build(BuildContext context) {
-    UserDatabase.instance.getAllUsers();
+    // UserDatabase.instance.getAllUsers();
     _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
@@ -73,7 +73,7 @@ class ScreenHome extends StatelessWidget {
                 mainAxisSpacing: _screenSize.width / 50,
                 crossAxisSpacing: _screenSize.width / 50,
                 children: List.generate(
-                  8,
+                  9,
                   (index) => HomeGrid(
                     index: index,
                     screenSize: _screenSize,

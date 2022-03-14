@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/screens/auth/pages/login_screen.dart';
 import 'package:shop_ez/screens/auth/pages/signup_screen.dart';
+import 'package:shop_ez/screens/category/screen_category.dart';
 import 'package:shop_ez/screens/home/home_screen.dart';
 import 'package:shop_ez/screens/home_items/manage_users.dart';
-import 'package:shop_ez/screens/item_master/item_master_screen.dart';
+import 'package:shop_ez/screens/item_master/screen_item_master.dart';
 import 'package:shop_ez/screens/splash/splash_screen.dart';
+import 'package:shop_ez/screens/sub-category/screen_sub_category.dart';
 import 'package:shop_ez/screens/supplier/manage_supplier_screen.dart';
 
 class RouteGenerator {
@@ -27,6 +29,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ScreenItemMaster());
       case routeManageSupplier:
         return MaterialPageRoute(builder: (_) => const ScreenManageSupplier());
+      case routeCategory:
+        return MaterialPageRoute(builder: (_) => CategoryScreen());
+      case routeSubCategory:
+        return MaterialPageRoute(builder: (_) => SubCategoryScreen());
       default:
         return _errorRoute();
     }
