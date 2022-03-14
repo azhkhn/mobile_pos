@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/color.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/db/user_database.dart';
+import 'package:shop_ez/db/database.dart';
+import 'package:shop_ez/db/db_functions/category_database/category_db.dart';
+import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
@@ -19,12 +21,11 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
   final _subCategoryEditingController = TextEditingController();
   late Size _screenSize;
   final _formKey = GlobalKey<FormState>();
-  final db = UserDatabase.instance;
+  final categoryDB = CategoryDatabase.instance;
 
   @override
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;
-    UserDatabase.instance.getAllCategories();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appBarColor,
@@ -48,37 +49,42 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
             child: Column(
               children: [
                 //========== Item Category Dropdown ==========
-                DropdownButtonFormField(
-                  decoration: const InputDecoration(
-                    label: Text(
-                      'Choose Category *',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    // prefixIcon: Icon(
-                    //   Icons.store,
-                    //   color: Colors.black,
-                    // ),
-                  ),
-                  isExpanded: true,
-                  items: [''].map((String item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(item),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    // setState(() {
-                    //   SignUpFields.shopCategoryController = value.toString();
-                    // });
-                  },
-                  validator: (value) {
-                    // if (value == null ||
-                    //     SignUpFields.shopCategoryController == 'null') {
-                    //   return 'This field is required*';
-                    // }
-                    return null;
-                  },
-                ),
+                FutureBuilder(
+                    future: categoryDB.getAllCategories(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<CategoryModel>> snapshot) {
+                      return DropdownButtonFormField(
+                        decoration: const InputDecoration(
+                          label: Text(
+                            'Choose Category *',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          // prefixIcon: Icon(
+                          //   Icons.store,
+                          //   color: Colors.black,
+                          // ),
+                        ),
+                        isExpanded: true,
+                        items: snapshot.data!.map((item) {
+                          return DropdownMenuItem<String>(
+                            value: item.category,
+                            child: Text(item.category),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          // setState(() {
+                          //   SignUpFields.shopCategoryController = value.toString();
+                          // });
+                        },
+                        validator: (value) {
+                          // if (value == null ||
+                          //     SignUpFields.shopCategoryController == 'null') {
+                          //   return 'This field is required*';
+                          // }
+                          return null;
+                        },
+                      );
+                    }),
                 kHeight10,
 
                 //========== Category Field ==========
@@ -106,7 +112,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                       log('Category is == ' + category);
 
                       try {
-                        await UserDatabase.instance.createCategory(category);
+                        await categoryDB.createCategory(category);
                         showSnackBar(
                             context: context,
                             content: 'Category $category Added!');
@@ -125,7 +131,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 kHeight50,
                 Expanded(
                   child: FutureBuilder<dynamic>(
-                    future: db.getAllCategories(),
+                    future: categoryDB.getAllCategories(),
                     builder: (context, snapshot) {
                       return snapshot.hasData
                           ? ListView.separated(
@@ -133,8 +139,8 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                 final item = snapshot.data[index];
                                 log('item == $item');
                                 return ListTile(
-                                  leading: Text(item['_id'].toString()),
-                                  title: Text(item['category']),
+                                  leading: Text('${index + 1}'.toString()),
+                                  title: Text(item.category),
                                 );
                               },
                               separatorBuilder: (context, index) =>

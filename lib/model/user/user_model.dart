@@ -1,7 +1,7 @@
 const String tableUser = 'users';
 const String tableLogin = 'login';
 
-class UserFeilds {
+class UserFields {
   static const String id = '_id';
   static const String shopName = 'shopName';
   static const String countryName = 'countryName';
@@ -27,13 +27,13 @@ class UserModel {
   });
 
   Map<String, Object?> toJson() => {
-        UserFeilds.id: id,
-        UserFeilds.shopName: shopName,
-        UserFeilds.countryName: countryName,
-        UserFeilds.shopCategory: shopCategory,
-        UserFeilds.mobileNumber: mobileNumber,
-        UserFeilds.email: email,
-        UserFeilds.password: password,
+        UserFields.id: id,
+        UserFields.shopName: shopName,
+        UserFields.countryName: countryName,
+        UserFields.shopCategory: shopCategory,
+        UserFields.mobileNumber: mobileNumber,
+        UserFields.email: email,
+        UserFields.password: password,
       };
 
   UserModel copy({
@@ -56,12 +56,12 @@ class UserModel {
       );
 
   static UserModel fromJson(Map<String, Object?> json) => UserModel(
-        id: json[UserFeilds.id] as int,
-        shopName: json[UserFeilds.shopName] as String,
-        countryName: json[UserFeilds.countryName] as String,
-        shopCategory: json[UserFeilds.shopCategory] as String,
-        mobileNumber: json[UserFeilds.mobileNumber] as String,
-        email: json[UserFeilds.email] as String,
-        password: json[UserFeilds.password] as String,
+        id: json[UserFields.id] as int,
+        shopName: json[UserFields.shopName] as String,
+        countryName: json[UserFields.countryName] as String,
+        shopCategory: json[UserFields.shopCategory] as String,
+        mobileNumber: json[UserFields.mobileNumber] as String,
+        email: json[UserFields.email] as String,
+        password: json[UserFields.password] as String,
       );
 }

@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/color.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/db/user_database.dart';
-import 'package:shop_ez/model/user_model.dart';
+import 'package:shop_ez/db/database.dart';
+import 'package:shop_ez/db/db_functions/user_database/user_db.dart';
+import 'package:shop_ez/model/user/user_model.dart';
 
 class LoginAndSignUpButtons extends StatelessWidget {
   LoginAndSignUpButtons.logIn({

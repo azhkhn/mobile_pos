@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/color.dart';
-import 'package:shop_ez/db/user_database.dart';
+import 'package:shop_ez/db/db_functions/category_database/category_db.dart';
+import 'package:shop_ez/db/db_functions/user_database/user_db.dart';
 import 'package:shop_ez/screens/auth/widgets/login_signup_buttons.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import 'package:shop_ez/widgets/wave_clip.dart';
@@ -13,7 +14,6 @@ class ScreenLogin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserDatabase.instance.getAllUsers();
     _screenSise = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(

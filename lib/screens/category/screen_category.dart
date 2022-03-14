@@ -3,7 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/color.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/db/user_database.dart';
+import 'package:shop_ez/db/database.dart';
+import 'package:shop_ez/db/db_functions/category_database/category_db.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
@@ -20,12 +21,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
   late Size _screenSize;
   final _formKey = GlobalKey<FormState>();
 
-  final db = UserDatabase.instance;
+  final categoryDB = CategoryDatabase.instance;
 
   @override
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;
-    UserDatabase.instance.getAllCategories();
+    categoryDB.getAllCategories();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appBarColor,
@@ -66,14 +67,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
               CustomMaterialBtton(
                 buttonText: 'Submit',
                 onPressed: () async {
-                  final category = _categoryEditingController.text;
-
+                  final category = _categoryEditingController.text.trim();
                   final isFormValid = _formKey.currentState!;
                   if (isFormValid.validate()) {
                     log('Category is == ' + category);
 
                     try {
-                      await UserDatabase.instance.createCategory(category);
+                      await categoryDB.createCategory(category);
                       showSnackBar(
                           context: context,
                           content: 'Category $category Added!');
@@ -92,7 +92,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               kHeight50,
               Expanded(
                 child: FutureBuilder<dynamic>(
-                  future: db.getAllCategories(),
+                  future: categoryDB.getAllCategories(),
                   builder: (context, snapshot) {
                     return snapshot.hasData
                         ? ListView.separated(
@@ -100,8 +100,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                               final item = snapshot.data[index];
                               log('item == $item');
                               return ListTile(
-                                leading: Text(item['_id'].toString()),
-                                title: Text(item['category']),
+                                leading: Text('${index + 1}'.toString()),
+                                title: Text(item.category),
                               );
                             },
                             separatorBuilder: (context, index) =>

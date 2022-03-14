@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/color.dart';
 import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/db/user_database.dart';
+import 'package:shop_ez/db/db_functions/user_database/user_db.dart';
 import 'package:shop_ez/screens/home/widgets/home_drawer.dart';
 import 'package:shop_ez/screens/home/widgets/home_grid.dart';
 import 'package:shop_ez/widgets/floating_add_options.dart';
