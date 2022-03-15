@@ -5,11 +5,11 @@ import 'package:shop_ez/core/constant/color.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/db/db_functions/category_database/category_db.dart';
 import 'package:shop_ez/db/db_functions/sub-category_database/sub_category_db.dart';
-import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
+import 'package:shop_ez/widgets/dropdown_field_widget/dropdown_field_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
@@ -42,50 +42,28 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
               children: [
                 //========== Item Category Dropdown ==========
                 FutureBuilder(
-                    future: categoryDB.getAllCategories(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<CategoryModel>> snapshot) {
-                      return DropdownButtonFormField(
-                        decoration: const InputDecoration(
-                          label: Text(
-                            'Choose Category *',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          // prefixIcon: Icon(
-                          //   Icons.store,
-                          //   color: Colors.black,
-                          // ),
-                        ),
-                        isExpanded: true,
-                        items: snapshot.hasData
-                            ? snapshot.data!.map((item) {
-                                return DropdownMenuItem<String>(
-                                  value: item.category,
-                                  child: Text(item.category),
-                                );
-                              }).toList()
-                            : [].map((item) {
-                                return DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(item),
-                                );
-                              }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            SubCategoryScreen.categoryEditingController =
-                                value.toString();
-                          });
-                        },
-                        validator: (value) {
-                          if (value == null ||
-                              SubCategoryScreen.categoryEditingController ==
-                                  'null') {
-                            return 'This field is required*';
-                          }
-                          return null;
-                        },
-                      );
-                    }),
+                  future: categoryDB.getAllCategories(),
+                  builder: (context, dynamic snapshot) {
+                    return CustomDropDownField(
+                      labelText: 'Choose Category *',
+                      snapshot: snapshot,
+                      onChanged: (value) {
+                        setState(() {
+                          SubCategoryScreen.categoryEditingController =
+                              value.toString();
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null ||
+                            SubCategoryScreen.categoryEditingController ==
+                                'null') {
+                          return 'This field is required*';
+                        }
+                        return null;
+                      },
+                    );
+                  },
+                ),
                 kHeight10,
 
                 //========== Category Field ==========
@@ -186,5 +164,11 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
         behavior: SnackBarBehavior.floating,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    SubCategoryScreen.subCategoryEditingController.text = '';
+    super.dispose();
   }
 }
