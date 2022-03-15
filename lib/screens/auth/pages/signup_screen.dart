@@ -62,6 +62,7 @@ class ScreenSignUp extends StatelessWidget {
 class SignUpFields extends StatefulWidget {
   static const items = [
     'Hyper Market',
+    'IT Company',
     'Stationary',
     'Mobile Shop',
     'Bakery',
@@ -72,20 +73,32 @@ class SignUpFields extends StatefulWidget {
     Key? key,
   }) : super(key: key);
   static final _formStateKey = GlobalKey<FormState>();
-  static final shopNameController = TextEditingController();
-  static final emailController = TextEditingController();
-  static final passwordController = TextEditingController();
-  static final mobileNumberController = TextEditingController();
-  static final countryNameController = TextEditingController();
+  static late TextEditingController shopNameController;
+  static late TextEditingController emailController;
+  static late TextEditingController passwordController;
+  static late TextEditingController mobileNumberController;
+  static late TextEditingController countryNameController;
   // final cPpasswordController = TextEditingController();
-  static String shopCategoryController = 'null';
-  static bool obscureState = false;
+  static late String shopCategoryController;
+  static late bool obscureState;
   @override
   State<SignUpFields> createState() => _SignUpFieldsState();
 }
 
 class _SignUpFieldsState extends State<SignUpFields> {
   late Size _screenSise;
+
+  @override
+  void initState() {
+    SignUpFields.shopNameController = TextEditingController();
+    SignUpFields.emailController = TextEditingController();
+    SignUpFields.passwordController = TextEditingController();
+    SignUpFields.mobileNumberController = TextEditingController();
+    SignUpFields.countryNameController = TextEditingController();
+    SignUpFields.shopCategoryController = 'null';
+    SignUpFields.obscureState = false;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

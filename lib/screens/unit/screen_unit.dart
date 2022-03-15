@@ -1,45 +1,42 @@
-import 'dart:developer';
-
+import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/color.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/db/db_functions/category_database/category_db.dart';
-import 'package:shop_ez/model/category/category_model.dart';
+import 'package:shop_ez/db/db_functions/unit_database/unit_database.dart';
+import 'package:shop_ez/model/unit/unit_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
-class CategoryScreen extends StatefulWidget {
-  const CategoryScreen({Key? key}) : super(key: key);
+class UnitScreen extends StatefulWidget {
+  const UnitScreen({Key? key}) : super(key: key);
+
   @override
-  State<CategoryScreen> createState() => _CategoryScreenState();
+  State<UnitScreen> createState() => _UnitScreenState();
 }
 
-class _CategoryScreenState extends State<CategoryScreen> {
-  final _categoryEditingController = TextEditingController();
+class _UnitScreenState extends State<UnitScreen> {
+  final _unitEditingController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
-  final categoryDB = CategoryDatabase.instance;
-
+  final unitDB = UnitDatabase.instance;
   @override
   Widget build(BuildContext context) {
-    categoryDB.getAllCategories();
     return Scaffold(
       appBar: AppBarWidget(
-        title: 'Category',
+        title: 'Unit',
       ),
       body: BackgroundContainerWidget(
         child: ItemScreenPaddingWidget(
           child: Column(
             children: [
-              //========== Category Field ==========
+              //========== Unit Field ==========
               Form(
                 key: _formKey,
                 child: TextFeildWidget(
-                  labelText: 'Category *',
-                  controller: _categoryEditingController,
+                  labelText: 'Unit *',
+                  controller: _unitEditingController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'This field is required*';
@@ -54,33 +51,32 @@ class _CategoryScreenState extends State<CategoryScreen> {
               CustomMaterialBtton(
                 buttonText: 'Submit',
                 onPressed: () async {
-                  final category = _categoryEditingController.text.trim();
+                  final unit = _unitEditingController.text.trim();
                   final isFormValid = _formKey.currentState!;
                   if (isFormValid.validate()) {
-                    log('Category == ' + category);
-                    final _category = CategoryModel(category: category);
+                    log('Unit == ' + unit);
+                    final _unit = UnitModel(unit: unit);
 
                     try {
-                      await categoryDB.createCategory(_category);
+                      await unitDB.createUnit(_unit);
                       showSnackBar(
-                          context: context,
-                          content: 'Category $category Added!');
-                      // _categoryEditingController.text = '';
+                          context: context, content: 'Unit $unit Added!');
+                      // _unitEditingController.text = '';
                       return setState(() {});
                     } catch (e) {
                       showSnackBar(
                           context: context,
-                          content: 'Category $category Already Exist!');
+                          content: 'Unit $unit Already Exist!');
                     }
                   }
                 },
               ),
 
-              //========== Category List Field ==========
+              //========== Unit List Field ==========
               kHeight50,
               Expanded(
                 child: FutureBuilder<dynamic>(
-                  future: categoryDB.getAllCategories(),
+                  future: unitDB.getAllUnits(),
                   builder: (context, snapshot) {
                     return snapshot.hasData
                         ? ListView.separated(
@@ -96,7 +92,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                         const TextStyle(color: kTextColorBlack),
                                   ),
                                 ),
-                                title: Text(item.category),
+                                title: Text(item.unit),
                               );
                             },
                             separatorBuilder: (context, index) =>
@@ -114,7 +110,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
-//========== Show SnackBar ==========
+  //========== Show SnackBar ==========
   void showSnackBar({required BuildContext context, required String content}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

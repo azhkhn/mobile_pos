@@ -9,4 +9,6 @@ Color appBarColor = const Color(0xFF05A0B0);
 //========= Const Color ==========
 const kWhite = Colors.white;
 const kButtonTextWhite = Colors.white;
+const kTransparentColor = Colors.transparent;
 Color kButtonColor = const Color(0xFF0A99AB);
+const kTextColorBlack = Colors.black;

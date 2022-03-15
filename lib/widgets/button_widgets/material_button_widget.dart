@@ -3,7 +3,7 @@ import 'package:shop_ez/core/constant/color.dart';
 
 class CustomMaterialBtton extends StatelessWidget {
   const CustomMaterialBtton({
-    this.onPressed,
+    required this.onPressed,
     required this.buttonText,
     this.textColor,
     this.buttonColor,
@@ -12,7 +12,7 @@ class CustomMaterialBtton extends StatelessWidget {
   final String buttonText;
   final Color? textColor;
   final Color? buttonColor;
-  final Function()? onPressed;
+  final Function() onPressed;
   @override
   Widget build(BuildContext context) {
     return MaterialButton(

@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/model/category/category_model.dart';
+import 'package:shop_ez/model/sub-category/sub_category_model.dart';
+import 'package:shop_ez/model/unit/unit_model.dart';
 import 'package:shop_ez/model/user/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -57,5 +60,21 @@ class EzDatabase {
     await db.execute('''CREATE TABLE $tableCategory (
   ${CategoryFields.id} $idType,
   ${CategoryFields.category} $textType)''');
+
+//========== Table Sub-Category ==========
+    await db.execute('''CREATE TABLE $tableSubCategory (
+   ${SubCategoryFields.id} $idType, 
+   ${SubCategoryFields.category} $textType, 
+   ${SubCategoryFields.subCategory} $textType)''');
+
+//========== Table Brand ==========
+    await db.execute('''CREATE TABLE $tableBrand (
+  ${BrandFields.id} $idType,
+  ${BrandFields.brand} $textType)''');
+
+//========== Table Unit ==========
+    await db.execute('''CREATE TABLE $tableUnit (
+  ${UnitFields.id} $idType,
+  ${UnitFields.unit} $textType)''');
   }
 }

@@ -1,45 +1,43 @@
-import 'dart:developer';
-
+import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/color.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/db/db_functions/category_database/category_db.dart';
-import 'package:shop_ez/model/category/category_model.dart';
+import 'package:shop_ez/db/db_functions/brand_database/brand_database.dart';
+import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
-class CategoryScreen extends StatefulWidget {
-  const CategoryScreen({Key? key}) : super(key: key);
+class BrandScreen extends StatefulWidget {
+  const BrandScreen({Key? key}) : super(key: key);
+
   @override
-  State<CategoryScreen> createState() => _CategoryScreenState();
+  State<BrandScreen> createState() => _BrandScreenState();
 }
 
-class _CategoryScreenState extends State<CategoryScreen> {
-  final _categoryEditingController = TextEditingController();
+class _BrandScreenState extends State<BrandScreen> {
+  final _brandEditingController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
-  final categoryDB = CategoryDatabase.instance;
+  final brandDB = BrandDatabase.instance;
 
   @override
   Widget build(BuildContext context) {
-    categoryDB.getAllCategories();
     return Scaffold(
       appBar: AppBarWidget(
-        title: 'Category',
+        title: 'Brand',
       ),
       body: BackgroundContainerWidget(
         child: ItemScreenPaddingWidget(
           child: Column(
             children: [
-              //========== Category Field ==========
+              //========== Brand Field ==========
               Form(
                 key: _formKey,
                 child: TextFeildWidget(
-                  labelText: 'Category *',
-                  controller: _categoryEditingController,
+                  labelText: 'Brand *',
+                  controller: _brandEditingController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'This field is required*';
@@ -54,33 +52,32 @@ class _CategoryScreenState extends State<CategoryScreen> {
               CustomMaterialBtton(
                 buttonText: 'Submit',
                 onPressed: () async {
-                  final category = _categoryEditingController.text.trim();
+                  final brand = _brandEditingController.text.trim();
                   final isFormValid = _formKey.currentState!;
                   if (isFormValid.validate()) {
-                    log('Category == ' + category);
-                    final _category = CategoryModel(category: category);
+                    log('Brand == ' + brand);
+                    final _brand = BrandModel(brand: brand);
 
                     try {
-                      await categoryDB.createCategory(_category);
+                      await brandDB.createBrand(_brand);
                       showSnackBar(
-                          context: context,
-                          content: 'Category $category Added!');
-                      // _categoryEditingController.text = '';
+                          context: context, content: 'Brand $brand Added!');
+                      // _brandEditingController.text = '';
                       return setState(() {});
                     } catch (e) {
                       showSnackBar(
                           context: context,
-                          content: 'Category $category Already Exist!');
+                          content: 'Brand $brand Already Exist!');
                     }
                   }
                 },
               ),
 
-              //========== Category List Field ==========
+              //========== Brand List Field ==========
               kHeight50,
               Expanded(
                 child: FutureBuilder<dynamic>(
-                  future: categoryDB.getAllCategories(),
+                  future: brandDB.getAllBrands(),
                   builder: (context, snapshot) {
                     return snapshot.hasData
                         ? ListView.separated(
@@ -96,11 +93,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                         const TextStyle(color: kTextColorBlack),
                                   ),
                                 ),
-                                title: Text(item.category),
+                                title: Text(item.brand),
                               );
                             },
-                            separatorBuilder: (context, index) =>
-                                const Divider(),
+                            separatorBuilder: (context, index) => const Divider(
+                              thickness: 1,
+                            ),
                             itemCount: snapshot.data.length,
                           )
                         : const Center(child: CircularProgressIndicator());
@@ -114,7 +112,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
-//========== Show SnackBar ==========
+  //========== Show SnackBar ==========
   void showSnackBar({required BuildContext context, required String content}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

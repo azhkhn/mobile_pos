@@ -8,30 +8,30 @@ class CategoryDatabase {
   CategoryDatabase._init();
 
 //========== Create Category ==========
-  Future<void> createCategory(String newCategory) async {
+  Future<void> createCategory(CategoryModel _categoryModel) async {
     final db = await dbInstance.database;
     final category = await db.rawQuery(
-        "select * from $tableCategory where category = '$newCategory'");
+        "select * from $tableCategory where ${CategoryFields.category} = '${_categoryModel.category}'");
     if (category.isNotEmpty) {
       log('Category already exist!');
       throw Exception('Category Already Exist!');
     } else {
       log('Category Created!');
-      final cat = await db.rawInsert(
+      final id = await db.rawInsert(
           'INSERT INTO $tableCategory(${CategoryFields.category}) VALUES(?)',
-          [newCategory]);
-      log('id == $cat');
+          [_categoryModel.category]);
+      log('Category Id == $id');
     }
   }
 
-//========== Create Category ==========
+//========== Get All Categories ==========
   Future<List<CategoryModel>> getAllCategories() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableCategory);
-    log('results === $_result');
-    final categories =
+    log('Categories === $_result');
+    final _categories =
         _result.map((json) => CategoryModel.fromJson(json)).toList();
     // db.delete(tableCategory);
-    return categories;
+    return _categories;
   }
 }

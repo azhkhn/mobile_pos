@@ -3,46 +3,38 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/color.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/db/database.dart';
 import 'package:shop_ez/db/db_functions/category_database/category_db.dart';
+import 'package:shop_ez/db/db_functions/sub-category_database/sub_category_db.dart';
 import 'package:shop_ez/model/category/category_model.dart';
+import 'package:shop_ez/model/sub-category/sub_category_model.dart';
+import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
+import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 class SubCategoryScreen extends StatefulWidget {
-  SubCategoryScreen({Key? key}) : super(key: key);
+  const SubCategoryScreen({Key? key}) : super(key: key);
 
   @override
   State<SubCategoryScreen> createState() => _SubCategoryScreenState();
+
+  static final subCategoryEditingController = TextEditingController();
+  static String categoryEditingController = 'null';
 }
 
 class _SubCategoryScreenState extends State<SubCategoryScreen> {
-  final _subCategoryEditingController = TextEditingController();
-  late Size _screenSize;
   final _formKey = GlobalKey<FormState>();
   final categoryDB = CategoryDatabase.instance;
+  final subCategoryDB = SubCategoryDatabase.instance;
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: appBarColor,
-        elevation: 0,
-        title: const Text('Sub-SCategory'),
+      appBar: AppBarWidget(
+        title: 'Sub-Category',
       ),
-      body: Container(
-        width: _screenSize.width,
-        height: _screenSize.height,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: AssetImage(
-              'assets/images/home_items.jpg',
-            ),
-          ),
-        ),
+      body: BackgroundContainerWidget(
         child: ItemScreenPaddingWidget(
           child: Form(
             key: _formKey,
@@ -65,22 +57,31 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                           // ),
                         ),
                         isExpanded: true,
-                        items: snapshot.data!.map((item) {
-                          return DropdownMenuItem<String>(
-                            value: item.category,
-                            child: Text(item.category),
-                          );
-                        }).toList(),
+                        items: snapshot.hasData
+                            ? snapshot.data!.map((item) {
+                                return DropdownMenuItem<String>(
+                                  value: item.category,
+                                  child: Text(item.category),
+                                );
+                              }).toList()
+                            : [].map((item) {
+                                return DropdownMenuItem<String>(
+                                  value: item,
+                                  child: Text(item),
+                                );
+                              }).toList(),
                         onChanged: (value) {
-                          // setState(() {
-                          //   SignUpFields.shopCategoryController = value.toString();
-                          // });
+                          setState(() {
+                            SubCategoryScreen.categoryEditingController =
+                                value.toString();
+                          });
                         },
                         validator: (value) {
-                          // if (value == null ||
-                          //     SignUpFields.shopCategoryController == 'null') {
-                          //   return 'This field is required*';
-                          // }
+                          if (value == null ||
+                              SubCategoryScreen.categoryEditingController ==
+                                  'null') {
+                            return 'This field is required*';
+                          }
                           return null;
                         },
                       );
@@ -90,7 +91,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 //========== Category Field ==========
                 TextFeildWidget(
                   labelText: 'Sub Category *',
-                  controller: _subCategoryEditingController,
+                  controller: SubCategoryScreen.subCategoryEditingController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'This field is required*';
@@ -105,23 +106,32 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 CustomMaterialBtton(
                   buttonText: 'Submit',
                   onPressed: () async {
-                    final category = _subCategoryEditingController.text;
+                    final category =
+                        SubCategoryScreen.categoryEditingController;
+                    final subCategory = SubCategoryScreen
+                        .subCategoryEditingController.text
+                        .trim();
 
                     final isFormValid = _formKey.currentState!;
                     if (isFormValid.validate()) {
-                      log('Category is == ' + category);
+                      log('Category == ' + category);
+                      log('Sub-Category == ' + subCategory);
+
+                      final _subCategory = SubCategoryModel(
+                          category: category, subCategory: subCategory);
 
                       try {
-                        await categoryDB.createCategory(category);
+                        await subCategoryDB.createSubCategory(_subCategory);
                         showSnackBar(
                             context: context,
-                            content: 'Category $category Added!');
+                            content: 'Category $subCategory Added!');
                         // _categoryEditingController.text = '';
                         return setState(() {});
                       } catch (e) {
                         showSnackBar(
                             context: context,
-                            content: 'Category $category Already Exist!');
+                            content:
+                                'Sub-Category $subCategory Already Exist!');
                       }
                     }
                   },
@@ -131,7 +141,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 kHeight50,
                 Expanded(
                   child: FutureBuilder<dynamic>(
-                    future: categoryDB.getAllCategories(),
+                    future: subCategoryDB.getAllSubCategories(),
                     builder: (context, snapshot) {
                       return snapshot.hasData
                           ? ListView.separated(
@@ -139,8 +149,16 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                 final item = snapshot.data[index];
                                 log('item == $item');
                                 return ListTile(
-                                  leading: Text('${index + 1}'.toString()),
+                                  leading: CircleAvatar(
+                                    backgroundColor: kTransparentColor,
+                                    child: Text(
+                                      '${index + 1}'.toString(),
+                                      style: const TextStyle(
+                                          color: kTextColorBlack),
+                                    ),
+                                  ),
                                   title: Text(item.category),
+                                  subtitle: Text(item.subCategory),
                                 );
                               },
                               separatorBuilder: (context, index) =>

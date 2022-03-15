@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/screens/auth/pages/login_screen.dart';
 import 'package:shop_ez/screens/auth/pages/signup_screen.dart';
+import 'package:shop_ez/screens/brand/screen_brand.dart';
 import 'package:shop_ez/screens/category/screen_category.dart';
+import 'package:shop_ez/screens/customer/screen_customer.dart';
 import 'package:shop_ez/screens/home/home_screen.dart';
 import 'package:shop_ez/screens/home_items/manage_users.dart';
 import 'package:shop_ez/screens/item_master/screen_item_master.dart';
 import 'package:shop_ez/screens/splash/splash_screen.dart';
 import 'package:shop_ez/screens/sub-category/screen_sub_category.dart';
 import 'package:shop_ez/screens/supplier/manage_supplier_screen.dart';
+import 'package:shop_ez/screens/unit/screen_unit.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -30,9 +33,15 @@ class RouteGenerator {
       case routeManageSupplier:
         return MaterialPageRoute(builder: (_) => const ScreenManageSupplier());
       case routeCategory:
-        return MaterialPageRoute(builder: (_) => CategoryScreen());
+        return MaterialPageRoute(builder: (_) => const CategoryScreen());
       case routeSubCategory:
-        return MaterialPageRoute(builder: (_) => SubCategoryScreen());
+        return MaterialPageRoute(builder: (_) => const SubCategoryScreen());
+      case routeBrand:
+        return MaterialPageRoute(builder: (_) => const BrandScreen());
+      case routeCustomer:
+        return MaterialPageRoute(builder: (_) => const CustomerScreen());
+      case routeUnit:
+        return MaterialPageRoute(builder: (_) => const UnitScreen());
       default:
         return _errorRoute();
     }

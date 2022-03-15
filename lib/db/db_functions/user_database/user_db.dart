@@ -72,7 +72,7 @@ class UserDatabase {
     final db = await dbInstance.database;
     final _result = await db.query(tableUser);
     log('results === $_result');
+    // db.delete(tableUser);
     return _result.map((json) => UserModel.fromJson(json)).toList();
-    // db.delete(tableLogin);
   }
 }

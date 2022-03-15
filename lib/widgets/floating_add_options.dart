@@ -34,6 +34,7 @@ class FloatingAddOptions extends StatelessWidget {
         SpeedDialChild(
           child: const Icon(Icons.person_add),
           label: 'Customer',
+          onTap: () => Navigator.pushNamed(context, routeCustomer),
         ),
         SpeedDialChild(
           child: const Icon(Icons.playlist_add),
@@ -48,10 +49,12 @@ class FloatingAddOptions extends StatelessWidget {
         SpeedDialChild(
           child: const Icon(Icons.numbers),
           label: 'Unit',
+          onTap: () => Navigator.pushNamed(context, routeUnit),
         ),
         SpeedDialChild(
           child: const Icon(Icons.verified_outlined),
           label: 'Brand',
+          onTap: () => Navigator.pushNamed(context, routeBrand),
         ),
       ],
     );
