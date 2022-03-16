@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/color.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
@@ -5,21 +7,26 @@ import 'package:shop_ez/screens/auth/widgets/login_signup_buttons.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import 'package:shop_ez/widgets/wave_clip.dart';
 
-class ScreenSignUp extends StatelessWidget {
+class ScreenSignUp extends StatefulWidget {
   const ScreenSignUp({Key? key}) : super(key: key);
   static late Size _screenSise;
 
   @override
+  State<ScreenSignUp> createState() => _ScreenSignUpState();
+}
+
+class _ScreenSignUpState extends State<ScreenSignUp> {
+  @override
   Widget build(BuildContext context) {
-    _screenSise = MediaQuery.of(context).size;
+    ScreenSignUp._screenSise = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(
         children: [
           ClipPath(
             clipper: WaveClip(),
             child: Container(
-              width: _screenSise.width,
-              height: _screenSise.height / 2,
+              width: ScreenSignUp._screenSise.width,
+              height: ScreenSignUp._screenSise.height / 2,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -40,22 +47,28 @@ class ScreenSignUp extends StatelessWidget {
                 child: Center(
                   child: Image.asset(
                     'assets/images/pos.png',
-                    width: _screenSise.width / 5,
+                    width: ScreenSignUp._screenSise.width / 5,
                     // height: _screenSise.width / 3,
                   ),
                 ),
-                height: _screenSise.height / 4,
+                height: ScreenSignUp._screenSise.height / 4,
               ),
 
               //========== SignUp Feilds ==========
-              const Expanded(
-                child: SignUpFields(),
+              Expanded(
+                child: SignUpFields(callback: callback),
               ),
             ],
           ),
         ],
       ),
     );
+  }
+
+//For retrieving value from TextFields (instead of State-Management)
+  callback() {
+    log('ScreenSignUp() => called!');
+    setState(() {});
   }
 }
 
@@ -67,20 +80,27 @@ class SignUpFields extends StatefulWidget {
     'Mobile Shop',
     'Bakery',
     'Restaurent',
-    'Pharmacy'
+    'Pharmacy',
+    'Other'
   ];
   const SignUpFields({
     Key? key,
+    required this.callback,
   }) : super(key: key);
+
+  final Function callback;
   static final _formStateKey = GlobalKey<FormState>();
-  static late TextEditingController shopNameController;
-  static late TextEditingController emailController;
-  static late TextEditingController passwordController;
-  static late TextEditingController mobileNumberController;
-  static late TextEditingController countryNameController;
-  // final cPpasswordController = TextEditingController();
-  static late String shopCategoryController;
-  static late bool obscureState;
+  static final TextEditingController shopNameController =
+      TextEditingController();
+  static final TextEditingController emailController = TextEditingController();
+  static final TextEditingController passwordController =
+      TextEditingController();
+  static final TextEditingController mobileNumberController =
+      TextEditingController();
+  static final TextEditingController countryNameController =
+      TextEditingController();
+  static String shopCategoryController = 'null';
+  static bool obscureState = false;
   @override
   State<SignUpFields> createState() => _SignUpFieldsState();
 }
@@ -89,28 +109,16 @@ class _SignUpFieldsState extends State<SignUpFields> {
   late Size _screenSise;
 
   @override
-  void initState() {
-    SignUpFields.shopNameController = TextEditingController();
-    SignUpFields.emailController = TextEditingController();
-    SignUpFields.passwordController = TextEditingController();
-    SignUpFields.mobileNumberController = TextEditingController();
-    SignUpFields.countryNameController = TextEditingController();
-    SignUpFields.shopCategoryController = 'null';
-    SignUpFields.obscureState = false;
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    log('build() => called!');
     _screenSise = MediaQuery.of(context).size;
     return Padding(
       //========== Dividing Screen Half and Half ==========
       padding: EdgeInsets.only(
-        // bottom: _screenSise.width * 0.10,
         right: _screenSise.width * 0.05,
         left: _screenSise.width * 0.05,
         top: _screenSise.width * 0.10,
-        // top: _screenSise.height / 10 / 10,
+        bottom: _screenSise.width * 0.10,
       ),
       child: SingleChildScrollView(
         child: Form(
@@ -132,10 +140,6 @@ class _SignUpFieldsState extends State<SignUpFields> {
                   if (value == null || value.trim().isEmpty) {
                     return 'This field is required*';
                   }
-                  // if (value.trim().length < 4) {
-                  //   return 'Username must be at least 4 characters in length';
-                  // }
-                  // Return null if the entered username is valid
                   return null;
                 },
               ),
@@ -188,11 +192,6 @@ class _SignUpFieldsState extends State<SignUpFields> {
                   }
                   return null;
                 },
-                onSaved: (value) {
-                  setState(() {
-                    SignUpFields.shopCategoryController = value.toString();
-                  });
-                },
               ),
 
               //========== Mobile Number Field ==========
@@ -224,7 +223,7 @@ class _SignUpFieldsState extends State<SignUpFields> {
               TextFeildWidget(
                 controller: SignUpFields.emailController,
                 labelText: 'Email',
-                textInputType: TextInputType.text,
+                textInputType: TextInputType.emailAddress,
                 prefixIcon: const Icon(
                   Icons.email,
                   color: Colors.black,
@@ -293,6 +292,7 @@ class _SignUpFieldsState extends State<SignUpFields> {
                 email: SignUpFields.emailController.text.trim(),
                 password: SignUpFields.passwordController.text.trim(),
                 formKey: SignUpFields._formStateKey,
+                callback: widget.callback,
               )
             ],
           ),

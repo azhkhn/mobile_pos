@@ -163,7 +163,7 @@ class _SignInFieldsState extends State<SignInFields> {
                 ),
                 LoginAndSignUpButtons.logIn(
                   type: 1,
-                  username: widget._usernameController.text,
+                  username: widget._usernameController.text.trim(),
                   password: widget._passwordController.text,
                   formKey: SignInFields._formStateKey,
                 )

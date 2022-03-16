@@ -25,6 +25,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
     required this.countryName,
     required this.shopCategory,
     required this.formKey,
+    required this.callback,
   }) : super(key: key);
 
   int type;
@@ -35,6 +36,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
       shopName,
       countryName,
       shopCategory;
+  late final Function callback;
 
   GlobalKey<FormState> formKey;
 
@@ -45,11 +47,13 @@ class LoginAndSignUpButtons extends StatelessWidget {
         MaterialButton(
           minWidth: 150,
           color: mainColor,
-          onPressed: () async {
+          onPressed: () {
             if (type == 0) {
-              await onSignUp(context);
+              log('Getting Values...');
+              callback();
+              onSignUp(context);
             } else {
-              await onLogin(context);
+              onLogin(context);
             }
           },
           child: Text(
@@ -102,9 +106,8 @@ class LoginAndSignUpButtons extends StatelessWidget {
 
     if (isFormValid.validate()) {
       try {
-        final result =
-            await UserDatabase.instance.loginUser(username, password);
-        log('User found! = $result');
+        await UserDatabase.instance.loginUser(username, password);
+        log('User found!');
         Navigator.pushReplacementNamed(context, routeHome);
       } catch (e) {
         log(e.toString());
@@ -124,14 +127,12 @@ class LoginAndSignUpButtons extends StatelessWidget {
         _password = password;
     final String? _email = email;
 
-    log(
-      'shopName = $_shopName, countryName = $_countryName, shopCategory = $_shopCategory, phoneNumber = $_mobileNumber, email = $_email, password = $_password',
-    );
-
     final isFormValid = formKey.currentState!;
 
     if (isFormValid.validate()) {
-      isFormValid.save();
+      log(
+        'shopName = $_shopName, countryName = $_countryName, shopCategory = $_shopCategory, phoneNumber = $_mobileNumber, email = $_email, password = $_password',
+      );
 
       final _user = UserModel(
         shopName: _shopName,
@@ -150,12 +151,6 @@ class LoginAndSignUpButtons extends StatelessWidget {
         showSnackBar(context: context, content: "Username Already Exist!");
         return;
       }
-    } else {
-      // if (_username.isEmpty || _email!.isEmpty || _password.isEmpty) {
-      //   log('Feilds cannot be empty!');
-      //   showSnackBar(context: context, content: "Feilds Can't Be Empty!");
-      //   return;
-      // }
     }
   }
 
