@@ -116,6 +116,7 @@ class _UnitScreenState extends State<UnitScreen> {
       SnackBar(
         content: Text(content),
         // backgroundColor: Colors.black,
+        duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
     );

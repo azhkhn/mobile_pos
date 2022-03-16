@@ -161,6 +161,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
       SnackBar(
         content: Text(content),
         // backgroundColor: Colors.black,
+        duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
     );

@@ -120,6 +120,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       SnackBar(
         content: Text(content),
         // backgroundColor: Colors.black,
+        duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
     );
