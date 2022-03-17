@@ -39,7 +39,7 @@ class RouteGenerator {
       case routeBrand:
         return MaterialPageRoute(builder: (_) => const BrandScreen());
       case routeCustomer:
-        return MaterialPageRoute(builder: (_) => CustomerScreen());
+        return MaterialPageRoute(builder: (_) => const CustomerScreen());
       case routeUnit:
         return MaterialPageRoute(builder: (_) => const UnitScreen());
       default:
