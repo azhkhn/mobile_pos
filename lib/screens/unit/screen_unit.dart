@@ -60,13 +60,15 @@ class _UnitScreenState extends State<UnitScreen> {
                     try {
                       await unitDB.createUnit(_unit);
                       showSnackBar(
-                          context: context, content: 'Unit $unit Added!');
+                          context: context,
+                          content: 'Unit "$unit" added successfully!');
                       // _unitEditingController.text = '';
                       return setState(() {});
                     } catch (e) {
                       showSnackBar(
                           context: context,
-                          content: 'Unit $unit Already Exist!');
+                          color: kSnackBarErrorColor,
+                          content: 'Unit "$unit" already exist!');
                     }
                   }
                 },
@@ -111,11 +113,12 @@ class _UnitScreenState extends State<UnitScreen> {
   }
 
   //========== Show SnackBar ==========
-  void showSnackBar({required BuildContext context, required String content}) {
+  void showSnackBar(
+      {required BuildContext context, required String content, Color? color}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(content),
-        // backgroundColor: Colors.black,
+        backgroundColor: color,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),

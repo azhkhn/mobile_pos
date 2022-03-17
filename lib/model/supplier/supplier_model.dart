@@ -87,7 +87,7 @@ class SupplierModel {
         state: json[SupplierFields.state] as String,
         stateArabic: json[SupplierFields.stateArabic] as String,
         country: json[SupplierFields.country] as String,
-        countryArabic: [SupplierFields.countryArabic] as String,
+        countryArabic: json[SupplierFields.countryArabic] as String,
         poBox: json[SupplierFields.poBox] as String,
       );
 }

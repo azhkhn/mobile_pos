@@ -102,14 +102,16 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                         await subCategoryDB.createSubCategory(_subCategory);
                         showSnackBar(
                             context: context,
-                            content: 'Category $subCategory Added!');
+                            content:
+                                'Category "$subCategory" added successfully!');
                         // _categoryEditingController.text = '';
                         return setState(() {});
                       } catch (e) {
                         showSnackBar(
                             context: context,
+                            color: kSnackBarErrorColor,
                             content:
-                                'Sub-Category $subCategory Already Exist!');
+                                'Sub-Category "$subCategory" already exist!');
                       }
                     }
                   },
@@ -135,8 +137,8 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                           color: kTextColorBlack),
                                     ),
                                   ),
-                                  title: Text(item.category),
-                                  subtitle: Text(item.subCategory),
+                                  title: Text(item.subCategory),
+                                  subtitle: Text(item.category),
                                 );
                               },
                               separatorBuilder: (context, index) =>
@@ -155,12 +157,13 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
     );
   }
 
-//========== Show SnackBar ==========
-  void showSnackBar({required BuildContext context, required String content}) {
+  //========== Show SnackBar ==========
+  void showSnackBar(
+      {required BuildContext context, required String content, Color? color}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(content),
-        // backgroundColor: Colors.black,
+        backgroundColor: color,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),

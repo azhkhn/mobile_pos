@@ -31,7 +31,7 @@ class RouteGenerator {
       case routeItemMaster:
         return MaterialPageRoute(builder: (_) => const ScreenItemMaster());
       case routeManageSupplier:
-        return MaterialPageRoute(builder: (_) => const ScreenManageSupplier());
+        return MaterialPageRoute(builder: (_) => ScreenManageSupplier());
       case routeCategory:
         return MaterialPageRoute(builder: (_) => const CategoryScreen());
       case routeSubCategory:

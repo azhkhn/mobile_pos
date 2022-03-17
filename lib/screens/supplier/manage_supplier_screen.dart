@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/color.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/db/db_functions/supplier_database/supplier_database.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
@@ -11,31 +12,34 @@ import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 class ScreenManageSupplier extends StatelessWidget {
-  const ScreenManageSupplier({Key? key}) : super(key: key);
+  ScreenManageSupplier({Key? key}) : super(key: key);
   static const items = ['Standard', 'Service'];
   static late Size _screenSize;
-  static final _formKey = GlobalKey<FormState>();
-  static final _companyController = TextEditingController();
-  static final _companyArabicController = TextEditingController();
-  static final _supplierController = TextEditingController();
-  static final _supplierArabicController = TextEditingController();
-  static final _vatNumberController = TextEditingController();
-  static final _emailController = TextEditingController();
-  static final _addressController = TextEditingController();
-  static final _addressArabicController = TextEditingController();
-  static final _cityController = TextEditingController();
-  static final _cityArabicController = TextEditingController();
-  static final _stateController = TextEditingController();
-  static final _stateArabicController = TextEditingController();
-  static final _countryController = TextEditingController();
-  static final _countryArabicController = TextEditingController();
-  static final _poBoxController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _companyController = TextEditingController();
+  final _companyArabicController = TextEditingController();
+  final _supplierController = TextEditingController();
+  final _supplierArabicController = TextEditingController();
+  final _vatNumberController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _addressArabicController = TextEditingController();
+  final _cityController = TextEditingController();
+  final _cityArabicController = TextEditingController();
+  final _stateController = TextEditingController();
+  final _stateArabicController = TextEditingController();
+  final _countryController = TextEditingController();
+  final _countryArabicController = TextEditingController();
+  final _poBoxController = TextEditingController();
 
   static final supplierDB = SupplierDatabase.instance;
+  getSupplier() async {
+    await supplierDB.getAllSuppliers();
+  }
 
   @override
   Widget build(BuildContext context) {
-    supplierDB.getAllSuppliers();
+    getSupplier();
     _screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBarWidget(
@@ -228,24 +232,25 @@ class ScreenManageSupplier extends StatelessWidget {
         countryArabic,
         poBox;
 
-    company = _companyController.text;
-    companyArabic = _companyArabicController.text;
-    supplier = _supplierController.text;
-    supplierArabic = _supplierArabicController.text;
-    vatNumber = _vatNumberController.text;
-    email = _emailController.text;
-    address = _addressController.text;
-    addressArabic = _addressArabicController.text;
-    city = _cityController.text;
-    cityArabic = _cityArabicController.text;
-    state = _stateArabicController.text;
-    stateArabic = _stateArabicController.text;
-    country = _countryController.text;
-    countryArabic = _countryArabicController.text;
-    poBox = _poBoxController.text;
-
     final _formState = _formKey.currentState!;
     if (_formState.validate()) {
+      //retieving values from TextFields to String
+      company = _companyController.text;
+      companyArabic = _companyArabicController.text;
+      supplier = _supplierController.text;
+      supplierArabic = _supplierArabicController.text;
+      vatNumber = _vatNumberController.text;
+      email = _emailController.text;
+      address = _addressController.text;
+      addressArabic = _addressArabicController.text;
+      city = _cityController.text;
+      cityArabic = _cityArabicController.text;
+      state = _stateArabicController.text;
+      stateArabic = _stateArabicController.text;
+      country = _countryController.text;
+      countryArabic = _countryArabicController.text;
+      poBox = _poBoxController.text;
+
       final _supplierModel = SupplierModel(
         company: company,
         companyArabic: companyArabic,
@@ -266,21 +271,26 @@ class ScreenManageSupplier extends StatelessWidget {
       try {
         await supplierDB.createSupplier(_supplierModel);
         log('Supplier $supplier Added!');
-        showSnackBar(context: context, content: 'Supplier $supplier Added!');
+        showSnackBar(
+            context: context,
+            content: 'Supplier "$supplier" added successfully!');
       } catch (e) {
         log('Commpany $company Already Exist!');
         showSnackBar(
-            context: context, content: 'Commpany $company Already Exist!');
+            context: context,
+            color: kSnackBarErrorColor,
+            content: 'Company "$company" already exist!');
       }
     }
   }
 
   //========== Show SnackBar ==========
-  void showSnackBar({required BuildContext context, required String content}) {
+  void showSnackBar(
+      {required BuildContext context, required String content, Color? color}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(content),
-        // backgroundColor: Colors.black,
+        backgroundColor: color,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),

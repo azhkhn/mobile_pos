@@ -64,13 +64,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       await categoryDB.createCategory(_category);
                       showSnackBar(
                           context: context,
-                          content: 'Category $category Added!');
+                          content: 'Category "$category" added successfully!');
                       // _categoryEditingController.text = '';
                       return setState(() {});
                     } catch (e) {
                       showSnackBar(
                           context: context,
-                          content: 'Category $category Already Exist!');
+                          color: kSnackBarErrorColor,
+                          content: 'Category "$category" already exist!');
                     }
                   }
                 },
@@ -114,12 +115,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
-//========== Show SnackBar ==========
-  void showSnackBar({required BuildContext context, required String content}) {
+  //========== Show SnackBar ==========
+  void showSnackBar(
+      {required BuildContext context, required String content, Color? color}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(content),
-        // backgroundColor: Colors.black,
+        backgroundColor: color,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),

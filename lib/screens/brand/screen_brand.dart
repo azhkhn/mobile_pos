@@ -61,13 +61,15 @@ class _BrandScreenState extends State<BrandScreen> {
                     try {
                       await brandDB.createBrand(_brand);
                       showSnackBar(
-                          context: context, content: 'Brand $brand Added!');
+                          context: context,
+                          content: 'Brand "$brand" added successfully!');
                       // _brandEditingController.text = '';
                       return setState(() {});
                     } catch (e) {
                       showSnackBar(
                           context: context,
-                          content: 'Brand $brand Already Exist!');
+                          color: kSnackBarErrorColor,
+                          content: 'Brand "$brand" already exist!');
                     }
                   }
                 },
@@ -113,11 +115,12 @@ class _BrandScreenState extends State<BrandScreen> {
   }
 
   //========== Show SnackBar ==========
-  void showSnackBar({required BuildContext context, required String content}) {
+  void showSnackBar(
+      {required BuildContext context, required String content, Color? color}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(content),
-        // backgroundColor: Colors.black,
+        backgroundColor: color,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
