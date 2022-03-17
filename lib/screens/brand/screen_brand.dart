@@ -1,6 +1,6 @@
 import 'dart:developer' show log;
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/color.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/db/db_functions/brand_database/brand_database.dart';
 import 'package:shop_ez/model/brand/brand_model.dart';
@@ -62,6 +62,11 @@ class _BrandScreenState extends State<BrandScreen> {
                       await brandDB.createBrand(_brand);
                       showSnackBar(
                           context: context,
+                          color: kSnackBarSuccessColor,
+                          icon: const Icon(
+                            Icons.done,
+                            color: kSnackBarIconColor,
+                          ),
                           content: 'Brand "$brand" added successfully!');
                       // _brandEditingController.text = '';
                       return setState(() {});
@@ -69,6 +74,10 @@ class _BrandScreenState extends State<BrandScreen> {
                       showSnackBar(
                           context: context,
                           color: kSnackBarErrorColor,
+                          icon: const Icon(
+                            Icons.new_releases_outlined,
+                            color: kSnackBarIconColor,
+                          ),
                           content: 'Brand "$brand" already exist!');
                     }
                   }
@@ -116,10 +125,19 @@ class _BrandScreenState extends State<BrandScreen> {
 
   //========== Show SnackBar ==========
   void showSnackBar(
-      {required BuildContext context, required String content, Color? color}) {
+      {required BuildContext context,
+      required String content,
+      Color? color,
+      Widget? icon}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(content),
+        content: Row(
+          children: [
+            icon ?? const Text(''),
+            kWidth5,
+            Text(content),
+          ],
+        ),
         backgroundColor: color,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,

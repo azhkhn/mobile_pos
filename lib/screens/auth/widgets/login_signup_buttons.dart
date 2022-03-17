@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/color.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/db_functions/user_database/user_db.dart';
@@ -112,7 +112,14 @@ class LoginAndSignUpButtons extends StatelessWidget {
       } catch (e) {
         log(e.toString());
         showSnackBar(
-            context: context, content: 'Incorrect username or password!');
+          context: context,
+          color: kSnackBarErrorColor,
+          icon: const Icon(
+            Icons.new_releases_outlined,
+            color: kSnackBarIconColor,
+          ),
+          content: 'Incorrect username or password!',
+        );
         return;
       }
     }
@@ -144,21 +151,49 @@ class LoginAndSignUpButtons extends StatelessWidget {
       );
       try {
         await UserDatabase.instance.createUser(_user, _mobileNumber);
-        showSnackBar(context: context, content: "User Registered Successfuly!");
+        showSnackBar(
+          context: context,
+          color: kSnackBarSuccessColor,
+          icon: const Icon(
+            Icons.done,
+            color: kSnackBarIconColor,
+          ),
+          content: "User Registered Successfully!",
+        );
         Navigator.pushReplacementNamed(context, routeHome);
         return;
       } catch (e) {
-        showSnackBar(context: context, content: "Username Already Exist!");
+        showSnackBar(
+          context: context,
+          color: kSnackBarErrorColor,
+          icon: const Icon(
+            Icons.new_releases_outlined,
+            color: kSnackBarIconColor,
+          ),
+          content: "Username Already Exist!",
+        );
         return;
       }
     }
   }
 
-  void showSnackBar({required BuildContext context, required String content}) {
+  //========== Show SnackBar ==========
+  void showSnackBar(
+      {required BuildContext context,
+      required String content,
+      Color? color,
+      Widget? icon}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(content),
-        // backgroundColor: Colors.black,
+        content: Row(
+          children: [
+            icon ?? const Text(''),
+            kWidth5,
+            Text(content),
+          ],
+        ),
+        backgroundColor: color,
+        duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
     );

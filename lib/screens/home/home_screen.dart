@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/color.dart';
+import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/db_functions/user_database/user_db.dart';
 import 'package:shop_ez/screens/home/widgets/home_drawer.dart';
@@ -27,12 +28,16 @@ class ScreenHome extends StatelessWidget {
       },
       child: Scaffold(
         key: _scaffoldKey,
+
+        //========== Drawer Widget ==========
         drawer: Drawer(
           child: Container(
             color: mainColor,
             child: const HomeDrawer(),
           ),
         ),
+
+        //========== AppBar Widget ==========
         appBar: AppBar(
           backgroundColor: appBarColor,
           elevation: 0.0,
@@ -55,6 +60,8 @@ class ScreenHome extends StatelessWidget {
             )
           ],
         ),
+
+        //========== Background Image ==========
         body: SafeArea(
           child: Container(
             width: _screenSize.width,
@@ -65,20 +72,133 @@ class ScreenHome extends StatelessWidget {
                 image: AssetImage('assets/images/home.jpg'),
               ),
             ),
+
+            //========== Home GridView Widget ==========
             child: Padding(
               padding: EdgeInsets.only(top: _screenSize.height / 6),
-              child: GridView.count(
-                padding: EdgeInsets.all(_screenSize.width / 50),
-                crossAxisCount: 3,
-                mainAxisSpacing: _screenSize.width / 50,
-                crossAxisSpacing: _screenSize.width / 50,
-                children: List.generate(
-                  9,
-                  (index) => HomeGrid(
-                    index: index,
-                    screenSize: _screenSize,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: _screenSize.width * 0.07),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Card(
+                          elevation: 5,
+                          color: Colors.blue[300],
+                          child: SizedBox(
+                            width: _screenSize.width / 4,
+                            height: _screenSize.width / 12,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Today Cash',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: kButtonTextWhite,
+                                      fontSize: _screenSize.width * 0.025),
+                                ),
+                                // kHeight5,
+                                Text(
+                                  '13840',
+                                  textAlign: TextAlign.center,
+                                  softWrap: false,
+                                  overflow: TextOverflow.fade,
+                                  style: TextStyle(
+                                    color: kButtonTextWhite,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: _screenSize.width * 0.03,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Card(
+                          elevation: 5,
+                          color: Colors.green[300],
+                          child: SizedBox(
+                            width: _screenSize.width / 4,
+                            height: _screenSize.width / 12,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Total Cash',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: kButtonTextWhite,
+                                      fontSize: _screenSize.width * 0.025),
+                                ),
+                                // kHeight5,
+                                Text(
+                                  '1856750',
+                                  softWrap: false,
+                                  overflow: TextOverflow.fade,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: kButtonTextWhite,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: _screenSize.width * 0.03,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Card(
+                          elevation: 5,
+                          color: Colors.red[300],
+                          child: SizedBox(
+                            width: _screenSize.width / 4,
+                            height: _screenSize.width / 12,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Today Sale',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: kButtonTextWhite,
+                                      fontSize: _screenSize.width * 0.025),
+                                ),
+                                // kHeight5,
+                                Text(
+                                  '160',
+                                  softWrap: false,
+                                  overflow: TextOverflow.fade,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: kButtonTextWhite,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: _screenSize.width * 0.03,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  Expanded(
+                    child: GridView.count(
+                      padding: EdgeInsets.all(_screenSize.width / 50),
+                      crossAxisCount: 3,
+                      mainAxisSpacing: _screenSize.width / 50,
+                      crossAxisSpacing: _screenSize.width / 50,
+                      children: List.generate(
+                        9,
+                        (index) => HomeGrid(
+                          index: index,
+                          screenSize: _screenSize,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

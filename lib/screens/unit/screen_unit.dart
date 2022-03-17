@@ -1,6 +1,6 @@
 import 'dart:developer' show log;
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/color.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/db/db_functions/unit_database/unit_database.dart';
 import 'package:shop_ez/model/unit/unit_model.dart';
@@ -61,6 +61,11 @@ class _UnitScreenState extends State<UnitScreen> {
                       await unitDB.createUnit(_unit);
                       showSnackBar(
                           context: context,
+                          color: kSnackBarSuccessColor,
+                          icon: const Icon(
+                            Icons.done,
+                            color: kSnackBarIconColor,
+                          ),
                           content: 'Unit "$unit" added successfully!');
                       // _unitEditingController.text = '';
                       return setState(() {});
@@ -68,6 +73,10 @@ class _UnitScreenState extends State<UnitScreen> {
                       showSnackBar(
                           context: context,
                           color: kSnackBarErrorColor,
+                          icon: const Icon(
+                            Icons.new_releases_outlined,
+                            color: kSnackBarIconColor,
+                          ),
                           content: 'Unit "$unit" already exist!');
                     }
                   }
@@ -114,10 +123,19 @@ class _UnitScreenState extends State<UnitScreen> {
 
   //========== Show SnackBar ==========
   void showSnackBar(
-      {required BuildContext context, required String content, Color? color}) {
+      {required BuildContext context,
+      required String content,
+      Color? color,
+      Widget? icon}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(content),
+        content: Row(
+          children: [
+            icon ?? const Text(''),
+            kWidth5,
+            Text(content),
+          ],
+        ),
         backgroundColor: color,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,

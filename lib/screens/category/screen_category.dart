@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/color.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/db/db_functions/category_database/category_db.dart';
 import 'package:shop_ez/model/category/category_model.dart';
@@ -64,14 +64,24 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       await categoryDB.createCategory(_category);
                       showSnackBar(
                           context: context,
+                          color: kSnackBarSuccessColor,
+                          icon: const Icon(
+                            Icons.done,
+                            color: kSnackBarIconColor,
+                          ),
                           content: 'Category "$category" added successfully!');
-                      // _categoryEditingController.text = '';
+                      // _categoryEditingController.clear();
                       return setState(() {});
                     } catch (e) {
                       showSnackBar(
                           context: context,
                           color: kSnackBarErrorColor,
+                          icon: const Icon(
+                            Icons.new_releases_outlined,
+                            color: kSnackBarIconColor,
+                          ),
                           content: 'Category "$category" already exist!');
+                      // _categoryEditingController.clear();
                     }
                   }
                 },
@@ -117,10 +127,19 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   //========== Show SnackBar ==========
   void showSnackBar(
-      {required BuildContext context, required String content, Color? color}) {
+      {required BuildContext context,
+      required String content,
+      Color? color,
+      Widget? icon}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(content),
+        content: Row(
+          children: [
+            icon ?? const Text(''),
+            kWidth5,
+            Text(content),
+          ],
+        ),
         backgroundColor: color,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,

@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/color.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/db/db_functions/supplier_database/supplier_database.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
@@ -13,7 +13,6 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 class ScreenManageSupplier extends StatelessWidget {
   ScreenManageSupplier({Key? key}) : super(key: key);
-  static const items = ['Standard', 'Service'];
   static late Size _screenSize;
   final _formKey = GlobalKey<FormState>();
   final _companyController = TextEditingController();
@@ -273,12 +272,21 @@ class ScreenManageSupplier extends StatelessWidget {
         log('Supplier $supplier Added!');
         showSnackBar(
             context: context,
+            color: kSnackBarSuccessColor,
+            icon: const Icon(
+              Icons.done,
+              color: kSnackBarIconColor,
+            ),
             content: 'Supplier "$supplier" added successfully!');
       } catch (e) {
         log('Commpany $company Already Exist!');
         showSnackBar(
             context: context,
             color: kSnackBarErrorColor,
+            icon: const Icon(
+              Icons.new_releases_outlined,
+              color: kSnackBarIconColor,
+            ),
             content: 'Company "$company" already exist!');
       }
     }
@@ -286,10 +294,19 @@ class ScreenManageSupplier extends StatelessWidget {
 
   //========== Show SnackBar ==========
   void showSnackBar(
-      {required BuildContext context, required String content, Color? color}) {
+      {required BuildContext context,
+      required String content,
+      Color? color,
+      Widget? icon}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(content),
+        content: Row(
+          children: [
+            icon ?? const Text(''),
+            kWidth5,
+            Text(content),
+          ],
+        ),
         backgroundColor: color,
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,

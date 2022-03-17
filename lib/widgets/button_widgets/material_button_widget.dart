@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/color.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 
 class CustomMaterialBtton extends StatelessWidget {
   const CustomMaterialBtton({

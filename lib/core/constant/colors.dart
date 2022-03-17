@@ -12,4 +12,6 @@ const kWhite = Colors.white;
 const kButtonTextWhite = Colors.white;
 const kTransparentColor = Colors.transparent;
 const kTextColorBlack = Colors.black;
+const kSnackBarIconColor = Colors.white;
+const kSnackBarSuccessColor = Colors.green;
 const kSnackBarErrorColor = Color.fromRGBO(229, 115, 115, 1);

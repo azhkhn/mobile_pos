@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/model/category/category_model.dart';
+import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/model/unit/unit_model.dart';
@@ -96,5 +97,24 @@ class EzDatabase {
    ${SupplierFields.country} $textType,
    ${SupplierFields.countryArabic} $textType,
    ${SupplierFields.poBox} $textType)''');
+
+    //========== Table Customer ==========
+    await db.execute('''CREATE TABLE $tableCustomer (
+   ${CustomerFields.id} $idType, 
+   ${CustomerFields.company} $textType,
+   ${CustomerFields.companyArabic} $textType, 
+   ${CustomerFields.customer} $textType,
+   ${CustomerFields.customerArabic} $textType,
+   ${CustomerFields.vatNumber} $textType,
+   ${CustomerFields.email} $textType,
+   ${CustomerFields.address} $textType,
+   ${CustomerFields.addressArabic} $textType,
+   ${CustomerFields.city} $textType,
+   ${CustomerFields.cityArabic} $textType,
+   ${CustomerFields.state} $textType,
+   ${CustomerFields.stateArabic} $textType,
+   ${CustomerFields.country} $textType,
+   ${CustomerFields.countryArabic} $textType,
+   ${CustomerFields.poBox} $textType)''');
   }
 }
