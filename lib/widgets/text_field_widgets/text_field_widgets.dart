@@ -12,6 +12,7 @@ class TextFeildWidget extends StatelessWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.validator,
+    this.focusNode,
     this.onSaved,
     this.onChanged,
     this.obscureText,
@@ -25,6 +26,7 @@ class TextFeildWidget extends StatelessWidget {
   final IconButton? suffixIcon;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+  final FocusNode? focusNode;
   final Function(String?)? onSaved;
   final Function(String?)? onChanged;
 
@@ -45,6 +47,7 @@ class TextFeildWidget extends StatelessWidget {
       keyboardType: textInputType ?? TextInputType.text,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: validator,
+      focusNode: focusNode,
       onSaved: onSaved,
       onChanged: onChanged,
       obscureText: obscureText ?? false,

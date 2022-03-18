@@ -98,9 +98,10 @@ class EzDatabase {
    ${SupplierFields.countryArabic} $textType,
    ${SupplierFields.poBox} $textType)''');
 
-    //========== Table Customer ==========
+//========== Table Customer ==========
     await db.execute('''CREATE TABLE $tableCustomer (
-   ${CustomerFields.id} $idType, 
+   ${CustomerFields.id} $idType,
+   ${CustomerFields.customerType} $textType,
    ${CustomerFields.company} $textType,
    ${CustomerFields.companyArabic} $textType, 
    ${CustomerFields.customer} $textType,

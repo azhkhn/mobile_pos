@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/db/db_functions/supplier_database/supplier_database.dart';
-import 'package:shop_ez/model/supplier/supplier_model.dart';
+import 'package:shop_ez/db/db_functions/customer_database/customer_database.dart';
+import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
@@ -15,7 +15,6 @@ class CustomerScreen extends StatefulWidget {
   const CustomerScreen({Key? key}) : super(key: key);
   static const items = ['Cash Customer', 'Credit Customer'];
   static late Size _screenSize;
-  static final supplierDB = SupplierDatabase.instance;
 
   @override
   State<CustomerScreen> createState() => _CustomerScreenState();
@@ -41,13 +40,25 @@ class _CustomerScreenState extends State<CustomerScreen> {
   final _poBoxController = TextEditingController();
   String _customerTypeController = 'null';
 
-  getSupplier() async {
-    await CustomerScreen.supplierDB.getAllSuppliers();
-  }
+  final customerDB = CustomerDatabase.instance;
+  FocusNode customerTypeFocusNode = FocusNode();
+  FocusNode companyFocusNode = FocusNode();
+  FocusNode companyArabicFocusNode = FocusNode();
+  FocusNode customerFocusNode = FocusNode();
+  FocusNode customerArabicFocusNode = FocusNode();
+  FocusNode vatNumberFocusNode = FocusNode();
+  FocusNode addressFocusNode = FocusNode();
+  FocusNode addressArabicFocusNode = FocusNode();
+  FocusNode cityFocusNode = FocusNode();
+  FocusNode cityArabicFocusNode = FocusNode();
+  FocusNode stateFocusNode = FocusNode();
+  FocusNode stateArabicFocusNode = FocusNode();
+  FocusNode countryFocusNode = FocusNode();
+  FocusNode countryArabicFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
-    // getSupplier();
+    customerDB.getAllSuppliers();
     CustomerScreen._screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBarWidget(
@@ -69,6 +80,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
                       ),
                     ),
                     isExpanded: true,
+                    focusNode: customerTypeFocusNode,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     items: CustomerScreen.items
                         .map(
                           (values) => DropdownMenuItem(
@@ -92,6 +105,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _companyController,
                     labelText: 'Company *',
+                    focusNode: companyFocusNode,
                     textInputType: TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -106,6 +120,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _companyArabicController,
                     labelText: 'Company Arabic *',
+                    focusNode: companyArabicFocusNode,
                     textInputType: TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -120,6 +135,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _customerController,
                     labelText: 'Customer Name *',
+                    focusNode: customerFocusNode,
                     textInputType: TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -134,6 +150,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _customerArabicController,
                     labelText: 'Customer Name Arabic *',
+                    focusNode: customerArabicFocusNode,
                     textInputType: TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -148,7 +165,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _vatNumberController,
                     labelText: 'VAT Number',
+                    focusNode: vatNumberFocusNode,
                     textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (_customerTypeController == 'Credit Customer') {
+                        if (value == null || value.isEmpty) {
+                          return 'This field is required*';
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   kHeight10,
 
@@ -164,7 +190,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _addressController,
                     labelText: 'Address',
+                    focusNode: addressFocusNode,
                     textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (_customerTypeController == 'Credit Customer') {
+                        if (value == null || value.isEmpty) {
+                          return 'This field is required*';
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   kHeight10,
 
@@ -172,7 +207,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _addressArabicController,
                     labelText: 'Address in Arabic',
+                    focusNode: addressArabicFocusNode,
                     textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (_customerTypeController == 'Credit Customer') {
+                        if (value == null || value.isEmpty) {
+                          return 'This field is required*';
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   kHeight10,
 
@@ -180,7 +224,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _cityController,
                     labelText: 'City',
+                    focusNode: cityFocusNode,
                     textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (_customerTypeController == 'Credit Customer') {
+                        if (value == null || value.isEmpty) {
+                          return 'This field is required*';
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   kHeight10,
 
@@ -188,7 +241,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _cityArabicController,
                     labelText: 'City in Arabic',
+                    focusNode: cityArabicFocusNode,
                     textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (_customerTypeController == 'Credit Customer') {
+                        if (value == null || value.isEmpty) {
+                          return 'This field is required*';
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   kHeight10,
 
@@ -196,7 +258,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _stateController,
                     labelText: 'State',
+                    focusNode: stateFocusNode,
                     textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (_customerTypeController == 'Credit Customer') {
+                        if (value == null || value.isEmpty) {
+                          return 'This field is required*';
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   kHeight10,
 
@@ -204,7 +275,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _stateArabicController,
                     labelText: 'State in Arabic',
+                    focusNode: stateArabicFocusNode,
                     textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (_customerTypeController == 'Credit Customer') {
+                        if (value == null || value.isEmpty) {
+                          return 'This field is required*';
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   kHeight10,
 
@@ -212,7 +292,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _countryController,
                     labelText: 'Country',
+                    focusNode: countryFocusNode,
                     textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (_customerTypeController == 'Credit Customer') {
+                        if (value == null || value.isEmpty) {
+                          return 'This field is required*';
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   kHeight10,
 
@@ -220,7 +309,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _countryArabicController,
                     labelText: 'Country in Arabic',
+                    focusNode: countryArabicFocusNode,
                     textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (_customerTypeController == 'Credit Customer') {
+                        if (value == null || value.isEmpty) {
+                          return 'This field is required*';
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   kHeight10,
 
@@ -239,7 +337,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     child: CustomMaterialBtton(
                         buttonText: 'Submit',
                         onPressed: () {
-                          // addCustomer(context: context);
+                          addCustomer(context: context);
                         }),
                   ),
                   kHeight10
@@ -254,7 +352,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
 
   //========== Add Supplier ==========
   Future<void> addCustomer({context}) async {
-    final String company,
+    final String customerType,
+        company,
         companyArabic,
         customer,
         customerArabic,
@@ -270,30 +369,32 @@ class _CustomerScreenState extends State<CustomerScreen> {
         countryArabic,
         poBox;
 
+    //retieving values from TextFields to String
+    customerType = _customerTypeController;
+    company = _companyController.text;
+    companyArabic = _companyArabicController.text;
+    customer = _customerController.text;
+    customerArabic = _customerArabicController.text;
+    vatNumber = _vatNumberController.text;
+    email = _emailController.text;
+    address = _addressController.text;
+    addressArabic = _addressArabicController.text;
+    city = _cityController.text;
+    cityArabic = _cityArabicController.text;
+    state = _stateArabicController.text;
+    stateArabic = _stateArabicController.text;
+    country = _countryController.text;
+    countryArabic = _countryArabicController.text;
+    poBox = _poBoxController.text;
+
     final _formState = _formKey.currentState!;
     if (_formState.validate()) {
-      //retieving values from TextFields to String
-      company = _companyController.text;
-      companyArabic = _companyArabicController.text;
-      customer = _customerController.text;
-      customerArabic = _customerArabicController.text;
-      vatNumber = _vatNumberController.text;
-      email = _emailController.text;
-      address = _addressController.text;
-      addressArabic = _addressArabicController.text;
-      city = _cityController.text;
-      cityArabic = _cityArabicController.text;
-      state = _stateArabicController.text;
-      stateArabic = _stateArabicController.text;
-      country = _countryController.text;
-      countryArabic = _countryArabicController.text;
-      poBox = _poBoxController.text;
-
-      final _supplierModel = SupplierModel(
+      final _customerModel = CustomerModel(
+        customerType: customerType,
         company: company,
         companyArabic: companyArabic,
-        supplier: customer,
-        supplierArabic: customerArabic,
+        customer: customer,
+        customerArabic: customerArabic,
         vatNumber: vatNumber,
         email: email,
         address: address,
@@ -307,8 +408,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
         poBox: poBox,
       );
       try {
-        await CustomerScreen.supplierDB.createSupplier(_supplierModel);
-        log('Supplier $customer Added!');
+        await customerDB.createCustomer(_customerModel);
+        log('Customer $customer Added!');
         showSnackBar(
             context: context,
             color: kSnackBarSuccessColor,
@@ -318,15 +419,64 @@ class _CustomerScreenState extends State<CustomerScreen> {
             ),
             content: 'Customer "$customer" added successfully!');
       } catch (e) {
-        log('Commpany $company Already Exist!');
-        showSnackBar(
+        if (e == 'Company Already Exist!') {
+          log('Commpany name Already Exist!');
+          companyFocusNode.requestFocus();
+          showSnackBar(
             context: context,
             color: kSnackBarErrorColor,
             icon: const Icon(
               Icons.new_releases_outlined,
               color: kSnackBarIconColor,
             ),
-            content: 'Customer "$customer" already exist!');
+            content: 'Company name already exist!',
+          );
+        } else if (e == 'VAT Number already exist!') {
+          vatNumberFocusNode.requestFocus();
+          showSnackBar(
+            context: context,
+            color: kSnackBarErrorColor,
+            icon: const Icon(
+              Icons.new_releases_outlined,
+              color: kSnackBarIconColor,
+            ),
+            content: 'VAT number already exist!',
+          );
+        }
+      }
+    } else {
+      if (customerType == 'null') {
+        customerTypeFocusNode.requestFocus();
+      } else if (company.isEmpty) {
+        companyFocusNode.requestFocus();
+      } else if (companyArabic.isEmpty) {
+        companyArabicFocusNode.requestFocus();
+      } else if (customer.isEmpty) {
+        customerFocusNode.requestFocus();
+      } else if (customerArabic.isEmpty) {
+        customerArabicFocusNode.requestFocus();
+      } else {
+        if (customerType == 'Credit Customer') {
+          if (vatNumber.isEmpty) {
+            vatNumberFocusNode.requestFocus();
+          } else if (address.isEmpty) {
+            addressFocusNode.requestFocus();
+          } else if (addressArabic.isEmpty) {
+            addressArabicFocusNode.requestFocus();
+          } else if (city.isEmpty) {
+            cityFocusNode.requestFocus();
+          } else if (cityArabic.isEmpty) {
+            cityArabicFocusNode.requestFocus();
+          } else if (state.isEmpty) {
+            stateFocusNode.requestFocus();
+          } else if (stateArabic.isEmpty) {
+            stateArabicFocusNode.requestFocus();
+          } else if (country.isEmpty) {
+            countryFocusNode.requestFocus();
+          } else if (countryArabic.isEmpty) {
+            countryArabicFocusNode.requestFocus();
+          }
+        }
       }
     }
   }
@@ -343,7 +493,13 @@ class _CustomerScreenState extends State<CustomerScreen> {
           children: [
             icon ?? const Text(''),
             kWidth5,
-            Text(content),
+            Flexible(
+              child: Text(
+                content,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         backgroundColor: color,

@@ -189,7 +189,13 @@ class LoginAndSignUpButtons extends StatelessWidget {
           children: [
             icon ?? const Text(''),
             kWidth5,
-            Text(content),
+            Flexible(
+              child: Text(
+                content,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         backgroundColor: color,
