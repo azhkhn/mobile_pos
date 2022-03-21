@@ -28,4 +28,8 @@ class SubCategoryModel {
         category: json[SubCategoryFields.category] as String,
         subCategory: json[SubCategoryFields.subCategory] as String,
       );
+
+  String get() {
+    return subCategory;
+  }
 }

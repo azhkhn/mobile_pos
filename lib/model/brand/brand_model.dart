@@ -22,4 +22,8 @@ class BrandModel {
         id: json[BrandFields.id] as int,
         brand: json[BrandFields.brand] as String,
       );
+
+  String get() {
+    return brand;
+  }
 }

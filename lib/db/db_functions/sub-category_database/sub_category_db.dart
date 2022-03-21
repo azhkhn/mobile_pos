@@ -23,6 +23,22 @@ class SubCategoryDatabase {
     }
   }
 
+//========== Get Sub-Categories by Category ==========
+  Future<List<SubCategoryModel>> getSubCategoryByCategory(
+      {required String category}) async {
+    final db = await dbInstance.database;
+    final _result = await db.query(
+      tableSubCategory,
+      columns: ['_id', 'category', 'subCategory'],
+      where: 'category = ?',
+      whereArgs: [category],
+    );
+    log('subCategories of $category == $_result');
+    final _subCategories =
+        _result.map((json) => SubCategoryModel.fromJson(json)).toList();
+    return _subCategories;
+  }
+
 //========== Get All Sub-Categories ==========
   Future<List<SubCategoryModel>> getAllSubCategories() async {
     final db = await dbInstance.database;

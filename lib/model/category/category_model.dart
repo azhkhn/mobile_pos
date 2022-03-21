@@ -22,4 +22,8 @@ class CategoryModel {
         id: json[CategoryFields.id] as int,
         category: json[CategoryFields.category] as String,
       );
+
+  String get() {
+    return category;
+  }
 }

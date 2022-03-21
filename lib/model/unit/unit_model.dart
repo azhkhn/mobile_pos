@@ -22,4 +22,8 @@ class UnitModel {
         id: json[UnitFields.id] as int,
         unit: json[UnitFields.unit] as String,
       );
+
+  String get() {
+    return unit;
+  }
 }

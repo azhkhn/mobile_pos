@@ -4,8 +4,8 @@ class CustomDropDownField extends StatelessWidget {
   const CustomDropDownField({
     Key? key,
     required this.labelText,
+    required this.snapshot,
     this.prefixIcon,
-    this.snapshot,
     this.validator,
     required this.onChanged,
   }) : super(key: key);
@@ -30,8 +30,8 @@ class CustomDropDownField extends StatelessWidget {
       items: snapshot!.hasData
           ? snapshot!.data!.map((item) {
               return DropdownMenuItem<String>(
-                value: item.category,
-                child: Text(item.category),
+                value: item.get(),
+                child: Text(item.get()),
               );
             }).toList()
           : [].map((item) {
