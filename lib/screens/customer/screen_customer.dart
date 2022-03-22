@@ -14,7 +14,6 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 class CustomerScreen extends StatefulWidget {
   const CustomerScreen({Key? key}) : super(key: key);
   static const items = ['Cash Customer', 'Credit Customer'];
-  static late Size _screenSize;
 
   @override
   State<CustomerScreen> createState() => _CustomerScreenState();
@@ -22,6 +21,9 @@ class CustomerScreen extends StatefulWidget {
 
 class _CustomerScreenState extends State<CustomerScreen> {
   final _formKey = GlobalKey<FormState>();
+  late Size _screenSize;
+
+  final customerDB = CustomerDatabase.instance;
 
   final _companyController = TextEditingController();
   final _companyArabicController = TextEditingController();
@@ -38,9 +40,9 @@ class _CustomerScreenState extends State<CustomerScreen> {
   final _countryController = TextEditingController();
   final _countryArabicController = TextEditingController();
   final _poBoxController = TextEditingController();
+
   String _customerTypeController = 'null';
 
-  final customerDB = CustomerDatabase.instance;
   FocusNode customerTypeFocusNode = FocusNode();
   FocusNode companyFocusNode = FocusNode();
   FocusNode companyArabicFocusNode = FocusNode();
@@ -59,7 +61,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
   @override
   Widget build(BuildContext context) {
     customerDB.getAllSuppliers();
-    CustomerScreen._screenSize = MediaQuery.of(context).size;
+    _screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBarWidget(
         title: 'Customer',
@@ -333,7 +335,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   //========== Submit Button ==========
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: CustomerScreen._screenSize.width / 10),
+                        horizontal: _screenSize.width / 10),
                     child: CustomMaterialBtton(
                         buttonText: 'Submit',
                         onPressed: () {
@@ -388,6 +390,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
     poBox = _poBoxController.text;
 
     final _formState = _formKey.currentState!;
+
     if (_formState.validate()) {
       final _customerModel = CustomerModel(
         customerType: customerType,

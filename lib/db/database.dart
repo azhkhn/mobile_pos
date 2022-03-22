@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
+import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/model/unit/unit_model.dart';
@@ -117,5 +118,25 @@ class EzDatabase {
    ${CustomerFields.country} $textType,
    ${CustomerFields.countryArabic} $textType,
    ${CustomerFields.poBox} $textType)''');
+
+    //========== Table Item-Master ==========
+    await db.execute('''CREATE TABLE $tableItemMaster (
+   ${ItemMasterFields.id} $idType,
+   ${ItemMasterFields.productType} $textType,
+   ${ItemMasterFields.itemName} $textType,
+   ${ItemMasterFields.itemNameArabic} $textType, 
+   ${ItemMasterFields.itemCode} $textType,
+   ${ItemMasterFields.itemCategory} $textType,
+   ${ItemMasterFields.itemSubCategory} $textType,
+   ${ItemMasterFields.itemBrand} $textType,
+   ${ItemMasterFields.itemCost} $textType,
+   ${ItemMasterFields.sellingPrice} $textType,
+   ${ItemMasterFields.secondarySellingPrice} $textType,
+   ${ItemMasterFields.productVAT} $textType,
+   ${ItemMasterFields.unit} $textType,
+   ${ItemMasterFields.openingStock} $textType,
+   ${ItemMasterFields.vatMethod} $textType,
+   ${ItemMasterFields.alertQuantity} $textType,
+   ${ItemMasterFields.itemImage} $textType)''');
   }
 }

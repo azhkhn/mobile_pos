@@ -5,6 +5,7 @@ class CustomDropDownField extends StatelessWidget {
     Key? key,
     required this.labelText,
     required this.snapshot,
+    this.dropdownKey,
     this.prefixIcon,
     this.validator,
     required this.onChanged,
@@ -15,10 +16,12 @@ class CustomDropDownField extends StatelessWidget {
   final AsyncSnapshot<List<dynamic>>? snapshot;
   final String? Function(String?)? validator;
   final void Function(String?)? onChanged;
+  final GlobalKey? dropdownKey;
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField(
+      key: dropdownKey,
       decoration: InputDecoration(
         label: Text(
           labelText,
