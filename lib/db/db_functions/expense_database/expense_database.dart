@@ -20,6 +20,7 @@ class ExpenseDatabase {
   Future<List<ExpenseModel>> getAllExpense() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableExpense);
+    // db.delete(tableExpense);
     log('Expenses == $_result');
     final _expenses =
         _result.map((json) => ExpenseModel.fromJson(json)).toList();

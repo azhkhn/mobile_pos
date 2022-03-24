@@ -203,6 +203,7 @@ class _SignUpFieldsState extends State<SignUpFields> {
                   Icons.smartphone,
                   color: Colors.black,
                 ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'This field is required*';
@@ -228,6 +229,7 @@ class _SignUpFieldsState extends State<SignUpFields> {
                   Icons.email,
                   color: Colors.black,
                 ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return null;
@@ -269,6 +271,7 @@ class _SignUpFieldsState extends State<SignUpFields> {
                       ? const Icon(Icons.visibility_off)
                       : const Icon(Icons.visibility),
                 ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'This field is required*';

@@ -18,15 +18,15 @@ class SubCategoryScreen extends StatefulWidget {
 
   @override
   State<SubCategoryScreen> createState() => _SubCategoryScreenState();
-
-  static final subCategoryEditingController = TextEditingController();
-  static String categoryEditingController = 'null';
 }
 
 class _SubCategoryScreenState extends State<SubCategoryScreen> {
   final _formKey = GlobalKey<FormState>();
   final categoryDB = CategoryDatabase.instance;
   final subCategoryDB = SubCategoryDatabase.instance;
+
+  final _subCategoryController = TextEditingController();
+  String _categoryController = 'null';
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +49,11 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                       snapshot: snapshot,
                       onChanged: (value) {
                         setState(() {
-                          SubCategoryScreen.categoryEditingController =
-                              value.toString();
+                          _categoryController = value.toString();
                         });
                       },
                       validator: (value) {
-                        if (value == null ||
-                            SubCategoryScreen.categoryEditingController ==
-                                'null') {
+                        if (value == null || _categoryController == 'null') {
                           return 'This field is required*';
                         }
                         return null;
@@ -69,7 +66,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 //========== Category Field ==========
                 TextFeildWidget(
                   labelText: 'Sub Category *',
-                  controller: SubCategoryScreen.subCategoryEditingController,
+                  controller: _subCategoryController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'This field is required*';
@@ -84,11 +81,8 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 CustomMaterialBtton(
                   buttonText: 'Submit',
                   onPressed: () async {
-                    final category =
-                        SubCategoryScreen.categoryEditingController;
-                    final subCategory = SubCategoryScreen
-                        .subCategoryEditingController.text
-                        .trim();
+                    final category = _categoryController;
+                    final subCategory = _subCategoryController.text.trim();
 
                     final isFormValid = _formKey.currentState!;
                     if (isFormValid.validate()) {
@@ -109,7 +103,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                             ),
                             content:
                                 'Category "$subCategory" added successfully!');
-                        // _categoryEditingController.text = '';
+                        _subCategoryController.clear();
                         return setState(() {});
                       } catch (e) {
                         showSnackBar(
@@ -196,7 +190,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
 
   @override
   void dispose() {
-    SubCategoryScreen.subCategoryEditingController.text = '';
+    _subCategoryController.clear();
     super.dispose();
   }
 }

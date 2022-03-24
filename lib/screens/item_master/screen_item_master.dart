@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
@@ -488,9 +487,9 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
       //========== Getting Directory Path ==========
       final Directory extDir = await getApplicationDocumentsDirectory();
       String dirPath = extDir.path;
-      // final fileName = DateTime.now().microsecondsSinceEpoch;
-      final fileName = basename(selectedImage!.path);
-      final String filePath = '$dirPath/$fileName';
+      final fileName = DateTime.now().microsecondsSinceEpoch.toString();
+      // final fileName = basename(selectedImage!.path);
+      final String filePath = '$dirPath/$fileName.jpg';
 
       //========== Coping Image to new path ==========
       image = await selectedImage!.copy(filePath);

@@ -68,7 +68,7 @@ class _BrandScreenState extends State<BrandScreen> {
                             color: kSnackBarIconColor,
                           ),
                           content: 'Brand "$brand" added successfully!');
-                      // _brandEditingController.text = '';
+                      _brandEditingController.clear();
                       return setState(() {});
                     } catch (e) {
                       showSnackBar(

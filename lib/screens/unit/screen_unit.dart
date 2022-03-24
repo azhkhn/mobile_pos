@@ -67,7 +67,7 @@ class _UnitScreenState extends State<UnitScreen> {
                             color: kSnackBarIconColor,
                           ),
                           content: 'Unit "$unit" added successfully!');
-                      // _unitEditingController.text = '';
+                      _unitEditingController.clear();
                       return setState(() {});
                     } catch (e) {
                       showSnackBar(

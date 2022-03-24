@@ -12,6 +12,7 @@ class TextFeildWidget extends StatelessWidget {
     this.inputBorder,
     this.prefixIcon,
     this.suffixIcon,
+    this.autovalidateMode,
     this.validator,
     this.focusNode,
     this.enabled,
@@ -30,6 +31,7 @@ class TextFeildWidget extends StatelessWidget {
   final Icon? prefixIcon;
   final IconButton? suffixIcon;
   final TextEditingController? controller;
+  final AutovalidateMode? autovalidateMode;
   final String? Function(String?)? validator;
   final FocusNode? focusNode;
   final bool? enabled;
@@ -54,7 +56,7 @@ class TextFeildWidget extends StatelessWidget {
       ),
       keyboardType: textInputType ?? TextInputType.text,
       maxLines: maxLines ?? 1,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
       validator: validator,
       focusNode: focusNode,
       enabled: enabled ?? true,

@@ -1,11 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
@@ -33,7 +33,12 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
 
   final expenseDB = ExpenseDatabase.instance;
 
-  File? image, selectedDocument;
+  File? image;
+  Color? textColor = Colors.black;
+  dynamic selectedDocument;
+  bool jpgOrNot = false;
+  String documentName = 'Document';
+  String? documentExtension;
 
   final _expenseTitleController = TextEditingController();
   final _paidByController = TextEditingController();
@@ -177,9 +182,9 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                       kHeight10,
                       InkWell(
                         onTap: () => imagePopUp(context),
-                        child: selectedDocument != null
+                        child: selectedDocument != null && jpgOrNot
                             ? Image.file(
-                                selectedDocument!,
+                                File(selectedDocument!),
                                 width: _screenSize.width / 2.5,
                                 height: _screenSize.width / 2.5,
                                 fit: BoxFit.fill,
@@ -187,11 +192,15 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                             : const Icon(Icons.add_photo_alternate_outlined),
                       ),
                       kHeight10,
-                      const Text(
-                        'Document',
+                      Text(
+                        documentName,
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.normal,
-                          color: Colors.black,
+                          color: textColor,
                         ),
                       ),
                     ],
@@ -233,12 +242,13 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
       //========== Getting Directory Path ==========
       final Directory extDir = await getApplicationDocumentsDirectory();
       String dirPath = extDir.path;
-      // final fileName = DateTime.now().microsecondsSinceEpoch;
-      final fileName = basename(selectedDocument!.path);
-      final String filePath = '$dirPath/$fileName';
+      final fileName = DateTime.now().microsecondsSinceEpoch.toString();
+      // final fileName = basename(File(selectedDocument).path);
+      log('FileName = $fileName');
+      final String filePath = '$dirPath/$fileName$documentExtension';
 
       //========== Coping Image to new path ==========
-      image = await selectedDocument!.copy(filePath);
+      image = await File(selectedDocument).copy(filePath);
       documents = image!.path;
     } else {
       documents = '';
@@ -260,7 +270,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
       try {
         await expenseDB.createExpense(_expenseModel);
         showSnackBar(
-            context: this.context,
+            context: context,
             color: kSnackBarSuccessColor,
             icon: const Icon(
               Icons.done,
@@ -269,7 +279,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
             content: 'Expense "$expenseTitle" added!');
       } catch (e) {
         showSnackBar(
-          context: this.context,
+          context: context,
           color: kSnackBarErrorColor,
           icon: const Icon(
             Icons.new_releases_outlined,
@@ -310,10 +320,10 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.collections),
-              title: const Text('Gallery'),
+              leading: const Icon(Icons.folder),
+              title: const Text('Files'),
               onTap: () {
-                imagePicker(ImageSource.gallery);
+                filePicker();
                 Navigator.of(ctx).pop();
               },
             ),
@@ -330,8 +340,43 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
       final imageFile = await imagePicker.pickImage(source: imageSource);
       if (imageFile == null) return;
 
-      selectedDocument = File(imageFile.path);
+      selectedDocument = imageFile.path;
+      documentName = '';
+      documentExtension = '.jpg';
+      jpgOrNot = true;
       log('selected Image = $selectedDocument');
+
+      setState(() {});
+
+      // blobImage = await selectedDocument.readAsBytes();
+    } on PlatformException catch (e) {
+      log('Failed to Pick Image $e');
+    }
+  }
+
+  //========== File Picker ==========
+  void filePicker() async {
+    try {
+      final _results = await FilePicker.platform.pickFiles();
+      if (_results == null) return;
+
+      final _file = _results.files.first;
+
+      log('name = ${_file.name}');
+
+      if (_file.extension == 'jpg' || _file.extension == 'JPG') {
+        jpgOrNot = true;
+        documentExtension = '.jpg';
+      } else {
+        jpgOrNot = false;
+        documentExtension = '.${_file.extension}';
+        textColor = Colors.blue;
+      }
+
+      selectedDocument = _file.path;
+      documentName = _file.name;
+
+      log('selected Document = $selectedDocument');
 
       setState(() {});
 

@@ -70,7 +70,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             color: kSnackBarIconColor,
                           ),
                           content: 'Category "$category" added successfully!');
-                      // _categoryEditingController.clear();
+                      _categoryEditingController.clear();
                       return setState(() {});
                     } catch (e) {
                       showSnackBar(
