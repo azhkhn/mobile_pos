@@ -6,6 +6,7 @@ class TextFeildWidget extends StatelessWidget {
     required this.labelText,
     this.hintText,
     this.textInputType,
+    this.maxLines,
     this.couterText,
     this.controller,
     this.inputBorder,
@@ -13,13 +14,17 @@ class TextFeildWidget extends StatelessWidget {
     this.suffixIcon,
     this.validator,
     this.focusNode,
+    this.enabled,
+    this.readOnly,
     this.onSaved,
     this.onChanged,
+    this.onTap,
     this.obscureText,
   }) : super(key: key);
   final String labelText;
   final String? hintText;
   final TextInputType? textInputType;
+  final int? maxLines;
   final String? couterText;
   final InputBorder? inputBorder;
   final Icon? prefixIcon;
@@ -27,8 +32,11 @@ class TextFeildWidget extends StatelessWidget {
   final TextEditingController? controller;
   final String? Function(String?)? validator;
   final FocusNode? focusNode;
+  final bool? enabled;
+  final bool? readOnly;
   final Function(String?)? onSaved;
   final Function(String?)? onChanged;
+  final Function()? onTap;
 
   final bool? obscureText;
   @override
@@ -45,11 +53,15 @@ class TextFeildWidget extends StatelessWidget {
         hintText: hintText,
       ),
       keyboardType: textInputType ?? TextInputType.text,
+      maxLines: maxLines ?? 1,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: validator,
       focusNode: focusNode,
+      enabled: enabled ?? true,
+      readOnly: readOnly ?? false,
       onSaved: onSaved,
       onChanged: onChanged,
+      onTap: onTap,
       obscureText: obscureText ?? false,
     );
   }

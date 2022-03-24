@@ -5,8 +5,8 @@ import 'package:shop_ez/screens/auth/pages/signup_screen.dart';
 import 'package:shop_ez/screens/brand/screen_brand.dart';
 import 'package:shop_ez/screens/category/screen_category.dart';
 import 'package:shop_ez/screens/customer/screen_customer.dart';
+import 'package:shop_ez/screens/expense/screen_expense.dart';
 import 'package:shop_ez/screens/home/home_screen.dart';
-import 'package:shop_ez/screens/home_items/manage_users.dart';
 import 'package:shop_ez/screens/item_master/screen_item_master.dart';
 import 'package:shop_ez/screens/splash/splash_screen.dart';
 import 'package:shop_ez/screens/sub-category/screen_sub_category.dart';
@@ -26,8 +26,6 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ScreenLogin());
       case routeSignUp:
         return MaterialPageRoute(builder: (_) => const ScreenSignUp());
-      case routeManageUsers:
-        return MaterialPageRoute(builder: (_) => const ManageUsers());
       case routeItemMaster:
         return MaterialPageRoute(builder: (_) => const ScreenItemMaster());
       case routeManageSupplier:
@@ -42,6 +40,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const CustomerScreen());
       case routeUnit:
         return MaterialPageRoute(builder: (_) => const UnitScreen());
+      case routeExpense:
+        return MaterialPageRoute(builder: (_) => const ManageExpenseScreen());
       default:
         return _errorRoute();
     }

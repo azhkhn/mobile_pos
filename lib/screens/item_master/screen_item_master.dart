@@ -58,7 +58,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
   String _unitController = 'null';
   String _vatMethodController = 'null';
 
-  File? image;
+  File? image, selectedImage;
 
   FocusNode itemNameFocusNode = FocusNode();
   FocusNode itemNameArabicFocusNode = FocusNode();
@@ -192,13 +192,6 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                         onChanged: (value) {
                           _itemSubCategoryController = value.toString();
                         },
-                        validator: (value) {
-                          if (value == null ||
-                              _itemSubCategoryController == 'null') {
-                            return 'This field is required*';
-                          }
-                          return null;
-                        },
                       );
                     },
                   ),
@@ -328,9 +321,9 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                       kHeight10,
                       InkWell(
                         onTap: () => imagePopUp(context),
-                        child: image != null
+                        child: selectedImage != null
                             ? Image.file(
-                                image!,
+                                selectedImage!,
                                 width: _screenSize.width / 2.5,
                                 height: _screenSize.width / 2.5,
                                 fit: BoxFit.fill,
@@ -444,19 +437,12 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
       final imageFile = await imagePicker.pickImage(source: imageSource);
       if (imageFile == null) return;
 
-      File selectedImage = File(imageFile.path);
+      selectedImage = File(imageFile.path);
+      log('selected Image = $selectedImage');
 
-      //getting a directory path for saving
-      final Directory extDir = await getApplicationDocumentsDirectory();
-      String dirPath = extDir.path;
-      final fileName = basename(imageFile.path);
-      final String filePath = '$dirPath/$fileName';
-
-      // copy the file to a new path
-      image = await selectedImage.copy(filePath);
+      setState(() {});
 
       // blobImage = await selectedImage.readAsBytes();
-      setState(() {});
     } on PlatformException catch (e) {
       log('Failed to Pick Image $e');
     }
@@ -497,7 +483,21 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
     openingStock = _openingStockController.text.trim();
     vatMethod = _vatMethodController;
     alertQuantity = _alertQuantityController.text.trim();
-    itemImage = image?.path ?? '';
+
+    if (selectedImage != null) {
+      //========== Getting Directory Path ==========
+      final Directory extDir = await getApplicationDocumentsDirectory();
+      String dirPath = extDir.path;
+      // final fileName = DateTime.now().microsecondsSinceEpoch;
+      final fileName = basename(selectedImage!.path);
+      final String filePath = '$dirPath/$fileName';
+
+      //========== Coping Image to new path ==========
+      image = await selectedImage!.copy(filePath);
+      itemImage = image!.path;
+    } else {
+      itemImage = '';
+    }
 
     final _formState = _formKey.currentState!;
 

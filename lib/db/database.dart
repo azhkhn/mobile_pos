@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
+import 'package:shop_ez/model/expense/expense_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
@@ -138,5 +139,16 @@ class EzDatabase {
    ${ItemMasterFields.vatMethod} $textType,
    ${ItemMasterFields.alertQuantity} $textType,
    ${ItemMasterFields.itemImage} $textType)''');
+
+    //========== Table Expense ==========
+    await db.execute('''CREATE TABLE $tableExpense (
+      ${ExpenseFields.id} $idType,
+      ${ExpenseFields.expenseCategory} $textType,
+      ${ExpenseFields.expenseTitle} $textType,
+      ${ExpenseFields.paidBy} $textType,
+      ${ExpenseFields.date} $textType,
+      ${ExpenseFields.note} $textType,
+      ${ExpenseFields.voucherNumber} $textType,
+      ${ExpenseFields.documents} $textType)''');
   }
 }

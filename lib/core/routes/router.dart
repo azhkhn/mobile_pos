@@ -10,3 +10,4 @@ const routeSubCategory = '/sub-category';
 const routeBrand = '/brand';
 const routeCustomer = '/customer';
 const routeUnit = '/unit';
+const routeExpense = '/expense';

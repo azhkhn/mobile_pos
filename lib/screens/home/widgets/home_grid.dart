@@ -49,28 +49,32 @@ class HomeGrid extends StatelessWidget {
                 case 2:
                   Navigator.pushNamed(context, routeItemMaster);
                   break;
+                case 5:
+                  Navigator.pushNamed(context, routeExpense);
+                  break;
                 default:
               }
             },
             child: GridTile(
-                footer: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Text(
-                    homeGridName[index],
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontSize: screenSize.width / 45,
-                      // fontSize: screenSize.width * 0.025,
-                      fontWeight: FontWeight.bold,
-                    ),
+              footer: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Text(
+                  homeGridName[index],
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: screenSize.width / 45,
+                    // fontSize: screenSize.width * 0.025,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: Image(
-                  image: AssetImage(
-                    homeGridIcons[index],
-                  ),
-                )),
+              ),
+              child: Image(
+                image: AssetImage(
+                  homeGridIcons[index],
+                ),
+              ),
+            ),
           )),
     );
   }

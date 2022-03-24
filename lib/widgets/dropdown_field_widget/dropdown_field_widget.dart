@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 
 class CustomDropDownField extends StatelessWidget {
   const CustomDropDownField({
@@ -25,7 +26,7 @@ class CustomDropDownField extends StatelessWidget {
       decoration: InputDecoration(
         label: Text(
           labelText,
-          style: const TextStyle(color: Colors.black),
+          style: const TextStyle(color: klabelColorBlack),
         ),
         prefixIcon: prefixIcon,
       ),
