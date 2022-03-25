@@ -56,6 +56,11 @@ class FloatingAddOptions extends StatelessWidget {
           label: 'Brand',
           onTap: () => Navigator.pushNamed(context, routeBrand),
         ),
+        SpeedDialChild(
+          child: const Icon(Icons.add_business_outlined),
+          label: 'Business Profile',
+          onTap: () => Navigator.pushNamed(context, routeBusinessProfile),
+        ),
       ],
     );
   }

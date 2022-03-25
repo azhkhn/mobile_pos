@@ -6,6 +6,7 @@ class TextFeildWidget extends StatelessWidget {
     required this.labelText,
     this.hintText,
     this.textInputType,
+    this.textDirection,
     this.maxLines,
     this.couterText,
     this.controller,
@@ -25,6 +26,7 @@ class TextFeildWidget extends StatelessWidget {
   final String labelText;
   final String? hintText;
   final TextInputType? textInputType;
+  final TextDirection? textDirection;
   final int? maxLines;
   final String? couterText;
   final InputBorder? inputBorder;
@@ -55,6 +57,7 @@ class TextFeildWidget extends StatelessWidget {
         hintText: hintText,
       ),
       keyboardType: textInputType ?? TextInputType.text,
+      textDirection: textDirection ?? TextDirection.ltr,
       maxLines: maxLines ?? 1,
       autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
       validator: validator,

@@ -33,7 +33,6 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
 
   final expenseDB = ExpenseDatabase.instance;
 
-  File? image;
   Color? textColor = Colors.black;
   dynamic selectedDocument;
   bool jpgOrNot = false;
@@ -189,7 +188,10 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                                 height: _screenSize.width / 2.5,
                                 fit: BoxFit.fill,
                               )
-                            : const Icon(Icons.add_photo_alternate_outlined),
+                            : Icon(
+                                Icons.add_photo_alternate_outlined,
+                                size: _screenSize.width / 10,
+                              ),
                       ),
                       kHeight10,
                       Text(
@@ -212,6 +214,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                     buttonText: 'Submit',
                     onPressed: () => addExpense(),
                   ),
+                  kHeight10,
                 ],
               ),
             ),
@@ -248,8 +251,8 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
       final String filePath = '$dirPath/$fileName$documentExtension';
 
       //========== Coping Image to new path ==========
-      image = await File(selectedDocument).copy(filePath);
-      documents = image!.path;
+      File image = await File(selectedDocument).copy(filePath);
+      documents = image.path;
     } else {
       documents = '';
     }

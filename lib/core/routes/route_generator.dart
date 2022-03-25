@@ -3,6 +3,7 @@ import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/screens/auth/pages/login_screen.dart';
 import 'package:shop_ez/screens/auth/pages/signup_screen.dart';
 import 'package:shop_ez/screens/brand/screen_brand.dart';
+import 'package:shop_ez/screens/business_profile/business_profile_screen.dart';
 import 'package:shop_ez/screens/category/screen_category.dart';
 import 'package:shop_ez/screens/customer/screen_customer.dart';
 import 'package:shop_ez/screens/expense/screen_expense.dart';
@@ -42,6 +43,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const UnitScreen());
       case routeExpense:
         return MaterialPageRoute(builder: (_) => const ManageExpenseScreen());
+      case routeBusinessProfile:
+        return MaterialPageRoute(builder: (_) => const BusinessProfile());
       default:
         return _errorRoute();
     }

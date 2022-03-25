@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:shop_ez/model/brand/brand_model.dart';
+import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
@@ -150,5 +151,23 @@ class EzDatabase {
       ${ExpenseFields.note} $textType,
       ${ExpenseFields.voucherNumber} $textType,
       ${ExpenseFields.documents} $textType)''');
+
+    //========== Table Business Profile ==========
+    await db.execute('''CREATE TABLE $tableBusinessProfile (
+   ${BusinessProfileFields.id} $idType,
+   ${BusinessProfileFields.business} $textType,
+   ${BusinessProfileFields.businessArabic} $textType,
+   ${BusinessProfileFields.address} $textType, 
+   ${BusinessProfileFields.addressArabic} $textType,
+   ${BusinessProfileFields.city} $textType,
+   ${BusinessProfileFields.cityArabic} $textType,
+   ${BusinessProfileFields.state} $textType,
+   ${BusinessProfileFields.stateArabic} $textType,
+   ${BusinessProfileFields.country} $textType,
+   ${BusinessProfileFields.countryArabic} $textType,
+   ${BusinessProfileFields.vatNumber} $textType,
+   ${BusinessProfileFields.phoneNumber} $textType,
+   ${BusinessProfileFields.email} $textType,
+   ${BusinessProfileFields.logo} $textType)''');
   }
 }

@@ -30,16 +30,21 @@ class ScreenItemMaster extends StatefulWidget {
 }
 
 class _ScreenItemMasterState extends State<ScreenItemMaster> {
+  //========== MediaQuery Screen Size ==========
   late Size _screenSize;
+
+  //========== Global Keys ==========
   final _dropdownKey = GlobalKey<FormFieldState>();
   final _formKey = GlobalKey<FormState>();
 
+  //========== Database Instances ==========
   final itemMasterDB = ItemMasterDatabase.instance;
   final categoryDB = CategoryDatabase.instance;
   final subCategoryDB = SubCategoryDatabase.instance;
   final brandDB = BrandDatabase.instance;
   final unitDB = UnitDatabase.instance;
 
+  //========== Text Editing Controllers ==========
   final _itemNameController = TextEditingController();
   final _itemNameArabicController = TextEditingController();
   final _itemCodeController = TextEditingController();
@@ -49,6 +54,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
   final _openingStockController = TextEditingController();
   final _alertQuantityController = TextEditingController();
 
+  //========== Dropdown Field ==========
   String _productTypeController = 'null';
   String _itemCategoryController = 'null';
   String _itemSubCategoryController = 'null';
@@ -57,8 +63,10 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
   String _unitController = 'null';
   String _vatMethodController = 'null';
 
+  //========== Image File Path ==========
   File? image, selectedImage;
 
+  //========== Focus Node for TextFields ==========
   FocusNode itemNameFocusNode = FocusNode();
   FocusNode itemNameArabicFocusNode = FocusNode();
   FocusNode itemCodeFocusNode = FocusNode();
@@ -311,35 +319,6 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                     textInputType: TextInputType.text,
                     controller: _openingStockController,
                   ),
-                  kHeight20,
-
-                  //========== Item Image ==========
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      kHeight10,
-                      InkWell(
-                        onTap: () => imagePopUp(context),
-                        child: selectedImage != null
-                            ? Image.file(
-                                selectedImage!,
-                                width: _screenSize.width / 2.5,
-                                height: _screenSize.width / 2.5,
-                                fit: BoxFit.fill,
-                              )
-                            : const Icon(Icons.add_photo_alternate_outlined),
-                      ),
-                      kHeight10,
-                      const Text(
-                        'Item Image',
-                        style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-
                   kHeight10,
 
                   //========== VAT Method Dropdown ==========
@@ -377,17 +356,43 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                     textInputType: TextInputType.text,
                     controller: _alertQuantityController,
                   ),
+                  kHeight20,
+
+                  //========== Item Image ==========
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      kHeight10,
+                      InkWell(
+                        onTap: () => imagePopUp(context),
+                        child: selectedImage != null
+                            ? Image.file(
+                                selectedImage!,
+                                width: _screenSize.width / 2.5,
+                                height: _screenSize.width / 2.5,
+                                fit: BoxFit.fill,
+                              )
+                            : Icon(
+                                Icons.add_photo_alternate_outlined,
+                                size: _screenSize.width / 10,
+                              ),
+                      ),
+                      kHeight10,
+                      const Text(
+                        'Item Image',
+                        style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
 
                   //========== Submit Button ==========
                   kHeight20,
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: _screenSize.width / 10,
-                    ),
-                    child: CustomMaterialBtton(
-                      buttonText: 'Submit',
-                      onPressed: () => addItem(context: context),
-                    ),
+                  CustomMaterialBtton(
+                    buttonText: 'Submit',
+                    onPressed: () => addItem(context: context),
                   ),
                   kHeight10,
                 ],
@@ -466,7 +471,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
         alertQuantity,
         itemImage;
 
-    //retieving values from TextFields to String
+    //Retieving values from TextFields to String
     productType = _productTypeController;
     itemName = _itemNameController.text.trim();
     itemNameArabic = _itemNameArabicController.text.trim();
@@ -498,6 +503,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
       itemImage = '';
     }
 
+    //========== Validating Text Form Fields ==========
     final _formState = _formKey.currentState!;
 
     if (_formState.validate()) {

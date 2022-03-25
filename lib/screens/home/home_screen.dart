@@ -4,7 +4,7 @@ import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/db_functions/user_database/user_db.dart';
 import 'package:shop_ez/screens/home/widgets/home_drawer.dart';
 import 'package:shop_ez/screens/home/widgets/home_grid.dart';
-import 'package:shop_ez/widgets/floating_add_options.dart';
+import 'package:shop_ez/widgets/floating_popup_widget/floating_add_options.dart';
 
 class ScreenHome extends StatelessWidget {
   ScreenHome({this.initialEntry, Key? key}) : super(key: key);
