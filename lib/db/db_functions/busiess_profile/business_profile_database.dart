@@ -12,20 +12,39 @@ class BusinessProfileDatabase {
   Future<void> createBusinessProfile(
       BusinessProfileModel _businessProfileModel) async {
     final db = await dbInstance.database;
-    log('Business Profile Added!');
-    final id =
-        await db.insert(tableBusinessProfile, _businessProfileModel.toJson());
+    final _result = await db.query(tableBusinessProfile);
+    if (_result.isNotEmpty) {
+      updateBusinessProfile(_businessProfileModel);
+    } else {
+      final id =
+          await db.insert(tableBusinessProfile, _businessProfileModel.toJson());
+      log('Business Profile id == $id');
+    }
+  }
+
+  //========== Update Business Profile ==========
+  Future<void> updateBusinessProfile(
+      BusinessProfileModel _businessProfileModel) async {
+    final db = await dbInstance.database;
+    final id = await db.update(
+        tableBusinessProfile, _businessProfileModel.toJson(),
+        where: '${BusinessProfileFields.id} = ?',
+        whereArgs: [_businessProfileModel.id]);
     log('Business Profile id == $id');
   }
 
-//========== Get All Business Profiles ==========
-  Future<List<BusinessProfileModel>> getAllBusinessProfiles() async {
+//========== Get Business Profile ==========
+  Future<BusinessProfileModel?> getAllBusinessProfiles() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableBusinessProfile);
     // db.delete(tableBusinessProfile);
     log('Business ProfileS == $_result');
-    final _businessProfiles =
-        _result.map((json) => BusinessProfileModel.fromJson(json)).toList();
-    return _businessProfiles;
+    if (_result.isNotEmpty) {
+      final _businessProfiles =
+          _result.map((json) => BusinessProfileModel.fromJson(json)).toList();
+      return _businessProfiles.first;
+    } else {
+      return null;
+    }
   }
 }

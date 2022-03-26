@@ -19,7 +19,7 @@ class BusinessProfileFields {
 }
 
 class BusinessProfileModel {
-  final int? id;
+  int? id;
   final String business,
       businessArabic,
       address,
@@ -36,7 +36,7 @@ class BusinessProfileModel {
       logo;
 
   BusinessProfileModel({
-    this.id,
+    this.id = 0,
     required this.business,
     required this.businessArabic,
     required this.address,

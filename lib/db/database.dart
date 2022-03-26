@@ -37,13 +37,14 @@ class EzDatabase {
   }
 
   Future _createDB(Database db, int version) async {
-    const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const idNotNull = 'INTEGER NOT NULL';
     const idLogin = 'INTEGER NOT NULL';
     const textType = 'TEXT NOT NULL';
 
 //========== Table Users ==========
     await db.execute('''CREATE TABLE $tableUser (
-  ${UserFields.id} $idType,
+  ${UserFields.id} $idAuto,
   ${UserFields.shopName} $textType,
   ${UserFields.countryName} $textType,
   ${UserFields.shopCategory} $textType,
@@ -63,28 +64,28 @@ class EzDatabase {
 
 //========== Table Category ==========
     await db.execute('''CREATE TABLE $tableCategory (
-  ${CategoryFields.id} $idType,
+  ${CategoryFields.id} $idAuto,
   ${CategoryFields.category} $textType)''');
 
 //========== Table Sub-Category ==========
     await db.execute('''CREATE TABLE $tableSubCategory (
-   ${SubCategoryFields.id} $idType, 
+   ${SubCategoryFields.id} $idAuto, 
    ${SubCategoryFields.category} $textType, 
    ${SubCategoryFields.subCategory} $textType)''');
 
 //========== Table Brand ==========
     await db.execute('''CREATE TABLE $tableBrand (
-  ${BrandFields.id} $idType,
+  ${BrandFields.id} $idAuto,
   ${BrandFields.brand} $textType)''');
 
 //========== Table Unit ==========
     await db.execute('''CREATE TABLE $tableUnit (
-  ${UnitFields.id} $idType,
+  ${UnitFields.id} $idAuto,
   ${UnitFields.unit} $textType)''');
 
 //========== Table Supplier ==========
     await db.execute('''CREATE TABLE $tableSupplier (
-   ${SupplierFields.id} $idType, 
+   ${SupplierFields.id} $idAuto, 
    ${SupplierFields.company} $textType,
    ${SupplierFields.companyArabic} $textType, 
    ${SupplierFields.supplier} $textType,
@@ -103,7 +104,7 @@ class EzDatabase {
 
 //========== Table Customer ==========
     await db.execute('''CREATE TABLE $tableCustomer (
-   ${CustomerFields.id} $idType,
+   ${CustomerFields.id} $idAuto,
    ${CustomerFields.customerType} $textType,
    ${CustomerFields.company} $textType,
    ${CustomerFields.companyArabic} $textType, 
@@ -123,7 +124,7 @@ class EzDatabase {
 
     //========== Table Item-Master ==========
     await db.execute('''CREATE TABLE $tableItemMaster (
-   ${ItemMasterFields.id} $idType,
+   ${ItemMasterFields.id} $idAuto,
    ${ItemMasterFields.productType} $textType,
    ${ItemMasterFields.itemName} $textType,
    ${ItemMasterFields.itemNameArabic} $textType, 
@@ -143,7 +144,7 @@ class EzDatabase {
 
     //========== Table Expense ==========
     await db.execute('''CREATE TABLE $tableExpense (
-      ${ExpenseFields.id} $idType,
+      ${ExpenseFields.id} $idAuto,
       ${ExpenseFields.expenseCategory} $textType,
       ${ExpenseFields.expenseTitle} $textType,
       ${ExpenseFields.paidBy} $textType,
@@ -154,7 +155,7 @@ class EzDatabase {
 
     //========== Table Business Profile ==========
     await db.execute('''CREATE TABLE $tableBusinessProfile (
-   ${BusinessProfileFields.id} $idType,
+   ${BusinessProfileFields.id} $idNotNull,
    ${BusinessProfileFields.business} $textType,
    ${BusinessProfileFields.businessArabic} $textType,
    ${BusinessProfileFields.address} $textType, 

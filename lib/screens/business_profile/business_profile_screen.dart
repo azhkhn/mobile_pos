@@ -64,6 +64,13 @@ class _BusinessProfileState extends State<BusinessProfile> {
   final FocusNode _countryArabicFocusNode = FocusNode();
 
   @override
+  void initState() {
+    //====== retrieving profile details ======
+    getBusinessProfileModel();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     businessProfileDB.getAllBusinessProfiles();
     _screenSize = MediaQuery.of(context).size;
@@ -232,6 +239,23 @@ class _BusinessProfileState extends State<BusinessProfile> {
                   TextFeildWidget(
                     labelText: 'Phone Number',
                     controller: _phoneNumberController,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return null;
+                      } else {
+                        if (!RegExp(r'^(?:[+0][1-9])?[0-9]{10,12}$')
+                            .hasMatch(value)) {
+                          if (value.length != 10) {
+                            return 'Mobile number must 10 digits';
+                          } else {
+                            return 'Please enter a valid Phone Number';
+                          }
+                        }
+                      }
+
+                      return null;
+                    },
                   ),
                   kHeight10,
 
@@ -239,6 +263,19 @@ class _BusinessProfileState extends State<BusinessProfile> {
                   TextFeildWidget(
                     labelText: 'Email',
                     controller: _emailController,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return null;
+                      } else {
+                        // Check if the entered email has the right format
+                        if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                          return 'Please enter a valid Email';
+                        }
+                      }
+                      // Return null if the entered email is valid
+                      return null;
+                    },
                   ),
                   kHeight20,
 
@@ -419,7 +456,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
 
       try {
         await businessProfileDB.createBusinessProfile(_businessProfileModel);
-        log('Item $business Updated!');
+        log('Profile Updated!');
 
         showSnackBar(
             context: context,
@@ -430,6 +467,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
             ),
             content: 'Profile updated successfully!');
       } catch (e) {
+        log(e.toString());
         log('something went wrong!');
       }
     } else {
@@ -454,6 +492,33 @@ class _BusinessProfileState extends State<BusinessProfile> {
       } else if (countryArabic.isEmpty) {
         _countryArabicFocusNode.requestFocus();
       }
+    }
+  }
+
+  //========== Get Business Profile Details ==========
+  getBusinessProfileModel() async {
+    final _businessProfileModel =
+        await businessProfileDB.getAllBusinessProfiles();
+
+    if (_businessProfileModel != null) {
+      _businessNameController.text = _businessProfileModel.business;
+      _businessNameArabicController.text = _businessProfileModel.businessArabic;
+      _addressController.text = _businessProfileModel.address;
+      _addressArabicController.text = _businessProfileModel.addressArabic;
+      _cityController.text = _businessProfileModel.city;
+      _cityArabicController.text = _businessProfileModel.cityArabic;
+      _stateController.text = _businessProfileModel.state;
+      _stateArabicController.text = _businessProfileModel.stateArabic;
+      _countryController.text = _businessProfileModel.country;
+      _countryArabicController.text = _businessProfileModel.countryArabic;
+      _vatNumberController.text = _businessProfileModel.vatNumber;
+      _phoneNumberController.text = _businessProfileModel.phoneNumber;
+      _emailController.text = _businessProfileModel.email;
+      if (_businessProfileModel.logo != '') {
+        selectedImage = File(_businessProfileModel.logo);
+      }
+
+      setState(() {});
     }
   }
 
