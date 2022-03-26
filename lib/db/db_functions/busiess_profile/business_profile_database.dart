@@ -34,7 +34,7 @@ class BusinessProfileDatabase {
   }
 
 //========== Get Business Profile ==========
-  Future<BusinessProfileModel?> getAllBusinessProfiles() async {
+  Future<BusinessProfileModel?> getBusinessProfile() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableBusinessProfile);
     // db.delete(tableBusinessProfile);

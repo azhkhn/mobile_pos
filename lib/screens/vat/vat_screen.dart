@@ -48,7 +48,7 @@ class _VatScreenState extends State<VatScreen> {
       appBar: AppBarWidget(title: 'TAX Rate'),
       body: BackgroundContainerWidget(
         child: ItemScreenPaddingWidget(
-          child: SingleChildScrollView(
+          child: Expanded(
             child: Form(
               key: _formKey,
               child: Column(
@@ -124,6 +124,40 @@ class _VatScreenState extends State<VatScreen> {
                   CustomMaterialBtton(
                     onPressed: () => addVat(),
                     buttonText: 'Submit',
+                  ),
+
+                  //========== VAT List Field ==========
+                  kHeight50,
+                  Expanded(
+                    child: FutureBuilder<dynamic>(
+                      future: vatDB.getAllVats(),
+                      builder: (context, snapshot) {
+                        return snapshot.hasData
+                            ? ListView.separated(
+                                itemBuilder: (context, index) {
+                                  final item = snapshot.data[index];
+                                  log('vats == $item');
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: kTransparentColor,
+                                      child: Text(
+                                        '${index + 1}'.toString(),
+                                        style: const TextStyle(
+                                            color: kTextColorBlack),
+                                      ),
+                                    ),
+                                    title: Text(item.name),
+                                  );
+                                },
+                                separatorBuilder: (context, index) =>
+                                    const Divider(
+                                  thickness: 1,
+                                ),
+                                itemCount: snapshot.data.length,
+                              )
+                            : const Center(child: CircularProgressIndicator());
+                      },
+                    ),
                   )
                 ],
               ),
@@ -160,6 +194,7 @@ class _VatScreenState extends State<VatScreen> {
               color: kSnackBarIconColor,
             ),
             content: 'Vat added successfully!');
+        return setState(() {});
       } catch (e) {
         if (e == 'VAT Already Exist!') {
           showSnackBar(

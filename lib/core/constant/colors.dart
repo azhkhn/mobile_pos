@@ -9,6 +9,7 @@ Color kButtonColor = const Color(0xFF0A99AB);
 
 //========= Const Color ==========
 const kWhite = Colors.white;
+const kBlack = Colors.black;
 const kButtonTextWhite = Colors.white;
 const kTransparentColor = Colors.transparent;
 const kTextColorBlack = Colors.black;

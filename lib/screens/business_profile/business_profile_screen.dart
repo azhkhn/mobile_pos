@@ -72,7 +72,6 @@ class _BusinessProfileState extends State<BusinessProfile> {
 
   @override
   Widget build(BuildContext context) {
-    businessProfileDB.getAllBusinessProfiles();
     _screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBarWidget(title: 'Business Profile'),
@@ -499,8 +498,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
 
   //========== Get Business Profile Details ==========
   getBusinessProfileModel() async {
-    final _businessProfileModel =
-        await businessProfileDB.getAllBusinessProfiles();
+    final _businessProfileModel = await businessProfileDB.getBusinessProfile();
 
     if (_businessProfileModel != null) {
       _businessNameController.text = _businessProfileModel.business;

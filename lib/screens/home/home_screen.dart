@@ -29,11 +29,8 @@ class ScreenHome extends StatelessWidget {
         key: _scaffoldKey,
 
         //========== Drawer Widget ==========
-        drawer: Drawer(
-          child: Container(
-            color: mainColor,
-            child: const HomeDrawer(),
-          ),
+        drawer: const Drawer(
+          child: HomeDrawer(),
         ),
 
         //========== AppBar Widget ==========
