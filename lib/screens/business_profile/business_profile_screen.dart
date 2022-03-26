@@ -239,6 +239,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
                   TextFeildWidget(
                     labelText: 'Phone Number',
                     controller: _phoneNumberController,
+                    textInputType: TextInputType.phone,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -263,6 +264,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
                   TextFeildWidget(
                     labelText: 'Email',
                     controller: _emailController,
+                    textInputType: TextInputType.emailAddress,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -405,7 +407,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
         email,
         logo;
 
-    //Retieving values from TextFields to String
+    //Retieving values from TextFields
     business = _businessNameController.text.trim();
     businessArabic = _businessNameArabicController.text.trim();
     address = _addressController.text.trim();
@@ -468,7 +470,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
             content: 'Profile updated successfully!');
       } catch (e) {
         log(e.toString());
-        log('something went wrong!');
+        log('Something went wrong!');
       }
     } else {
       if (business.isEmpty) {

@@ -9,6 +9,7 @@ import 'package:shop_ez/model/sub-category/sub_category_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/model/unit/unit_model.dart';
 import 'package:shop_ez/model/user/user_model.dart';
+import 'package:shop_ez/model/vat/vat_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -170,5 +171,13 @@ class EzDatabase {
    ${BusinessProfileFields.phoneNumber} $textType,
    ${BusinessProfileFields.email} $textType,
    ${BusinessProfileFields.logo} $textType)''');
+
+    //========== Table VAT ==========
+    await db.execute('''CREATE TABLE $tableVat (
+   ${VatFields.id} $idAuto, 
+   ${VatFields.name} $textType,
+   ${VatFields.code} $textType,
+   ${VatFields.rate} $textType,
+   ${VatFields.type} $textType)''');
   }
 }

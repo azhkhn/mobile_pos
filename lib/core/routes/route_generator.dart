@@ -13,6 +13,7 @@ import 'package:shop_ez/screens/splash/splash_screen.dart';
 import 'package:shop_ez/screens/sub-category/screen_sub_category.dart';
 import 'package:shop_ez/screens/supplier/manage_supplier_screen.dart';
 import 'package:shop_ez/screens/unit/screen_unit.dart';
+import 'package:shop_ez/screens/vat/vat_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -45,6 +46,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ManageExpenseScreen());
       case routeBusinessProfile:
         return MaterialPageRoute(builder: (_) => const BusinessProfile());
+      case routeVat:
+        return MaterialPageRoute(builder: (_) => const VatScreen());
       default:
         return _errorRoute();
     }
