@@ -13,3 +13,4 @@ const routeUnit = '/unit';
 const routeExpense = '/expense';
 const routeBusinessProfile = '/business_profile';
 const routeVat = '/vat';
+const routeExpenseCategory = '/expense_category';

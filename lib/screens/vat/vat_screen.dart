@@ -48,119 +48,129 @@ class _VatScreenState extends State<VatScreen> {
       appBar: AppBarWidget(title: 'TAX Rate'),
       body: BackgroundContainerWidget(
         child: ItemScreenPaddingWidget(
-          child: Expanded(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  //========== Name Field ==========
-                  TextFeildWidget(
-                    labelText: 'Name *',
-                    controller: _nameController,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
-                  ),
-                  kHeight10,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                //========== Name Field ==========
+                TextFeildWidget(
+                  labelText: 'Name *',
+                  controller: _nameController,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'This field is required*';
+                    }
+                    return null;
+                  },
+                ),
+                kHeight10,
 
-                  //========== Code Field ==========
-                  TextFeildWidget(
-                    labelText: 'Code *',
-                    controller: _codeController,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
-                  ),
-                  kHeight10,
+                //========== Code Field ==========
+                TextFeildWidget(
+                  labelText: 'Code *',
+                  controller: _codeController,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'This field is required*';
+                    }
+                    return null;
+                  },
+                ),
+                kHeight10,
 
-                  //========== Rate Field ==========
-                  TextFeildWidget(
-                    labelText: 'Rate *',
-                    controller: _rateController,
-                    textInputType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
-                  ),
-                  kHeight10,
-
-                  //========== Type DropDown ==========
-                  DropdownButtonFormField(
-                    decoration: const InputDecoration(
-                        label: Text(
-                      'VAT Type *',
-                      style: TextStyle(color: klabelColorBlack),
-                    )),
-                    items: types
-                        .map((values) => DropdownMenuItem<String>(
-                              value: values,
-                              child: Text(values),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _vatType = value.toString();
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
-                  ),
-                  kHeight20,
-
-                  //========== Submit Button ==========
-                  CustomMaterialBtton(
-                    onPressed: () => addVat(),
-                    buttonText: 'Submit',
-                  ),
-
-                  //========== VAT List Field ==========
-                  kHeight50,
-                  Expanded(
-                    child: FutureBuilder<dynamic>(
-                      future: vatDB.getAllVats(),
-                      builder: (context, snapshot) {
-                        return snapshot.hasData
-                            ? ListView.separated(
-                                itemBuilder: (context, index) {
-                                  final item = snapshot.data[index];
-                                  log('vats == $item');
-                                  return ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundColor: kTransparentColor,
-                                      child: Text(
-                                        '${index + 1}'.toString(),
-                                        style: const TextStyle(
-                                            color: kTextColorBlack),
-                                      ),
-                                    ),
-                                    title: Text(item.name),
-                                  );
-                                },
-                                separatorBuilder: (context, index) =>
-                                    const Divider(
-                                  thickness: 1,
-                                ),
-                                itemCount: snapshot.data.length,
-                              )
-                            : const Center(child: CircularProgressIndicator());
-                      },
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    //========== Rate Field ==========
+                    Flexible(
+                      flex: 6,
+                      child: TextFeildWidget(
+                        labelText: 'Rate *',
+                        controller: _rateController,
+                        textInputType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'This field is required*';
+                          }
+                          return null;
+                        },
+                      ),
                     ),
-                  )
-                ],
-              ),
+
+                    kWidth20,
+
+                    //========== Type DropDown ==========
+                    Flexible(
+                      flex: 4,
+                      child: DropdownButtonFormField(
+                        decoration: const InputDecoration(
+                            label: Text(
+                          'VAT Type *',
+                          style: TextStyle(color: klabelColorBlack),
+                        )),
+                        items: types
+                            .map((values) => DropdownMenuItem<String>(
+                                  value: values,
+                                  child: Text(values),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _vatType = value.toString();
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null) {
+                            return 'This field is required*';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+
+                kHeight20,
+
+                //========== Submit Button ==========
+                CustomMaterialBtton(
+                  onPressed: () => addVat(),
+                  buttonText: 'Submit',
+                ),
+
+                //========== VAT List Field ==========
+                kHeight50,
+                Expanded(
+                  child: FutureBuilder<dynamic>(
+                    future: vatDB.getAllVats(),
+                    builder: (context, snapshot) {
+                      return snapshot.hasData
+                          ? ListView.separated(
+                              itemBuilder: (context, index) {
+                                final item = snapshot.data[index];
+                                return ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundColor: kTransparentColor,
+                                    child: Text(
+                                      '${index + 1}'.toString(),
+                                      style: const TextStyle(
+                                          color: kTextColorBlack),
+                                    ),
+                                  ),
+                                  title: Text(item.name),
+                                );
+                              },
+                              separatorBuilder: (context, index) =>
+                                  const Divider(
+                                thickness: 1,
+                              ),
+                              itemCount: snapshot.data.length,
+                            )
+                          : const Center(child: CircularProgressIndicator());
+                    },
+                  ),
+                )
+              ],
             ),
           ),
         ),

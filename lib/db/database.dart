@@ -3,6 +3,7 @@ import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
+import 'package:shop_ez/model/expense/expense_category_model.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
@@ -45,105 +46,105 @@ class EzDatabase {
 
 //========== Table Users ==========
     await db.execute('''CREATE TABLE $tableUser (
-  ${UserFields.id} $idAuto,
-  ${UserFields.shopName} $textType,
-  ${UserFields.countryName} $textType,
-  ${UserFields.shopCategory} $textType,
-  ${UserFields.mobileNumber} $textType,
-  ${UserFields.email} $textType,
-  ${UserFields.password} $textType)''');
+      ${UserFields.id} $idAuto,
+      ${UserFields.shopName} $textType,
+      ${UserFields.countryName} $textType,
+      ${UserFields.shopCategory} $textType,
+      ${UserFields.mobileNumber} $textType,
+      ${UserFields.email} $textType,
+      ${UserFields.password} $textType)''');
 
 //========== Table Login ==========
     await db.execute('''CREATE TABLE $tableLogin (
-  ${UserFields.id} $idLogin,
-  ${UserFields.shopName} $textType,
-  ${UserFields.countryName} $textType,
-  ${UserFields.shopCategory} $textType,
-  ${UserFields.mobileNumber} $textType,
-  ${UserFields.email} $textType,
-  ${UserFields.password} $textType)''');
+      ${UserFields.id} $idLogin,
+      ${UserFields.shopName} $textType,
+      ${UserFields.countryName} $textType,
+      ${UserFields.shopCategory} $textType,
+      ${UserFields.mobileNumber} $textType,
+      ${UserFields.email} $textType,
+      ${UserFields.password} $textType)''');
 
 //========== Table Category ==========
     await db.execute('''CREATE TABLE $tableCategory (
-  ${CategoryFields.id} $idAuto,
-  ${CategoryFields.category} $textType)''');
+      ${CategoryFields.id} $idAuto,
+      ${CategoryFields.category} $textType)''');
 
 //========== Table Sub-Category ==========
     await db.execute('''CREATE TABLE $tableSubCategory (
-   ${SubCategoryFields.id} $idAuto, 
-   ${SubCategoryFields.category} $textType, 
-   ${SubCategoryFields.subCategory} $textType)''');
+      ${SubCategoryFields.id} $idAuto, 
+      ${SubCategoryFields.category} $textType, 
+      ${SubCategoryFields.subCategory} $textType)''');
 
 //========== Table Brand ==========
     await db.execute('''CREATE TABLE $tableBrand (
-  ${BrandFields.id} $idAuto,
-  ${BrandFields.brand} $textType)''');
+      ${BrandFields.id} $idAuto,
+      ${BrandFields.brand} $textType)''');
 
 //========== Table Unit ==========
     await db.execute('''CREATE TABLE $tableUnit (
-  ${UnitFields.id} $idAuto,
-  ${UnitFields.unit} $textType)''');
+      ${UnitFields.id} $idAuto,
+      ${UnitFields.unit} $textType)''');
 
 //========== Table Supplier ==========
     await db.execute('''CREATE TABLE $tableSupplier (
-   ${SupplierFields.id} $idAuto, 
-   ${SupplierFields.company} $textType,
-   ${SupplierFields.companyArabic} $textType, 
-   ${SupplierFields.supplier} $textType,
-   ${SupplierFields.supplierArabic} $textType,
-   ${SupplierFields.vatNumber} $textType,
-   ${SupplierFields.email} $textType,
-   ${SupplierFields.address} $textType,
-   ${SupplierFields.addressArabic} $textType,
-   ${SupplierFields.city} $textType,
-   ${SupplierFields.cityArabic} $textType,
-   ${SupplierFields.state} $textType,
-   ${SupplierFields.stateArabic} $textType,
-   ${SupplierFields.country} $textType,
-   ${SupplierFields.countryArabic} $textType,
-   ${SupplierFields.poBox} $textType)''');
+      ${SupplierFields.id} $idAuto, 
+      ${SupplierFields.company} $textType,
+      ${SupplierFields.companyArabic} $textType, 
+      ${SupplierFields.supplier} $textType,
+      ${SupplierFields.supplierArabic} $textType,
+      ${SupplierFields.vatNumber} $textType,
+      ${SupplierFields.email} $textType,
+      ${SupplierFields.address} $textType,
+      ${SupplierFields.addressArabic} $textType,
+      ${SupplierFields.city} $textType,
+      ${SupplierFields.cityArabic} $textType,
+      ${SupplierFields.state} $textType,
+      ${SupplierFields.stateArabic} $textType,
+      ${SupplierFields.country} $textType,
+      ${SupplierFields.countryArabic} $textType,
+      ${SupplierFields.poBox} $textType)''');
 
 //========== Table Customer ==========
     await db.execute('''CREATE TABLE $tableCustomer (
-   ${CustomerFields.id} $idAuto,
-   ${CustomerFields.customerType} $textType,
-   ${CustomerFields.company} $textType,
-   ${CustomerFields.companyArabic} $textType, 
-   ${CustomerFields.customer} $textType,
-   ${CustomerFields.customerArabic} $textType,
-   ${CustomerFields.vatNumber} $textType,
-   ${CustomerFields.email} $textType,
-   ${CustomerFields.address} $textType,
-   ${CustomerFields.addressArabic} $textType,
-   ${CustomerFields.city} $textType,
-   ${CustomerFields.cityArabic} $textType,
-   ${CustomerFields.state} $textType,
-   ${CustomerFields.stateArabic} $textType,
-   ${CustomerFields.country} $textType,
-   ${CustomerFields.countryArabic} $textType,
-   ${CustomerFields.poBox} $textType)''');
+      ${CustomerFields.id} $idAuto,
+      ${CustomerFields.customerType} $textType,
+      ${CustomerFields.company} $textType,
+      ${CustomerFields.companyArabic} $textType, 
+      ${CustomerFields.customer} $textType,
+      ${CustomerFields.customerArabic} $textType,
+      ${CustomerFields.vatNumber} $textType,
+      ${CustomerFields.email} $textType,
+      ${CustomerFields.address} $textType,
+      ${CustomerFields.addressArabic} $textType,
+      ${CustomerFields.city} $textType,
+      ${CustomerFields.cityArabic} $textType,
+      ${CustomerFields.state} $textType,
+      ${CustomerFields.stateArabic} $textType,
+      ${CustomerFields.country} $textType,
+      ${CustomerFields.countryArabic} $textType,
+      ${CustomerFields.poBox} $textType)''');
 
-    //========== Table Item-Master ==========
+//========== Table Item-Master ==========
     await db.execute('''CREATE TABLE $tableItemMaster (
-   ${ItemMasterFields.id} $idAuto,
-   ${ItemMasterFields.productType} $textType,
-   ${ItemMasterFields.itemName} $textType,
-   ${ItemMasterFields.itemNameArabic} $textType, 
-   ${ItemMasterFields.itemCode} $textType,
-   ${ItemMasterFields.itemCategory} $textType,
-   ${ItemMasterFields.itemSubCategory} $textType,
-   ${ItemMasterFields.itemBrand} $textType,
-   ${ItemMasterFields.itemCost} $textType,
-   ${ItemMasterFields.sellingPrice} $textType,
-   ${ItemMasterFields.secondarySellingPrice} $textType,
-   ${ItemMasterFields.productVAT} $textType,
-   ${ItemMasterFields.unit} $textType,
-   ${ItemMasterFields.openingStock} $textType,
-   ${ItemMasterFields.vatMethod} $textType,
-   ${ItemMasterFields.alertQuantity} $textType,
-   ${ItemMasterFields.itemImage} $textType)''');
+      ${ItemMasterFields.id} $idAuto,
+      ${ItemMasterFields.productType} $textType,
+      ${ItemMasterFields.itemName} $textType,
+      ${ItemMasterFields.itemNameArabic} $textType, 
+      ${ItemMasterFields.itemCode} $textType,
+      ${ItemMasterFields.itemCategory} $textType,
+      ${ItemMasterFields.itemSubCategory} $textType,
+      ${ItemMasterFields.itemBrand} $textType,
+      ${ItemMasterFields.itemCost} $textType,
+      ${ItemMasterFields.sellingPrice} $textType,
+      ${ItemMasterFields.secondarySellingPrice} $textType,
+      ${ItemMasterFields.productVAT} $textType,
+      ${ItemMasterFields.unit} $textType,
+      ${ItemMasterFields.openingStock} $textType,
+      ${ItemMasterFields.vatMethod} $textType,
+      ${ItemMasterFields.alertQuantity} $textType,
+      ${ItemMasterFields.itemImage} $textType)''');
 
-    //========== Table Expense ==========
+//========== Table Expense ==========
     await db.execute('''CREATE TABLE $tableExpense (
       ${ExpenseFields.id} $idAuto,
       ${ExpenseFields.expenseCategory} $textType,
@@ -154,30 +155,35 @@ class EzDatabase {
       ${ExpenseFields.voucherNumber} $textType,
       ${ExpenseFields.documents} $textType)''');
 
-    //========== Table Business Profile ==========
+//========== Table Business Profile ==========
     await db.execute('''CREATE TABLE $tableBusinessProfile (
-   ${BusinessProfileFields.id} $idNotNull,
-   ${BusinessProfileFields.business} $textType,
-   ${BusinessProfileFields.businessArabic} $textType,
-   ${BusinessProfileFields.address} $textType, 
-   ${BusinessProfileFields.addressArabic} $textType,
-   ${BusinessProfileFields.city} $textType,
-   ${BusinessProfileFields.cityArabic} $textType,
-   ${BusinessProfileFields.state} $textType,
-   ${BusinessProfileFields.stateArabic} $textType,
-   ${BusinessProfileFields.country} $textType,
-   ${BusinessProfileFields.countryArabic} $textType,
-   ${BusinessProfileFields.vatNumber} $textType,
-   ${BusinessProfileFields.phoneNumber} $textType,
-   ${BusinessProfileFields.email} $textType,
-   ${BusinessProfileFields.logo} $textType)''');
+      ${BusinessProfileFields.id} $idNotNull,
+      ${BusinessProfileFields.business} $textType,
+      ${BusinessProfileFields.businessArabic} $textType,
+      ${BusinessProfileFields.address} $textType, 
+      ${BusinessProfileFields.addressArabic} $textType,
+      ${BusinessProfileFields.city} $textType,
+      ${BusinessProfileFields.cityArabic} $textType,
+      ${BusinessProfileFields.state} $textType,
+      ${BusinessProfileFields.stateArabic} $textType,
+      ${BusinessProfileFields.country} $textType,
+      ${BusinessProfileFields.countryArabic} $textType,
+      ${BusinessProfileFields.vatNumber} $textType,
+      ${BusinessProfileFields.phoneNumber} $textType,
+      ${BusinessProfileFields.email} $textType,
+      ${BusinessProfileFields.logo} $textType)''');
 
-    //========== Table VAT ==========
+//========== Table VAT ==========
     await db.execute('''CREATE TABLE $tableVat (
-   ${VatFields.id} $idAuto, 
-   ${VatFields.name} $textType,
-   ${VatFields.code} $textType,
-   ${VatFields.rate} $textType,
-   ${VatFields.type} $textType)''');
+      ${VatFields.id} $idAuto, 
+      ${VatFields.name} $textType,
+      ${VatFields.code} $textType,
+      ${VatFields.rate} $textType,
+      ${VatFields.type} $textType)''');
+
+//========== Table Expense ==========
+    await db.execute('''CREATE TABLE $tableExpenseCategory (
+      ${ExpenseCategoryFields.id} $idAuto,
+      ${ExpenseCategoryFields.expense} $textType)''');
   }
 }

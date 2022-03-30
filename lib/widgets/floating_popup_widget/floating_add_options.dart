@@ -32,7 +32,7 @@ class FloatingAddOptions extends StatelessWidget {
           onTap: () => Navigator.pushNamed(context, routeManageSupplier),
         ),
         SpeedDialChild(
-          child: const Icon(Icons.person_add),
+          child: const Icon(Icons.person_add_outlined),
           label: 'Customer',
           onTap: () => Navigator.pushNamed(context, routeCustomer),
         ),
@@ -42,7 +42,7 @@ class FloatingAddOptions extends StatelessWidget {
           onTap: () => Navigator.pushNamed(context, routeSubCategory),
         ),
         SpeedDialChild(
-          child: const Icon(Icons.category),
+          child: const Icon(Icons.category_outlined),
           label: 'Category',
           onTap: () => Navigator.pushNamed(context, routeCategory),
         ),
@@ -65,6 +65,11 @@ class FloatingAddOptions extends StatelessWidget {
           child: const Icon(Icons.price_change_outlined),
           label: 'Tax Rate',
           onTap: () => Navigator.pushNamed(context, routeVat),
+        ),
+        SpeedDialChild(
+          child: const Icon(Icons.paid_outlined),
+          label: 'Expense Category',
+          onTap: () => Navigator.pushNamed(context, routeExpenseCategory),
         ),
       ],
     );

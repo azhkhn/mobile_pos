@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 
 class TextFeildWidget extends StatelessWidget {
   const TextFeildWidget({
@@ -51,7 +52,7 @@ class TextFeildWidget extends StatelessWidget {
         counterText: couterText,
         labelText: labelText,
         border: inputBorder ?? const UnderlineInputBorder(),
-        labelStyle: const TextStyle(color: Colors.black),
+        labelStyle: const TextStyle(color: klabelColorBlack),
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         hintText: hintText,

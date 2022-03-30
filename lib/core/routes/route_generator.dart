@@ -7,6 +7,7 @@ import 'package:shop_ez/screens/business_profile/business_profile_screen.dart';
 import 'package:shop_ez/screens/category/screen_category.dart';
 import 'package:shop_ez/screens/customer/screen_customer.dart';
 import 'package:shop_ez/screens/expense/screen_expense.dart';
+import 'package:shop_ez/screens/expense/screen_expense_category.dart';
 import 'package:shop_ez/screens/home/home_screen.dart';
 import 'package:shop_ez/screens/item_master/screen_item_master.dart';
 import 'package:shop_ez/screens/splash/splash_screen.dart';
@@ -48,6 +49,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const BusinessProfile());
       case routeVat:
         return MaterialPageRoute(builder: (_) => const VatScreen());
+      case routeExpenseCategory:
+        return MaterialPageRoute(builder: (_) => const ExpenseCategory());
       default:
         return _errorRoute();
     }
