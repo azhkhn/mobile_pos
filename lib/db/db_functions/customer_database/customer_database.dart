@@ -7,7 +7,7 @@ class CustomerDatabase {
   EzDatabase dbInstance = EzDatabase.instance;
   CustomerDatabase._init();
 
-//========== Create Supplier ==========
+//========== Create Customer ==========
   Future<void> createCustomer(CustomerModel _customerModel) async {
     final db = await dbInstance.database;
 
@@ -35,7 +35,7 @@ class CustomerDatabase {
   }
 
   //========== Get All Customers ==========
-  Future<List<CustomerModel>> getAllSuppliers() async {
+  Future<List<CustomerModel>> getAllCustomers() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableCustomer);
     log('Customers === $_result');
@@ -43,5 +43,32 @@ class CustomerDatabase {
         _result.map((json) => CustomerModel.fromJson(json)).toList();
     // db.delete(tableCustomer);
     return _customers;
+  }
+
+  //========== Get Customer By Id ==========
+  Future<CustomerModel> getCustomerById(int customerId) async {
+    final db = await dbInstance.database;
+    final _result = await db.query(
+      tableCustomer,
+      where: '${CustomerFields.id} = ?',
+      whereArgs: [customerId],
+    );
+    log('Customer === $_result');
+    final _customers =
+        _result.map((json) => CustomerModel.fromJson(json)).toList();
+    return _customers.first;
+  }
+
+  //========== Get All Customers By Query ==========
+  Future<List<CustomerModel>> getCustomerSuggestions(String pattern) async {
+    final db = await dbInstance.database;
+    final res = await db.rawQuery(
+        "select * from $tableCustomer where ${CustomerFields.customer} LIKE '%$pattern%'");
+
+    List<CustomerModel> list = res.isNotEmpty
+        ? res.map((c) => CustomerModel.fromJson(c)).toList()
+        : [];
+
+    return list;
   }
 }

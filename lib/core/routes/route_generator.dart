@@ -10,7 +10,7 @@ import 'package:shop_ez/screens/expense/screen_expense.dart';
 import 'package:shop_ez/screens/expense/screen_expense_category.dart';
 import 'package:shop_ez/screens/home/home_screen.dart';
 import 'package:shop_ez/screens/item_master/screen_item_master.dart';
-import 'package:shop_ez/screens/sales/screen_sales.dart';
+import 'package:shop_ez/screens/pos/screen_pos.dart';
 import 'package:shop_ez/screens/splash/splash_screen.dart';
 import 'package:shop_ez/screens/sub-category/screen_sub_category.dart';
 import 'package:shop_ez/screens/supplier/manage_supplier_screen.dart';
@@ -52,8 +52,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const VatScreen());
       case routeExpenseCategory:
         return MaterialPageRoute(builder: (_) => const ExpenseCategory());
-      case routeSales:
-        return MaterialPageRoute(builder: (_) => const SalesScreen());
+      case routePos:
+        return MaterialPageRoute(builder: (_) => const PosScreen());
       default:
         return _errorRoute();
     }

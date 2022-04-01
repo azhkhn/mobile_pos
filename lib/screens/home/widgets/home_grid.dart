@@ -46,8 +46,8 @@ class HomeGrid extends StatelessWidget {
           child: InkWell(
             onTap: () {
               switch (index) {
-                case 1:
-                  Navigator.pushNamed(context, routeSales);
+                case 0:
+                  Navigator.pushNamed(context, routePos);
                   break;
                 case 2:
                   Navigator.pushNamed(context, routeItemMaster);

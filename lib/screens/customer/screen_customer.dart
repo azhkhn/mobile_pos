@@ -60,7 +60,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    customerDB.getAllSuppliers();
+    customerDB.getAllCustomers();
     _screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBarWidget(
