@@ -6,8 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/db/db_functions/brand_database/brand_database.dart';
+import 'package:shop_ez/db/db_functions/category_database/category_db.dart';
 import 'package:shop_ez/db/db_functions/customer_database/customer_database.dart';
+import 'package:shop_ez/db/db_functions/item_master_database/item_master_database.dart';
+import 'package:shop_ez/db/db_functions/sub-category_database/sub_category_db.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
+import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/payment_buttons_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/price_section_widget.dart';
@@ -37,9 +42,6 @@ class _PosScreenState extends State<PosScreen> {
     super.dispose();
   }
 
-//========== TextEditing Controllers ==========
-  final _customerController = TextEditingController();
-
 //========== MediaQuery Screen Size ==========
   late Size _screenSize;
 
@@ -64,12 +66,11 @@ class _PosScreenState extends State<PosScreen> {
                 //==================== Left Side ====================
                 SaleSideWidget(
                   screenSize: _screenSize,
-                  customerController: _customerController,
                 ),
                 kWidth20,
 
                 //==================== Right Side ====================
-                ProductSideWidget(screenSize: _screenSize)
+                const ProductSideWidget()
               ],
             ),
           ),
@@ -83,7 +84,6 @@ class _PosScreenState extends State<PosScreen> {
 class SaleSideWidget extends StatefulWidget {
   const SaleSideWidget({
     Key? key,
-    required this.customerController,
     required Size screenSize,
   })  : _screenSize = screenSize,
         super(key: key);
@@ -91,15 +91,15 @@ class SaleSideWidget extends StatefulWidget {
 //========== MediaQuery Screen Size ==========
   final Size _screenSize;
 
-//========== TextEditing Controllers ==========
-  final TextEditingController customerController;
-
   @override
   State<SaleSideWidget> createState() => _SaleSideWidgetState();
 }
 
 class _SaleSideWidgetState extends State<SaleSideWidget> {
   int? _customerId;
+
+  //========== TextEditing Controllers ==========
+  final _customerController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +118,7 @@ class _SaleSideWidgetState extends State<SaleSideWidget> {
                   debounceDuration: const Duration(milliseconds: 500),
                   hideSuggestionsOnKeyboardHide: false,
                   textFieldConfiguration: TextFieldConfiguration(
-                      controller: widget.customerController,
+                      controller: _customerController,
                       decoration: InputDecoration(
                         fillColor: Colors.white,
                         filled: true,
@@ -133,7 +133,7 @@ class _SaleSideWidgetState extends State<SaleSideWidget> {
                             child: const Icon(Icons.clear),
                             onTap: () {
                               _customerId = null;
-                              widget.customerController.clear();
+                              _customerController.clear();
                             },
                           ),
                         ),
@@ -152,7 +152,7 @@ class _SaleSideWidgetState extends State<SaleSideWidget> {
                     return ListTile(title: Text(suggestion.customer));
                   },
                   onSuggestionSelected: (CustomerModel suggestion) {
-                    widget.customerController.text = suggestion.customer;
+                    _customerController.text = suggestion.customer;
                     _customerId = suggestion.id;
                     setState(() {});
                     log(suggestion.company);
@@ -302,33 +302,94 @@ class _SaleSideWidgetState extends State<SaleSideWidget> {
   }
 }
 
-//==================== Product Side Widget ====================
-class ProductSideWidget extends StatelessWidget {
+//========================================                     ========================================
+//======================================== Product Side Widget ========================================
+//========================================                     ========================================
+class ProductSideWidget extends StatefulWidget {
   const ProductSideWidget({
     Key? key,
-    required Size screenSize,
-  })  : _screenSize = screenSize,
-        super(key: key);
+  }) : super(key: key);
 
-  final Size _screenSize;
+//========== TextEditing Controllers ==========
+
+  @override
+  State<ProductSideWidget> createState() => _ProductSideWidgetState();
+}
+
+class _ProductSideWidgetState extends State<ProductSideWidget> {
+  //========== Database Instances ==========
+  final categoryDB = CategoryDatabase.instance;
+  final subCategoryDB = SubCategoryDatabase.instance;
+  final brandDB = BrandDatabase.instance;
+  final itemMasterDB = ItemMasterDatabase.instance;
+
+  //========== FutureBuilder Database ==========
+  Future<List<dynamic>>? futureGrid = ItemMasterDatabase.instance.getAllItems();
+
+  //========== FutureBuilder ModelClass by Integer ==========
+  int? builderModel;
+
+  //========== MediaQuery Screen Size ==========
+  late Size _screenSize;
+
+  //========== TextEditing Controllers ==========
+  final _productController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    _screenSize = MediaQuery.of(context).size;
     return SizedBox(
       width: _screenSize.width / 1.9,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          TextFormField(
-            decoration: const InputDecoration(
-              fillColor: Colors.white,
-              filled: true,
-              isDense: true,
-              contentPadding: EdgeInsets.all(10),
-              hintText: 'Search product by name/code',
-              border: OutlineInputBorder(),
-            ),
+          //========== Get All Products Search Field ==========
+          TypeAheadField(
+            debounceDuration: const Duration(milliseconds: 500),
+            hideSuggestionsOnKeyboardHide: false,
+            textFieldConfiguration: TextFieldConfiguration(
+                controller: _productController,
+                decoration: InputDecoration(
+                  fillColor: Colors.white,
+                  filled: true,
+                  isDense: true,
+                  suffixIconConstraints: const BoxConstraints(
+                    minWidth: 10,
+                    minHeight: 10,
+                  ),
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      child: const Icon(Icons.clear),
+                      onTap: () {
+                        _productController.clear();
+                        builderModel = null;
+                        futureGrid = itemMasterDB.getAllItems();
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                  contentPadding: const EdgeInsets.all(10),
+                  hintText: 'Search product by name/code',
+                  border: const OutlineInputBorder(),
+                )),
+            noItemsFoundBuilder: (context) => const SizedBox(
+                height: 50, child: Center(child: Text('No Product Found!'))),
+            suggestionsCallback: (pattern) async {
+              return itemMasterDB.getProductSuggestions(pattern);
+            },
+            itemBuilder: (context, ItemMasterModel suggestion) {
+              return ListTile(title: Text(suggestion.itemName));
+            },
+            onSuggestionSelected: (ItemMasterModel suggestion) {
+              final itemId = suggestion.id;
+              _productController.text = suggestion.itemName;
+              futureGrid = itemMasterDB.getProductById(itemId!);
+              builderModel = null;
+              setState(() {});
+              log(suggestion.itemName);
+            },
           ),
 
           //==================== Quick Filter Buttons ====================
@@ -338,14 +399,22 @@ class ProductSideWidget extends StatelessWidget {
                 flex: 4,
                 child: CustomMaterialBtton(
                     buttonColor: Colors.blue,
-                    onPressed: () {},
+                    onPressed: () {
+                      futureGrid = categoryDB.getAllCategories();
+                      builderModel = 0;
+                      setState(() {});
+                    },
                     buttonText: 'Categories'),
               ),
               kWidth5,
               Expanded(
                 flex: 5,
                 child: CustomMaterialBtton(
-                    onPressed: () {},
+                    onPressed: () {
+                      futureGrid = subCategoryDB.getAllSubCategories();
+                      builderModel = 1;
+                      setState(() {});
+                    },
                     buttonColor: Colors.orange,
                     buttonText: 'Sub Categories'),
               ),
@@ -353,7 +422,11 @@ class ProductSideWidget extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: CustomMaterialBtton(
-                  onPressed: () {},
+                  onPressed: () {
+                    futureGrid = brandDB.getAllBrands();
+                    builderModel = 2;
+                    setState(() {});
+                  },
                   buttonColor: Colors.indigo,
                   buttonText: 'Brands',
                 ),
@@ -362,7 +435,12 @@ class ProductSideWidget extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: MaterialButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _productController.clear();
+                    builderModel = null;
+                    futureGrid = itemMasterDB.getAllItems();
+                    setState(() {});
+                  },
                   color: Colors.blue,
                   child: const Icon(
                     Icons.rotate_left,
@@ -377,44 +455,132 @@ class ProductSideWidget extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: GridView.count(
-                childAspectRatio: (1 / .75),
-                crossAxisCount: 5,
-                children: List.generate(
-                  30,
-                  (index) => Card(
-                    elevation: 10,
-                    child: Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          AutoSizeText(
-                            'Shavarma Grillided Chicken',
-                            textAlign: TextAlign.center,
-                            minFontSize: 8,
-                            softWrap: true,
-                            style: TextStyle(fontSize: 10),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                          ),
-                          AutoSizeText(
-                            'Qty: 10',
-                            minFontSize: 8,
-                            style: TextStyle(fontSize: 10),
-                          ),
-                          AutoSizeText(
-                            '90.00',
-                            minFontSize: 8,
-                            style: TextStyle(fontSize: 10),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              child: FutureBuilder(
+                  future: futureGrid,
+                  builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                    final dynamic itemList;
+                    if (snapshot.hasData) {
+                      itemList = snapshot.data!;
+                    } else {
+                      itemList = [];
+                    }
+                    log('${itemList.length}');
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      const Center(
+                        child: AutoSizeText('No Item Found!'),
+                      );
+                    }
+                    return snapshot.hasData && itemList.isNotEmpty
+                        ? GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 5,
+                              childAspectRatio: (1 / .75),
+                            ),
+                            itemCount: itemList.length,
+                            itemBuilder: (context, index) {
+                              return InkWell(
+                                onTap: () {
+                                  if (builderModel == 0) {
+                                    log(itemList[index].category);
+                                    final category = itemList[index].category;
+                                    builderModel = null;
+                                    futureGrid = itemMasterDB
+                                        .getProductByCategory(category);
+                                    setState(() {});
+                                  } else if (builderModel == 1) {
+                                    log(itemList[index].subCategory);
+                                    final subCategory =
+                                        itemList[index].subCategory;
+                                    builderModel = null;
+                                    futureGrid = itemMasterDB
+                                        .getProductBySubCategory(subCategory);
+                                    setState(() {});
+                                  } else if (builderModel == 2) {
+                                    log(itemList[index].brand);
+                                    final brand = itemList[index].brand;
+                                    builderModel = null;
+                                    futureGrid =
+                                        itemMasterDB.getProductByBrand(brand);
+                                    setState(() {});
+                                  }
+                                },
+                                child: Card(
+                                  elevation: 10,
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: builderModel == null
+                                          ? Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                AutoSizeText(
+                                                  itemList[index].itemName ??
+                                                      '',
+                                                  textAlign: TextAlign.center,
+                                                  minFontSize: 8,
+                                                  softWrap: true,
+                                                  style: const TextStyle(
+                                                      fontSize: 10),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 2,
+                                                ),
+                                                AutoSizeText(
+                                                  itemList[index]
+                                                          .openingStock ??
+                                                      '',
+                                                  minFontSize: 8,
+                                                  style: const TextStyle(
+                                                      fontSize: 10),
+                                                ),
+                                                AutoSizeText(
+                                                  itemList[index].itemCost ??
+                                                      '',
+                                                  minFontSize: 8,
+                                                  style: const TextStyle(
+                                                      fontSize: 10),
+                                                ),
+                                              ],
+                                            )
+                                          : Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                AutoSizeText(
+                                                  builderModel == 0
+                                                      ? itemList[index].category
+                                                      : builderModel == 1
+                                                          ? itemList[index]
+                                                              .subCategory
+                                                          : builderModel == 2
+                                                              ? itemList[index]
+                                                                  .brand
+                                                              : '',
+                                                  textAlign: TextAlign.center,
+                                                  minFontSize: 14,
+                                                  softWrap: true,
+                                                  style: const TextStyle(
+                                                      fontSize: 16),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 2,
+                                                ),
+                                              ],
+                                            )),
+                                ),
+                              );
+                            },
+                          )
+                        : const Center(
+                            child: AutoSizeText('No Item Found!'),
+                          );
+                  }),
             ),
           )
         ],

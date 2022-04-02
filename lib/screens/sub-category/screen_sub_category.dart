@@ -140,7 +140,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                           color: kTextColorBlack),
                                     ),
                                   ),
-                                  title: Text(item.code),
+                                  title: Text(item.subCategory),
                                   subtitle: Text(item.category),
                                 );
                               },
