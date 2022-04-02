@@ -80,7 +80,9 @@ class _PosScreenState extends State<PosScreen> {
   }
 }
 
-//==================== Sale Side Widget ====================
+//========================================                 ========================================
+//======================================== Sale Side Widge ========================================
+//========================================                 ========================================
 class SaleSideWidget extends StatefulWidget {
   const SaleSideWidget({
     Key? key,
@@ -96,6 +98,14 @@ class SaleSideWidget extends StatefulWidget {
 }
 
 class _SaleSideWidgetState extends State<SaleSideWidget> {
+  //For retrieving value from TextFields (instead of State-Management)
+  callback(List<ItemMasterModel> selectedProducts) {
+    log('SaleSideWidget() => called!');
+    selectedProducts = selectedProducts;
+    setState(() {});
+  }
+
+  List<ItemMasterModel> selectedProducts = [];
   int? _customerId;
 
   //========== TextEditing Controllers ==========
@@ -310,8 +320,6 @@ class ProductSideWidget extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-//========== TextEditing Controllers ==========
-
   @override
   State<ProductSideWidget> createState() => _ProductSideWidgetState();
 }
@@ -334,6 +342,8 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
   //========== TextEditing Controllers ==========
   final _productController = TextEditingController();
+
+  final List<ItemMasterModel> _selectedProducts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -507,44 +517,56 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                     futureGrid =
                                         itemMasterDB.getProductByBrand(brand);
                                     setState(() {});
+                                  } else {
+                                    log('hello');
+                                    _selectedProducts.add(itemList[index]);
+                                    log('length == ${_selectedProducts.length}');
+                                    for (var i = 0;
+                                        i < _selectedProducts.length;
+                                        i++) {
+                                      log('list == ' +
+                                          _selectedProducts[i].itemName);
+                                    }
                                   }
                                 },
                                 child: Card(
                                   elevation: 10,
                                   child: Padding(
-                                      padding: const EdgeInsets.all(2.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 5.0),
                                       child: builderModel == null
                                           ? Column(
                                               mainAxisSize: MainAxisSize.min,
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceEvenly,
                                               children: [
-                                                AutoSizeText(
-                                                  itemList[index].itemName ??
-                                                      '',
-                                                  textAlign: TextAlign.center,
-                                                  minFontSize: 8,
-                                                  softWrap: true,
-                                                  style: const TextStyle(
-                                                      fontSize: 10),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 2,
+                                                Expanded(
+                                                  child: AutoSizeText(
+                                                    itemList[index].itemName ??
+                                                        '',
+                                                    textAlign: TextAlign.center,
+                                                    minFontSize: 10,
+                                                    softWrap: true,
+                                                    style: const TextStyle(
+                                                        fontSize: 14),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
+                                                  ),
                                                 ),
                                                 AutoSizeText(
-                                                  itemList[index]
-                                                          .openingStock ??
-                                                      '',
+                                                  'Qty : ' +
+                                                      itemList[index]
+                                                          .openingStock,
                                                   minFontSize: 8,
                                                   style: const TextStyle(
-                                                      fontSize: 10),
+                                                      fontSize: 12),
                                                 ),
                                                 AutoSizeText(
-                                                  itemList[index].itemCost ??
-                                                      '',
+                                                  '' + itemList[index].itemCost,
                                                   minFontSize: 8,
                                                   style: const TextStyle(
-                                                      fontSize: 10),
+                                                      fontSize: 12),
                                                 ),
                                               ],
                                             )
