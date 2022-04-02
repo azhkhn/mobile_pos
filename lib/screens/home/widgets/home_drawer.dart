@@ -62,30 +62,32 @@ class HomeDrawer extends StatelessWidget {
                             ? CircleAvatar(
                                 backgroundImage:
                                     FileImage(File(snapshot.data!.logo)))
-                            : Stack(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: CircleAvatar(
-                                      radius: _screenSize.width / 10,
-                                      backgroundColor:
-                                          Colors.black.withOpacity(0.5),
-                                      child: Icon(
-                                        Icons.business,
-                                        size: _screenSize.width / 10,
+                            : FittedBox(
+                                child: Stack(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: CircleAvatar(
+                                        radius: _screenSize.width / 10,
+                                        backgroundColor:
+                                            Colors.black.withOpacity(0.5),
+                                        child: Icon(
+                                          Icons.business,
+                                          size: _screenSize.width / 10,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Positioned(
-                                    top: 3,
-                                    right: 0,
-                                    child: Icon(
-                                      Icons.edit,
-                                      color: kWhite,
-                                      size: _screenSize.width / 20,
+                                    Positioned(
+                                      top: 3,
+                                      right: 0,
+                                      child: Icon(
+                                        Icons.edit,
+                                        color: kWhite,
+                                        size: _screenSize.width / 20,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                     decoration: BoxDecoration(color: mainColor),
                     accountName: Text(snapshot.hasData

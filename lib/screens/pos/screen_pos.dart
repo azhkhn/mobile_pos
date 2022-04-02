@@ -8,10 +8,12 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/db/db_functions/customer_database/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
+import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/payment_buttons_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/price_section_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
+import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
 
 class PosScreen extends StatefulWidget {
   const PosScreen({Key? key}) : super(key: key);
@@ -114,15 +116,30 @@ class _SaleSideWidgetState extends State<SaleSideWidget> {
                 flex: 8,
                 child: TypeAheadField(
                   debounceDuration: const Duration(milliseconds: 500),
+                  hideSuggestionsOnKeyboardHide: false,
                   textFieldConfiguration: TextFieldConfiguration(
                       controller: widget.customerController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         fillColor: Colors.white,
                         filled: true,
                         isDense: true,
-                        contentPadding: EdgeInsets.all(10),
+                        suffixIconConstraints: const BoxConstraints(
+                          minWidth: 10,
+                          minHeight: 10,
+                        ),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            child: const Icon(Icons.clear),
+                            onTap: () {
+                              _customerId = null;
+                              widget.customerController.clear();
+                            },
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.all(10),
                         hintText: 'Cash Customer',
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                       )),
                   noItemsFoundBuilder: (context) => const SizedBox(
                       height: 50,
@@ -161,6 +178,11 @@ class _SaleSideWidgetState extends State<SaleSideWidget> {
                                 borderRadius: BorderRadius.vertical(
                                     top: Radius.circular(20))),
                             builder: (context) => customerSheet());
+                      } else {
+                        showSnackBar(
+                            context: context,
+                            content:
+                                'Please select any Customer to show details!');
                       }
                     },
                     icon: const Icon(
@@ -271,323 +293,11 @@ class _SaleSideWidgetState extends State<SaleSideWidget> {
     );
   }
 
-  Widget makeDismissable({required Widget child}) => GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => Navigator.pop(context),
-        child: child,
-      );
-
   //==================== Customer Bottom Sheet ====================
   Widget customerSheet() {
-    return makeDismissable(
-      child: DraggableScrollableSheet(
-        initialChildSize: 0.8,
-        minChildSize: 0.5,
-        maxChildSize: 0.8,
-        builder: (context, scrollController) => Container(
-          decoration: const BoxDecoration(
-              color: kWhite,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-          padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.height * .50,
-              vertical: MediaQuery.of(context).size.height * .05),
-          child: SingleChildScrollView(
-              controller: scrollController,
-              child: FutureBuilder(
-                future: CustomerDatabase.instance.getCustomerById(_customerId!),
-                builder: (context, AsyncSnapshot<CustomerModel> snapshot) =>
-                    snapshot.hasData
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const AutoSizeText(
-                                    'Customer Type',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  const AutoSizeText(
-                                    '  : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.customerType,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  const AutoSizeText(
-                                    'Company',
-                                    maxFontSize: 50,
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                  const AutoSizeText(
-                                    '  : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.company,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'Company Arabic : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.companyArabic,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'Customer Name : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.customer,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'Customer Name Arabic : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.customerArabic,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'VAT Number : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.vatNumber!,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'Email : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.email!,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'Address : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.address!,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'Address Arabic : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.addressArabic!,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'City : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.city!,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'City Arabic : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.cityArabic!,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'State : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.state!,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'State Arabic : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.stateArabic!,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'Country : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.country!,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'Country Arabic : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.countryArabic!,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const AutoSizeText(
-                                    'PO Box : ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  AutoSizeText(
-                                    snapshot.data!.poBox!,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              kHeight10,
-                            ],
-                          )
-                        : const CircularProgressIndicator(),
-              )),
-        ),
-      ),
+    return DismissibleWidget(
+      context: context,
+      child: CustomBottomSheetWidget(customerId: _customerId),
     );
   }
 }
@@ -711,4 +421,32 @@ class ProductSideWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+//========== Show SnackBar ==========
+void showSnackBar(
+    {required BuildContext context,
+    required String content,
+    Color? color,
+    Widget? icon}) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Row(
+        children: [
+          icon ?? const Text(''),
+          kWidth5,
+          Flexible(
+            child: Text(
+              content,
+              softWrap: false,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: color,
+      duration: const Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+    ),
+  );
 }

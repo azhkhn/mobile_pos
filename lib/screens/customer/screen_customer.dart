@@ -122,6 +122,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _companyArabicController,
                     labelText: 'Company Arabic *',
+                    textDirection: TextDirection.rtl,
                     focusNode: companyArabicFocusNode,
                     textInputType: TextInputType.text,
                     validator: (value) {
@@ -152,6 +153,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _customerArabicController,
                     labelText: 'Customer Name Arabic *',
+                    textDirection: TextDirection.rtl,
                     focusNode: customerArabicFocusNode,
                     textInputType: TextInputType.text,
                     validator: (value) {
@@ -209,6 +211,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _addressArabicController,
                     labelText: 'Address in Arabic',
+                    textDirection: TextDirection.rtl,
                     focusNode: addressArabicFocusNode,
                     textInputType: TextInputType.text,
                     validator: (value) {
@@ -243,6 +246,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _cityArabicController,
                     labelText: 'City in Arabic',
+                    textDirection: TextDirection.rtl,
                     focusNode: cityArabicFocusNode,
                     textInputType: TextInputType.text,
                     validator: (value) {
@@ -277,6 +281,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _stateArabicController,
                     labelText: 'State in Arabic',
+                    textDirection: TextDirection.rtl,
                     focusNode: stateArabicFocusNode,
                     textInputType: TextInputType.text,
                     validator: (value) {
@@ -311,6 +316,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   TextFeildWidget(
                     controller: _countryArabicController,
                     labelText: 'Country in Arabic',
+                    textDirection: TextDirection.rtl,
                     focusNode: countryArabicFocusNode,
                     textInputType: TextInputType.text,
                     validator: (value) {
