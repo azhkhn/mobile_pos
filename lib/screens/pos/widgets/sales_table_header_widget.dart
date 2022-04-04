@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 
@@ -22,40 +23,54 @@ class SalesTableHeaderWidget extends StatelessWidget {
           Container(
             color: Colors.blue,
             height: 30,
-            child: const Center(
-              child: Text('Product',
-                  style: TextStyle(color: kWhite, fontWeight: FontWeight.bold)),
-            ),
+            alignment: Alignment.center,
+            child: const AutoSizeText('Product',
+                minFontSize: 8,
+                maxFontSize: 20,
+                style: TextStyle(
+                  color: kWhite,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                )),
           ),
           Container(
             color: Colors.blue,
             height: 30,
-            child: const Center(
-              child: Text(
-                'Price',
-                style: TextStyle(color: kWhite, fontWeight: FontWeight.bold),
-              ),
-            ),
+            alignment: Alignment.center,
+            child: const AutoSizeText('Price',
+                minFontSize: 8,
+                maxFontSize: 20,
+                style: TextStyle(
+                  color: kWhite,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                )),
           ),
           Container(
             color: Colors.blue,
             height: 30,
-            child: const Center(
-              child: Text(
-                'Qty',
-                style: TextStyle(color: kWhite, fontWeight: FontWeight.bold),
-              ),
-            ),
+            alignment: Alignment.center,
+            child: const AutoSizeText('Qty',
+                minFontSize: 8,
+                maxFontSize: 20,
+                style: TextStyle(
+                  color: kWhite,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                )),
           ),
           Container(
             color: Colors.blue,
             height: 30,
-            child: const Center(
-              child: Text(
-                'Subtotal',
-                style: TextStyle(color: kWhite, fontWeight: FontWeight.bold),
-              ),
-            ),
+            alignment: Alignment.center,
+            child: const AutoSizeText('Subtotal',
+                minFontSize: 8,
+                maxFontSize: 20,
+                style: TextStyle(
+                  color: kWhite,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                )),
           ),
           Container(
               color: Colors.blue,
@@ -63,7 +78,7 @@ class SalesTableHeaderWidget extends StatelessWidget {
               child: const Center(
                   child: Icon(
                 Icons.delete,
-                size: 18,
+                size: 16,
                 color: kWhite,
               )))
         ]),

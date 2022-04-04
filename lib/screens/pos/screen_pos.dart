@@ -98,18 +98,38 @@ class SaleSideWidget extends StatefulWidget {
 }
 
 class _SaleSideWidgetState extends State<SaleSideWidget> {
-  //For retrieving value from TextFields (instead of State-Management)
+  //For retrieving selected Products (instead of State-Management)
   callback(List<ItemMasterModel> selectedProducts) {
     log('SaleSideWidget() => called!');
-    selectedProducts = selectedProducts;
-    setState(() {});
+    _selectedProducts.value = selectedProducts;
+    _subTotalNotifier.value.clear();
+    for (var i = 0; i < _selectedProducts.value.length; i++) {
+      _subTotalNotifier.value.add(_selectedProducts.value[i].itemCost);
+      log('subotal == ' + _subTotalNotifier.value[i]);
+    }
+    // _subTotalNotifier.notifyListeners();
+
+    _selectedProducts.notifyListeners();
   }
 
-  List<ItemMasterModel> selectedProducts = [];
+  //========== ValueNotifiers ==========
+  static final ValueNotifier<List<ItemMasterModel>> _selectedProducts =
+      ValueNotifier([]);
+  static final ValueNotifier<List<String>> _subTotalNotifier =
+      ValueNotifier([]);
+
   int? _customerId;
 
   //========== TextEditing Controllers ==========
   final _customerController = TextEditingController();
+  final List<TextEditingController> _quantityController = [];
+
+  @override
+  void dispose() {
+    _selectedProducts.value.clear();
+    _subTotalNotifier.value.clear();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +179,15 @@ class _SaleSideWidgetState extends State<SaleSideWidget> {
                         .getCustomerSuggestions(pattern);
                   },
                   itemBuilder: (context, CustomerModel suggestion) {
-                    return ListTile(title: Text(suggestion.customer));
+                    return ListTile(
+                      title: AutoSizeText(suggestion.customer,
+                          maxLines: 1,
+                          minFontSize: 8,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 12,
+                          )),
+                    );
                   },
                   onSuggestionSelected: (CustomerModel suggestion) {
                     _customerController.text = suggestion.customer;
@@ -220,74 +248,120 @@ class _SaleSideWidgetState extends State<SaleSideWidget> {
           //==================== Product Items Table ====================
           Expanded(
             child: SingleChildScrollView(
-              child: Table(
-                columnWidths: const {
-                  0: FractionColumnWidth(0.30),
-                  1: FractionColumnWidth(0.23),
-                  2: FractionColumnWidth(0.12),
-                  3: FractionColumnWidth(0.23),
-                  4: FractionColumnWidth(0.12),
+              child: ValueListenableBuilder(
+                valueListenable: _selectedProducts,
+                builder:
+                    (context, List<ItemMasterModel> selectedProducts, child) {
+                  return Table(
+                    columnWidths: const {
+                      0: FractionColumnWidth(0.30),
+                      1: FractionColumnWidth(0.23),
+                      2: FractionColumnWidth(0.12),
+                      3: FractionColumnWidth(0.23),
+                      4: FractionColumnWidth(0.12),
+                    },
+                    border: TableBorder.all(color: Colors.grey, width: 0.5),
+                    children: List<TableRow>.generate(
+                      selectedProducts.length,
+                      (index) {
+                        _quantityController
+                            .add(TextEditingController(text: '1'));
+
+                        return TableRow(children: [
+                          Container(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                            color: Colors.white,
+                            height: 30,
+                            alignment: Alignment.centerLeft,
+                            child:
+                                AutoSizeText(selectedProducts[index].itemName,
+                                    maxLines: 1,
+                                    minFontSize: 8,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                    )),
+                          ),
+                          Container(
+                            color: Colors.white,
+                            height: 30,
+                            alignment: Alignment.center,
+                            child:
+                                AutoSizeText(selectedProducts[index].itemCost,
+                                    maxLines: 1,
+                                    minFontSize: 8,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                    )),
+                          ),
+                          Container(
+                            color: Colors.white,
+                            height: 30,
+                            alignment: Alignment.topCenter,
+                            child: TextFormField(
+                              controller: _quantityController[index],
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                isDense: true,
+                              ),
+                              style:
+                                  const TextStyle(fontSize: 11, color: kBlack),
+                              onChanged: (value) {
+                                final qty = num.tryParse(value);
+                                if (qty != null) {
+                                  log('$qty');
+                                  final cost = int.tryParse(
+                                      selectedProducts[index].itemCost);
+                                  final subTotal = cost! * qty.toInt();
+                                  log('$subTotal');
+                                  _subTotalNotifier.value[index] = '$subTotal';
+                                  _subTotalNotifier.notifyListeners();
+                                }
+                              },
+                            ),
+                          ),
+                          Container(
+                              color: Colors.white,
+                              height: 30,
+                              alignment: Alignment.center,
+                              child: ValueListenableBuilder(
+                                  valueListenable: _subTotalNotifier,
+                                  builder:
+                                      (context, List<String> subTotal, child) {
+                                    return AutoSizeText(subTotal[index],
+                                        maxLines: 1,
+                                        minFontSize: 8,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                        ));
+                                  })),
+                          Container(
+                              color: Colors.white,
+                              height: 30,
+                              alignment: Alignment.center,
+                              child: IconButton(
+                                onPressed: () {
+                                  selectedProducts.removeAt(index);
+                                  _subTotalNotifier.value.removeAt(index);
+                                  _subTotalNotifier.notifyListeners();
+                                  _selectedProducts.notifyListeners();
+                                },
+                                icon: const Icon(
+                                  Icons.close,
+                                  size: 16,
+                                ),
+                              ))
+                        ]);
+                      },
+                    ),
+                  );
                 },
-                border: TableBorder.all(color: Colors.grey, width: 0.5),
-                children: List<TableRow>.generate(
-                  10,
-                  (index) => TableRow(children: [
-                    Container(
-                      color: Colors.white,
-                      height: 30,
-                      child: const Center(
-                        child: Text('Apple',
-                            style: TextStyle(
-                              color: kBlack,
-                            )),
-                      ),
-                    ),
-                    Container(
-                      color: Colors.white,
-                      height: 30,
-                      child: const Center(
-                        child: Text(
-                          '130.0',
-                          style: TextStyle(
-                            color: kBlack,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      color: Colors.white,
-                      height: 30,
-                      child: Center(
-                        child: Text(
-                          '${index + 1}',
-                          style: const TextStyle(
-                            color: kBlack,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      color: Colors.white,
-                      height: 30,
-                      child: const Center(
-                        child: Text(
-                          '130.0',
-                          style: TextStyle(
-                            color: kBlack,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                        color: Colors.white,
-                        height: 30,
-                        child: const Center(
-                            child: Icon(
-                          Icons.close,
-                          size: 18,
-                        )))
-                  ]),
-                ),
               ),
             ),
           ),
@@ -390,7 +464,15 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
               return itemMasterDB.getProductSuggestions(pattern);
             },
             itemBuilder: (context, ItemMasterModel suggestion) {
-              return ListTile(title: Text(suggestion.itemName));
+              return ListTile(
+                title: AutoSizeText(suggestion.itemName,
+                    maxLines: 1,
+                    minFontSize: 8,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12,
+                    )),
+              );
             },
             onSuggestionSelected: (ItemMasterModel suggestion) {
               final itemId = suggestion.id;
@@ -518,34 +600,28 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                         itemMasterDB.getProductByBrand(brand);
                                     setState(() {});
                                   } else {
-                                    log('hello');
                                     _selectedProducts.add(itemList[index]);
                                     log('length == ${_selectedProducts.length}');
-                                    for (var i = 0;
-                                        i < _selectedProducts.length;
-                                        i++) {
-                                      log('list == ' +
-                                          _selectedProducts[i].itemName);
-                                    }
+
+                                    final sales = _SaleSideWidgetState();
+                                    sales.callback(_selectedProducts);
                                   }
                                 },
                                 child: Card(
                                   elevation: 10,
                                   child: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 10.0, horizontal: 5.0),
+                                          vertical: 5.0, horizontal: 5.0),
                                       child: builderModel == null
                                           ? Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 Expanded(
+                                                  flex: 5,
                                                   child: AutoSizeText(
                                                     itemList[index].itemName ??
                                                         '',
                                                     textAlign: TextAlign.center,
-                                                    minFontSize: 10,
+                                                    minFontSize: 8,
                                                     softWrap: true,
                                                     style: const TextStyle(
                                                         fontSize: 14),
@@ -554,20 +630,28 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                                     maxLines: 2,
                                                   ),
                                                 ),
-                                                AutoSizeText(
-                                                  'Qty : ' +
-                                                      itemList[index]
-                                                          .openingStock,
-                                                  minFontSize: 8,
-                                                  style: const TextStyle(
-                                                      fontSize: 12),
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: AutoSizeText(
+                                                    'Qty : ' +
+                                                        itemList[index]
+                                                            .openingStock,
+                                                    minFontSize: 8,
+                                                    style: const TextStyle(
+                                                        fontSize: 12),
+                                                  ),
                                                 ),
-                                                AutoSizeText(
-                                                  '' + itemList[index].itemCost,
-                                                  minFontSize: 8,
-                                                  style: const TextStyle(
-                                                      fontSize: 12),
-                                                ),
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: AutoSizeText(
+                                                    '₹ ' +
+                                                        itemList[index]
+                                                            .itemCost,
+                                                    minFontSize: 8,
+                                                    style: const TextStyle(
+                                                        fontSize: 12),
+                                                  ),
+                                                )
                                               ],
                                             )
                                           : Column(
@@ -585,13 +669,33 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                                                   .brand
                                                               : '',
                                                   textAlign: TextAlign.center,
-                                                  minFontSize: 14,
+                                                  minFontSize: 6,
                                                   softWrap: true,
                                                   style: const TextStyle(
-                                                      fontSize: 16),
+                                                      fontSize: 12),
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  maxLines: 2,
+                                                  maxLines: builderModel == 0 &&
+                                                          itemList[index]
+                                                              .category
+                                                              .toString()
+                                                              .contains(' ')
+                                                      ? 2
+                                                      : builderModel == 1 &&
+                                                              itemList[index]
+                                                                  .subCategory
+                                                                  .toString()
+                                                                  .contains(' ')
+                                                          ? 2
+                                                          : builderModel == 2 &&
+                                                                  itemList[
+                                                                          index]
+                                                                      .brand
+                                                                      .toString()
+                                                                      .contains(
+                                                                          ' ')
+                                                              ? 2
+                                                              : 1,
                                                 ),
                                               ],
                                             )),
