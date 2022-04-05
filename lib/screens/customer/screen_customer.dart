@@ -389,12 +389,13 @@ class _CustomerScreenState extends State<CustomerScreen> {
     addressArabic = _addressArabicController.text;
     city = _cityController.text;
     cityArabic = _cityArabicController.text;
-    state = _stateArabicController.text;
+    state = _stateController.text;
     stateArabic = _stateArabicController.text;
     country = _countryController.text;
     countryArabic = _countryArabicController.text;
     poBox = _poBoxController.text;
-
+    log(state);
+    log(stateArabic);
     final _formState = _formKey.currentState!;
 
     if (_formState.validate()) {
