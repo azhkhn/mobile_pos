@@ -1,7 +1,6 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
 import 'dart:developer';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -13,7 +12,6 @@ import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/payment_buttons_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/price_section_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
-
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
 import '../../../widgets/gesture_dismissible_widget/dismissible_widget.dart';
@@ -23,25 +21,40 @@ class SaleSideWidget extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  // //==================== Singleton Instance ====================
+  // static final SaleSideWidget instance = SaleSideWidget._internal();
+  // factory SaleSideWidget._internal() {
+  //   return instance;
+  // }
+
   //For retrieving selected Products (instead of State-Management)
   callback(List<ItemMasterModel> selectedProducts) {
     log('SaleSideWidget() => called!');
-    _selectedProducts.value = selectedProducts;
-    for (var i = 0; i < _selectedProducts.value.length; i++) {
-      _subTotalNotifier.value.add(_selectedProducts.value[i].itemCost);
+
+    _selectedProductsNotifier.value = selectedProducts;
+    totalItemsNotifier.value = _selectedProductsNotifier.value.length;
+
+    //adding subtotals to _subTotalNotfier from Selected Products
+    for (var i = 0; i < _selectedProductsNotifier.value.length; i++) {
+      _subTotalNotifier.value.add(_selectedProductsNotifier.value[i].itemCost);
       log('subotal == ' + _subTotalNotifier.value[i]);
     }
-    _selectedProducts.notifyListeners();
+    _subTotalNotifier.notifyListeners();
+    _selectedProductsNotifier.notifyListeners();
+    getTotalAmount();
   }
 
-  //==================== ValueNotifiers ====================
-  static final ValueNotifier<List<ItemMasterModel>> _selectedProducts =
+  //==================== Value Notifiers ====================
+  static final ValueNotifier<List<ItemMasterModel>> _selectedProductsNotifier =
       ValueNotifier([]);
 
   static final ValueNotifier<List<String>> _subTotalNotifier =
       ValueNotifier([]);
 
-  static final ValueNotifier<int?> _customerId = ValueNotifier(null);
+  static final ValueNotifier<int?> _customerIdNotifier = ValueNotifier(null);
+  static final ValueNotifier<num> totalItemsNotifier = ValueNotifier(0);
+  static final ValueNotifier<num> totalQuantityNotifier = ValueNotifier(0);
+  static final ValueNotifier<num> totalAmountNotifier = ValueNotifier(0);
 
   //==================== TextEditing Controllers ====================
   static final _customerController = TextEditingController();
@@ -52,11 +65,13 @@ class SaleSideWidget extends StatelessWidget {
     Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
-        _selectedProducts.value.clear();
+        _selectedProductsNotifier.value.clear();
         _subTotalNotifier.value.clear();
         _customerController.clear();
         _quantityController.clear();
-        _customerId.value = null;
+        totalItemsNotifier.value = 0;
+        totalQuantityNotifier.value = 0;
+        _customerIdNotifier.value = null;
         return true;
       },
       child: SizedBox(
@@ -88,7 +103,7 @@ class SaleSideWidget extends StatelessWidget {
                             child: InkWell(
                               child: const Icon(Icons.clear),
                               onTap: () {
-                                _customerId.value = null;
+                                _customerIdNotifier.value = null;
                                 _customerController.clear();
                               },
                             ),
@@ -117,7 +132,7 @@ class SaleSideWidget extends StatelessWidget {
                     },
                     onSuggestionSelected: (CustomerModel suggestion) {
                       _customerController.text = suggestion.customer;
-                      _customerId.value = suggestion.id;
+                      _customerIdNotifier.value = suggestion.id;
                       log(suggestion.company);
                     },
                   ),
@@ -130,8 +145,8 @@ class SaleSideWidget extends StatelessWidget {
                   child: IconButton(
                       color: kBlack,
                       onPressed: () {
-                        if (_customerId.value != null) {
-                          log('$_customerId');
+                        if (_customerIdNotifier.value != null) {
+                          log('$_customerIdNotifier');
 
                           showModalBottomSheet(
                               context: context,
@@ -143,7 +158,7 @@ class SaleSideWidget extends StatelessWidget {
                               builder: (context) => DismissibleWidget(
                                     context: context,
                                     child: CustomBottomSheetWidget(
-                                        customerId: _customerId.value),
+                                        customerId: _customerIdNotifier.value),
                                   ));
                         } else {
                           showSnackBar(
@@ -178,7 +193,7 @@ class SaleSideWidget extends StatelessWidget {
             Expanded(
               child: SingleChildScrollView(
                 child: ValueListenableBuilder(
-                  valueListenable: _selectedProducts,
+                  valueListenable: _selectedProductsNotifier,
                   builder:
                       (context, List<ItemMasterModel> selectedProducts, child) {
                     return Table(
@@ -195,6 +210,7 @@ class SaleSideWidget extends StatelessWidget {
                         (index) {
                           _quantityController
                               .add(TextEditingController(text: '1'));
+                          getTotalQuantity();
 
                           return TableRow(children: [
                             Container(
@@ -251,16 +267,9 @@ class SaleSideWidget extends StatelessWidget {
                                   final qty = num.tryParse(value);
                                   if (qty != null) {
                                     log('$qty');
-                                    final cost = num.tryParse(
-                                        selectedProducts[index]
-                                            .itemCost
-                                            .replaceAll(RegExp(r'[^0-9]'), ''));
-                                    log('cost =  $cost');
-                                    final subTotal = cost! * qty;
-                                    log('$subTotal');
-                                    _subTotalNotifier.value[index] =
-                                        '$subTotal';
-                                    _subTotalNotifier.notifyListeners();
+                                    getSubTotal(selectedProducts, index, qty);
+                                    getTotalQuantity();
+                                    getTotalAmount();
                                   }
                                 },
                               ),
@@ -294,7 +303,10 @@ class SaleSideWidget extends StatelessWidget {
                                     _subTotalNotifier.value.removeAt(index);
                                     _quantityController.removeAt(index);
                                     _subTotalNotifier.notifyListeners();
-                                    _selectedProducts.notifyListeners();
+                                    _selectedProductsNotifier.notifyListeners();
+                                    totalItemsNotifier.value -= 1;
+                                    getTotalQuantity();
+                                    getTotalAmount();
                                   },
                                   icon: const Icon(
                                     Icons.close,
@@ -320,5 +332,41 @@ class SaleSideWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  //==================== Get SubTotal Amount ====================
+  void getSubTotal(List<ItemMasterModel> selectedProducts, int index, num qty) {
+    final cost = num.tryParse(
+        selectedProducts[index].itemCost.replaceAll(RegExp(r'[^0-9]'), ''));
+
+    final subTotal = cost! * qty;
+    _subTotalNotifier.value[index] = '$subTotal';
+    _subTotalNotifier.notifyListeners();
+  }
+
+  //==================== Get Total Quantity ====================
+  void getTotalQuantity() async {
+    num? _totalQuantiy = 0;
+
+    for (var i = 0; i < _selectedProductsNotifier.value.length; i++) {
+      _totalQuantiy =
+          _totalQuantiy! + num.tryParse(_quantityController[i].value.text)!;
+    }
+    log('$_totalQuantiy');
+    await Future.delayed(const Duration(milliseconds: 0));
+    totalQuantityNotifier.value = _totalQuantiy!;
+  }
+
+  //==================== Get Total Amount ====================
+  void getTotalAmount() {
+    num? _totalAmount = 0;
+    if (_subTotalNotifier.value.isEmpty) totalAmountNotifier.value = 0;
+    for (var i = 0; i < _selectedProductsNotifier.value.length; i++) {
+      log(_subTotalNotifier.value[i]);
+      _totalAmount = _totalAmount! +
+          num.tryParse(
+              _subTotalNotifier.value[i].replaceAll(RegExp(r'[^0-9]'), ''))!;
+      totalAmountNotifier.value = _totalAmount;
+    }
   }
 }
