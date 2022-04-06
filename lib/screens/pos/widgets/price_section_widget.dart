@@ -4,17 +4,16 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 
+import '../../../core/constant/converters.dart';
+
 class PriceSectionWidget extends StatelessWidget {
   const PriceSectionWidget({
     Key? key,
-    required Size screenSize,
-  })  : _screenSize = screenSize,
-        super(key: key);
-
-  final Size _screenSize;
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Size _screenSize = MediaQuery.of(context).size;
     return Container(
       height: _screenSize.width / 20,
       color: kWhite,
@@ -59,13 +58,16 @@ class PriceSectionWidget extends StatelessWidget {
                               valueListenable:
                                   SaleSideWidget.totalQuantityNotifier,
                               builder: (context, totalQuantity, child) {
-                                return AutoSizeText(
-                                  '($totalQuantity)',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10),
-                                  minFontSize: 8,
+                                return Flexible(
+                                  child: AutoSizeText(
+                                    '($totalQuantity)',
+                                    softWrap: false,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 10),
+                                    minFontSize: 8,
+                                  ),
                                 );
                               },
                             ),
@@ -91,7 +93,9 @@ class PriceSectionWidget extends StatelessWidget {
                           valueListenable: SaleSideWidget.totalAmountNotifier,
                           builder: (context, totalAmount, child) {
                             return AutoSizeText(
-                              '$totalAmount',
+                              totalAmount == 0
+                                  ? '0'
+                                  : Converter.roundNumber.format(totalAmount),
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 10),
@@ -134,20 +138,27 @@ class PriceSectionWidget extends StatelessWidget {
                 Expanded(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      AutoSizeText(
+                    children: [
+                      const AutoSizeText(
                         'VAT',
                         style: TextStyle(fontSize: 10),
                         minFontSize: 8,
                       ),
                       kWidth5,
                       Flexible(
-                        child: AutoSizeText(
-                          '35.31',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 10),
-                          minFontSize: 8,
+                        child: ValueListenableBuilder(
+                          valueListenable: SaleSideWidget.totalVatNotifier,
+                          builder: (context, totalVAT, child) {
+                            return AutoSizeText(
+                              totalVAT == 0
+                                  ? '0'
+                                  : Converter.roundNumber.format(totalVAT),
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 10),
+                              minFontSize: 8,
+                            );
+                          },
                         ),
                       )
                     ],

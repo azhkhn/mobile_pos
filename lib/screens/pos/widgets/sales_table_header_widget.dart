@@ -24,7 +24,7 @@ class SalesTableHeaderWidget extends StatelessWidget {
             color: Colors.blue,
             height: 30,
             alignment: Alignment.center,
-            child: const AutoSizeText('Product',
+            child: const AutoSizeText('Items',
                 minFontSize: 8,
                 maxFontSize: 20,
                 style: TextStyle(

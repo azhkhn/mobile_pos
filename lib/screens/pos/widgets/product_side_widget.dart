@@ -1,10 +1,10 @@
-import 'dart:developer';
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
+import 'dart:developer';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
-
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
 import '../../../db/db_functions/brand_database/brand_database.dart';
@@ -41,8 +41,6 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
   //========== TextEditing Controllers ==========
   final _productController = TextEditingController();
-
-  final List<ItemMasterModel> _selectedProducts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +179,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                     } else {
                       itemList = [];
                     }
-                    log('${itemList.length}');
+                    log('Total Products == ${itemList.length}');
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
                         child: CircularProgressIndicator(),
@@ -225,11 +223,32 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                         itemMasterDB.getProductByBrand(brand);
                                     setState(() {});
                                   } else {
-                                    _selectedProducts.add(itemList[index]);
-                                    log('length == ${_selectedProducts.length}');
+                                    final vatMethod = itemList[index].vatMethod;
+                                    log('VAT Method = ' + vatMethod);
 
-                                    const sales = SaleSideWidget();
-                                    sales.callback(_selectedProducts);
+                                    SaleSideWidget
+                                        .selectedProductsNotifier.value
+                                        .add(itemList[index]);
+                                    SaleSideWidget.selectedProductsNotifier
+                                        .notifyListeners();
+
+                                    SaleSideWidget.quantityNotifier.value
+                                        .add(TextEditingController(text: '1'));
+
+                                    SaleSideWidget.totalItemsNotifier.value++;
+
+                                    SaleSideWidget.subTotalNotifier.value.add(
+                                        vatMethod == 'Inclusive'
+                                            ? '${const SaleSideWidget().getExclusiveAmount(itemList[index])}'
+                                            : itemList[index].itemCost);
+
+                                    SaleSideWidget
+                                        .totalQuantityNotifier.value++;
+
+                                    const SaleSideWidget().getTotalAmount();
+
+                                    const SaleSideWidget().getTotalVAT();
+                                    const SaleSideWidget().getTotalPayable();
                                   }
                                 },
                                 child: Card(

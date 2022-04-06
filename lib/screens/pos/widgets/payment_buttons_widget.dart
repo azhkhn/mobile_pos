@@ -1,18 +1,19 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
+
+import '../../../core/constant/converters.dart';
+import '../../../core/constant/sizes.dart';
 
 class PaymentButtonsWidget extends StatelessWidget {
   const PaymentButtonsWidget({
     Key? key,
-    required Size screenSize,
-  })  : _screenSize = screenSize,
-        super(key: key);
-
-  final Size _screenSize;
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Size _screenSize = MediaQuery.of(context).size;
     return Column(
       children: [
         Container(
@@ -21,13 +22,33 @@ class PaymentButtonsWidget extends StatelessWidget {
           color: Colors.blueGrey,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              AutoSizeText('Total Payable',
-                  minFontSize: 10,
-                  style: TextStyle(color: kWhite, fontWeight: FontWeight.bold)),
-              AutoSizeText('270.71',
-                  minFontSize: 10,
-                  style: TextStyle(color: kWhite, fontWeight: FontWeight.bold))
+            children: [
+              const AutoSizeText(
+                'Total Payable',
+                style: TextStyle(
+                    color: kWhite, fontWeight: FontWeight.bold, fontSize: 12),
+                minFontSize: 8,
+              ),
+              kWidth5,
+              Flexible(
+                child: ValueListenableBuilder(
+                  valueListenable: SaleSideWidget.totalPayableNotifier,
+                  builder: (context, totalPayable, child) {
+                    return AutoSizeText(
+                      totalPayable == 0
+                          ? '0'
+                          : Converter.roundNumber.format(totalPayable),
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: kWhite,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                      minFontSize: 8,
+                    );
+                  },
+                ),
+              )
             ],
           ),
         ),
@@ -45,9 +66,11 @@ class PaymentButtonsWidget extends StatelessWidget {
                   child: const Center(
                     child: AutoSizeText(
                       'Credit Payment',
-                      minFontSize: 10,
-                      style:
-                          TextStyle(color: kWhite, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: kWhite,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12),
+                      minFontSize: 8,
                     ),
                   ),
                 ),
@@ -63,9 +86,11 @@ class PaymentButtonsWidget extends StatelessWidget {
                   child: const Center(
                     child: AutoSizeText(
                       'Partial Payment',
-                      minFontSize: 10,
-                      style:
-                          TextStyle(color: kWhite, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: kWhite,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12),
+                      minFontSize: 8,
                     ),
                   ),
                 ),
@@ -87,9 +112,11 @@ class PaymentButtonsWidget extends StatelessWidget {
                   child: const Center(
                     child: AutoSizeText(
                       'Cancel',
-                      minFontSize: 10,
-                      style:
-                          TextStyle(color: kWhite, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: kWhite,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12),
+                      minFontSize: 8,
                     ),
                   ),
                 ),
@@ -105,9 +132,11 @@ class PaymentButtonsWidget extends StatelessWidget {
                   child: const Center(
                     child: AutoSizeText(
                       'Full Payment',
-                      minFontSize: 10,
-                      style:
-                          TextStyle(color: kWhite, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: kWhite,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12),
+                      minFontSize: 8,
                     ),
                   ),
                 ),

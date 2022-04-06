@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:shop_ez/core/constant/converters.dart';
 import 'package:shop_ez/db/db_functions/customer_database/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
@@ -21,56 +22,37 @@ class SaleSideWidget extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  // //==================== Singleton Instance ====================
-  // static final SaleSideWidget instance = SaleSideWidget._internal();
-  // factory SaleSideWidget._internal() {
-  //   return instance;
-  // }
-
-  //For retrieving selected Products (instead of State-Management)
-  callback(List<ItemMasterModel> selectedProducts) {
-    log('SaleSideWidget() => called!');
-
-    _selectedProductsNotifier.value = selectedProducts;
-    totalItemsNotifier.value = _selectedProductsNotifier.value.length;
-
-    //adding subtotals to _subTotalNotfier from Selected Products
-    for (var i = 0; i < _selectedProductsNotifier.value.length; i++) {
-      _subTotalNotifier.value.add(_selectedProductsNotifier.value[i].itemCost);
-      log('subotal == ' + _subTotalNotifier.value[i]);
-    }
-    _subTotalNotifier.notifyListeners();
-    _selectedProductsNotifier.notifyListeners();
-    getTotalAmount();
-  }
-
   //==================== Value Notifiers ====================
-  static final ValueNotifier<List<ItemMasterModel>> _selectedProductsNotifier =
+  static final ValueNotifier<List<ItemMasterModel>> selectedProductsNotifier =
       ValueNotifier([]);
-
-  static final ValueNotifier<List<String>> _subTotalNotifier =
+  static final ValueNotifier<List<String>> subTotalNotifier = ValueNotifier([]);
+  static final ValueNotifier<List<TextEditingController>> quantityNotifier =
       ValueNotifier([]);
 
   static final ValueNotifier<int?> _customerIdNotifier = ValueNotifier(null);
   static final ValueNotifier<num> totalItemsNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalQuantityNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalAmountNotifier = ValueNotifier(0);
+  static final ValueNotifier<num> totalVatNotifier = ValueNotifier(0);
+  static final ValueNotifier<num> totalPayableNotifier = ValueNotifier(0);
 
   //==================== TextEditing Controllers ====================
   static final _customerController = TextEditingController();
-  static final List<TextEditingController> _quantityController = [];
 
   @override
   Widget build(BuildContext context) {
     Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
-        _selectedProductsNotifier.value.clear();
-        _subTotalNotifier.value.clear();
+        selectedProductsNotifier.value.clear();
+        subTotalNotifier.value.clear();
         _customerController.clear();
-        _quantityController.clear();
+        quantityNotifier.value.clear();
         totalItemsNotifier.value = 0;
         totalQuantityNotifier.value = 0;
+        totalAmountNotifier.value = 0;
+        totalVatNotifier.value = 0;
+        totalPayableNotifier.value = 0;
         _customerIdNotifier.value = null;
         return true;
       },
@@ -193,7 +175,7 @@ class SaleSideWidget extends StatelessWidget {
             Expanded(
               child: SingleChildScrollView(
                 child: ValueListenableBuilder(
-                  valueListenable: _selectedProductsNotifier,
+                  valueListenable: selectedProductsNotifier,
                   builder:
                       (context, List<ItemMasterModel> selectedProducts, child) {
                     return Table(
@@ -208,10 +190,6 @@ class SaleSideWidget extends StatelessWidget {
                       children: List<TableRow>.generate(
                         selectedProducts.length,
                         (index) {
-                          _quantityController
-                              .add(TextEditingController(text: '1'));
-                          getTotalQuantity();
-
                           return TableRow(children: [
                             Container(
                               padding:
@@ -236,7 +214,11 @@ class SaleSideWidget extends StatelessWidget {
                               height: 30,
                               alignment: Alignment.center,
                               child: AutoSizeText(
-                                selectedProducts[index].itemCost,
+                                selectedProducts[index].vatMethod == 'Inclusive'
+                                    ? Converter.roundNumber.format(
+                                        getExclusiveAmount(
+                                            selectedProducts[index]))
+                                    : selectedProducts[index].itemCost,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(fontSize: 9),
@@ -251,7 +233,7 @@ class SaleSideWidget extends StatelessWidget {
                               height: 30,
                               alignment: Alignment.topCenter,
                               child: TextFormField(
-                                controller: _quantityController[index],
+                                controller: quantityNotifier.value[index],
                                 keyboardType: TextInputType.number,
                                 textAlign: TextAlign.center,
                                 maxLines: 1,
@@ -270,6 +252,8 @@ class SaleSideWidget extends StatelessWidget {
                                     getSubTotal(selectedProducts, index, qty);
                                     getTotalQuantity();
                                     getTotalAmount();
+                                    getTotalVAT();
+                                    getTotalPayable();
                                   }
                                 },
                               ),
@@ -281,11 +265,15 @@ class SaleSideWidget extends StatelessWidget {
                                 height: 30,
                                 alignment: Alignment.center,
                                 child: ValueListenableBuilder(
-                                    valueListenable: _subTotalNotifier,
+                                    valueListenable: subTotalNotifier,
                                     builder: (context, List<String> subTotal,
                                         child) {
                                       return AutoSizeText(
-                                        subTotal[index],
+                                        selectedProducts[index].vatMethod ==
+                                                'Inclusive'
+                                            ? Converter.roundNumber.format(
+                                                num.tryParse(subTotal[index]))
+                                            : subTotal[index],
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(fontSize: 9),
@@ -300,13 +288,15 @@ class SaleSideWidget extends StatelessWidget {
                                 child: IconButton(
                                   onPressed: () {
                                     selectedProducts.removeAt(index);
-                                    _subTotalNotifier.value.removeAt(index);
-                                    _quantityController.removeAt(index);
-                                    _subTotalNotifier.notifyListeners();
-                                    _selectedProductsNotifier.notifyListeners();
+                                    subTotalNotifier.value.removeAt(index);
+                                    quantityNotifier.value.removeAt(index);
+                                    subTotalNotifier.notifyListeners();
+                                    selectedProductsNotifier.notifyListeners();
                                     totalItemsNotifier.value -= 1;
                                     getTotalQuantity();
                                     getTotalAmount();
+                                    getTotalVAT();
+                                    getTotalPayable();
                                   },
                                   icon: const Icon(
                                     Icons.close,
@@ -324,10 +314,10 @@ class SaleSideWidget extends StatelessWidget {
             kHeight5,
 
             //==================== Price Sections ====================
-            PriceSectionWidget(screenSize: _screenSize),
+            const PriceSectionWidget(),
 
             //==================== Payment Buttons Widget ====================
-            PaymentButtonsWidget(screenSize: _screenSize)
+            const PaymentButtonsWidget()
           ],
         ),
       ),
@@ -337,22 +327,30 @@ class SaleSideWidget extends StatelessWidget {
   //==================== Get SubTotal Amount ====================
   void getSubTotal(List<ItemMasterModel> selectedProducts, int index, num qty) {
     final cost = num.tryParse(
-        selectedProducts[index].itemCost.replaceAll(RegExp(r'[^0-9]'), ''));
+        selectedProducts[index].itemCost.replaceAll(RegExp(r','), ''));
+    if (selectedProducts[index].vatMethod == 'Inclusive') {
+      final _exclusiveCost = getExclusiveAmount(selectedProducts[index]);
+      final _subTotal = _exclusiveCost * qty;
+      log('$_subTotal');
+      subTotalNotifier.value[index] = '$_subTotal';
+      log('inclusive');
+    } else {
+      final _subTotal = cost! * qty;
+      subTotalNotifier.value[index] = '$_subTotal';
+      log('exclusive');
+    }
 
-    final subTotal = cost! * qty;
-    _subTotalNotifier.value[index] = '$subTotal';
-    _subTotalNotifier.notifyListeners();
+    subTotalNotifier.notifyListeners();
   }
 
   //==================== Get Total Quantity ====================
   void getTotalQuantity() async {
     num? _totalQuantiy = 0;
 
-    for (var i = 0; i < _selectedProductsNotifier.value.length; i++) {
+    for (var i = 0; i < selectedProductsNotifier.value.length; i++) {
       _totalQuantiy =
-          _totalQuantiy! + num.tryParse(_quantityController[i].value.text)!;
+          _totalQuantiy! + num.tryParse(quantityNotifier.value[i].value.text)!;
     }
-    log('$_totalQuantiy');
     await Future.delayed(const Duration(milliseconds: 0));
     totalQuantityNotifier.value = _totalQuantiy!;
   }
@@ -360,13 +358,71 @@ class SaleSideWidget extends StatelessWidget {
   //==================== Get Total Amount ====================
   void getTotalAmount() {
     num? _totalAmount = 0;
-    if (_subTotalNotifier.value.isEmpty) totalAmountNotifier.value = 0;
-    for (var i = 0; i < _selectedProductsNotifier.value.length; i++) {
-      log(_subTotalNotifier.value[i]);
-      _totalAmount = _totalAmount! +
-          num.tryParse(
-              _subTotalNotifier.value[i].replaceAll(RegExp(r'[^0-9]'), ''))!;
-      totalAmountNotifier.value = _totalAmount;
+    num? subTotal = 0;
+    if (subTotalNotifier.value.isEmpty) {
+      totalAmountNotifier.value = 0;
+    } else {
+      for (var i = 0; i < subTotalNotifier.value.length; i++) {
+        if (selectedProductsNotifier.value[i].vatMethod == 'Inclusive') {
+          subTotal = num.tryParse(subTotalNotifier.value[i]);
+        } else {
+          subTotal = num.tryParse(
+              subTotalNotifier.value[i].replaceAll(RegExp(r','), ''));
+        }
+
+        log('subtotal ==  $subTotal');
+
+        _totalAmount = _totalAmount! + subTotal!;
+        totalAmountNotifier.value = _totalAmount;
+      }
     }
+  }
+
+  //==================== Get Total VAT ====================
+  void getTotalVAT() {
+    num _totalVAT = 0;
+    num? _subTotal = 0;
+    if (subTotalNotifier.value.isEmpty) {
+      totalVatNotifier.value = 0;
+    } else {
+      for (var i = 0; i < subTotalNotifier.value.length; i++) {
+        if (selectedProductsNotifier.value[i].vatMethod == 'Inclusive') {
+          log('Inclusive VAT Calculation...');
+          _subTotal = num.tryParse(
+              subTotalNotifier.value[i].replaceAll(RegExp(r','), ''));
+        } else {
+          log('Exclusive VAT Calculation...');
+          _subTotal = num.tryParse(
+              subTotalNotifier.value[i].replaceAll(RegExp(r','), ''));
+        }
+
+        _totalVAT += _subTotal! * 15 / 100;
+        log('_totalVAT == ${_subTotal * 15 / 100}');
+      }
+
+      totalVatNotifier.value = _totalVAT;
+    }
+  }
+
+  //==================== Calculate Exclusive Amount from Inclusive Amount ====================
+  num getExclusiveAmount(ItemMasterModel item) {
+    num _exclusiveAmount = 0;
+
+    final _inclusiveAmount =
+        num.tryParse(item.itemCost.replaceAll(RegExp(r','), ''));
+
+    _exclusiveAmount = _inclusiveAmount! * 100 / 115;
+
+    log('VAT == ' '${_inclusiveAmount * 15 / 115}');
+    // log('Exclusive == ' '${_inclusiveAmount * 100 / 115}');
+    // log('Inclusive == ' '${_inclusiveAmount * 115 / 100}');
+
+    return _exclusiveAmount;
+  }
+
+//==================== Get Total VAT ====================
+  void getTotalPayable() {
+    totalPayableNotifier.value =
+        totalAmountNotifier.value + totalVatNotifier.value;
   }
 }

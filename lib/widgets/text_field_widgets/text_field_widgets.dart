@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 
 class TextFeildWidget extends StatelessWidget {
@@ -7,6 +8,7 @@ class TextFeildWidget extends StatelessWidget {
     required this.labelText,
     this.hintText,
     this.textInputType,
+    this.inputFormatters,
     this.textDirection,
     this.maxLines,
     this.couterText,
@@ -27,6 +29,7 @@ class TextFeildWidget extends StatelessWidget {
   final String labelText;
   final String? hintText;
   final TextInputType? textInputType;
+  final List<TextInputFormatter>? inputFormatters;
   final TextDirection? textDirection;
   final int? maxLines;
   final String? couterText;
@@ -58,6 +61,7 @@ class TextFeildWidget extends StatelessWidget {
         hintText: hintText,
       ),
       keyboardType: textInputType ?? TextInputType.text,
+      inputFormatters: inputFormatters,
       textDirection: textDirection ?? TextDirection.ltr,
       maxLines: maxLines ?? 1,
       autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,

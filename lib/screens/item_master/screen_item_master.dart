@@ -228,7 +228,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                   //========== Item Cost ==========
                   TextFeildWidget(
                     labelText: 'Item Cost *',
-                    textInputType: TextInputType.text,
+                    textInputType: TextInputType.number,
                     controller: _itemCostController,
                     focusNode: itemCostFocusNode,
                     validator: (value) {
@@ -243,7 +243,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                   //========== Selling Price ==========
                   TextFeildWidget(
                     labelText: 'Selling Price *',
-                    textInputType: TextInputType.text,
+                    textInputType: TextInputType.number,
                     controller: _sellingPriceController,
                     focusNode: sellingPriceFocusNode,
                     validator: (value) {
@@ -258,7 +258,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                   //========== Secondary Selling Price ==========
                   TextFeildWidget(
                     labelText: 'Secondary Selling Price',
-                    textInputType: TextInputType.text,
+                    textInputType: TextInputType.number,
                     controller: _secondarySellingPriceController,
                   ),
                   kHeight10,
@@ -316,7 +316,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                   //========== Opening Stock ==========
                   TextFeildWidget(
                     labelText: 'Opening Stock',
-                    textInputType: TextInputType.text,
+                    textInputType: TextInputType.number,
                     controller: _openingStockController,
                   ),
                   kHeight10,
