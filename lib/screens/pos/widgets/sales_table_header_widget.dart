@@ -2,6 +2,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 
+import '../../../core/utils/device/device.dart';
+
 class SalesTableHeaderWidget extends StatelessWidget {
   const SalesTableHeaderWidget({
     Key? key,
@@ -24,53 +26,65 @@ class SalesTableHeaderWidget extends StatelessWidget {
             color: Colors.blue,
             height: 30,
             alignment: Alignment.center,
-            child: const AutoSizeText('Items',
-                minFontSize: 8,
-                maxFontSize: 20,
-                style: TextStyle(
+            child: AutoSizeText(
+              'Items',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  fontSize: DeviceUtil.isTablet ? 13 : 12,
                   color: kWhite,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                )),
+                  fontWeight: FontWeight.bold),
+              minFontSize: 12,
+              maxFontSize: 13,
+            ),
           ),
           Container(
             color: Colors.blue,
             height: 30,
             alignment: Alignment.center,
-            child: const AutoSizeText('Price',
-                minFontSize: 8,
-                maxFontSize: 20,
-                style: TextStyle(
+            child: AutoSizeText(
+              'Price',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  fontSize: DeviceUtil.isTablet ? 13 : 12,
                   color: kWhite,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                )),
+                  fontWeight: FontWeight.bold),
+              minFontSize: 12,
+              maxFontSize: 13,
+            ),
           ),
           Container(
             color: Colors.blue,
             height: 30,
             alignment: Alignment.center,
-            child: const AutoSizeText('Qty',
-                minFontSize: 8,
-                maxFontSize: 20,
-                style: TextStyle(
+            child: AutoSizeText(
+              'Qty',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  fontSize: DeviceUtil.isTablet ? 13 : 12,
                   color: kWhite,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                )),
+                  fontWeight: FontWeight.bold),
+              minFontSize: 12,
+              maxFontSize: 13,
+            ),
           ),
           Container(
             color: Colors.blue,
             height: 30,
             alignment: Alignment.center,
-            child: const AutoSizeText('Subtotal',
-                minFontSize: 8,
-                maxFontSize: 20,
-                style: TextStyle(
+            child: AutoSizeText(
+              'Subtotal',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  fontSize: DeviceUtil.isTablet ? 13 : 12,
                   color: kWhite,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                )),
+                  fontWeight: FontWeight.bold),
+              minFontSize: 12,
+              maxFontSize: 13,
+            ),
           ),
           Container(
               color: Colors.blue,

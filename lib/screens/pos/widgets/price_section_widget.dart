@@ -4,7 +4,8 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 
-import '../../../core/constant/converters.dart';
+import '../../../core/utils/device/device.dart';
+import '../../../core/utils/text/converters.dart';
 
 class PriceSectionWidget extends StatelessWidget {
   const PriceSectionWidget({
@@ -13,7 +14,8 @@ class PriceSectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size _screenSize = MediaQuery.of(context).size;
+    final bool isTablet = DeviceUtil.isTablet;
+    final Size _screenSize = MediaQuery.of(context).size;
     return Container(
       height: _screenSize.width / 20,
       color: kWhite,
@@ -30,10 +32,10 @@ class PriceSectionWidget extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const AutoSizeText(
+                      AutoSizeText(
                         'items',
-                        style: TextStyle(fontSize: 10),
-                        minFontSize: 8,
+                        style: TextStyle(fontSize: isTablet ? 12 : 10),
+                        minFontSize: 10,
                       ),
                       kWidth5,
                       Flexible(
@@ -47,10 +49,10 @@ class PriceSectionWidget extends StatelessWidget {
                                 return AutoSizeText(
                                   '$totalItems',
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10),
-                                  minFontSize: 8,
+                                  style: TextStyle(
+                                      fontSize: DeviceUtil.isTablet ? 12 : 10,
+                                      fontWeight: FontWeight.bold),
+                                  minFontSize: 10,
                                 );
                               },
                             ),
@@ -63,10 +65,10 @@ class PriceSectionWidget extends StatelessWidget {
                                     '($totalQuantity)',
                                     softWrap: false,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 10),
-                                    minFontSize: 8,
+                                    style: TextStyle(
+                                        fontSize: isTablet ? 12 : 10,
+                                        fontWeight: FontWeight.bold),
+                                    minFontSize: 10,
                                   ),
                                 );
                               },
@@ -82,10 +84,10 @@ class PriceSectionWidget extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const AutoSizeText(
+                      AutoSizeText(
                         'Total',
-                        style: TextStyle(fontSize: 10),
-                        minFontSize: 8,
+                        style: TextStyle(fontSize: isTablet ? 12 : 10),
+                        minFontSize: 10,
                       ),
                       kWidth5,
                       Flexible(
@@ -95,11 +97,12 @@ class PriceSectionWidget extends StatelessWidget {
                             return AutoSizeText(
                               totalAmount == 0
                                   ? '0'
-                                  : Converter.roundNumber.format(totalAmount),
+                                  : Converter.currency.format(totalAmount),
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 10),
-                              minFontSize: 8,
+                              style: TextStyle(
+                                  fontSize: isTablet ? 12 : 10,
+                                  fontWeight: FontWeight.bold),
+                              minFontSize: 10,
                             );
                           },
                         ),
@@ -115,11 +118,11 @@ class PriceSectionWidget extends StatelessWidget {
                 Expanded(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
+                    children: [
                       AutoSizeText(
                         'Discount',
-                        style: TextStyle(fontSize: 10),
-                        minFontSize: 8,
+                        style: TextStyle(fontSize: isTablet ? 12 : 10),
+                        minFontSize: 10,
                       ),
                       kWidth5,
                       Flexible(
@@ -127,8 +130,9 @@ class PriceSectionWidget extends StatelessWidget {
                           '(0)0.00',
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 10),
-                          minFontSize: 8,
+                              fontSize: isTablet ? 12 : 10,
+                              fontWeight: FontWeight.bold),
+                          minFontSize: 10,
                         ),
                       ),
                     ],
@@ -139,10 +143,10 @@ class PriceSectionWidget extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const AutoSizeText(
+                      AutoSizeText(
                         'VAT',
-                        style: TextStyle(fontSize: 10),
-                        minFontSize: 8,
+                        style: TextStyle(fontSize: isTablet ? 12 : 10),
+                        minFontSize: 10,
                       ),
                       kWidth5,
                       Flexible(
@@ -152,11 +156,12 @@ class PriceSectionWidget extends StatelessWidget {
                             return AutoSizeText(
                               totalVAT == 0
                                   ? '0'
-                                  : Converter.roundNumber.format(totalVAT),
+                                  : Converter.currency.format(totalVAT),
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 10),
-                              minFontSize: 8,
+                              style: TextStyle(
+                                  fontSize: isTablet ? 12 : 10,
+                                  fontWeight: FontWeight.bold),
+                              minFontSize: 10,
                             );
                           },
                         ),

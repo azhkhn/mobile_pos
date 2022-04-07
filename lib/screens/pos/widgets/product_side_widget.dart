@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
+import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
@@ -39,11 +41,15 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
   //========== MediaQuery Screen Size ==========
   late Size _screenSize;
 
+  //========== Device Type ==========
+  late bool isTablet;
+
   //========== TextEditing Controllers ==========
   final _productController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    isTablet = DeviceUtil.isTablet;
     _screenSize = MediaQuery.of(context).size;
     return SizedBox(
       width: _screenSize.width / 1.9,
@@ -88,13 +94,14 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
             },
             itemBuilder: (context, ItemMasterModel suggestion) {
               return ListTile(
-                title: AutoSizeText(suggestion.itemName,
-                    maxLines: 1,
-                    minFontSize: 8,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12,
-                    )),
+                title: AutoSizeText(
+                  suggestion.itemName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: isTablet ? 12 : 10),
+                  minFontSize: 10,
+                  maxFontSize: 12,
+                ),
               );
             },
             onSuggestionSelected: (ItemMasterModel suggestion) {
@@ -226,27 +233,17 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                     final vatMethod = itemList[index].vatMethod;
                                     log('VAT Method = ' + vatMethod);
 
-                                    SaleSideWidget
-                                        .selectedProductsNotifier.value
-                                        .add(itemList[index]);
+//===================================== if the Product Already Added ====================================
+                                    isProductAlreadyAdded(itemList, index);
+//=======================================================================================================
+
                                     SaleSideWidget.selectedProductsNotifier
                                         .notifyListeners();
-
-                                    SaleSideWidget.quantityNotifier.value
-                                        .add(TextEditingController(text: '1'));
-
-                                    SaleSideWidget.totalItemsNotifier.value++;
-
-                                    SaleSideWidget.subTotalNotifier.value.add(
-                                        vatMethod == 'Inclusive'
-                                            ? '${const SaleSideWidget().getExclusiveAmount(itemList[index])}'
-                                            : itemList[index].itemCost);
 
                                     SaleSideWidget
                                         .totalQuantityNotifier.value++;
 
                                     const SaleSideWidget().getTotalAmount();
-
                                     const SaleSideWidget().getTotalVAT();
                                     const SaleSideWidget().getTotalPayable();
                                   }
@@ -266,42 +263,45 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                                         '',
                                                     textAlign: TextAlign.center,
                                                     softWrap: true,
-                                                    style: const TextStyle(
-                                                        fontSize: 8),
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                            isTablet ? 10 : 7),
                                                     overflow:
                                                         TextOverflow.ellipsis,
-                                                    minFontSize: 8,
-                                                    maxFontSize: 10,
                                                     maxLines: 2,
+                                                    minFontSize: 7,
+                                                    maxFontSize: 10,
                                                   ),
                                                 ),
                                                 const Spacer(),
                                                 Expanded(
                                                   flex: 2,
-                                                  child: FittedBox(
-                                                    child: Text(
-                                                      'Qty : ' +
-                                                          itemList[index]
-                                                              .openingStock,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: const TextStyle(
-                                                          fontSize: 8),
-                                                      maxLines: 1,
-                                                    ),
+                                                  child: AutoSizeText(
+                                                    'Qty : ' +
+                                                        itemList[index]
+                                                            .openingStock,
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                            isTablet ? 10 : 7),
+                                                    maxLines: 1,
+                                                    minFontSize: 7,
+                                                    maxFontSize: 10,
                                                   ),
                                                 ),
                                                 Expanded(
                                                   flex: 2,
-                                                  child: FittedBox(
-                                                    child: Text(
-                                                      '₹ ' +
-                                                          itemList[index]
-                                                              .itemCost,
-                                                      style: const TextStyle(
-                                                          fontSize: 8),
-                                                      maxLines: 1,
-                                                    ),
+                                                  child: AutoSizeText(
+                                                    Converter.currency.format(
+                                                        num.tryParse(
+                                                            itemList[index]
+                                                                .itemCost)),
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                            isTablet ? 10 : 7),
+                                                    maxLines: 1,
+                                                    minFontSize: 7,
+                                                    maxFontSize: 10,
                                                   ),
                                                 )
                                               ],
@@ -321,10 +321,12 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                                                   .brand
                                                               : '',
                                                   textAlign: TextAlign.center,
-                                                  minFontSize: 8,
                                                   softWrap: true,
-                                                  style: const TextStyle(
-                                                      fontSize: 10),
+                                                  style: TextStyle(
+                                                      fontSize:
+                                                          isTablet ? 10 : 8),
+                                                  minFontSize: 8,
+                                                  maxFontSize: 10,
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   maxLines: builderModel == 0 &&
@@ -364,5 +366,41 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
         ],
       ),
     );
+  }
+
+// Checking if the product already added then Increasing the Quantity
+//====================================================================
+  void isProductAlreadyAdded(itemList, int index) {
+    final vatMethod = itemList[index].vatMethod;
+    log('VAT Method = ' + vatMethod);
+
+    for (var i = 0;
+        i < SaleSideWidget.selectedProductsNotifier.value.length;
+        i++) {
+      if (SaleSideWidget.selectedProductsNotifier.value[i].id ==
+          itemList[index].id) {
+        final _currentQty =
+            num.tryParse(SaleSideWidget.quantityNotifier.value[i].value.text);
+        log('Current Quantit == $_currentQty');
+
+        SaleSideWidget.quantityNotifier.value[i].text = '${_currentQty! + 1}';
+
+//==================== On Item Quantity Changed ====================
+        const SaleSideWidget().onItemQuantityChanged(
+            SaleSideWidget.quantityNotifier.value[i].text,
+            SaleSideWidget.selectedProductsNotifier.value,
+            i);
+        return;
+      }
+    }
+    SaleSideWidget.selectedProductsNotifier.value.add(itemList[index]);
+
+    SaleSideWidget.subTotalNotifier.value.add(vatMethod == 'Inclusive'
+        ? '${const SaleSideWidget().getExclusiveAmount(itemList[index])}'
+        : itemList[index].itemCost);
+
+    SaleSideWidget.quantityNotifier.value.add(TextEditingController(text: '1'));
+
+    SaleSideWidget.totalItemsNotifier.value++;
   }
 }

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/db/db_functions/brand_database/brand_database.dart';
 import 'package:shop_ez/db/db_functions/category_database/category_db.dart';
 import 'package:shop_ez/db/db_functions/item_master_database/item_master_database.dart';
@@ -229,6 +230,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                   TextFeildWidget(
                     labelText: 'Item Cost *',
                     textInputType: TextInputType.number,
+                    inputFormatters: Converter.digitsOnly,
                     controller: _itemCostController,
                     focusNode: itemCostFocusNode,
                     validator: (value) {
@@ -244,6 +246,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                   TextFeildWidget(
                     labelText: 'Selling Price *',
                     textInputType: TextInputType.number,
+                    inputFormatters: Converter.digitsOnly,
                     controller: _sellingPriceController,
                     focusNode: sellingPriceFocusNode,
                     validator: (value) {
@@ -259,6 +262,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                   TextFeildWidget(
                     labelText: 'Secondary Selling Price',
                     textInputType: TextInputType.number,
+                    inputFormatters: Converter.digitsOnly,
                     controller: _secondarySellingPriceController,
                   ),
                   kHeight10,
@@ -317,6 +321,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                   TextFeildWidget(
                     labelText: 'Opening Stock',
                     textInputType: TextInputType.number,
+                    inputFormatters: Converter.digitsOnly,
                     controller: _openingStockController,
                   ),
                   kHeight10,
@@ -354,6 +359,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                   TextFeildWidget(
                     labelText: 'Alert Quantity',
                     textInputType: TextInputType.text,
+                    inputFormatters: Converter.digitsOnly,
                     controller: _alertQuantityController,
                   ),
                   kHeight20,

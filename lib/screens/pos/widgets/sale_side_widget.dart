@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:shop_ez/core/constant/converters.dart';
+import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/db/db_functions/customer_database/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
@@ -15,6 +15,7 @@ import 'package:shop_ez/screens/pos/widgets/price_section_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
+import '../../../core/utils/device/device.dart';
 import '../../../widgets/gesture_dismissible_widget/dismissible_widget.dart';
 
 class SaleSideWidget extends StatelessWidget {
@@ -103,13 +104,15 @@ class SaleSideWidget extends StatelessWidget {
                     },
                     itemBuilder: (context, CustomerModel suggestion) {
                       return ListTile(
-                        title: AutoSizeText(suggestion.customer,
-                            maxLines: 1,
-                            minFontSize: 8,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 12,
-                            )),
+                        title: AutoSizeText(
+                          suggestion.customer,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize: DeviceUtil.isTablet ? 12 : 10),
+                          minFontSize: 10,
+                          maxFontSize: 12,
+                        ),
                       );
                     },
                     onSuggestionSelected: (CustomerModel suggestion) {
@@ -200,9 +203,10 @@ class SaleSideWidget extends StatelessWidget {
                               child: AutoSizeText(
                                 selectedProducts[index].itemName,
                                 softWrap: true,
-                                style: const TextStyle(fontSize: 9),
+                                style: TextStyle(
+                                    fontSize: DeviceUtil.isTablet ? 10 : 7),
                                 overflow: TextOverflow.ellipsis,
-                                minFontSize: 8,
+                                minFontSize: 7,
                                 maxFontSize: 10,
                                 maxLines: 2,
                               ),
@@ -215,14 +219,15 @@ class SaleSideWidget extends StatelessWidget {
                               alignment: Alignment.center,
                               child: AutoSizeText(
                                 selectedProducts[index].vatMethod == 'Inclusive'
-                                    ? Converter.roundNumber.format(
+                                    ? Converter.currency.format(
                                         getExclusiveAmount(
                                             selectedProducts[index]))
                                     : selectedProducts[index].itemCost,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 9),
-                                minFontSize: 8,
+                                style: TextStyle(
+                                    fontSize: DeviceUtil.isTablet ? 10 : 7),
+                                minFontSize: 7,
                                 maxFontSize: 10,
                               ),
                             ),
@@ -243,18 +248,12 @@ class SaleSideWidget extends StatelessWidget {
                                   contentPadding:
                                       EdgeInsets.symmetric(vertical: 10),
                                 ),
-                                style:
-                                    const TextStyle(fontSize: 9, color: kBlack),
+                                style: TextStyle(
+                                    fontSize: DeviceUtil.isTablet ? 10 : 7,
+                                    color: kBlack),
                                 onChanged: (value) {
-                                  final qty = num.tryParse(value);
-                                  if (qty != null) {
-                                    log('$qty');
-                                    getSubTotal(selectedProducts, index, qty);
-                                    getTotalQuantity();
-                                    getTotalAmount();
-                                    getTotalVAT();
-                                    getTotalPayable();
-                                  }
+                                  onItemQuantityChanged(
+                                      value, selectedProducts, index);
                                 },
                               ),
                             ),
@@ -271,13 +270,15 @@ class SaleSideWidget extends StatelessWidget {
                                       return AutoSizeText(
                                         selectedProducts[index].vatMethod ==
                                                 'Inclusive'
-                                            ? Converter.roundNumber.format(
+                                            ? Converter.currency.format(
                                                 num.tryParse(subTotal[index]))
                                             : subTotal[index],
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(fontSize: 9),
-                                        minFontSize: 8,
+                                        style: TextStyle(
+                                            fontSize:
+                                                DeviceUtil.isTablet ? 10 : 7),
+                                        minFontSize: 7,
                                         maxFontSize: 10,
                                       );
                                     })),
@@ -322,6 +323,20 @@ class SaleSideWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  //==================== On Item Quantity Changed ====================
+  void onItemQuantityChanged(
+      String value, List<ItemMasterModel> selectedProducts, int index) {
+    final qty = num.tryParse(value);
+    if (qty != null) {
+      log('$qty');
+      getSubTotal(selectedProducts, index, qty);
+      getTotalQuantity();
+      getTotalAmount();
+      getTotalVAT();
+      getTotalPayable();
+    }
   }
 
   //==================== Get SubTotal Amount ====================

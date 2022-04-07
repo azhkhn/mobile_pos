@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 
-import '../../../core/constant/converters.dart';
+import '../../../core/utils/text/converters.dart';
 import '../../../core/constant/sizes.dart';
 
 class PaymentButtonsWidget extends StatelessWidget {
@@ -37,7 +37,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                     return AutoSizeText(
                       totalPayable == 0
                           ? '0'
-                          : Converter.roundNumber.format(totalPayable),
+                          : Converter.currency.format(totalPayable),
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: kWhite,
