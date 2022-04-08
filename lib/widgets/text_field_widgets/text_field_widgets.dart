@@ -3,29 +3,33 @@ import 'package:flutter/services.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 
 class TextFeildWidget extends StatelessWidget {
-  const TextFeildWidget({
-    Key? key,
-    required this.labelText,
-    this.hintText,
-    this.textInputType,
-    this.inputFormatters,
-    this.textDirection,
-    this.maxLines,
-    this.couterText,
-    this.controller,
-    this.inputBorder,
-    this.prefixIcon,
-    this.suffixIcon,
-    this.autovalidateMode,
-    this.validator,
-    this.focusNode,
-    this.enabled,
-    this.readOnly,
-    this.onSaved,
-    this.onChanged,
-    this.onTap,
-    this.obscureText,
-  }) : super(key: key);
+  const TextFeildWidget(
+      {Key? key,
+      required this.labelText,
+      this.hintText,
+      this.textInputType,
+      this.inputFormatters,
+      this.textDirection,
+      this.maxLines,
+      this.couterText,
+      this.controller,
+      this.inputBorder,
+      this.prefixIcon,
+      this.suffixIcon,
+      this.autovalidateMode,
+      this.validator,
+      this.focusNode,
+      this.enabled,
+      this.isDense,
+      this.contentPadding,
+      this.constraints,
+      this.readOnly,
+      this.onSaved,
+      this.onChanged,
+      this.onTap,
+      this.obscureText,
+      this.floatingLabelBehavior})
+      : super(key: key);
   final String labelText;
   final String? hintText;
   final TextInputType? textInputType;
@@ -42,23 +46,32 @@ class TextFeildWidget extends StatelessWidget {
   final FocusNode? focusNode;
   final bool? enabled;
   final bool? readOnly;
+  final bool? isDense;
   final Function(String?)? onSaved;
   final Function(String?)? onChanged;
   final Function()? onTap;
-
+  final BoxConstraints? constraints;
+  final FloatingLabelBehavior? floatingLabelBehavior;
+  final EdgeInsetsGeometry? contentPadding;
   final bool? obscureText;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
+        floatingLabelBehavior: floatingLabelBehavior,
         counterText: couterText,
         labelText: labelText,
         border: inputBorder ?? const UnderlineInputBorder(),
         labelStyle: const TextStyle(color: klabelColorBlack),
+        fillColor: kWhite,
+        filled: true,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         hintText: hintText,
+        isDense: isDense,
+        constraints: constraints,
+        contentPadding: contentPadding,
       ),
       keyboardType: textInputType ?? TextInputType.text,
       inputFormatters: inputFormatters,

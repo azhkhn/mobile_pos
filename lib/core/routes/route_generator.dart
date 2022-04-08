@@ -10,6 +10,7 @@ import 'package:shop_ez/screens/expense/screen_expense.dart';
 import 'package:shop_ez/screens/expense/screen_expense_category.dart';
 import 'package:shop_ez/screens/home/home_screen.dart';
 import 'package:shop_ez/screens/item_master/screen_item_master.dart';
+import 'package:shop_ez/screens/payment/partial_payment/screen_partial_payment.dart';
 import 'package:shop_ez/screens/pos/screen_pos.dart';
 import 'package:shop_ez/screens/splash/splash_screen.dart';
 import 'package:shop_ez/screens/sub-category/screen_sub_category.dart';
@@ -19,7 +20,8 @@ import 'package:shop_ez/screens/vat/vat_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    // final args = settings.arguments;
+    //get arguments passed in while calling Navigator.pushNamed
+    final args = settings.arguments;
 
     switch (settings.name) {
       case routeRoot:
@@ -54,6 +56,15 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ExpenseCategory());
       case routePos:
         return MaterialPageRoute(builder: (_) => const PosScreen());
+      case routePartialPayment:
+        if (args is Map) {
+          return MaterialPageRoute(
+              builder: (_) => PartialPayment(
+                    paymentDetails: args,
+                  ));
+        }
+        return _errorRoute();
+
       default:
         return _errorRoute();
     }

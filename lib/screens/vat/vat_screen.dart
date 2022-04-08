@@ -25,7 +25,7 @@ class _VatScreenState extends State<VatScreen> {
   //========== Database Instances ==========
   final vatDB = VatDatabase.instance;
 
-  //========== Text Editing Controllers ==========
+  //========== DropDown Items ==========
   static const types = ['Percentage', 'Fixed'];
 
   //========== DropDown Controllers ==========

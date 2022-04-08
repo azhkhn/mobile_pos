@@ -1,3 +1,5 @@
+import 'dart:developer' show log;
+
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
@@ -5,6 +7,7 @@ import 'package:shop_ez/db/db_functions/user_database/user_db.dart';
 import 'package:shop_ez/screens/home/widgets/home_drawer.dart';
 import 'package:shop_ez/screens/home/widgets/home_grid.dart';
 import 'package:shop_ez/widgets/floating_popup_widget/floating_add_options.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 
 class ScreenHome extends StatelessWidget {
   ScreenHome({this.initialEntry, Key? key}) : super(key: key);
@@ -15,6 +18,11 @@ class ScreenHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // UserDatabase.instance.getAllUsers();
+    if (DeviceUtil.isTablet) {
+      log("You're Using a Tablet!");
+    } else {
+      log("You're Using a Phone!");
+    }
     _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {

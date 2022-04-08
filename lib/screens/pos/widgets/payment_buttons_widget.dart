@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 
 import '../../../core/utils/text/converters.dart';
@@ -80,7 +81,14 @@ class PaymentButtonsWidget extends StatelessWidget {
               child: SizedBox(
                 height: _screenSize.width / 25,
                 child: MaterialButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, routePartialPayment,
+                        arguments: {
+                          'totalPayable':
+                              SaleSideWidget.totalPayableNotifier.value,
+                          'totalItems': SaleSideWidget.totalItemsNotifier.value,
+                        });
+                  },
                   padding: const EdgeInsets.all(5),
                   color: Colors.green[800],
                   child: const Center(

@@ -230,9 +230,6 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                         itemMasterDB.getProductByBrand(brand);
                                     setState(() {});
                                   } else {
-                                    final vatMethod = itemList[index].vatMethod;
-                                    log('VAT Method = ' + vatMethod);
-
 //===================================== if the Product Already Added ====================================
                                     isProductAlreadyAdded(itemList, index);
 //=======================================================================================================
@@ -242,10 +239,6 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
                                     SaleSideWidget
                                         .totalQuantityNotifier.value++;
-
-                                    const SaleSideWidget().getTotalAmount();
-                                    const SaleSideWidget().getTotalVAT();
-                                    const SaleSideWidget().getTotalPayable();
                                   }
                                 },
                                 child: Card(
@@ -381,7 +374,6 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
           itemList[index].id) {
         final _currentQty =
             num.tryParse(SaleSideWidget.quantityNotifier.value[i].value.text);
-        log('Current Quantit == $_currentQty');
 
         SaleSideWidget.quantityNotifier.value[i].text = '${_currentQty! + 1}';
 
@@ -402,5 +394,9 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
     SaleSideWidget.quantityNotifier.value.add(TextEditingController(text: '1'));
 
     SaleSideWidget.totalItemsNotifier.value++;
+
+    const SaleSideWidget().getTotalAmount();
+    const SaleSideWidget().getTotalVAT();
+    const SaleSideWidget().getTotalPayable();
   }
 }

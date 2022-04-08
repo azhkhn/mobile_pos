@@ -128,7 +128,9 @@ class SaleSideWidget extends StatelessWidget {
                 Flexible(
                   flex: 1,
                   child: IconButton(
-                      color: kBlack,
+                      constraints: const BoxConstraints(
+                        minHeight: 40,
+                      ),
                       onPressed: () {
                         if (_customerIdNotifier.value != null) {
                           log('$_customerIdNotifier');
@@ -162,15 +164,17 @@ class SaleSideWidget extends StatelessWidget {
                 Flexible(
                   flex: 1,
                   child: IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.person_add,
-                        color: Colors.blue,
-                      )),
+                    onPressed: () {},
+                    icon: const Icon(Icons.person_add, color: Colors.blue),
+                    constraints: const BoxConstraints(
+                      minHeight: 40,
+                    ),
+                  ),
                 ),
               ],
             ),
 
+            kHeight5,
             //==================== Table Header ====================
             const SalesTableHeaderWidget(),
 
@@ -218,11 +222,8 @@ class SaleSideWidget extends StatelessWidget {
                               height: 30,
                               alignment: Alignment.center,
                               child: AutoSizeText(
-                                selectedProducts[index].vatMethod == 'Inclusive'
-                                    ? Converter.currency.format(
-                                        getExclusiveAmount(
-                                            selectedProducts[index]))
-                                    : selectedProducts[index].itemCost,
+                                Converter.currency.format(getExclusiveAmount(
+                                    selectedProducts[index])),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -268,11 +269,8 @@ class SaleSideWidget extends StatelessWidget {
                                     builder: (context, List<String> subTotal,
                                         child) {
                                       return AutoSizeText(
-                                        selectedProducts[index].vatMethod ==
-                                                'Inclusive'
-                                            ? Converter.currency.format(
-                                                num.tryParse(subTotal[index]))
-                                            : subTotal[index],
+                                        Converter.currency.format(
+                                            num.tryParse(subTotal[index])),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
@@ -330,9 +328,8 @@ class SaleSideWidget extends StatelessWidget {
       String value, List<ItemMasterModel> selectedProducts, int index) {
     final qty = num.tryParse(value);
     if (qty != null) {
-      log('$qty');
-      getSubTotal(selectedProducts, index, qty);
       getTotalQuantity();
+      getSubTotal(selectedProducts, index, qty);
       getTotalAmount();
       getTotalVAT();
       getTotalPayable();
@@ -341,18 +338,14 @@ class SaleSideWidget extends StatelessWidget {
 
   //==================== Get SubTotal Amount ====================
   void getSubTotal(List<ItemMasterModel> selectedProducts, int index, num qty) {
-    final cost = num.tryParse(
-        selectedProducts[index].itemCost.replaceAll(RegExp(r','), ''));
+    final cost = num.tryParse(selectedProducts[index].itemCost);
     if (selectedProducts[index].vatMethod == 'Inclusive') {
       final _exclusiveCost = getExclusiveAmount(selectedProducts[index]);
       final _subTotal = _exclusiveCost * qty;
-      log('$_subTotal');
       subTotalNotifier.value[index] = '$_subTotal';
-      log('inclusive');
     } else {
       final _subTotal = cost! * qty;
       subTotalNotifier.value[index] = '$_subTotal';
-      log('exclusive');
     }
 
     subTotalNotifier.notifyListeners();
@@ -381,15 +374,13 @@ class SaleSideWidget extends StatelessWidget {
         if (selectedProductsNotifier.value[i].vatMethod == 'Inclusive') {
           subTotal = num.tryParse(subTotalNotifier.value[i]);
         } else {
-          subTotal = num.tryParse(
-              subTotalNotifier.value[i].replaceAll(RegExp(r','), ''));
+          subTotal = num.tryParse(subTotalNotifier.value[i]);
         }
 
-        log('subtotal ==  $subTotal');
-
         _totalAmount = _totalAmount! + subTotal!;
-        totalAmountNotifier.value = _totalAmount;
       }
+      totalAmountNotifier.value = _totalAmount!;
+      log('Total Amount ==  $_totalAmount');
     }
   }
 
@@ -402,19 +393,16 @@ class SaleSideWidget extends StatelessWidget {
     } else {
       for (var i = 0; i < subTotalNotifier.value.length; i++) {
         if (selectedProductsNotifier.value[i].vatMethod == 'Inclusive') {
-          log('Inclusive VAT Calculation...');
-          _subTotal = num.tryParse(
-              subTotalNotifier.value[i].replaceAll(RegExp(r','), ''));
+          //Inclusive VAT Calculation...
+          _subTotal = num.tryParse(subTotalNotifier.value[i]);
         } else {
-          log('Exclusive VAT Calculation...');
-          _subTotal = num.tryParse(
-              subTotalNotifier.value[i].replaceAll(RegExp(r','), ''));
+          //Exclusive VAT Calculation...
+          _subTotal = num.tryParse(subTotalNotifier.value[i]);
         }
 
         _totalVAT += _subTotal! * 15 / 100;
-        log('_totalVAT == ${_subTotal * 15 / 100}');
       }
-
+      log('Total VAT == $_totalVAT');
       totalVatNotifier.value = _totalVAT;
     }
   }
@@ -423,12 +411,11 @@ class SaleSideWidget extends StatelessWidget {
   num getExclusiveAmount(ItemMasterModel item) {
     num _exclusiveAmount = 0;
 
-    final _inclusiveAmount =
-        num.tryParse(item.itemCost.replaceAll(RegExp(r','), ''));
+    final _inclusiveAmount = num.tryParse(item.itemCost);
 
     _exclusiveAmount = _inclusiveAmount! * 100 / 115;
 
-    log('VAT == ' '${_inclusiveAmount * 15 / 115}');
+    // log('Product VAT == ' '${_inclusiveAmount * 15 / 115}');
     // log('Exclusive == ' '${_inclusiveAmount * 100 / 115}');
     // log('Inclusive == ' '${_inclusiveAmount * 115 / 100}');
 
@@ -437,7 +424,9 @@ class SaleSideWidget extends StatelessWidget {
 
 //==================== Get Total VAT ====================
   void getTotalPayable() {
-    totalPayableNotifier.value =
+    final num _totalPayable =
         totalAmountNotifier.value + totalVatNotifier.value;
+    totalPayableNotifier.value = _totalPayable;
+    log('Total Payable == $_totalPayable');
   }
 }

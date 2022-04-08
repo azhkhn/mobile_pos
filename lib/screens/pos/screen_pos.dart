@@ -1,11 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/screens/pos/widgets/product_side_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
+
+import '../../core/constant/colors.dart';
 
 class PosScreen extends StatefulWidget {
   const PosScreen({Key? key}) : super(key: key);
@@ -34,19 +33,14 @@ class _PosScreenState extends State<PosScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (DeviceUtil.isTablet) {
-      log("You're Using a Tablet!");
-    } else {
-      log("You're Using a Phone!");
-    }
     _screenSize = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.grey[200],
+      backgroundColor: kBackgroundGrey,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(
-              vertical: _screenSize.width * .015,
+              vertical: _screenSize.width * .01,
               horizontal: _screenSize.width * .02),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,

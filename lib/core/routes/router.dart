@@ -15,3 +15,4 @@ const routeBusinessProfile = '/business_profile';
 const routeVat = '/vat';
 const routeExpenseCategory = '/expense_category';
 const routePos = '/pos';
+const routePartialPayment = '/partial_payment';
