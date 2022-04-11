@@ -14,9 +14,13 @@ class ItemMasterDatabase {
 
     final _item = await db.rawQuery(
         "select * from $tableItemMaster where ${ItemMasterFields.itemName} = '${_itemMasterModel.itemName}'");
+    final _itemCode = await db.rawQuery(
+        "select * from $tableItemMaster where ${ItemMasterFields.itemCode} = '${_itemMasterModel.itemCode}'");
 
     if (_item.isNotEmpty) {
       throw 'Item Already Exist!';
+    } else if (_itemCode.isNotEmpty) {
+      throw 'ItemCode Already Exist!';
     } else {
       final id = await db.insert(tableItemMaster, _itemMasterModel.toJson());
       log('Item id = $id');

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:shop_ez/model/biller/biller_model.dart';
 import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:shop_ez/model/category/category_model.dart';
@@ -103,6 +104,27 @@ class EzDatabase {
       ${SupplierFields.country} $textType,
       ${SupplierFields.countryArabic} $textType,
       ${SupplierFields.poBox} $textType)''');
+
+//========== Table Business Profile ==========
+    await db.execute('''CREATE TABLE $tableBiller (
+      ${BillerFields.id} $idAuto,
+      ${BillerFields.company} $textType,
+      ${BillerFields.companyArabic} $textType,
+      ${BillerFields.name} $textType,
+      ${BillerFields.nameArabic} $textType,
+      ${BillerFields.address} $textType, 
+      ${BillerFields.addressArabic} $textType,
+      ${BillerFields.city} $textType,
+      ${BillerFields.cityArabic} $textType,
+      ${BillerFields.state} $textType,
+      ${BillerFields.stateArabic} $textType,
+      ${BillerFields.country} $textType,
+      ${BillerFields.countryArabic} $textType,
+      ${BillerFields.vatNumber} $textType,
+      ${BillerFields.phoneNumber} $textType,
+      ${BillerFields.email} $textType,
+      ${BillerFields.poBox} $textType,
+      ${BillerFields.logo} $textType)''');
 
 //========== Table Customer ==========
     await db.execute('''CREATE TABLE $tableCustomer (

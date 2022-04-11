@@ -76,7 +76,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
 
   @override
   Widget build(BuildContext context) {
-    itemMasterDB.getAllItems();
+    // itemMasterDB.getAllItems();
     _screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBarWidget(
@@ -554,6 +554,18 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
               color: kSnackBarIconColor,
             ),
             content: 'Item name already exist!',
+          );
+        } else if (e == 'ItemCode Already Exist!') {
+          log('ItemCode Already Exist!');
+          itemCodeFocusNode.requestFocus();
+          showSnackBar(
+            context: context,
+            color: kSnackBarErrorColor,
+            icon: const Icon(
+              Icons.new_releases_outlined,
+              color: kSnackBarIconColor,
+            ),
+            content: 'Item code already exist!',
           );
         }
       }

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/screens/payment/partial_payment/widgets/payment_options_table_widget.dart';
-import 'package:shop_ez/screens/payment/partial_payment/widgets/quick_cash_widget.dart';
+import 'package:shop_ez/screens/purchase/partial_payment/widgets/payment_details_table_widget.dart';
+import 'package:shop_ez/screens/purchase/partial_payment/widgets/quick_cash_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import '../../../core/constant/sizes.dart';
 import 'widgets/payment_type_widget.dart';
 
-// ignore: must_be_immutable
 class PartialPayment extends StatelessWidget {
   const PartialPayment({
     Key? key,
@@ -42,21 +41,23 @@ class PartialPayment extends StatelessWidget {
                       kHeight20,
 
                       //==================== Payment Type Widget ====================
-                      PaymentTypeWidget(),
+                      PaymentTypeWidget(
+                        totalPayable: paymentDetails['totalPayable'],
+                      ),
                       kHeight15,
-                      //==================== Payment Options Table Widget ====================
 
+                      //==================== Payment Details Table Widget ====================
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 0.0),
                         child: Column(
                           children: [
-                            PaymentOptionsTableWidget(
+                            PaymentDetailsTableWidget(
                               borderTop: 0.5,
                               firstRow: true,
                               totalItems: paymentDetails['totalItems'],
                               totalPayable: paymentDetails['totalPayable'],
                             ),
-                            PaymentOptionsTableWidget(
+                            PaymentDetailsTableWidget(
                               borderTop: 0,
                               totalItems: paymentDetails['totalItems'],
                               totalPayable: paymentDetails['totalPayable'],

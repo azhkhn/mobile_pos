@@ -9,6 +9,7 @@ const routeCategory = '/category';
 const routeSubCategory = '/sub-category';
 const routeBrand = '/brand';
 const routeCustomer = '/customer';
+const routeBiller = '/biller';
 const routeUnit = '/unit';
 const routeExpense = '/expense';
 const routeBusinessProfile = '/business_profile';
