@@ -142,6 +142,12 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                   ),
                                   title: Text(item.subCategory),
                                   subtitle: Text(item.category),
+                                  trailing: IconButton(
+                                      onPressed: () async {
+                                        await subCategoryDB.deleteVAT(item.id);
+                                        setState(() {});
+                                      },
+                                      icon: const Icon(Icons.delete)),
                                 );
                               },
                               separatorBuilder: (context, index) =>

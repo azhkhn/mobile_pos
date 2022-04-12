@@ -31,4 +31,12 @@ class VatDatabase {
     final _vats = _result.map((json) => VatModel.fromJson(json)).toList();
     return _vats;
   }
+
+//========== Delete VAT ==========
+  Future<void> deleteVAT(int id) async {
+    final db = await dbInstance.database;
+    final _result = await db
+        .delete(tableVat, where: '${VatFields.id} = ?', whereArgs: [id]);
+    log('VAT $id Deleted == $_result');
+  }
 }

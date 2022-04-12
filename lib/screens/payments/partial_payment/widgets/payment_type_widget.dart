@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/screens/purchase/partial_payment/widgets/payment_details_table_widget.dart';
+import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_details_table_widget.dart';
 
 import '../../../../core/constant/colors.dart';
 import '../../../../core/constant/sizes.dart';

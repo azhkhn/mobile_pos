@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/db/db_functions/vat_database/vat_database.dart';
 import 'package:shop_ez/model/vat/vat_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -88,6 +89,7 @@ class _VatScreenState extends State<VatScreen> {
                         labelText: 'Rate *',
                         controller: _rateController,
                         textInputType: TextInputType.number,
+                        inputFormatters: Converter.digitsOnly,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'This field is required*';
@@ -158,6 +160,12 @@ class _VatScreenState extends State<VatScreen> {
                                     ),
                                   ),
                                   title: Text(item.name),
+                                  trailing: IconButton(
+                                      onPressed: () async {
+                                        await vatDB.deleteVAT(item.id);
+                                        setState(() {});
+                                      },
+                                      icon: const Icon(Icons.delete)),
                                 );
                               },
                               separatorBuilder: (context, index) =>

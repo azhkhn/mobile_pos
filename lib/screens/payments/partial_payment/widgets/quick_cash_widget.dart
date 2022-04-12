@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
-import 'package:shop_ez/screens/purchase/partial_payment/widgets/payment_type_widget.dart';
+import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_type_widget.dart';
 
 import '../../../../core/constant/sizes.dart';
 import '../../../../core/constant/text.dart';

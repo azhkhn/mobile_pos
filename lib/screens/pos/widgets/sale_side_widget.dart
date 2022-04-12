@@ -30,7 +30,9 @@ class SaleSideWidget extends StatelessWidget {
   static final ValueNotifier<List<TextEditingController>> quantityNotifier =
       ValueNotifier([]);
 
-  static final ValueNotifier<int?> _customerIdNotifier = ValueNotifier(null);
+  static final ValueNotifier<int?> customerIdNotifier = ValueNotifier(null);
+  static final ValueNotifier<String?> customerNameNotifier =
+      ValueNotifier(null);
   static final ValueNotifier<num> totalItemsNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalQuantityNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalAmountNotifier = ValueNotifier(0);
@@ -54,7 +56,7 @@ class SaleSideWidget extends StatelessWidget {
         totalAmountNotifier.value = 0;
         totalVatNotifier.value = 0;
         totalPayableNotifier.value = 0;
-        _customerIdNotifier.value = null;
+        customerIdNotifier.value = null;
         return true;
       },
       child: SizedBox(
@@ -86,13 +88,13 @@ class SaleSideWidget extends StatelessWidget {
                             child: InkWell(
                               child: const Icon(Icons.clear),
                               onTap: () {
-                                _customerIdNotifier.value = null;
+                                customerIdNotifier.value = null;
                                 _customerController.clear();
                               },
                             ),
                           ),
                           contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Cash Customer',
+                          hintText: 'Customer',
                           border: const OutlineInputBorder(),
                         )),
                     noItemsFoundBuilder: (context) => const SizedBox(
@@ -117,7 +119,8 @@ class SaleSideWidget extends StatelessWidget {
                     },
                     onSuggestionSelected: (CustomerModel suggestion) {
                       _customerController.text = suggestion.customer;
-                      _customerIdNotifier.value = suggestion.id;
+                      customerNameNotifier.value = suggestion.customer;
+                      customerIdNotifier.value = suggestion.id;
                       log(suggestion.company);
                     },
                   ),
@@ -132,8 +135,8 @@ class SaleSideWidget extends StatelessWidget {
                         minHeight: 40,
                       ),
                       onPressed: () {
-                        if (_customerIdNotifier.value != null) {
-                          log('$_customerIdNotifier');
+                        if (customerIdNotifier.value != null) {
+                          log('$customerIdNotifier');
 
                           showModalBottomSheet(
                               context: context,
@@ -145,7 +148,7 @@ class SaleSideWidget extends StatelessWidget {
                               builder: (context) => DismissibleWidget(
                                     context: context,
                                     child: CustomBottomSheetWidget(
-                                        customerId: _customerIdNotifier.value),
+                                        customerId: customerIdNotifier.value),
                                   ));
                         } else {
                           showSnackBar(
@@ -197,6 +200,8 @@ class SaleSideWidget extends StatelessWidget {
                       children: List<TableRow>.generate(
                         selectedProducts.length,
                         (index) {
+                          final ItemMasterModel _product =
+                              selectedProducts[index];
                           return TableRow(children: [
                             Container(
                               padding:
@@ -205,7 +210,7 @@ class SaleSideWidget extends StatelessWidget {
                               height: 30,
                               alignment: Alignment.centerLeft,
                               child: AutoSizeText(
-                                selectedProducts[index].itemName,
+                                _product.itemName,
                                 softWrap: true,
                                 style: TextStyle(
                                     fontSize: DeviceUtil.isTablet ? 10 : 7),
@@ -222,8 +227,11 @@ class SaleSideWidget extends StatelessWidget {
                               height: 30,
                               alignment: Alignment.center,
                               child: AutoSizeText(
-                                Converter.currency.format(getExclusiveAmount(
-                                    selectedProducts[index])),
+                                _product.vatMethod == 'Exclusive'
+                                    ? Converter.currency
+                                        .format(num.parse(_product.itemCost))
+                                    : Converter.currency
+                                        .format(getExclusiveAmount(_product)),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(

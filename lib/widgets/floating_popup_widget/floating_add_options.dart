@@ -37,11 +37,6 @@ class FloatingAddOptions extends StatelessWidget {
           onTap: () => Navigator.pushNamed(context, routeCustomer),
         ),
         SpeedDialChild(
-          child: const Icon(Icons.badge_outlined),
-          label: 'Add Biller',
-          onTap: () => Navigator.pushNamed(context, routeBiller),
-        ),
-        SpeedDialChild(
           child: const Icon(Icons.paid_outlined),
           label: 'Expense Category',
           onTap: () => Navigator.pushNamed(context, routeExpenseCategory),

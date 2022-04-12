@@ -107,7 +107,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
     if (isFormValid.validate()) {
       try {
         await UserDatabase.instance.loginUser(username, password);
-        log('User found!');
+        log('User Signed Successfully!');
         Navigator.pushReplacementNamed(context, routeHome);
       } catch (e) {
         log(e.toString());

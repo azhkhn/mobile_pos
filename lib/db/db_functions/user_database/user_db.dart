@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:shop_ez/core/utils/user/logged_user.dart';
 import 'package:shop_ez/db/database.dart';
 import 'package:shop_ez/model/user/user_model.dart';
 
@@ -34,12 +35,9 @@ class UserDatabase {
         "select * from $tableUser where ${UserFields.mobileNumber} = '$username' and ${UserFields.password} = '$password' or  ${UserFields.email} = '$username' and ${UserFields.password} = '$password'");
     if (response.isNotEmpty) {
       final user = UserModel.fromJson(response.first);
-      log('user== $user');
-      db.insert(tableLogin, user.toJson());
+      log('user == $user');
+      await db.insert(tableLogin, user.toJson());
       return user;
-      // List list = response.toList().map((c) => UserModel.fromJson(c)).toList();
-      // log('list response == ${list.toString()}');
-      // return list[0];
     } else {
       throw Exception('User Not Found!');
     }
@@ -56,9 +54,9 @@ class UserDatabase {
   Future<UserModel> getUser() async {
     final db = await dbInstance.database;
     final _userList = await db.query(tableLogin);
-    log('userList =  $_userList');
+    log('User ==  $_userList');
     final _user = _userList.map((json) => UserModel.fromJson(json)).toList();
-    return _user[0];
+    return _user.first;
   }
 
 //========== Logout ==========

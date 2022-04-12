@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:shop_ez/model/biller/biller_model.dart';
+import 'dart:developer';
 import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:shop_ez/model/category/category_model.dart';
@@ -7,6 +7,7 @@ import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/expense/expense_category_model.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
+import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/model/unit/unit_model.dart';
@@ -31,7 +32,14 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(path,
+        version: 1, onCreate: _createDB, onUpgrade: _upgradeDB);
+  }
+
+  Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
+    // const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    // const textType = 'TEXT NOT NULL';
   }
 
   Future close() async {
@@ -105,27 +113,6 @@ class EzDatabase {
       ${SupplierFields.countryArabic} $textType,
       ${SupplierFields.poBox} $textType)''');
 
-//========== Table Business Profile ==========
-    await db.execute('''CREATE TABLE $tableBiller (
-      ${BillerFields.id} $idAuto,
-      ${BillerFields.company} $textType,
-      ${BillerFields.companyArabic} $textType,
-      ${BillerFields.name} $textType,
-      ${BillerFields.nameArabic} $textType,
-      ${BillerFields.address} $textType, 
-      ${BillerFields.addressArabic} $textType,
-      ${BillerFields.city} $textType,
-      ${BillerFields.cityArabic} $textType,
-      ${BillerFields.state} $textType,
-      ${BillerFields.stateArabic} $textType,
-      ${BillerFields.country} $textType,
-      ${BillerFields.countryArabic} $textType,
-      ${BillerFields.vatNumber} $textType,
-      ${BillerFields.phoneNumber} $textType,
-      ${BillerFields.email} $textType,
-      ${BillerFields.poBox} $textType,
-      ${BillerFields.logo} $textType)''');
-
 //========== Table Customer ==========
     await db.execute('''CREATE TABLE $tableCustomer (
       ${CustomerFields.id} $idAuto,
@@ -182,6 +169,7 @@ class EzDatabase {
       ${BusinessProfileFields.id} $idNotNull,
       ${BusinessProfileFields.business} $textType,
       ${BusinessProfileFields.businessArabic} $textType,
+      ${BusinessProfileFields.billerName} $textType,
       ${BusinessProfileFields.address} $textType, 
       ${BusinessProfileFields.addressArabic} $textType,
       ${BusinessProfileFields.city} $textType,
@@ -207,5 +195,25 @@ class EzDatabase {
     await db.execute('''CREATE TABLE $tableExpenseCategory (
       ${ExpenseCategoryFields.id} $idAuto,
       ${ExpenseCategoryFields.expense} $textType)''');
+
+//========== Table Sales ==========
+    await db.execute('''CREATE TABLE $tableSales (
+      ${SalesFields.id} $idAuto,
+      ${SalesFields.salesId} $textType,
+      ${SalesFields.salesNote} $textType,
+      ${SalesFields.dateTime} $textType,
+      ${SalesFields.cusomerId} $textType, 
+      ${SalesFields.customerName} $textType,
+      ${SalesFields.billerName} $textType,
+      ${SalesFields.totalItems} $textType,
+      ${SalesFields.vatAmount} $textType,
+      ${SalesFields.subTotal} $textType,
+      ${SalesFields.discount} $textType,
+      ${SalesFields.grantTotal} $textType,
+      ${SalesFields.paid} $textType,
+      ${SalesFields.paymentType} $textType,
+      ${SalesFields.salesStatus} $textType,
+      ${SalesFields.paymentStatus} $textType,
+      ${SalesFields.createdBy} $textType)''');
   }
 }

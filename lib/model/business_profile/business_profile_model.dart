@@ -4,6 +4,7 @@ class BusinessProfileFields {
   static const id = '_id';
   static const business = 'business';
   static const businessArabic = 'businessArabic';
+  static const billerName = 'biller';
   static const address = 'address';
   static const addressArabic = 'addressArabic';
   static const city = 'city';
@@ -22,6 +23,7 @@ class BusinessProfileModel {
   int? id;
   final String business,
       businessArabic,
+      billerName,
       address,
       addressArabic,
       city,
@@ -39,6 +41,7 @@ class BusinessProfileModel {
     this.id = 0,
     required this.business,
     required this.businessArabic,
+    required this.billerName,
     required this.address,
     required this.addressArabic,
     required this.city,
@@ -57,6 +60,7 @@ class BusinessProfileModel {
         BusinessProfileFields.id: id,
         BusinessProfileFields.business: business,
         BusinessProfileFields.businessArabic: businessArabic,
+        BusinessProfileFields.billerName: billerName,
         BusinessProfileFields.address: address,
         BusinessProfileFields.addressArabic: addressArabic,
         BusinessProfileFields.city: city,
@@ -76,6 +80,7 @@ class BusinessProfileModel {
         id: json[BusinessProfileFields.id] as int,
         business: json[BusinessProfileFields.business] as String,
         businessArabic: json[BusinessProfileFields.businessArabic] as String,
+        billerName: json[BusinessProfileFields.billerName] as String,
         address: json[BusinessProfileFields.address] as String,
         addressArabic: json[BusinessProfileFields.addressArabic] as String,
         city: json[BusinessProfileFields.city] as String,

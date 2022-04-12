@@ -39,6 +39,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
   //========== Text Editing Controllers ==========
   final _businessNameController = TextEditingController();
   final _businessNameArabicController = TextEditingController();
+  final _billerNameController = TextEditingController();
   final _addressController = TextEditingController();
   final _addressArabicController = TextEditingController();
   final _cityController = TextEditingController();
@@ -54,6 +55,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
   //========== Focus Node for TextFields ==========
   final FocusNode _businessNameFocusNode = FocusNode();
   final FocusNode _businessNameArabicFocusNode = FocusNode();
+  final FocusNode _billerNameFocusNode = FocusNode();
   final FocusNode _addressFocusNode = FocusNode();
   final FocusNode _addressArabicFocusNode = FocusNode();
   final FocusNode _cityFocusNode = FocusNode();
@@ -102,6 +104,20 @@ class _BusinessProfileState extends State<BusinessProfile> {
                     controller: _businessNameArabicController,
                     textDirection: TextDirection.rtl,
                     focusNode: _businessNameArabicFocusNode,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field is required*';
+                      }
+                      return null;
+                    },
+                  ),
+                  kHeight10,
+
+                  //========== Biller Name ==========
+                  TextFeildWidget(
+                    labelText: 'Biller Name *',
+                    controller: _billerNameController,
+                    focusNode: _billerNameFocusNode,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'This field is required*';
@@ -393,6 +409,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
   addBusinessProfile() async {
     final String business,
         businessArabic,
+        billerName,
         address,
         addressArabic,
         city,
@@ -409,6 +426,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
     //Retieving values from TextFields
     business = _businessNameController.text.trim();
     businessArabic = _businessNameArabicController.text.trim();
+    billerName = _billerNameController.text.trim();
     address = _addressController.text.trim();
     addressArabic = _addressArabicController.text.trim();
     city = _cityController.text.trim();
@@ -442,6 +460,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
       final _businessProfileModel = BusinessProfileModel(
           business: business,
           businessArabic: businessArabic,
+          billerName: billerName,
           address: address,
           addressArabic: addressArabic,
           city: city,
@@ -503,6 +522,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
     if (_businessProfileModel != null) {
       _businessNameController.text = _businessProfileModel.business;
       _businessNameArabicController.text = _businessProfileModel.businessArabic;
+      _billerNameController.text = _businessProfileModel.billerName;
       _addressController.text = _businessProfileModel.address;
       _addressArabicController.text = _businessProfileModel.addressArabic;
       _cityController.text = _businessProfileModel.city;

@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/db/db_functions/expense_database/expense_database.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -127,7 +128,6 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                     readOnly: true,
                     onTap: () async {
                       final _date = await datePicker(context);
-                      DateFormat formatter = DateFormat('dd-MM-yyyy');
 
                       if (_date != null) {
                         //Date to String for Database
@@ -136,7 +136,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                         log('selected date == $_selectedDate');
                         log('back to time == ${DateTime.parse(_selectedDate)}');
 
-                        final parseDate = formatter.format(_date);
+                        final parseDate = Converter.dateFormat.format(_date);
                         _dateController.text = parseDate.toString();
 
                         setState(() {});

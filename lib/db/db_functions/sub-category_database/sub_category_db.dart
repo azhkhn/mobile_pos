@@ -48,4 +48,12 @@ class SubCategoryDatabase {
         _result.map((json) => SubCategoryModel.fromJson(json)).toList();
     return _subCategories;
   }
+
+  //========== Delete Sub-Category ==========
+  Future<void> deleteVAT(int id) async {
+    final db = await dbInstance.database;
+    final _result = await db.delete(tableSubCategory,
+        where: '${SubCategoryFields.id} = ?', whereArgs: [id]);
+    log('Sub-Category $id Deleted == $_result');
+  }
 }

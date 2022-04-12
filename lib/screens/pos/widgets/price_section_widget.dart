@@ -21,8 +21,8 @@ class PriceSectionWidget extends StatelessWidget {
       color: kWhite,
       child: Padding(
         padding: const EdgeInsets.all(5),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Flex(
+          direction: Axis.vertical,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(

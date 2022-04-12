@@ -3,6 +3,7 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/user/logged_user.dart';
 import 'package:shop_ez/db/db_functions/user_database/user_db.dart';
 import 'package:shop_ez/screens/home/widgets/home_drawer.dart';
 import 'package:shop_ez/screens/home/widgets/home_grid.dart';
@@ -17,6 +18,9 @@ class ScreenHome extends StatelessWidget {
   final isDialOpen = ValueNotifier(false);
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      LoggedUser.instance.currentUser;
+    });
     // UserDatabase.instance.getAllUsers();
     if (DeviceUtil.isTablet) {
       log("You're Using a Tablet!");

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/screens/purchase/partial_payment/widgets/payment_details_table_widget.dart';
-import 'package:shop_ez/screens/purchase/partial_payment/widgets/quick_cash_widget.dart';
+import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_details_table_widget.dart';
+import 'package:shop_ez/screens/payments/partial_payment/widgets/quick_cash_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import '../../../core/constant/sizes.dart';
 import 'widgets/payment_type_widget.dart';

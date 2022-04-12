@@ -13,4 +13,7 @@ class Converter {
 
   // static final NumberFormat roundNumber = NumberFormat("###.0#", "en_US");
 
+  //Convert Date and Time to readable Format
+  static final DateFormat dateFormat = DateFormat('dd-MM-yyyy');
+  static final DateFormat dateTimeFormat = DateFormat('dd-MM-yyyy, h:mm a');
 }
