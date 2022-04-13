@@ -9,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
-import 'package:shop_ez/db/db_functions/expense_database/expense_database.dart';
+import 'package:shop_ez/db/db_functions/expense/expense_database.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';

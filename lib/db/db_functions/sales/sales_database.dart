@@ -7,15 +7,15 @@ class SalesDatabase {
   EzDatabase dbInstance = EzDatabase.instance;
   SalesDatabase._init();
 
-//========== Create Sales ==========
+//==================== Create Sales ====================
   Future<void> createSales(SalesModel _salesModel) async {
     final db = await dbInstance.database;
 
     final _sale = await db.rawQuery(
-        "select * from $tableSales where ${SalesFields.salesId} = '${_salesModel.salesId}'");
+        "select * from $tableSales where ${SalesFields.invoiceNumber} = '${_salesModel.invoiceNumber}'");
 
     if (_sale.isNotEmpty) {
-      throw 'SalesId Already Exist!';
+      throw 'Invoice Number Already Exist!';
     } else {
       final _sales = await db.query(tableSales);
 
@@ -25,36 +25,36 @@ class SalesDatabase {
         final int? _recentSaleId = _recentSale.id;
         log('Recent id == $_recentSaleId');
 
-        final String _salesId = 'SA-${_recentSaleId! + 1}';
-        final _newSale = _salesModel.copyWith(salesId: _salesId);
-        log('New Sale id == $_salesId');
+        final String _invoiceNumber = 'SA-${_recentSaleId! + 1}';
+        final _newSale = _salesModel.copyWith(invoiceNumber: _invoiceNumber);
+        log('New Invoice Number == $_invoiceNumber');
 
         final id = await db.insert(tableSales, _newSale.toJson());
-        log('New id == $id');
+        log('Sales id == $id');
         log('Sale Created!');
       } else {
-        final _newSale = _salesModel.copyWith(salesId: 'SA-1');
+        final _newSale = _salesModel.copyWith(invoiceNumber: 'SA-1');
         log('Sales Model Id === ${_newSale.billerName}');
 
-        log('Sales Model Sales Id === ' + _newSale.salesId!);
+        log('New Invoice Number == ' + _newSale.invoiceNumber!);
         final id = await db.insert(tableSales, _newSale.toJson());
         log('Sale Created!');
-        log('id == $id');
+        log('Sales id == $id');
       }
     }
   }
 
 //========== Get All Sales ==========
-  Future<SalesModel?> getAllSales() async {
+  Future<List<SalesModel?>?> getAllSales() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableSales);
     // db.delete(tableSales);
     log('Sales == $_result');
     if (_result.isNotEmpty) {
       final _sales = _result.map((json) => SalesModel.fromJson(json)).toList();
-      return _sales.first;
+      return _sales;
     } else {
-      return null;
+      throw 'Sales is Empty!';
     }
   }
 }

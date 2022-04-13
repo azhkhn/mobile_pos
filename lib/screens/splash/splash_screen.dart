@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/db/db_functions/user_database/user_db.dart';
+import 'package:shop_ez/db/db_functions/auth/user_db.dart';
 
 class ScreenSplash extends StatefulWidget {
   const ScreenSplash({Key? key}) : super(key: key);

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/db/db_functions/user_database/user_db.dart';
-import 'package:shop_ez/model/user/user_model.dart';
+import 'package:shop_ez/db/db_functions/auth/user_db.dart';
+import 'package:shop_ez/model/auth/user_model.dart';
 
 import '../../../core/utils/snackbar/snackbar.dart';
 

@@ -1,8 +1,8 @@
 import 'dart:developer' show log;
 import 'package:shop_ez/db/db_functions/busiess_profile/business_profile_database.dart';
-import 'package:shop_ez/db/db_functions/user_database/user_db.dart';
+import 'package:shop_ez/db/db_functions/auth/user_db.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
-import '../../../model/user/user_model.dart';
+import '../../../model/auth/user_model.dart';
 
 class UserUtils {
 //========== Singleton Instance ==========

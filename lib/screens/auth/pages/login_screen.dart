@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/db/db_functions/user_database/user_db.dart';
+import 'package:shop_ez/db/db_functions/auth/user_db.dart';
 import 'package:shop_ez/screens/auth/widgets/login_signup_buttons.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import 'package:shop_ez/widgets/wave_clip.dart';

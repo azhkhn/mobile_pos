@@ -7,11 +7,12 @@ import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/expense/expense_category_model.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
+import 'package:shop_ez/model/sales/sales_items_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/model/unit/unit_model.dart';
-import 'package:shop_ez/model/user/user_model.dart';
+import 'package:shop_ez/model/auth/user_model.dart';
 import 'package:shop_ez/model/vat/vat_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -33,7 +34,7 @@ class EzDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path,
-        version: 3, onCreate: _createDB, onUpgrade: _upgradeDB);
+        version: 4, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -46,7 +47,7 @@ class EzDatabase {
     //========== Table Sales ==========
     await db.execute('''CREATE TABLE $tableSales (
       ${SalesFields.id} $idAuto,
-      ${SalesFields.salesId} $textType,
+      ${SalesFields.invoiceNumber} $textType,
       ${SalesFields.salesNote} $textType,
       ${SalesFields.dateTime} $textType,
       ${SalesFields.cusomerId} $textType, 
@@ -63,6 +64,25 @@ class EzDatabase {
       ${SalesFields.salesStatus} $textType,
       ${SalesFields.paymentStatus} $textType,
       ${SalesFields.createdBy} $textType)''');
+
+    //========== Table Sales Items ==========
+    await db.execute('''CREATE TABLE $tableSalesItems (
+      ${SalesItemsFields.id} $idAuto,
+      ${SalesItemsFields.salesId} $textType,
+      ${SalesItemsFields.productId} $textType,
+      ${SalesItemsFields.productType} $textType,
+      ${SalesItemsFields.productName} $textType, 
+      ${SalesItemsFields.category} $textType,
+      ${SalesItemsFields.productCode} $textType,
+      ${SalesItemsFields.unitPrice} $textType,
+      ${SalesItemsFields.productCost} $textType,
+      ${SalesItemsFields.quantity} $textType,
+      ${SalesItemsFields.subTotal} $textType,
+      ${SalesItemsFields.vatId} $textType,
+      ${SalesItemsFields.vatTotal} $textType,
+      ${SalesItemsFields.unitCode} $textType,
+      ${SalesItemsFields.netUnitPrice} $textType,
+      ${SalesItemsFields.vatPercentage} $textType)''');
   }
 
   Future close() async {
@@ -222,7 +242,7 @@ class EzDatabase {
 //========== Table Sales ==========
     await db.execute('''CREATE TABLE $tableSales (
       ${SalesFields.id} $idAuto,
-      ${SalesFields.salesId} $textType,
+      ${SalesFields.invoiceNumber} $textType,
       ${SalesFields.salesNote} $textType,
       ${SalesFields.dateTime} $textType,
       ${SalesFields.cusomerId} $textType, 
@@ -239,5 +259,24 @@ class EzDatabase {
       ${SalesFields.salesStatus} $textType,
       ${SalesFields.paymentStatus} $textType,
       ${SalesFields.createdBy} $textType)''');
+
+//========== Table Sales Items ==========
+    await db.execute('''CREATE TABLE $tableSalesItems (
+      ${SalesItemsFields.id} $idAuto,
+      ${SalesItemsFields.salesId} $textType,
+      ${SalesItemsFields.productId} $textType,
+      ${SalesItemsFields.productType} $textType,
+      ${SalesItemsFields.productName} $textType, 
+      ${SalesItemsFields.category} $textType,
+      ${SalesItemsFields.productCode} $textType,
+      ${SalesItemsFields.unitPrice} $textType,
+      ${SalesItemsFields.productCost} $textType,
+      ${SalesItemsFields.quantity} $textType,
+      ${SalesItemsFields.subTotal} $textType,
+      ${SalesItemsFields.vatId} $textType,
+      ${SalesItemsFields.vatTotal} $textType,
+      ${SalesItemsFields.unitCode} $textType,
+      ${SalesItemsFields.netUnitPrice} $textType,
+      ${SalesItemsFields.vatPercentage} $textType)''');
   }
 }

@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/db/db_functions/customer_database/customer_database.dart';
+import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';

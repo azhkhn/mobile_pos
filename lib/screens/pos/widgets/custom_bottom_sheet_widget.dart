@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/db/db_functions/customer_database/customer_database.dart';
+import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 
 class CustomBottomSheetWidget extends StatelessWidget {

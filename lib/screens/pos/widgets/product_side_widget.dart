@@ -9,10 +9,10 @@ import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
-import '../../../db/db_functions/brand_database/brand_database.dart';
-import '../../../db/db_functions/category_database/category_db.dart';
-import '../../../db/db_functions/item_master_database/item_master_database.dart';
-import '../../../db/db_functions/sub-category_database/sub_category_db.dart';
+import '../../../db/db_functions/brand/brand_database.dart';
+import '../../../db/db_functions/category/category_db.dart';
+import '../../../db/db_functions/item_master/item_master_database.dart';
+import '../../../db/db_functions/sub_category/sub_category_db.dart';
 import '../../../model/item_master/item_master_model.dart';
 import '../../../widgets/button_widgets/material_button_widget.dart';
 
@@ -288,7 +288,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                                     Converter.currency.format(
                                                         num.tryParse(
                                                             itemList[index]
-                                                                .itemCost)),
+                                                                .sellingPrice)),
                                                     style: TextStyle(
                                                         fontSize:
                                                             isTablet ? 10 : 7),
@@ -389,7 +389,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
     SaleSideWidget.subTotalNotifier.value.add(vatMethod == 'Inclusive'
         ? '${const SaleSideWidget().getExclusiveAmount(itemList[index])}'
-        : itemList[index].itemCost);
+        : itemList[index].sellingPrice);
 
     SaleSideWidget.quantityNotifier.value.add(TextEditingController(text: '1'));
 

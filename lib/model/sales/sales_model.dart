@@ -2,7 +2,7 @@ const String tableSales = 'sales';
 
 class SalesFields {
   static const id = '_id';
-  static const salesId = 'salesId';
+  static const invoiceNumber = 'invoiceNumber';
   static const salesNote = 'salesNote';
   static const dateTime = 'dateTime';
   static const cusomerId = 'cusomerId';
@@ -23,7 +23,7 @@ class SalesFields {
 
 class SalesModel {
   int? id;
-  String? salesId;
+  String? invoiceNumber;
   final String dateTime,
       cusomerId,
       customerName,
@@ -43,7 +43,7 @@ class SalesModel {
 
   SalesModel({
     this.id,
-    this.salesId,
+    this.invoiceNumber,
     required this.dateTime,
     required this.cusomerId,
     required this.customerName,
@@ -64,7 +64,7 @@ class SalesModel {
 
   SalesModel copyWith({
     int? id,
-    String? salesId,
+    String? invoiceNumber,
     dateTime,
     cusomerId,
     customerName,
@@ -84,7 +84,7 @@ class SalesModel {
   }) =>
       SalesModel(
         id: id ?? this.id,
-        salesId: salesId ?? this.salesId,
+        invoiceNumber: invoiceNumber ?? this.invoiceNumber,
         dateTime: dateTime ?? this.dateTime,
         cusomerId: cusomerId ?? this.cusomerId,
         customerName: customerName ?? this.customerName,
@@ -105,7 +105,7 @@ class SalesModel {
 
   Map<String, Object?> toJson() => {
         SalesFields.id: id,
-        SalesFields.salesId: salesId,
+        SalesFields.invoiceNumber: invoiceNumber,
         SalesFields.dateTime: dateTime,
         SalesFields.cusomerId: cusomerId,
         SalesFields.customerName: customerName,
@@ -127,7 +127,7 @@ class SalesModel {
   static SalesModel fromJson(Map<String, Object?> json) => SalesModel(
         id: json[SalesFields.id] as int,
         dateTime: json[SalesFields.dateTime] as String,
-        salesId: json[SalesFields.salesId] as String,
+        invoiceNumber: json[SalesFields.invoiceNumber] as String,
         cusomerId: json[SalesFields.cusomerId] as String,
         customerName: json[SalesFields.customerName] as String,
         billerName: json[SalesFields.billerName] as String,

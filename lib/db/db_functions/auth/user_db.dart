@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/user/user_model.dart';
+import 'package:shop_ez/model/auth/user_model.dart';
 
 class UserDatabase {
   static final UserDatabase instance = UserDatabase._init();

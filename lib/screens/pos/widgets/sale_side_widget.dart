@@ -5,7 +5,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
-import 'package:shop_ez/db/db_functions/customer_database/customer_database.dart';
+import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
@@ -228,8 +228,8 @@ class SaleSideWidget extends StatelessWidget {
                               alignment: Alignment.center,
                               child: AutoSizeText(
                                 _product.vatMethod == 'Exclusive'
-                                    ? Converter.currency
-                                        .format(num.parse(_product.itemCost))
+                                    ? Converter.currency.format(
+                                        num.parse(_product.sellingPrice))
                                     : Converter.currency
                                         .format(getExclusiveAmount(_product)),
                                 maxLines: 1,
@@ -346,7 +346,7 @@ class SaleSideWidget extends StatelessWidget {
 
   //==================== Get SubTotal Amount ====================
   void getSubTotal(List<ItemMasterModel> selectedProducts, int index, num qty) {
-    final cost = num.tryParse(selectedProducts[index].itemCost);
+    final cost = num.tryParse(selectedProducts[index].sellingPrice);
     if (selectedProducts[index].vatMethod == 'Inclusive') {
       final _exclusiveCost = getExclusiveAmount(selectedProducts[index]);
       final _subTotal = _exclusiveCost * qty;
@@ -419,7 +419,7 @@ class SaleSideWidget extends StatelessWidget {
   num getExclusiveAmount(ItemMasterModel item) {
     num _exclusiveAmount = 0;
 
-    final _inclusiveAmount = num.tryParse(item.itemCost);
+    final _inclusiveAmount = num.tryParse(item.sellingPrice);
 
     _exclusiveAmount = _inclusiveAmount! * 100 / 115;
 

@@ -4,15 +4,16 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
-import 'package:shop_ez/core/utils/user/logged_user.dart';
+import 'package:shop_ez/core/utils/user/user.dart';
+import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
+import 'package:shop_ez/db/db_functions/sales/sales_items_database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 
-import '../../../core/utils/device/device.dart';
-import '../../../core/utils/text/converters.dart';
 import '../../../core/constant/sizes.dart';
-import '../../../db/db_functions/sales/sales_database.dart';
+import '../../../core/utils/text/converters.dart';
 
 class PaymentButtonsWidget extends StatelessWidget {
   const PaymentButtonsWidget({
@@ -23,7 +24,14 @@ class PaymentButtonsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isTablet = DeviceUtil.isTablet;
     Size _screenSize = MediaQuery.of(context).size;
-    SalesDatabase.instance.getAllSales();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      try {
+        await SalesDatabase.instance.getAllSales();
+      } catch (e) {
+        log('$e');
+      }
+    });
 
     return Column(
       children: [
@@ -227,7 +235,9 @@ class PaymentButtonsWidget extends StatelessWidget {
     );
   }
 
-//==================== Add Sale ====================
+//========================================          ========================================
+//======================================== Add Sale ========================================
+//========================================          ========================================
   addSale(
     BuildContext context, {
     String? argBalance,
@@ -319,7 +329,22 @@ class PaymentButtonsWidget extends StatelessWidget {
 
     try {
       final SalesDatabase salesDB = SalesDatabase.instance;
-      salesDB.createSales(_salesModel);
+      final SalesItemsDatabase salesItemDB = SalesItemsDatabase.instance;
+
+      await salesDB.createSales(_salesModel);
+
+      final num items = SaleSideWidget.totalItemsNotifier.value;
+      for (var i = 0; i < items; i++) {
+        log(' Product id == ${SaleSideWidget.selectedProductsNotifier.value[i].id}');
+        log(' Product Type == ${SaleSideWidget.selectedProductsNotifier.value[i].productType}');
+        log(' Product Code == ${SaleSideWidget.selectedProductsNotifier.value[i].itemCode}');
+        log(' Product Name == ${SaleSideWidget.selectedProductsNotifier.value[i].itemName}');
+        log(' Product Category == ${SaleSideWidget.selectedProductsNotifier.value[i].itemCategory}');
+        log(' Product Cost == ${SaleSideWidget.selectedProductsNotifier.value[i].itemCost}');
+        log(' Unit Price == ${SaleSideWidget.selectedProductsNotifier.value[i].sellingPrice}');
+        log(' Product quantity == ${SaleSideWidget.quantityNotifier.value[i].text}');
+      }
+
       kSnackBar(
         context: context,
         color: kSnackBarSuccessColor,
