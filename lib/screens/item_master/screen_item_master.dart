@@ -21,6 +21,8 @@ import 'package:shop_ez/widgets/dropdown_field_widget/dropdown_field_widget.dart
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
+import '../../core/utils/snackbar/snackbar.dart';
+
 class ScreenItemMaster extends StatefulWidget {
   const ScreenItemMaster({Key? key}) : super(key: key);
 
@@ -534,7 +536,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
       try {
         await itemMasterDB.createItem(_itemMasterModel);
         log('Item $itemName Added!');
-        showSnackBar(
+        kSnackBar(
             context: context,
             color: kSnackBarSuccessColor,
             icon: const Icon(
@@ -546,7 +548,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
         if (e == 'Item Already Exist!') {
           log('Item Already Exist!');
           itemNameFocusNode.requestFocus();
-          showSnackBar(
+          kSnackBar(
             context: context,
             color: kSnackBarErrorColor,
             icon: const Icon(
@@ -558,7 +560,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
         } else if (e == 'ItemCode Already Exist!') {
           log('ItemCode Already Exist!');
           itemCodeFocusNode.requestFocus();
-          showSnackBar(
+          kSnackBar(
             context: context,
             color: kSnackBarErrorColor,
             icon: const Icon(
@@ -584,33 +586,5 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
         itemCostFocusNode.requestFocus();
       }
     }
-  }
-
-  //========== Show SnackBar ==========
-  void showSnackBar(
-      {required BuildContext context,
-      required String content,
-      Color? color,
-      Widget? icon}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            icon ?? const Text(''),
-            kWidth5,
-            Flexible(
-              child: Text(
-                content,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: color,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 }

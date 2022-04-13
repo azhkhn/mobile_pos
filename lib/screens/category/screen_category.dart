@@ -11,6 +11,8 @@ import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
+import '../../core/utils/snackbar/snackbar.dart';
+
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({Key? key}) : super(key: key);
   @override
@@ -62,7 +64,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
                     try {
                       await categoryDB.createCategory(_category);
-                      showSnackBar(
+                      kSnackBar(
                           context: context,
                           color: kSnackBarSuccessColor,
                           icon: const Icon(
@@ -73,7 +75,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       _categoryEditingController.clear();
                       return setState(() {});
                     } catch (e) {
-                      showSnackBar(
+                      kSnackBar(
                           context: context,
                           color: kSnackBarErrorColor,
                           icon: const Icon(
@@ -121,34 +123,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  //========== Show SnackBar ==========
-  void showSnackBar(
-      {required BuildContext context,
-      required String content,
-      Color? color,
-      Widget? icon}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            icon ?? const Text(''),
-            kWidth5,
-            Flexible(
-              child: Text(
-                content,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: color,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
       ),
     );
   }

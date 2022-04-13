@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'package:shop_ez/core/utils/user/logged_user.dart';
 import 'package:shop_ez/db/database.dart';
 import 'package:shop_ez/model/user/user_model.dart';
 
@@ -15,7 +14,7 @@ class UserDatabase {
     final user = await db.rawQuery(
         "select * from $tableUser where ${UserFields.mobileNumber} = '$username'");
     if (user.isNotEmpty) {
-      log('user already exist!');
+      log('User already exist!');
       throw Exception('User Already Exist!');
     } else {
       log('User registered!');

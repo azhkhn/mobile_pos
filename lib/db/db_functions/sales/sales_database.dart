@@ -17,9 +17,30 @@ class SalesDatabase {
     if (_sale.isNotEmpty) {
       throw 'SalesId Already Exist!';
     } else {
-      log('Sale Created!');
-      final id = await db.insert(tableSales, _salesModel.toJson());
-      log('Sale id = $id');
+      final _sales = await db.query(tableSales);
+
+      if (_sales.isNotEmpty) {
+        final _recentSale = SalesModel.fromJson(_sales.last);
+
+        final int? _recentSaleId = _recentSale.id;
+        log('Recent id == $_recentSaleId');
+
+        final String _salesId = 'SA-${_recentSaleId! + 1}';
+        final _newSale = _salesModel.copyWith(salesId: _salesId);
+        log('New Sale id == $_salesId');
+
+        final id = await db.insert(tableSales, _newSale.toJson());
+        log('New id == $id');
+        log('Sale Created!');
+      } else {
+        final _newSale = _salesModel.copyWith(salesId: 'SA-1');
+        log('Sales Model Id === ${_newSale.billerName}');
+
+        log('Sales Model Sales Id === ' + _newSale.salesId!);
+        final id = await db.insert(tableSales, _newSale.toJson());
+        log('Sale Created!');
+        log('id == $id');
+      }
     }
   }
 

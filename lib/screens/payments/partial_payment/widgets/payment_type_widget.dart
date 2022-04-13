@@ -19,8 +19,8 @@ class PaymentTypeWidget extends StatelessWidget {
 
   final num totalPayable;
 
-  // //========== DropDown Controllers ==========
-  // String? _payingCahController;
+  //========== DropDown Controllers ==========
+  static String? payingByController;
 
   //========== Text Editing Controllers ==========
   static final amountController = TextEditingController();
@@ -93,7 +93,10 @@ class PaymentTypeWidget extends StatelessWidget {
                                 child: Text(values),
                               ))
                           .toList(),
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        payingByController = value.toString();
+                        log(payingByController!);
+                      },
                       validator: (value) {
                         if (value == null) {
                           return 'This field is required*';
@@ -129,6 +132,6 @@ class PaymentTypeWidget extends StatelessWidget {
 
     final num _balance = totalPayable - _totalPaying!;
     PaymentDetailsTableWidget.balanceNotifier.value = _balance;
-    log('$_balance');
+    log('Balance Amount == $_balance');
   }
 }

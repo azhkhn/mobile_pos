@@ -33,13 +33,36 @@ class EzDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path,
-        version: 1, onCreate: _createDB, onUpgrade: _upgradeDB);
+        version: 3, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
-    // const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    // const textType = 'TEXT NOT NULL';
+    const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const textType = 'TEXT NOT NULL';
+
+    await db.rawQuery('DROP TABLE $tableSales');
+
+    //========== Table Sales ==========
+    await db.execute('''CREATE TABLE $tableSales (
+      ${SalesFields.id} $idAuto,
+      ${SalesFields.salesId} $textType,
+      ${SalesFields.salesNote} $textType,
+      ${SalesFields.dateTime} $textType,
+      ${SalesFields.cusomerId} $textType, 
+      ${SalesFields.customerName} $textType,
+      ${SalesFields.billerName} $textType,
+      ${SalesFields.totalItems} $textType,
+      ${SalesFields.vatAmount} $textType,
+      ${SalesFields.subTotal} $textType,
+      ${SalesFields.discount} $textType,
+      ${SalesFields.grantTotal} $textType,
+      ${SalesFields.paid} $textType,
+      ${SalesFields.balance} $textType,
+      ${SalesFields.paymentType} $textType,
+      ${SalesFields.salesStatus} $textType,
+      ${SalesFields.paymentStatus} $textType,
+      ${SalesFields.createdBy} $textType)''');
   }
 
   Future close() async {
@@ -211,6 +234,7 @@ class EzDatabase {
       ${SalesFields.discount} $textType,
       ${SalesFields.grantTotal} $textType,
       ${SalesFields.paid} $textType,
+      ${SalesFields.balance} $textType,
       ${SalesFields.paymentType} $textType,
       ${SalesFields.salesStatus} $textType,
       ${SalesFields.paymentStatus} $textType,

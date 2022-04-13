@@ -12,6 +12,8 @@ import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
+import '../../core/utils/snackbar/snackbar.dart';
+
 class VatScreen extends StatefulWidget {
   const VatScreen({Key? key}) : super(key: key);
 
@@ -204,7 +206,7 @@ class _VatScreenState extends State<VatScreen> {
       try {
         await vatDB.createVAT(_vatModel);
         log('VAT Created Successfully');
-        showSnackBar(
+        kSnackBar(
             context: context,
             color: kSnackBarSuccessColor,
             icon: const Icon(
@@ -215,7 +217,7 @@ class _VatScreenState extends State<VatScreen> {
         return setState(() {});
       } catch (e) {
         if (e == 'VAT Already Exist!') {
-          showSnackBar(
+          kSnackBar(
               context: context,
               color: kSnackBarErrorColor,
               icon: const Icon(
@@ -229,33 +231,5 @@ class _VatScreenState extends State<VatScreen> {
         log('Something went wrong!');
       }
     }
-  }
-
-  //========== Show SnackBar ==========
-  void showSnackBar(
-      {required BuildContext context,
-      required String content,
-      Color? color,
-      Widget? icon}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            icon ?? const Text(''),
-            kWidth5,
-            Flexible(
-              child: Text(
-                content,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: color,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 }

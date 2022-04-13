@@ -11,6 +11,8 @@ import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
+import '../../core/utils/snackbar/snackbar.dart';
+
 class CustomerScreen extends StatefulWidget {
   const CustomerScreen({Key? key}) : super(key: key);
   static const items = ['Cash Customer', 'Credit Customer'];
@@ -420,7 +422,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
       try {
         await customerDB.createCustomer(_customerModel);
         log('Customer $customer Added!');
-        showSnackBar(
+        kSnackBar(
             context: context,
             color: kSnackBarSuccessColor,
             icon: const Icon(
@@ -432,7 +434,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
         if (e == 'Company Already Exist!') {
           log('Commpany name Already Exist!');
           companyFocusNode.requestFocus();
-          showSnackBar(
+          kSnackBar(
             context: context,
             color: kSnackBarErrorColor,
             icon: const Icon(
@@ -443,7 +445,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
           );
         } else if (e == 'VAT Number already exist!') {
           vatNumberFocusNode.requestFocus();
-          showSnackBar(
+          kSnackBar(
             context: context,
             color: kSnackBarErrorColor,
             icon: const Icon(
@@ -489,33 +491,5 @@ class _CustomerScreenState extends State<CustomerScreen> {
         }
       }
     }
-  }
-
-  //========== Show SnackBar ==========
-  void showSnackBar(
-      {required BuildContext context,
-      required String content,
-      Color? color,
-      Widget? icon}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            icon ?? const Text(''),
-            kWidth5,
-            Flexible(
-              child: Text(
-                content,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: color,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 }

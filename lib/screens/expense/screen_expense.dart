@@ -5,7 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
@@ -17,6 +16,8 @@ import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
+
+import '../../core/utils/snackbar/snackbar.dart';
 
 const expenseList = ['Travel', 'Fuel', 'Food'];
 
@@ -272,7 +273,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
 
       try {
         await expenseDB.createExpense(_expenseModel);
-        showSnackBar(
+        kSnackBar(
             context: context,
             color: kSnackBarSuccessColor,
             icon: const Icon(
@@ -281,7 +282,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
             ),
             content: 'Expense "$expenseTitle" added!');
       } catch (e) {
-        showSnackBar(
+        kSnackBar(
           context: context,
           color: kSnackBarErrorColor,
           icon: const Icon(
@@ -387,33 +388,5 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
     } on PlatformException catch (e) {
       log('Failed to Pick Image $e');
     }
-  }
-
-  //========== Show SnackBar ==========
-  void showSnackBar(
-      {required BuildContext context,
-      required String content,
-      Color? color,
-      Widget? icon}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            icon ?? const Text(''),
-            kWidth5,
-            Flexible(
-              child: Text(
-                content,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: color,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 }

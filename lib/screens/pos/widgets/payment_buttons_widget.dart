@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/logged_user.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
@@ -72,7 +73,41 @@ class PaymentButtonsWidget extends StatelessWidget {
               child: SizedBox(
                 height: _screenSize.width / 25,
                 child: MaterialButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (ctx) {
+                        return AlertDialog(
+                          title: const Text(
+                            'Credit Payment!',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          content: const Text('Do you want to add this sale?'),
+                          actions: [
+                            TextButton(
+                                onPressed: () => Navigator.pop(ctx),
+                                child: const Text('Cancel')),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(ctx);
+                                  final String _balance = SaleSideWidget
+                                      .totalPayableNotifier.value
+                                      .toString();
+                                  addSale(
+                                    context,
+                                    argPaid: '0',
+                                    argBalance: _balance,
+                                    argPaymentStatus: 'Credit',
+                                    argPaymentType: '',
+                                  );
+                                },
+                                child: const Text('Accept')),
+                          ],
+                        );
+                      },
+                    );
+                  },
                   padding: const EdgeInsets.all(5),
                   color: Colors.yellow[800],
                   child: Center(
@@ -94,26 +129,29 @@ class PaymentButtonsWidget extends StatelessWidget {
                 child: MaterialButton(
                   onPressed: () {
                     showDialog(
-                        context: context,
-                        builder: (ctx) {
-                          return AlertDialog(
-                            title: const Text(
-                              'Full Payment!',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                            content:
-                                const Text('Do you want to add this sale?'),
-                            actions: [
-                              TextButton(
-                                  onPressed: () => Navigator.pop(ctx),
-                                  child: const Text('Cancel')),
-                              TextButton(
-                                  onPressed: () => addSale(),
-                                  child: const Text('Accept')),
-                            ],
-                          );
-                        });
+                      context: context,
+                      builder: (ctx) {
+                        return AlertDialog(
+                          title: const Text(
+                            'Full Payment!',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          content: const Text('Do you want to add this sale?'),
+                          actions: [
+                            TextButton(
+                                onPressed: () => Navigator.pop(ctx),
+                                child: const Text('Cancel')),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(ctx);
+                                  addSale(context);
+                                },
+                                child: const Text('Accept')),
+                          ],
+                        );
+                      },
+                    );
                   },
                   padding: const EdgeInsets.all(5),
                   color: Colors.green[700],
@@ -140,7 +178,7 @@ class PaymentButtonsWidget extends StatelessWidget {
               child: SizedBox(
                 height: _screenSize.width / 25,
                 child: MaterialButton(
-                  onPressed: () {},
+                  onPressed: () => Navigator.pop(context),
                   padding: const EdgeInsets.all(5),
                   color: Colors.red[400],
                   child: Center(
@@ -189,10 +227,15 @@ class PaymentButtonsWidget extends StatelessWidget {
     );
   }
 
-//========== Add Sale ==========
-  addSale() async {
-    final String salesId,
-        dateTime,
+//==================== Add Sale ====================
+  addSale(
+    BuildContext context, {
+    String? argBalance,
+    String? argPaymentStatus,
+    String? argPaymentType,
+    String? argPaid,
+  }) async {
+    final String dateTime,
         cusomerId,
         customerName,
         billerName,
@@ -203,34 +246,60 @@ class PaymentButtonsWidget extends StatelessWidget {
         discount,
         grantTotal,
         paid,
+        balance,
         paymentType,
         salesStatus,
         paymentStatus,
         createdBy;
 
-    final _userDetails = await LoggedUser.instance.currentUser;
-    final String _user = _userDetails!.shopName;
-    log('Current User ==== ${_userDetails.shopName}');
+    final _loggedUser = await UserUtils.instance.loggedUser;
+    final String _user = _loggedUser!.shopName;
+    log('Logged User ==== $_user');
 
-    salesId = 'SALE-101';
+    final _businessProfile = await UserUtils.instance.businessProfile;
+    final String _biller = _businessProfile!.billerName;
+    log('Biller Name ==== $_biller');
+
+//Checking if it's Partial Payment then Including Balance Amount
+
+    if (argPaymentStatus != null) {
+      paymentStatus = argPaymentStatus;
+    } else {
+      paymentStatus = 'Paid';
+    }
+
+    if (argBalance != null) {
+      balance = argBalance;
+    } else {
+      balance = '0';
+    }
+
+    if (argPaymentType != null) {
+      paymentType = argPaymentType;
+    } else {
+      paymentType = 'Cash';
+    }
+
+    if (argPaid != null) {
+      paid = argPaid;
+    } else {
+      paid = SaleSideWidget.totalPayableNotifier.value.toString();
+    }
+
     dateTime = DateTime.now().toIso8601String();
     cusomerId = SaleSideWidget.customerIdNotifier.value.toString();
     customerName = SaleSideWidget.customerNameNotifier.value!;
-    billerName = 'Rishal';
+    billerName = _biller;
     salesNote = 'New Sale';
     totalItems = SaleSideWidget.totalItemsNotifier.value.toString();
     vatAmount = SaleSideWidget.totalVatNotifier.value.toString();
     subTotal = SaleSideWidget.totalAmountNotifier.value.toString();
     discount = '';
     grantTotal = SaleSideWidget.totalPayableNotifier.value.toString();
-    paid = SaleSideWidget.totalPayableNotifier.value.toString();
-    paymentType = 'Cash';
     salesStatus = 'Completed';
-    paymentStatus = 'Paid';
     createdBy = _user;
 
     final SalesModel _salesModel = SalesModel(
-        salesId: salesId,
         dateTime: dateTime,
         cusomerId: cusomerId,
         customerName: customerName,
@@ -242,6 +311,7 @@ class PaymentButtonsWidget extends StatelessWidget {
         discount: discount,
         grantTotal: grantTotal,
         paid: paid,
+        balance: balance,
         paymentType: paymentType,
         salesStatus: salesStatus,
         paymentStatus: paymentStatus,
@@ -250,6 +320,15 @@ class PaymentButtonsWidget extends StatelessWidget {
     try {
       final SalesDatabase salesDB = SalesDatabase.instance;
       salesDB.createSales(_salesModel);
+      kSnackBar(
+        context: context,
+        color: kSnackBarSuccessColor,
+        icon: const Icon(
+          Icons.done,
+          color: kSnackBarIconColor,
+        ),
+        content: "Sale Added Successfully!",
+      );
     } catch (e) {
       log('$e');
     }

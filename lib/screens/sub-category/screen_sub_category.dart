@@ -13,6 +13,8 @@ import 'package:shop_ez/widgets/dropdown_field_widget/dropdown_field_widget.dart
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
+import '../../core/utils/snackbar/snackbar.dart';
+
 class SubCategoryScreen extends StatefulWidget {
   const SubCategoryScreen({Key? key}) : super(key: key);
 
@@ -94,7 +96,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
 
                       try {
                         await subCategoryDB.createSubCategory(_subCategory);
-                        showSnackBar(
+                        kSnackBar(
                             context: context,
                             color: kSnackBarSuccessColor,
                             icon: const Icon(
@@ -106,7 +108,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                         _subCategoryController.clear();
                         return setState(() {});
                       } catch (e) {
-                        showSnackBar(
+                        kSnackBar(
                             context: context,
                             color: kSnackBarErrorColor,
                             icon: const Icon(
@@ -162,34 +164,6 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  //========== Show SnackBar ==========
-  void showSnackBar(
-      {required BuildContext context,
-      required String content,
-      Color? color,
-      Widget? icon}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            icon ?? const Text(''),
-            kWidth5,
-            Flexible(
-              child: Text(
-                content,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: color,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
       ),
     );
   }

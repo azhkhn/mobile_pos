@@ -7,6 +7,8 @@ import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/db_functions/user_database/user_db.dart';
 import 'package:shop_ez/model/user/user_model.dart';
 
+import '../../../core/utils/snackbar/snackbar.dart';
+
 class LoginAndSignUpButtons extends StatelessWidget {
   LoginAndSignUpButtons.logIn({
     Key? key,
@@ -111,7 +113,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
         Navigator.pushReplacementNamed(context, routeHome);
       } catch (e) {
         log(e.toString());
-        showSnackBar(
+        kSnackBar(
           context: context,
           color: kSnackBarErrorColor,
           icon: const Icon(
@@ -151,7 +153,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
       );
       try {
         await UserDatabase.instance.createUser(_user, _mobileNumber);
-        showSnackBar(
+        kSnackBar(
           context: context,
           color: kSnackBarSuccessColor,
           icon: const Icon(
@@ -163,7 +165,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
         Navigator.pushReplacementNamed(context, routeHome);
         return;
       } catch (e) {
-        showSnackBar(
+        kSnackBar(
           context: context,
           color: kSnackBarErrorColor,
           icon: const Icon(
@@ -175,33 +177,5 @@ class LoginAndSignUpButtons extends StatelessWidget {
         return;
       }
     }
-  }
-
-  //========== Show SnackBar ==========
-  void showSnackBar(
-      {required BuildContext context,
-      required String content,
-      Color? color,
-      Widget? icon}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            icon ?? const Text(''),
-            kWidth5,
-            Flexible(
-              child: Text(
-                content,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: color,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 }

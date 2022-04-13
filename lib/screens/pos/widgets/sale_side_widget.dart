@@ -8,7 +8,6 @@ import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/db/db_functions/customer_database/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
-import 'package:shop_ez/screens/pos/screen_pos.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/payment_buttons_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/price_section_widget.dart';
@@ -16,6 +15,7 @@ import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
 import '../../../core/utils/device/device.dart';
+import '../../../core/utils/snackbar/snackbar.dart';
 import '../../../widgets/gesture_dismissible_widget/dismissible_widget.dart';
 
 class SaleSideWidget extends StatelessWidget {
@@ -151,7 +151,7 @@ class SaleSideWidget extends StatelessWidget {
                                         customerId: customerIdNotifier.value),
                                   ));
                         } else {
-                          showSnackBar(
+                          kSnackBar(
                               context: context,
                               content:
                                   'Please select any Customer to show details!');

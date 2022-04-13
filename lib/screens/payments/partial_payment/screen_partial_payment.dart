@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_details_table_widget.dart';
 import 'package:shop_ez/screens/payments/partial_payment/widgets/quick_cash_widget.dart';
+import 'package:shop_ez/screens/pos/widgets/payment_buttons_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import '../../../core/constant/sizes.dart';
 import 'widgets/payment_type_widget.dart';
@@ -70,7 +71,31 @@ class PartialPayment extends StatelessWidget {
                     ],
                   ),
                 ),
-                CustomMaterialBtton(onPressed: () {}, buttonText: 'Submit'),
+                CustomMaterialBtton(
+                    onPressed: () {
+                      final String _paid =
+                          PaymentTypeWidget.amountController.text.toString();
+
+                      final String _balance = PaymentDetailsTableWidget
+                          .balanceNotifier.value
+                          .toString();
+
+                      final String _paymentStatus =
+                          _balance == '0' ? 'Paid' : 'Partial';
+
+                      final String _paymentType =
+                          PaymentTypeWidget.payingByController!;
+
+                      const PaymentButtonsWidget().addSale(
+                        context,
+                        argBalance: _balance,
+                        argPaymentStatus: _paymentStatus,
+                        argPaymentType: _paymentType,
+                        argPaid: _paid,
+                      );
+                      Navigator.pop(context);
+                    },
+                    buttonText: 'Submit'),
                 kHeight5,
               ],
             ),

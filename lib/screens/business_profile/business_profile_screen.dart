@@ -16,6 +16,8 @@ import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
+import '../../core/utils/snackbar/snackbar.dart';
+
 class BusinessProfile extends StatefulWidget {
   const BusinessProfile({Key? key}) : super(key: key);
 
@@ -478,7 +480,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
         await businessProfileDB.createBusinessProfile(_businessProfileModel);
         log('Profile Updated!');
 
-        showSnackBar(
+        kSnackBar(
             context: context,
             color: kSnackBarSuccessColor,
             icon: const Icon(
@@ -540,33 +542,5 @@ class _BusinessProfileState extends State<BusinessProfile> {
 
       setState(() {});
     }
-  }
-
-  //========== Show SnackBar ==========
-  void showSnackBar(
-      {required BuildContext context,
-      required String content,
-      Color? color,
-      Widget? icon}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            icon ?? const Text(''),
-            kWidth5,
-            Flexible(
-              child: Text(
-                content,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: color,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 }

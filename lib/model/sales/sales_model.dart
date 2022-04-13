@@ -14,6 +14,7 @@ class SalesFields {
   static const discount = 'discount';
   static const grantTotal = 'grantTotal';
   static const paid = 'paid';
+  static const balance = 'balance';
   static const paymentType = 'paymentType';
   static const salesStatus = 'salesStatus';
   static const paymentStatus = 'paymentStatus';
@@ -22,8 +23,8 @@ class SalesFields {
 
 class SalesModel {
   int? id;
-  final String salesId,
-      dateTime,
+  String? salesId;
+  final String dateTime,
       cusomerId,
       customerName,
       billerName,
@@ -34,6 +35,7 @@ class SalesModel {
       discount,
       grantTotal,
       paid,
+      balance,
       paymentType,
       salesStatus,
       paymentStatus,
@@ -41,7 +43,7 @@ class SalesModel {
 
   SalesModel({
     this.id,
-    required this.salesId,
+    this.salesId,
     required this.dateTime,
     required this.cusomerId,
     required this.customerName,
@@ -53,11 +55,53 @@ class SalesModel {
     required this.discount,
     required this.grantTotal,
     required this.paid,
+    required this.balance,
     required this.paymentType,
     required this.salesStatus,
     required this.paymentStatus,
     required this.createdBy,
   });
+
+  SalesModel copyWith({
+    int? id,
+    String? salesId,
+    dateTime,
+    cusomerId,
+    customerName,
+    billerName,
+    salesNote,
+    totalItems,
+    vatAmount,
+    subTotal,
+    discount,
+    grantTotal,
+    paid,
+    balance,
+    paymentType,
+    salesStatus,
+    paymentStatus,
+    createdBy,
+  }) =>
+      SalesModel(
+        id: id ?? this.id,
+        salesId: salesId ?? this.salesId,
+        dateTime: dateTime ?? this.dateTime,
+        cusomerId: cusomerId ?? this.cusomerId,
+        customerName: customerName ?? this.customerName,
+        billerName: billerName ?? this.billerName,
+        salesNote: salesNote ?? this.salesNote,
+        totalItems: totalItems ?? this.totalItems,
+        vatAmount: vatAmount ?? this.vatAmount,
+        subTotal: subTotal ?? this.subTotal,
+        discount: discount ?? this.discount,
+        grantTotal: grantTotal ?? this.grantTotal,
+        paid: paid ?? this.paid,
+        balance: balance ?? this.balance,
+        paymentType: paymentType ?? this.paymentType,
+        salesStatus: salesStatus ?? this.salesStatus,
+        paymentStatus: paymentStatus ?? this.paymentStatus,
+        createdBy: createdBy ?? this.createdBy,
+      );
 
   Map<String, Object?> toJson() => {
         SalesFields.id: id,
@@ -73,6 +117,7 @@ class SalesModel {
         SalesFields.discount: discount,
         SalesFields.grantTotal: grantTotal,
         SalesFields.paid: paid,
+        SalesFields.balance: balance,
         SalesFields.paymentType: paymentType,
         SalesFields.salesStatus: salesStatus,
         SalesFields.paymentStatus: paymentStatus,
@@ -93,6 +138,7 @@ class SalesModel {
         discount: json[SalesFields.discount] as String,
         grantTotal: json[SalesFields.grantTotal] as String,
         paid: json[SalesFields.paid] as String,
+        balance: json[SalesFields.balance] as String,
         paymentType: json[SalesFields.paymentType] as String,
         salesStatus: json[SalesFields.salesStatus] as String,
         paymentStatus: json[SalesFields.paymentStatus] as String,

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
@@ -29,7 +27,6 @@ class PaymentDetailsTableWidget extends StatelessWidget {
       if (totalPayingNotifier.value == 0) {
         balanceNotifier.value = totalPayable;
       }
-      log('ldsfdsf');
     });
     return WillPopScope(
       onWillPop: () async {

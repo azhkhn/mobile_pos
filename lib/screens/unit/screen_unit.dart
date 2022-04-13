@@ -10,6 +10,8 @@ import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
+import '../../core/utils/snackbar/snackbar.dart';
+
 class UnitScreen extends StatefulWidget {
   const UnitScreen({Key? key}) : super(key: key);
 
@@ -59,7 +61,7 @@ class _UnitScreenState extends State<UnitScreen> {
 
                     try {
                       await unitDB.createUnit(_unit);
-                      showSnackBar(
+                      kSnackBar(
                           context: context,
                           color: kSnackBarSuccessColor,
                           icon: const Icon(
@@ -70,7 +72,7 @@ class _UnitScreenState extends State<UnitScreen> {
                       _unitEditingController.clear();
                       return setState(() {});
                     } catch (e) {
-                      showSnackBar(
+                      kSnackBar(
                           context: context,
                           color: kSnackBarErrorColor,
                           icon: const Icon(
@@ -117,34 +119,6 @@ class _UnitScreenState extends State<UnitScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  //========== Show SnackBar ==========
-  void showSnackBar(
-      {required BuildContext context,
-      required String content,
-      Color? color,
-      Widget? icon}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            icon ?? const Text(''),
-            kWidth5,
-            Flexible(
-              child: Text(
-                content,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: color,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
       ),
     );
   }
