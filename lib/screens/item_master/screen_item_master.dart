@@ -13,6 +13,7 @@ import 'package:shop_ez/db/db_functions/category/category_db.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/sub_category/sub_category_db.dart';
 import 'package:shop_ez/db/db_functions/unit/unit_database.dart';
+import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
@@ -46,6 +47,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
   final subCategoryDB = SubCategoryDatabase.instance;
   final brandDB = BrandDatabase.instance;
   final unitDB = UnitDatabase.instance;
+  final vatDB = VatDatabase.instance;
 
   //========== Text Editing Controllers ==========
   final _itemNameController = TextEditingController();
@@ -58,13 +60,14 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
   final _alertQuantityController = TextEditingController();
 
   //========== Dropdown Field ==========
-  String _productTypeController = 'null';
-  String _itemCategoryController = 'null';
-  String _itemSubCategoryController = 'null';
-  String _itemBrandController = 'null';
-  String _productVatController = 'null';
-  String _unitController = 'null';
-  String _vatMethodController = 'null';
+  String? _productTypeController;
+  String? _itemCategoryController;
+  String? _itemSubCategoryController;
+  String? _itemBrandController;
+  String? _productVatController;
+  String? _vatId;
+  String? _unitController;
+  String? _vatMethodController;
 
   //========== Image File Path ==========
   File? image, selectedImage;
@@ -112,7 +115,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                       });
                     },
                     validator: (value) {
-                      if (value == null || _productTypeController == 'null') {
+                      if (value == null || _productTypeController == null) {
                         return 'This field is required*';
                       }
                       return null;
@@ -180,7 +183,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                         },
                         validator: (value) {
                           if (value == null ||
-                              _itemCategoryController == 'null') {
+                              _itemCategoryController == null) {
                             return 'This field is required*';
                           }
                           return null;
@@ -193,7 +196,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                   //========== Item Sub-Category Dropdown ==========
                   FutureBuilder(
                     future: subCategoryDB.getSubCategoryByCategory(
-                        category: _itemCategoryController),
+                        category: _itemCategoryController ?? ''),
                     builder: (context, dynamic snapshot) {
                       return CustomDropDownField(
                         dropdownKey: _dropdownKey,
@@ -218,7 +221,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                           _itemBrandController = value.toString();
                         },
                         validator: (value) {
-                          if (value == null || _itemBrandController == 'null') {
+                          if (value == null || _itemBrandController == null) {
                             return 'This field is required*';
                           }
                           return null;
@@ -270,30 +273,25 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                   kHeight10,
 
                   //========== Product VAT Dropdown ==========
-                  DropdownButtonFormField(
-                    decoration: const InputDecoration(
-                      label: Text(
-                        'Product VAT *',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                    isExpanded: true,
-                    items: ScreenItemMaster.productTypeList.map((String item) {
-                      return DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(item),
+                  FutureBuilder(
+                    future: vatDB.getAllVats(),
+                    builder: (context, dynamic snapshot) {
+                      return CustomDropDownField(
+                        labelText: 'Product VAT *',
+                        snapshot: snapshot,
+                        onChanged: (value) async {
+                          _productVatController = value.toString();
+                          final _vat = await vatDB.getVatByName(value!);
+                          _vatId = '${_vat.id}';
+                          log('VAT id = $_vatId');
+                        },
+                        validator: (value) {
+                          if (value == null || _productVatController == null) {
+                            return 'This field is required*';
+                          }
+                          return null;
+                        },
                       );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _productVatController = value.toString();
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || _productVatController == 'null') {
-                        return 'This field is required*';
-                      }
-                      return null;
                     },
                   ),
                   kHeight10,
@@ -309,7 +307,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                           _unitController = value.toString();
                         },
                         validator: (value) {
-                          if (value == null || _unitController == 'null') {
+                          if (value == null || _unitController == null) {
                             return 'This field is required*';
                           }
                           return null;
@@ -349,7 +347,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                       });
                     },
                     validator: (value) {
-                      if (value == null || _vatMethodController == 'null') {
+                      if (value == null || _vatMethodController == null) {
                         return 'This field is required*';
                       }
                       return null;
@@ -472,6 +470,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
         itemCost,
         sellingPrice,
         secondarySellingPrice,
+        vatId,
         productVAT,
         unit,
         openingStock,
@@ -480,20 +479,21 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
         itemImage;
 
     //Retieving values from TextFields to String
-    productType = _productTypeController;
+    productType = _productTypeController!;
     itemName = _itemNameController.text.trim();
     itemNameArabic = _itemNameArabicController.text.trim();
     itemCode = _itemCodeController.text.trim();
-    itemCategory = _itemCategoryController;
-    itemSubCategory = _itemSubCategoryController;
-    itemBrand = _itemBrandController;
+    itemCategory = _itemCategoryController!;
+    itemSubCategory = _itemSubCategoryController!;
+    itemBrand = _itemBrandController!;
     itemCost = _itemCostController.text.trim();
     sellingPrice = _sellingPriceController.text.trim();
     secondarySellingPrice = _secondarySellingPriceController.text.trim();
-    productVAT = _productVatController;
-    unit = _unitController;
+    vatId = _vatId!;
+    productVAT = _productVatController!;
+    unit = _unitController!;
     openingStock = _openingStockController.text.trim();
-    vatMethod = _vatMethodController;
+    vatMethod = _vatMethodController!;
     alertQuantity = _alertQuantityController.text.trim();
 
     if (selectedImage != null) {
@@ -523,6 +523,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
         itemCategory: itemCategory,
         itemCost: itemCost,
         sellingPrice: sellingPrice,
+        vatId: vatId,
         productVAT: productVAT,
         unit: unit,
         vatMethod: vatMethod,

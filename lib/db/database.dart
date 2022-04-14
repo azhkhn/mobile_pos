@@ -34,7 +34,7 @@ class EzDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path,
-        version: 4, onCreate: _createDB, onUpgrade: _upgradeDB);
+        version: 5, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -42,7 +42,30 @@ class EzDatabase {
     const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textType = 'TEXT NOT NULL';
 
+    await db.rawQuery('DROP TABLE $tableItemMaster');
     await db.rawQuery('DROP TABLE $tableSales');
+    await db.rawQuery('DROP TABLE $tableSalesItems');
+
+    //========== Table Item-Master ==========
+    await db.execute('''CREATE TABLE $tableItemMaster (
+      ${ItemMasterFields.id} $idAuto,
+      ${ItemMasterFields.productType} $textType,
+      ${ItemMasterFields.itemName} $textType,
+      ${ItemMasterFields.itemNameArabic} $textType, 
+      ${ItemMasterFields.itemCode} $textType,
+      ${ItemMasterFields.itemCategory} $textType,
+      ${ItemMasterFields.itemSubCategory} $textType,
+      ${ItemMasterFields.itemBrand} $textType,
+      ${ItemMasterFields.itemCost} $textType,
+      ${ItemMasterFields.sellingPrice} $textType,
+      ${ItemMasterFields.secondarySellingPrice} $textType,
+      ${ItemMasterFields.vatId} $textType,
+      ${ItemMasterFields.productVAT} $textType,
+      ${ItemMasterFields.unit} $textType,
+      ${ItemMasterFields.openingStock} $textType,
+      ${ItemMasterFields.vatMethod} $textType,
+      ${ItemMasterFields.alertQuantity} $textType,
+      ${ItemMasterFields.itemImage} $textType)''');
 
     //========== Table Sales ==========
     await db.execute('''CREATE TABLE $tableSales (
@@ -189,6 +212,7 @@ class EzDatabase {
       ${ItemMasterFields.itemCost} $textType,
       ${ItemMasterFields.sellingPrice} $textType,
       ${ItemMasterFields.secondarySellingPrice} $textType,
+      ${ItemMasterFields.vatId} $textType,
       ${ItemMasterFields.productVAT} $textType,
       ${ItemMasterFields.unit} $textType,
       ${ItemMasterFields.openingStock} $textType,

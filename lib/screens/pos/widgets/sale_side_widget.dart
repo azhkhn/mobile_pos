@@ -27,6 +27,8 @@ class SaleSideWidget extends StatelessWidget {
   static final ValueNotifier<List<ItemMasterModel>> selectedProductsNotifier =
       ValueNotifier([]);
   static final ValueNotifier<List<String>> subTotalNotifier = ValueNotifier([]);
+  static final ValueNotifier<List<String>> itemTotalVatNotifier =
+      ValueNotifier([]);
   static final ValueNotifier<List<TextEditingController>> quantityNotifier =
       ValueNotifier([]);
 
@@ -49,6 +51,7 @@ class SaleSideWidget extends StatelessWidget {
       onWillPop: () async {
         selectedProductsNotifier.value.clear();
         subTotalNotifier.value.clear();
+        itemTotalVatNotifier.value.clear();
         _customerController.clear();
         quantityNotifier.value.clear();
         totalItemsNotifier.value = 0;
@@ -230,8 +233,9 @@ class SaleSideWidget extends StatelessWidget {
                                 _product.vatMethod == 'Exclusive'
                                     ? Converter.currency.format(
                                         num.parse(_product.sellingPrice))
-                                    : Converter.currency
-                                        .format(getExclusiveAmount(_product)),
+                                    : Converter.currency.format(
+                                        getExclusiveAmount(
+                                            _product.sellingPrice)),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -296,6 +300,7 @@ class SaleSideWidget extends StatelessWidget {
                                   onPressed: () {
                                     selectedProducts.removeAt(index);
                                     subTotalNotifier.value.removeAt(index);
+                                    itemTotalVatNotifier.value.removeAt(index);
                                     quantityNotifier.value.removeAt(index);
                                     subTotalNotifier.notifyListeners();
                                     selectedProductsNotifier.notifyListeners();
@@ -348,7 +353,8 @@ class SaleSideWidget extends StatelessWidget {
   void getSubTotal(List<ItemMasterModel> selectedProducts, int index, num qty) {
     final cost = num.tryParse(selectedProducts[index].sellingPrice);
     if (selectedProducts[index].vatMethod == 'Inclusive') {
-      final _exclusiveCost = getExclusiveAmount(selectedProducts[index]);
+      final _exclusiveCost =
+          getExclusiveAmount(selectedProducts[index].sellingPrice);
       final _subTotal = _exclusiveCost * qty;
       subTotalNotifier.value[index] = '$_subTotal';
     } else {
@@ -392,23 +398,35 @@ class SaleSideWidget extends StatelessWidget {
     }
   }
 
+  //==================== Get Item VAT ====================
+  void getItemVat({String? vatMethod, String? amount}) {
+    num? itemTotalVat;
+    num sellingPrice = num.parse(amount!);
+
+    if (vatMethod == 'Inclusive') {
+      sellingPrice = getExclusiveAmount('$sellingPrice');
+    }
+
+    itemTotalVat = sellingPrice * 15 / 100;
+    log('Item Total VAT == $itemTotalVat');
+    itemTotalVatNotifier.value.add('$itemTotalVat');
+  }
+
   //==================== Get Total VAT ====================
   void getTotalVAT() {
     num _totalVAT = 0;
     num? _subTotal = 0;
+
     if (subTotalNotifier.value.isEmpty) {
       totalVatNotifier.value = 0;
     } else {
       for (var i = 0; i < subTotalNotifier.value.length; i++) {
-        if (selectedProductsNotifier.value[i].vatMethod == 'Inclusive') {
-          //Inclusive VAT Calculation...
-          _subTotal = num.tryParse(subTotalNotifier.value[i]);
-        } else {
-          //Exclusive VAT Calculation...
-          _subTotal = num.tryParse(subTotalNotifier.value[i]);
-        }
+        _subTotal = num.tryParse(subTotalNotifier.value[i]);
+        log('item total vat length == ${itemTotalVatNotifier.value.length}');
+        itemTotalVatNotifier.value[i] = '${_subTotal! * 15 / 100}';
+        log('Item Total VAT == ${itemTotalVatNotifier.value[i]}');
 
-        _totalVAT += _subTotal! * 15 / 100;
+        _totalVAT += _subTotal * 15 / 100;
       }
       log('Total VAT == $_totalVAT');
       totalVatNotifier.value = _totalVAT;
@@ -416,10 +434,10 @@ class SaleSideWidget extends StatelessWidget {
   }
 
   //==================== Calculate Exclusive Amount from Inclusive Amount ====================
-  num getExclusiveAmount(ItemMasterModel item) {
+  num getExclusiveAmount(String sellingPrice) {
     num _exclusiveAmount = 0;
 
-    final _inclusiveAmount = num.tryParse(item.sellingPrice);
+    final _inclusiveAmount = num.tryParse(sellingPrice);
 
     _exclusiveAmount = _inclusiveAmount! * 100 / 115;
 

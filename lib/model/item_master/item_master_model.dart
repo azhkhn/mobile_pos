@@ -12,6 +12,7 @@ class ItemMasterFields {
   static const itemCost = 'itemCost';
   static const sellingPrice = 'sellingPrice';
   static const secondarySellingPrice = 'secondarySellingPrice';
+  static const vatId = 'vatId';
   static const productVAT = 'productVAT';
   static const unit = 'unit';
   static const openingStock = 'openingStock';
@@ -29,6 +30,7 @@ class ItemMasterModel {
       itemCategory,
       itemCost,
       sellingPrice,
+      vatId,
       productVAT,
       unit,
       vatMethod;
@@ -48,6 +50,7 @@ class ItemMasterModel {
     required this.itemCategory,
     required this.itemCost,
     required this.sellingPrice,
+    required this.vatId,
     required this.productVAT,
     required this.unit,
     required this.vatMethod,
@@ -71,6 +74,7 @@ class ItemMasterModel {
         ItemMasterFields.itemCost: itemCost,
         ItemMasterFields.sellingPrice: sellingPrice,
         ItemMasterFields.secondarySellingPrice: secondarySellingPrice,
+        ItemMasterFields.vatId: vatId,
         ItemMasterFields.productVAT: productVAT,
         ItemMasterFields.unit: unit,
         ItemMasterFields.openingStock: openingStock,
@@ -92,8 +96,9 @@ class ItemMasterModel {
         sellingPrice: json[ItemMasterFields.sellingPrice] as String,
         secondarySellingPrice:
             json[ItemMasterFields.secondarySellingPrice] as String,
-        productVAT: json[ItemMasterFields.itemBrand] as String,
-        unit: json[ItemMasterFields.itemBrand] as String,
+        vatId: json[ItemMasterFields.vatId] as String,
+        productVAT: json[ItemMasterFields.productVAT] as String,
+        unit: json[ItemMasterFields.unit] as String,
         openingStock: json[ItemMasterFields.openingStock] as String,
         itemImage: json[ItemMasterFields.itemImage] as String,
         vatMethod: json[ItemMasterFields.vatMethod] as String,

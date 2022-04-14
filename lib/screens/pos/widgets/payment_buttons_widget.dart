@@ -331,7 +331,7 @@ class PaymentButtonsWidget extends StatelessWidget {
       final SalesDatabase salesDB = SalesDatabase.instance;
       final SalesItemsDatabase salesItemDB = SalesItemsDatabase.instance;
 
-      await salesDB.createSales(_salesModel);
+      // await salesDB.createSales(_salesModel);
 
       final num items = SaleSideWidget.totalItemsNotifier.value;
       for (var i = 0; i < items; i++) {
@@ -343,6 +343,26 @@ class PaymentButtonsWidget extends StatelessWidget {
         log(' Product Cost == ${SaleSideWidget.selectedProductsNotifier.value[i].itemCost}');
         log(' Unit Price == ${SaleSideWidget.selectedProductsNotifier.value[i].sellingPrice}');
         log(' Product quantity == ${SaleSideWidget.quantityNotifier.value[i].text}');
+        log(' Product subTotal == ${SaleSideWidget.subTotalNotifier.value[i]}');
+        log(' VAT id == ${SaleSideWidget.selectedProductsNotifier.value[i].vatId}');
+        log(' Product Percentage == ${SaleSideWidget.selectedProductsNotifier.value[i].productVAT}');
+        log(' VAT Total == ${SaleSideWidget.itemTotalVatNotifier.value[i]}');
+        log(' Unit Code == ${SaleSideWidget.selectedProductsNotifier.value[i].unit}');
+        if (SaleSideWidget.selectedProductsNotifier.value[i].vatMethod ==
+            'Inclusive') {
+          final sellingPrice =
+              SaleSideWidget.selectedProductsNotifier.value[i].sellingPrice;
+          final netUnitPrice =
+              const SaleSideWidget().getExclusiveAmount(sellingPrice);
+
+          log(' Net Unit Price == $netUnitPrice');
+        } else {
+          final netUnitPrice =
+              SaleSideWidget.selectedProductsNotifier.value[i].sellingPrice;
+          log(' Net Unit Price == $netUnitPrice');
+        }
+
+        log('==============================================');
       }
 
       kSnackBar(

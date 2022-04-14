@@ -379,22 +379,25 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
 //==================== On Item Quantity Changed ====================
         const SaleSideWidget().onItemQuantityChanged(
-            SaleSideWidget.quantityNotifier.value[i].text,
-            SaleSideWidget.selectedProductsNotifier.value,
-            i);
+          SaleSideWidget.quantityNotifier.value[i].text,
+          SaleSideWidget.selectedProductsNotifier.value,
+          i,
+        );
         return;
       }
     }
     SaleSideWidget.selectedProductsNotifier.value.add(itemList[index]);
 
     SaleSideWidget.subTotalNotifier.value.add(vatMethod == 'Inclusive'
-        ? '${const SaleSideWidget().getExclusiveAmount(itemList[index])}'
+        ? '${const SaleSideWidget().getExclusiveAmount(itemList[index].sellingPrice)}'
         : itemList[index].sellingPrice);
 
     SaleSideWidget.quantityNotifier.value.add(TextEditingController(text: '1'));
 
     SaleSideWidget.totalItemsNotifier.value++;
 
+    const SaleSideWidget()
+        .getItemVat(vatMethod: vatMethod, amount: itemList[index].sellingPrice);
     const SaleSideWidget().getTotalAmount();
     const SaleSideWidget().getTotalVAT();
     const SaleSideWidget().getTotalPayable();

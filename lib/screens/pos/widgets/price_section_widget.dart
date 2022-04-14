@@ -25,151 +25,163 @@ class PriceSectionWidget extends StatelessWidget {
           direction: Axis.vertical,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AutoSizeText(
-                        'items',
-                        style: TextStyle(fontSize: isTablet ? 12 : 10),
-                        minFontSize: 10,
+            Expanded(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          AutoSizeText(
+                            'items',
+                            style: TextStyle(fontSize: isTablet ? 12 : 10),
+                            minFontSize: 10,
+                          ),
+                          kWidth5,
+                          Flexible(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ValueListenableBuilder(
+                                  valueListenable:
+                                      SaleSideWidget.totalItemsNotifier,
+                                  builder: (context, totalItems, child) {
+                                    return AutoSizeText(
+                                      '$totalItems',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontSize:
+                                              DeviceUtil.isTablet ? 12 : 10,
+                                          fontWeight: FontWeight.bold),
+                                      minFontSize: 10,
+                                    );
+                                  },
+                                ),
+                                ValueListenableBuilder(
+                                  valueListenable:
+                                      SaleSideWidget.totalQuantityNotifier,
+                                  builder: (context, totalQuantity, child) {
+                                    return Flexible(
+                                      child: AutoSizeText(
+                                        '($totalQuantity)',
+                                        softWrap: false,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: isTablet ? 12 : 10,
+                                            fontWeight: FontWeight.bold),
+                                        minFontSize: 10,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      kWidth5,
-                      Flexible(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            ValueListenableBuilder(
+                    ),
+                    kWidth20,
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          AutoSizeText(
+                            'Total',
+                            style: TextStyle(fontSize: isTablet ? 12 : 10),
+                            minFontSize: 10,
+                          ),
+                          kWidth5,
+                          Flexible(
+                            child: ValueListenableBuilder(
                               valueListenable:
-                                  SaleSideWidget.totalItemsNotifier,
-                              builder: (context, totalItems, child) {
+                                  SaleSideWidget.totalAmountNotifier,
+                              builder: (context, totalAmount, child) {
                                 return AutoSizeText(
-                                  '$totalItems',
+                                  totalAmount == 0
+                                      ? '0'
+                                      : Converter.currency.format(totalAmount),
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                      fontSize: DeviceUtil.isTablet ? 12 : 10,
+                                      fontSize: isTablet ? 12 : 10,
                                       fontWeight: FontWeight.bold),
                                   minFontSize: 10,
                                 );
                               },
                             ),
-                            ValueListenableBuilder(
-                              valueListenable:
-                                  SaleSideWidget.totalQuantityNotifier,
-                              builder: (context, totalQuantity, child) {
-                                return Flexible(
-                                  child: AutoSizeText(
-                                    '($totalQuantity)',
-                                    softWrap: false,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontSize: isTablet ? 12 : 10,
-                                        fontWeight: FontWeight.bold),
-                                    minFontSize: 10,
-                                  ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          AutoSizeText(
+                            'Discount',
+                            style: TextStyle(fontSize: isTablet ? 12 : 10),
+                            minFontSize: 10,
+                          ),
+                          kWidth5,
+                          Flexible(
+                            child: AutoSizeText(
+                              '(0)0.00',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontSize: isTablet ? 12 : 10,
+                                  fontWeight: FontWeight.bold),
+                              minFontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    kWidth20,
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          AutoSizeText(
+                            'VAT',
+                            style: TextStyle(fontSize: isTablet ? 12 : 10),
+                            minFontSize: 10,
+                          ),
+                          kWidth5,
+                          Flexible(
+                            child: ValueListenableBuilder(
+                              valueListenable: SaleSideWidget.totalVatNotifier,
+                              builder: (context, totalVAT, child) {
+                                return AutoSizeText(
+                                  totalVAT == 0
+                                      ? '0'
+                                      : Converter.currency.format(totalVAT),
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize: isTablet ? 12 : 10,
+                                      fontWeight: FontWeight.bold),
+                                  minFontSize: 10,
                                 );
                               },
                             ),
-                          ],
-                        ),
+                          )
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                kWidth20,
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AutoSizeText(
-                        'Total',
-                        style: TextStyle(fontSize: isTablet ? 12 : 10),
-                        minFontSize: 10,
-                      ),
-                      kWidth5,
-                      Flexible(
-                        child: ValueListenableBuilder(
-                          valueListenable: SaleSideWidget.totalAmountNotifier,
-                          builder: (context, totalAmount, child) {
-                            return AutoSizeText(
-                              totalAmount == 0
-                                  ? '0'
-                                  : Converter.currency.format(totalAmount),
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontSize: isTablet ? 12 : 10,
-                                  fontWeight: FontWeight.bold),
-                              minFontSize: 10,
-                            );
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AutoSizeText(
-                        'Discount',
-                        style: TextStyle(fontSize: isTablet ? 12 : 10),
-                        minFontSize: 10,
-                      ),
-                      kWidth5,
-                      Flexible(
-                        child: AutoSizeText(
-                          '(0)0.00',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: isTablet ? 12 : 10,
-                              fontWeight: FontWeight.bold),
-                          minFontSize: 10,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                kWidth20,
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AutoSizeText(
-                        'VAT',
-                        style: TextStyle(fontSize: isTablet ? 12 : 10),
-                        minFontSize: 10,
-                      ),
-                      kWidth5,
-                      Flexible(
-                        child: ValueListenableBuilder(
-                          valueListenable: SaleSideWidget.totalVatNotifier,
-                          builder: (context, totalVAT, child) {
-                            return AutoSizeText(
-                              totalVAT == 0
-                                  ? '0'
-                                  : Converter.currency.format(totalVAT),
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontSize: isTablet ? 12 : 10,
-                                  fontWeight: FontWeight.bold),
-                              minFontSize: 10,
-                            );
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ),

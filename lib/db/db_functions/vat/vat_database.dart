@@ -12,7 +12,7 @@ class VatDatabase {
   Future<void> createVAT(VatModel _vatModel) async {
     final db = await dbInstance.database;
     final _vat = await db.rawQuery(
-        "SELECT * FROM $tableVat WHERE ${VatFields.rate} = '${_vatModel.rate}' AND ${VatFields.type} = '${_vatModel.type}'");
+        "SELECT * FROM $tableVat WHERE ${VatFields.rate} = '${_vatModel.rate}' AND ${VatFields.type} = '${_vatModel.type}' OR ${VatFields.name} = '${_vatModel.name}'");
     if (_vat.isNotEmpty) {
       log('VAT Already Exist!');
       throw 'VAT Already Exist!';
@@ -30,6 +30,16 @@ class VatDatabase {
     log('VATs == $_result');
     final _vats = _result.map((json) => VatModel.fromJson(json)).toList();
     return _vats;
+  }
+
+  //========== Get VAT by name ==========
+  Future<VatModel> getVatByName(String name) async {
+    final db = await dbInstance.database;
+    final _result = await db
+        .query(tableVat, where: '${VatFields.name} = ?', whereArgs: [name]);
+    log('VAT of $name == $_result');
+    final _vats = _result.map((json) => VatModel.fromJson(json)).toList();
+    return _vats.first;
   }
 
 //========== Delete VAT ==========

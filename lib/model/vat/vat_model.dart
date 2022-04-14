@@ -38,6 +38,6 @@ class VatModel {
       );
 
   String get() {
-    return rate;
+    return name;
   }
 }
