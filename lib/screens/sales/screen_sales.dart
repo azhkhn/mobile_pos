@@ -5,6 +5,9 @@ import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
+import 'package:shop_ez/widgets/container/background_container_widget.dart';
+import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
 class ScreenSales extends StatelessWidget {
   const ScreenSales({Key? key}) : super(key: key);
@@ -12,23 +15,26 @@ class ScreenSales extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: FutureBuilder(
-            future: SalesDatabase.instance.getAllSales(),
-            builder: (context, AsyncSnapshot<List<SalesModel?>?> snapshot) {
-              final List<SalesModel?> _sales = snapshot.data!;
-              return ListView.separated(
-                itemCount: _sales.length,
-                separatorBuilder: (BuildContext context, int index) =>
-                    const SizedBox(),
-                itemBuilder: (BuildContext context, int index) {
-                  return SalesCardWidget(index: index, sales: _sales);
-                },
-              );
-            }),
-      )),
+      appBar: AppBarWidget(
+        title: 'Sales',
+      ),
+      body: BackgroundContainerWidget(
+        child: ItemScreenPaddingWidget(
+          child: FutureBuilder(
+              future: SalesDatabase.instance.getAllSales(),
+              builder: (context, AsyncSnapshot<List<SalesModel?>?> snapshot) {
+                final List<SalesModel?> _sales = snapshot.data!;
+                return ListView.separated(
+                  itemCount: _sales.length,
+                  separatorBuilder: (BuildContext context, int index) =>
+                      kHeight5,
+                  itemBuilder: (BuildContext context, int index) {
+                    return SalesCardWidget(index: index, sales: _sales);
+                  },
+                );
+              }),
+        ),
+      ),
     );
   }
 }

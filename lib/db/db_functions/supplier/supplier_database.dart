@@ -32,4 +32,31 @@ class SupplierDatabase {
         _result.map((json) => SupplierModel.fromJson(json)).toList();
     return _suppliers;
   }
+
+  //========== Get Supplier By Id ==========
+  Future<SupplierModel> getSupplierById(int customerId) async {
+    final db = await dbInstance.database;
+    final _result = await db.query(
+      tableSupplier,
+      where: '${SupplierFields.id} = ?',
+      whereArgs: [customerId],
+    );
+    log('Supplier === $_result');
+    final _customers =
+        _result.map((json) => SupplierModel.fromJson(json)).toList();
+    return _customers.first;
+  }
+
+  //========== Get All Supplier By Query ==========
+  Future<List<SupplierModel>> getSupplierSuggestions(String pattern) async {
+    final db = await dbInstance.database;
+    final res = await db.rawQuery(
+        "select * from $tableSupplier where ${SupplierFields.supplier} LIKE '%$pattern%'");
+
+    List<SupplierModel> list = res.isNotEmpty
+        ? res.map((c) => SupplierModel.fromJson(c)).toList()
+        : [];
+
+    return list;
+  }
 }

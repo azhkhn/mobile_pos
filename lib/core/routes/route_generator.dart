@@ -12,6 +12,7 @@ import 'package:shop_ez/screens/home/home_screen.dart';
 import 'package:shop_ez/screens/item_master/screen_item_master.dart';
 import 'package:shop_ez/screens/payments/partial_payment/screen_partial_payment.dart';
 import 'package:shop_ez/screens/pos/screen_pos.dart';
+import 'package:shop_ez/screens/purchase/screen_purchase.dart';
 import 'package:shop_ez/screens/sales/screen_sales.dart';
 import 'package:shop_ez/screens/splash/splash_screen.dart';
 import 'package:shop_ez/screens/sub-category/screen_sub_category.dart';
@@ -67,6 +68,8 @@ class RouteGenerator {
         return _errorRoute();
       case routeSales:
         return MaterialPageRoute(builder: (_) => const ScreenSales());
+      case routePurchase:
+        return MaterialPageRoute(builder: (_) => const ScreenPurchase());
 
       default:
         return _errorRoute();

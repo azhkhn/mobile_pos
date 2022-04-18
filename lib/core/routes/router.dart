@@ -18,3 +18,4 @@ const routeExpenseCategory = '/expense_category';
 const routePos = '/pos';
 const routePartialPayment = '/partial_payment';
 const routeSales = '/sales';
+const routePurchase = '/purchase';

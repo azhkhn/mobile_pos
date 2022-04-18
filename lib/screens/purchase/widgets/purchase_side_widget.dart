@@ -5,21 +5,21 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
-import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
-import 'package:shop_ez/model/customer/customer_model.dart';
+import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
+import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
-import 'package:shop_ez/screens/pos/widgets/payment_buttons_widget.dart';
-import 'package:shop_ez/screens/pos/widgets/price_section_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
+import 'package:shop_ez/screens/purchase/widgets/purchase_button_widget.dart';
+import 'package:shop_ez/screens/purchase/widgets/purchase_price_section_widget.dart';
+import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
 import '../../../core/utils/device/device.dart';
 import '../../../core/utils/snackbar/snackbar.dart';
-import '../../../widgets/gesture_dismissible_widget/dismissible_widget.dart';
 
-class SaleSideWidget extends StatelessWidget {
-  const SaleSideWidget({
+class PurchaseSideWidget extends StatelessWidget {
+  const PurchaseSideWidget({
     Key? key,
   }) : super(key: key);
 
@@ -32,8 +32,8 @@ class SaleSideWidget extends StatelessWidget {
   static final ValueNotifier<List<TextEditingController>> quantityNotifier =
       ValueNotifier([]);
 
-  static final ValueNotifier<int?> customerIdNotifier = ValueNotifier(null);
-  static final ValueNotifier<String?> customerNameNotifier =
+  static final ValueNotifier<int?> supplierIdNotifier = ValueNotifier(null);
+  static final ValueNotifier<String?> supplierNameNotifier =
       ValueNotifier(null);
   static final ValueNotifier<num> totalItemsNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalQuantityNotifier = ValueNotifier(0);
@@ -42,7 +42,7 @@ class SaleSideWidget extends StatelessWidget {
   static final ValueNotifier<num> totalPayableNotifier = ValueNotifier(0);
 
   //==================== TextEditing Controllers ====================
-  static final _customerController = TextEditingController();
+  static final _supplierController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,15 +52,15 @@ class SaleSideWidget extends StatelessWidget {
         selectedProductsNotifier.value.clear();
         subTotalNotifier.value.clear();
         itemTotalVatNotifier.value.clear();
-        _customerController.clear();
+        _supplierController.clear();
         quantityNotifier.value.clear();
         totalItemsNotifier.value = 0;
         totalQuantityNotifier.value = 0;
         totalAmountNotifier.value = 0;
         totalVatNotifier.value = 0;
         totalPayableNotifier.value = 0;
-        customerIdNotifier.value = null;
-        customerNameNotifier.value = null;
+        supplierIdNotifier.value = null;
+        supplierNameNotifier.value = null;
         return true;
       },
       child: SizedBox(
@@ -71,14 +71,14 @@ class SaleSideWidget extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //==================== Get All Customers Search Field ====================
+                //==================== Get All Supplier Search Field ====================
                 Flexible(
                   flex: 8,
                   child: TypeAheadField(
                     debounceDuration: const Duration(milliseconds: 500),
                     hideSuggestionsOnKeyboardHide: false,
                     textFieldConfiguration: TextFieldConfiguration(
-                        controller: _customerController,
+                        controller: _supplierController,
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
@@ -92,26 +92,26 @@ class SaleSideWidget extends StatelessWidget {
                             child: InkWell(
                               child: const Icon(Icons.clear),
                               onTap: () {
-                                customerIdNotifier.value = null;
-                                _customerController.clear();
+                                supplierIdNotifier.value = null;
+                                _supplierController.clear();
                               },
                             ),
                           ),
                           contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Customer',
+                          hintText: 'Supplier',
                           border: const OutlineInputBorder(),
                         )),
                     noItemsFoundBuilder: (context) => const SizedBox(
                         height: 50,
-                        child: Center(child: Text('No Customer Found!'))),
+                        child: Center(child: Text('No supplier Found!'))),
                     suggestionsCallback: (pattern) async {
-                      return CustomerDatabase.instance
-                          .getCustomerSuggestions(pattern);
+                      return SupplierDatabase.instance
+                          .getSupplierSuggestions(pattern);
                     },
-                    itemBuilder: (context, CustomerModel suggestion) {
+                    itemBuilder: (context, SupplierModel suggestion) {
                       return ListTile(
                         title: AutoSizeText(
-                          suggestion.customer,
+                          suggestion.supplier,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -121,17 +121,17 @@ class SaleSideWidget extends StatelessWidget {
                         ),
                       );
                     },
-                    onSuggestionSelected: (CustomerModel suggestion) {
-                      _customerController.text = suggestion.customer;
-                      customerNameNotifier.value = suggestion.customer;
-                      customerIdNotifier.value = suggestion.id;
+                    onSuggestionSelected: (SupplierModel suggestion) {
+                      _supplierController.text = suggestion.supplier;
+                      supplierNameNotifier.value = suggestion.supplier;
+                      supplierIdNotifier.value = suggestion.id;
                       log(suggestion.company);
                     },
                   ),
                 ),
                 kWidth5,
 
-                //========== View Customer Button ==========
+                //========== View supplier Button ==========
                 Flexible(
                   flex: 1,
                   child: IconButton(
@@ -139,8 +139,8 @@ class SaleSideWidget extends StatelessWidget {
                         minHeight: 40,
                       ),
                       onPressed: () {
-                        if (customerIdNotifier.value != null) {
-                          log('$customerIdNotifier');
+                        if (supplierIdNotifier.value != null) {
+                          log('$supplierIdNotifier');
 
                           showModalBottomSheet(
                               context: context,
@@ -152,13 +152,15 @@ class SaleSideWidget extends StatelessWidget {
                               builder: (context) => DismissibleWidget(
                                     context: context,
                                     child: CustomBottomSheetWidget(
-                                        id: customerIdNotifier.value),
+                                      id: supplierIdNotifier.value,
+                                      supplier: true,
+                                    ),
                                   ));
                         } else {
                           kSnackBar(
                               context: context,
                               content:
-                                  'Please select any Customer to show details!');
+                                  'Please select any Supplier to show details!');
                         }
                       },
                       icon: const Icon(
@@ -167,7 +169,7 @@ class SaleSideWidget extends StatelessWidget {
                       )),
                 ),
 
-                //========== Add Customer Button ==========
+                //========== Add supplier Button ==========
                 Flexible(
                   flex: 1,
                   child: IconButton(
@@ -327,10 +329,10 @@ class SaleSideWidget extends StatelessWidget {
             kHeight5,
 
             //==================== Price Sections ====================
-            const PriceSectionWidget(),
+            const PurchasePriceSectionWidget(),
 
             //==================== Payment Buttons Widget ====================
-            const PaymentButtonsWidget()
+            const PurchaseButtonsWidget()
           ],
         ),
       ),
