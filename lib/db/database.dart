@@ -11,6 +11,7 @@ import 'package:shop_ez/model/sales/sales_items_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
+import 'package:shop_ez/model/transactions/transactions_model.dart';
 import 'package:shop_ez/model/unit/unit_model.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
 import 'package:shop_ez/model/vat/vat_model.dart';
@@ -34,38 +35,20 @@ class EzDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path,
-        version: 5, onCreate: _createDB, onUpgrade: _upgradeDB);
+        version: 1, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
     const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textType = 'TEXT NOT NULL';
+    // const textNull = 'TEXT';
+    const intNull = 'INTEGER';
+    const intType = 'INTEGER NOT NULL';
 
-    await db.rawQuery('DROP TABLE $tableItemMaster');
     await db.rawQuery('DROP TABLE $tableSales');
     await db.rawQuery('DROP TABLE $tableSalesItems');
-
-    //========== Table Item-Master ==========
-    await db.execute('''CREATE TABLE $tableItemMaster (
-      ${ItemMasterFields.id} $idAuto,
-      ${ItemMasterFields.productType} $textType,
-      ${ItemMasterFields.itemName} $textType,
-      ${ItemMasterFields.itemNameArabic} $textType, 
-      ${ItemMasterFields.itemCode} $textType,
-      ${ItemMasterFields.itemCategory} $textType,
-      ${ItemMasterFields.itemSubCategory} $textType,
-      ${ItemMasterFields.itemBrand} $textType,
-      ${ItemMasterFields.itemCost} $textType,
-      ${ItemMasterFields.sellingPrice} $textType,
-      ${ItemMasterFields.secondarySellingPrice} $textType,
-      ${ItemMasterFields.vatId} $textType,
-      ${ItemMasterFields.productVAT} $textType,
-      ${ItemMasterFields.unit} $textType,
-      ${ItemMasterFields.openingStock} $textType,
-      ${ItemMasterFields.vatMethod} $textType,
-      ${ItemMasterFields.alertQuantity} $textType,
-      ${ItemMasterFields.itemImage} $textType)''');
+    await db.rawQuery('DROP TABLE $tableTransactions');
 
     //========== Table Sales ==========
     await db.execute('''CREATE TABLE $tableSales (
@@ -91,7 +74,7 @@ class EzDatabase {
     //========== Table Sales Items ==========
     await db.execute('''CREATE TABLE $tableSalesItems (
       ${SalesItemsFields.id} $idAuto,
-      ${SalesItemsFields.salesId} $textType,
+      ${SalesItemsFields.salesId} $intType,
       ${SalesItemsFields.productId} $textType,
       ${SalesItemsFields.productType} $textType,
       ${SalesItemsFields.productName} $textType, 
@@ -106,6 +89,18 @@ class EzDatabase {
       ${SalesItemsFields.unitCode} $textType,
       ${SalesItemsFields.netUnitPrice} $textType,
       ${SalesItemsFields.vatPercentage} $textType)''');
+
+    //========== Table Transactions ==========
+    await db.execute('''CREATE TABLE $tableTransactions (
+      ${TransactionsField.id} $idAuto,
+      ${TransactionsField.category} $textType,
+      ${TransactionsField.transactionType} $textType,
+      ${TransactionsField.dateTime} $textType,
+      ${TransactionsField.amount} $textType,
+      ${TransactionsField.status} $textType,
+      ${TransactionsField.description} $textType,
+      ${TransactionsField.salesId} $intNull,
+      ${TransactionsField.purchaseId} $intNull)''');
   }
 
   Future close() async {
@@ -118,6 +113,9 @@ class EzDatabase {
     const idNotNull = 'INTEGER NOT NULL';
     const idLogin = 'INTEGER NOT NULL';
     const textType = 'TEXT NOT NULL';
+    const intType = 'INTEGER NOT NULL';
+    // const textNull = 'TEXT';
+    const intNull = 'INTEGER';
 
 //========== Table Users ==========
     await db.execute('''CREATE TABLE $tableUser (
@@ -287,7 +285,7 @@ class EzDatabase {
 //========== Table Sales Items ==========
     await db.execute('''CREATE TABLE $tableSalesItems (
       ${SalesItemsFields.id} $idAuto,
-      ${SalesItemsFields.salesId} $textType,
+      ${SalesItemsFields.salesId} $intType,
       ${SalesItemsFields.productId} $textType,
       ${SalesItemsFields.productType} $textType,
       ${SalesItemsFields.productName} $textType, 
@@ -302,5 +300,17 @@ class EzDatabase {
       ${SalesItemsFields.unitCode} $textType,
       ${SalesItemsFields.netUnitPrice} $textType,
       ${SalesItemsFields.vatPercentage} $textType)''');
+
+//========== Table Transactions ==========
+    await db.execute('''CREATE TABLE $tableTransactions (
+      ${TransactionsField.id} $idAuto,
+      ${TransactionsField.category} $textType,
+      ${TransactionsField.transactionType} $textType,
+      ${TransactionsField.dateTime} $textType,
+      ${TransactionsField.amount} $textType,
+      ${TransactionsField.status} $textType,
+      ${TransactionsField.description} $textType,
+      ${TransactionsField.salesId} $intNull,
+      ${TransactionsField.purchaseId} $intNull)''');
   }
 }

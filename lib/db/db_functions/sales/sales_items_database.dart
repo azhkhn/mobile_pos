@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:shop_ez/db/database.dart';
 import 'package:shop_ez/model/sales/sales_items_model.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
 
 class SalesItemsDatabase {
   static final SalesItemsDatabase instance = SalesItemsDatabase._init();
@@ -11,19 +10,8 @@ class SalesItemsDatabase {
 //==================== Create Sales Items ====================
   Future<void> createSalesItems(SalesItemsModel _salesItemsModel) async {
     final db = await dbInstance.database;
-
-    final _sales = await db.query(tableSales);
-
-    final _recentSale = SalesModel.fromJson(_sales.last);
-
-    final int? _recentSaleId = _recentSale.id;
-    log('Recent Sales id == $_recentSaleId');
-
-    final _newSaleItem = _salesItemsModel.copyWith(salesId: _recentSaleId);
-
-    final id = await db.insert(tableSalesItems, _newSaleItem.toJson());
-    log('Sales Items id == $id');
-    log('Sales Items Created!');
+    final id = await db.insert(tableSalesItems, _salesItemsModel.toJson());
+    log('Sales Items Created! ($id)');
   }
 
 //========== Get All Sales Items ==========

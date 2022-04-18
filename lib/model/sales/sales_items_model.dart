@@ -12,15 +12,16 @@ class SalesItemsFields {
   static const netUnitPrice = 'netUnitPrice';
   static const unitPrice = 'unitPrice';
   static const quantity = 'quantity';
+  static const unitCode = 'unitCode';
   static const subTotal = 'subTotal';
   static const vatId = 'vatId';
   static const vatPercentage = 'vatPercentage';
   static const vatTotal = 'vatTotal';
-  static const unitCode = 'unitCode';
 }
 
 class SalesItemsModel {
-  int? id, salesId;
+  int? id;
+  int salesId;
   final String productId,
       productType,
       productCode,
@@ -30,15 +31,15 @@ class SalesItemsModel {
       netUnitPrice,
       unitPrice,
       quantity,
+      unitCode,
       subTotal,
       vatId,
       vatPercentage,
-      vatTotal,
-      unitCode;
+      vatTotal;
 
   SalesItemsModel({
     this.id,
-    this.salesId,
+    required this.salesId,
     required this.productId,
     required this.productType,
     required this.productCode,
@@ -48,11 +49,11 @@ class SalesItemsModel {
     required this.netUnitPrice,
     required this.unitPrice,
     required this.quantity,
+    required this.unitCode,
     required this.subTotal,
     required this.vatId,
     required this.vatPercentage,
     required this.vatTotal,
-    required this.unitCode,
   });
 
   SalesItemsModel copyWith({
@@ -67,11 +68,11 @@ class SalesItemsModel {
     String? netUnitPrice,
     String? unitPrice,
     String? quantity,
+    String? unitCode,
     String? subTotal,
     String? vatId,
     String? vatPercentage,
     String? vatTotal,
-    String? unitCode,
   }) =>
       SalesItemsModel(
         id: id ?? this.id,
@@ -85,11 +86,11 @@ class SalesItemsModel {
         netUnitPrice: netUnitPrice ?? this.netUnitPrice,
         unitPrice: unitPrice ?? this.unitPrice,
         quantity: quantity ?? this.quantity,
+        unitCode: unitCode ?? this.unitCode,
         subTotal: subTotal ?? this.subTotal,
         vatId: vatId ?? this.vatId,
         vatPercentage: vatPercentage ?? this.vatPercentage,
         vatTotal: vatTotal ?? this.vatTotal,
-        unitCode: unitCode ?? this.unitCode,
       );
 
   Map<String, Object?> toJson() => {
@@ -104,11 +105,11 @@ class SalesItemsModel {
         SalesItemsFields.netUnitPrice: netUnitPrice,
         SalesItemsFields.unitPrice: unitPrice,
         SalesItemsFields.quantity: quantity,
+        SalesItemsFields.unitCode: unitCode,
         SalesItemsFields.subTotal: subTotal,
         SalesItemsFields.vatId: vatId,
         SalesItemsFields.vatPercentage: vatPercentage,
         SalesItemsFields.vatTotal: vatTotal,
-        SalesItemsFields.unitCode: unitCode,
       };
 
   static SalesItemsModel fromJson(Map<String, Object?> json) => SalesItemsModel(
@@ -123,10 +124,10 @@ class SalesItemsModel {
         netUnitPrice: json[SalesItemsFields.netUnitPrice] as String,
         unitPrice: json[SalesItemsFields.unitPrice] as String,
         quantity: json[SalesItemsFields.quantity] as String,
+        unitCode: json[SalesItemsFields.unitCode] as String,
         subTotal: json[SalesItemsFields.subTotal] as String,
         vatId: json[SalesItemsFields.vatId] as String,
         vatPercentage: json[SalesItemsFields.vatPercentage] as String,
         vatTotal: json[SalesItemsFields.vatTotal] as String,
-        unitCode: json[SalesItemsFields.unitCode] as String,
       );
 }

@@ -9,7 +9,10 @@ import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_items_database.dart';
+import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
+import 'package:shop_ez/model/sales/sales_items_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/model/transactions/transactions_model.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 
 import '../../../core/constant/sizes.dart';
@@ -28,8 +31,10 @@ class PaymentButtonsWidget extends StatelessWidget {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       try {
         await SalesDatabase.instance.getAllSales();
+        await SalesItemsDatabase.instance.getAllSalesItems();
+        await TransactionDatabase.instance.getAllTransactions();
       } catch (e) {
-        log('$e');
+        log(e.toString());
       }
     });
 
@@ -106,7 +111,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                                     context,
                                     argPaid: '0',
                                     argBalance: _balance,
-                                    argPaymentStatus: 'Credit',
+                                    argPaymentStatus: 'Due',
                                     argPaymentType: '',
                                   );
                                 },
@@ -245,6 +250,7 @@ class PaymentButtonsWidget extends StatelessWidget {
     String? argPaymentType,
     String? argPaid,
   }) async {
+    int? salesId;
     final String dateTime,
         cusomerId,
         customerName,
@@ -262,6 +268,10 @@ class PaymentButtonsWidget extends StatelessWidget {
         paymentStatus,
         createdBy;
 
+    final SalesDatabase salesDB = SalesDatabase.instance;
+    final SalesItemsDatabase salesItemDB = SalesItemsDatabase.instance;
+    final TransactionDatabase transactionDB = TransactionDatabase.instance;
+
     final _loggedUser = await UserUtils.instance.loggedUser;
     final String _user = _loggedUser!.shopName;
     log('Logged User ==== $_user');
@@ -271,7 +281,6 @@ class PaymentButtonsWidget extends StatelessWidget {
     log('Biller Name ==== $_biller');
 
 //Checking if it's Partial Payment then Including Balance Amount
-
     if (argPaymentStatus != null) {
       paymentStatus = argPaymentStatus;
     } else {
@@ -328,42 +337,89 @@ class PaymentButtonsWidget extends StatelessWidget {
         createdBy: createdBy);
 
     try {
-      final SalesDatabase salesDB = SalesDatabase.instance;
-      final SalesItemsDatabase salesItemDB = SalesItemsDatabase.instance;
-
-      // await salesDB.createSales(_salesModel);
+      //==================== Create Sales ====================
+      salesId = await salesDB.createSales(_salesModel);
 
       final num items = SaleSideWidget.totalItemsNotifier.value;
       for (var i = 0; i < items; i++) {
-        log(' Product id == ${SaleSideWidget.selectedProductsNotifier.value[i].id}');
-        log(' Product Type == ${SaleSideWidget.selectedProductsNotifier.value[i].productType}');
-        log(' Product Code == ${SaleSideWidget.selectedProductsNotifier.value[i].itemCode}');
-        log(' Product Name == ${SaleSideWidget.selectedProductsNotifier.value[i].itemName}');
-        log(' Product Category == ${SaleSideWidget.selectedProductsNotifier.value[i].itemCategory}');
-        log(' Product Cost == ${SaleSideWidget.selectedProductsNotifier.value[i].itemCost}');
-        log(' Unit Price == ${SaleSideWidget.selectedProductsNotifier.value[i].sellingPrice}');
-        log(' Product quantity == ${SaleSideWidget.quantityNotifier.value[i].text}');
-        log(' Product subTotal == ${SaleSideWidget.subTotalNotifier.value[i]}');
-        log(' VAT id == ${SaleSideWidget.selectedProductsNotifier.value[i].vatId}');
-        log(' Product Percentage == ${SaleSideWidget.selectedProductsNotifier.value[i].productVAT}');
-        log(' VAT Total == ${SaleSideWidget.itemTotalVatNotifier.value[i]}');
-        log(' Unit Code == ${SaleSideWidget.selectedProductsNotifier.value[i].unit}');
-        if (SaleSideWidget.selectedProductsNotifier.value[i].vatMethod ==
-            'Inclusive') {
-          final sellingPrice =
-              SaleSideWidget.selectedProductsNotifier.value[i].sellingPrice;
-          final netUnitPrice =
-              const SaleSideWidget().getExclusiveAmount(sellingPrice);
+        final vatMethod =
+            SaleSideWidget.selectedProductsNotifier.value[i].vatMethod;
 
-          log(' Net Unit Price == $netUnitPrice');
-        } else {
-          final netUnitPrice =
-              SaleSideWidget.selectedProductsNotifier.value[i].sellingPrice;
-          log(' Net Unit Price == $netUnitPrice');
-        }
+        final String productId =
+                '${SaleSideWidget.selectedProductsNotifier.value[i].id}',
+            productType =
+                SaleSideWidget.selectedProductsNotifier.value[i].productType,
+            productCode =
+                SaleSideWidget.selectedProductsNotifier.value[i].itemCode,
+            productName =
+                SaleSideWidget.selectedProductsNotifier.value[i].itemName,
+            category =
+                SaleSideWidget.selectedProductsNotifier.value[i].itemCategory,
+            productCost =
+                SaleSideWidget.selectedProductsNotifier.value[i].itemCost,
+            unitPrice =
+                SaleSideWidget.selectedProductsNotifier.value[i].sellingPrice,
+            netUnitPrice = vatMethod == 'Inclusive'
+                ? '${const SaleSideWidget().getExclusiveAmount(unitPrice)}'
+                : unitPrice,
+            quantity = SaleSideWidget.quantityNotifier.value[i].text,
+            subTotal = SaleSideWidget.subTotalNotifier.value[i],
+            vatId = SaleSideWidget.selectedProductsNotifier.value[i].vatId,
+            vatPercentage =
+                SaleSideWidget.selectedProductsNotifier.value[i].productVAT,
+            vatTotal = SaleSideWidget.itemTotalVatNotifier.value[i],
+            unitCode = SaleSideWidget.selectedProductsNotifier.value[i].unit;
 
-        log('==============================================');
+        log(' Sales Id == $salesId');
+        log(' Product id == $productId');
+        log(' Product Type == $productType');
+        log(' Product Code == $productCode');
+        log(' Product Name == $productName');
+        log(' Product Category == $category');
+        log(' Product Cost == $productCost');
+        log(' Net Unit Price == $netUnitPrice');
+        log(' Unit Price == $unitPrice');
+        log(' Product quantity == $quantity');
+        log(' Unit Code == $unitCode');
+        log(' Product subTotal == $subTotal');
+        log(' VAT id == $vatId');
+        log(' VAT Percentage == $vatPercentage');
+        log(' VAT Total == $vatTotal');
+        log('\n==============================================\n');
+
+        final SalesItemsModel _salesItemsModel = SalesItemsModel(
+            salesId: salesId,
+            productId: productId,
+            productType: productType,
+            productCode: productCode,
+            productName: productName,
+            category: category,
+            productCost: productCost,
+            netUnitPrice: netUnitPrice,
+            unitPrice: unitPrice,
+            quantity: quantity,
+            unitCode: unitCode,
+            subTotal: subTotal,
+            vatId: vatId,
+            vatPercentage: vatPercentage,
+            vatTotal: vatTotal);
+
+        //==================== Create Sales Items ====================
+        await salesItemDB.createSalesItems(_salesItemsModel);
       }
+
+      final TransactionsModel _transaction = TransactionsModel(
+        category: 'Sales',
+        transactionType: 'Income',
+        dateTime: dateTime,
+        amount: grantTotal,
+        status: paymentStatus,
+        description: 'Transaction $salesId',
+        salesId: salesId,
+      );
+
+      //==================== Create Transactions ====================
+      await transactionDB.createTransaction(_transaction);
 
       kSnackBar(
         context: context,
@@ -376,6 +432,14 @@ class PaymentButtonsWidget extends StatelessWidget {
       );
     } catch (e) {
       log('$e');
+      kSnackBar(
+          context: context,
+          content: 'Something went wrong! Please try again later.',
+          color: kSnackBarErrorColor,
+          icon: const Icon(
+            Icons.new_releases_outlined,
+            color: kSnackBarIconColor,
+          ));
     }
   }
 }

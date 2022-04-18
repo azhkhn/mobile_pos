@@ -8,7 +8,7 @@ class SalesDatabase {
   SalesDatabase._init();
 
 //==================== Create Sales ====================
-  Future<void> createSales(SalesModel _salesModel) async {
+  Future<int> createSales(SalesModel _salesModel) async {
     final db = await dbInstance.database;
 
     final _sale = await db.rawQuery(
@@ -30,16 +30,15 @@ class SalesDatabase {
         log('New Invoice Number == $_invoiceNumber');
 
         final id = await db.insert(tableSales, _newSale.toJson());
-        log('Sales id == $id');
-        log('Sale Created!');
+        log('Sale Created! ($id)');
+        return id;
       } else {
         final _newSale = _salesModel.copyWith(invoiceNumber: 'SA-1');
-        log('Sales Model Id === ${_newSale.billerName}');
 
         log('New Invoice Number == ' + _newSale.invoiceNumber!);
         final id = await db.insert(tableSales, _newSale.toJson());
-        log('Sale Created!');
-        log('Sales id == $id');
+        log('Sale Created! ($id)');
+        return id;
       }
     }
   }
