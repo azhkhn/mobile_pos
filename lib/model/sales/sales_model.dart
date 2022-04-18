@@ -24,8 +24,8 @@ class SalesFields {
 class SalesModel {
   int? id;
   String? invoiceNumber;
+  final int cusomerId;
   final String dateTime,
-      cusomerId,
       customerName,
       billerName,
       salesNote,
@@ -128,7 +128,7 @@ class SalesModel {
         id: json[SalesFields.id] as int,
         dateTime: json[SalesFields.dateTime] as String,
         invoiceNumber: json[SalesFields.invoiceNumber] as String,
-        cusomerId: json[SalesFields.cusomerId] as String,
+        cusomerId: json[SalesFields.cusomerId] as int,
         customerName: json[SalesFields.customerName] as String,
         billerName: json[SalesFields.billerName] as String,
         salesNote: json[SalesFields.salesNote] as String,

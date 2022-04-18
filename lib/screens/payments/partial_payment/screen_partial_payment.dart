@@ -73,27 +73,32 @@ class PartialPayment extends StatelessWidget {
                 ),
                 CustomMaterialBtton(
                     onPressed: () {
-                      final String _paid =
-                          PaymentTypeWidget.amountController.text.toString();
+                      final _formState =
+                          PaymentTypeWidget.formKey.currentState!;
+                      if (_formState.validate()) {
+                        final String _paid =
+                            PaymentTypeWidget.amountController.text.toString();
 
-                      final String _balance = PaymentDetailsTableWidget
-                          .balanceNotifier.value
-                          .toString();
+                        final String _balance = PaymentDetailsTableWidget
+                            .balanceNotifier.value
+                            .toString();
 
-                      final String _paymentStatus =
-                          _balance == '0' ? 'Paid' : 'Partial';
+                        final String _paymentStatus =
+                            _balance == '0' ? 'Paid' : 'Partial';
 
-                      final String _paymentType =
-                          PaymentTypeWidget.payingByController!;
+                        final String _paymentType =
+                            PaymentTypeWidget.payingByController!;
 
-                      const PaymentButtonsWidget().addSale(
-                        context,
-                        argBalance: _balance,
-                        argPaymentStatus: _paymentStatus,
-                        argPaymentType: _paymentType,
-                        argPaid: _paid,
-                      );
-                      Navigator.pop(context);
+                        const PaymentButtonsWidget().addSale(
+                          context,
+                          argBalance: _balance,
+                          argPaymentStatus: _paymentStatus,
+                          argPaymentType: _paymentType,
+                          argPaid: _paid,
+                        );
+                        PaymentTypeWidget.amountController.clear();
+                        Navigator.pop(context);
+                      }
                     },
                     buttonText: 'Submit'),
                 kHeight5,

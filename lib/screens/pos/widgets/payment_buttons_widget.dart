@@ -87,39 +87,54 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (ctx) {
-                        return AlertDialog(
-                          title: const Text(
-                            'Credit Payment!',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          content: const Text('Do you want to add this sale?'),
-                          actions: [
-                            TextButton(
-                                onPressed: () => Navigator.pop(ctx),
-                                child: const Text('Cancel')),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(ctx);
-                                  final String _balance = SaleSideWidget
-                                      .totalPayableNotifier.value
-                                      .toString();
-                                  addSale(
-                                    context,
-                                    argPaid: '0',
-                                    argBalance: _balance,
-                                    argPaymentStatus: 'Due',
-                                    argPaymentType: '',
-                                  );
-                                },
-                                child: const Text('Accept')),
-                          ],
-                        );
-                      },
-                    );
+                    final int? cusomerId =
+                        SaleSideWidget.customerIdNotifier.value;
+                    final num items = SaleSideWidget.totalItemsNotifier.value;
+
+                    if (cusomerId == null) {
+                      kSnackBar(
+                          context: context,
+                          content: 'Please select any Customer to add Sale!');
+                    } else if (items == 0) {
+                      return kSnackBar(
+                          context: context,
+                          content: 'Please select any Products to add Sale!');
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) {
+                          return AlertDialog(
+                            title: const Text(
+                              'Credit Payment!',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            content:
+                                const Text('Do you want to add this sale?'),
+                            actions: [
+                              TextButton(
+                                  onPressed: () => Navigator.pop(ctx),
+                                  child: const Text('Cancel')),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(ctx);
+                                    final String _balance = SaleSideWidget
+                                        .totalPayableNotifier.value
+                                        .toString();
+                                    addSale(
+                                      context,
+                                      argPaid: '0',
+                                      argBalance: _balance,
+                                      argPaymentStatus: 'Due',
+                                      argPaymentType: '',
+                                    );
+                                  },
+                                  child: const Text('Accept')),
+                            ],
+                          );
+                        },
+                      );
+                    }
                   },
                   padding: const EdgeInsets.all(5),
                   color: Colors.yellow[800],
@@ -141,30 +156,45 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (ctx) {
-                        return AlertDialog(
-                          title: const Text(
-                            'Full Payment!',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          content: const Text('Do you want to add this sale?'),
-                          actions: [
-                            TextButton(
-                                onPressed: () => Navigator.pop(ctx),
-                                child: const Text('Cancel')),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(ctx);
-                                  addSale(context);
-                                },
-                                child: const Text('Accept')),
-                          ],
-                        );
-                      },
-                    );
+                    final int? cusomerId =
+                        SaleSideWidget.customerIdNotifier.value;
+                    final num items = SaleSideWidget.totalItemsNotifier.value;
+
+                    if (cusomerId == null) {
+                      kSnackBar(
+                          context: context,
+                          content: 'Please select any Customer to add Sale!');
+                    } else if (items == 0) {
+                      return kSnackBar(
+                          context: context,
+                          content: 'Please select any Products to add Sale!');
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) {
+                          return AlertDialog(
+                            title: const Text(
+                              'Full Payment!',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            content:
+                                const Text('Do you want to add this sale?'),
+                            actions: [
+                              TextButton(
+                                  onPressed: () => Navigator.pop(ctx),
+                                  child: const Text('Cancel')),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(ctx);
+                                    addSale(context);
+                                  },
+                                  child: const Text('Accept')),
+                            ],
+                          );
+                        },
+                      );
+                    }
                   },
                   padding: const EdgeInsets.all(5),
                   color: Colors.green[700],
@@ -212,12 +242,27 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, routePartialPayment,
-                        arguments: {
-                          'totalPayable':
-                              SaleSideWidget.totalPayableNotifier.value,
-                          'totalItems': SaleSideWidget.totalItemsNotifier.value,
-                        });
+                    final int? cusomerId =
+                        SaleSideWidget.customerIdNotifier.value;
+                    final num items = SaleSideWidget.totalItemsNotifier.value;
+
+                    if (cusomerId == null) {
+                      kSnackBar(
+                          context: context,
+                          content: 'Please select any Customer to add Sale!');
+                    } else if (items == 0) {
+                      return kSnackBar(
+                          context: context,
+                          content: 'Please select any Products to add Sale!');
+                    } else {
+                      Navigator.pushNamed(context, routePartialPayment,
+                          arguments: {
+                            'totalPayable':
+                                SaleSideWidget.totalPayableNotifier.value,
+                            'totalItems':
+                                SaleSideWidget.totalItemsNotifier.value,
+                          });
+                    }
                   },
                   padding: const EdgeInsets.all(5),
                   color: Colors.lightGreen[700],
@@ -251,8 +296,8 @@ class PaymentButtonsWidget extends StatelessWidget {
     String? argPaid,
   }) async {
     int? salesId;
+    int cusomerId;
     final String dateTime,
-        cusomerId,
         customerName,
         billerName,
         salesNote,
@@ -306,7 +351,7 @@ class PaymentButtonsWidget extends StatelessWidget {
     }
 
     dateTime = DateTime.now().toIso8601String();
-    cusomerId = SaleSideWidget.customerIdNotifier.value.toString();
+    cusomerId = SaleSideWidget.customerIdNotifier.value!;
     customerName = SaleSideWidget.customerNameNotifier.value!;
     billerName = _biller;
     salesNote = 'New Sale';

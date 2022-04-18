@@ -18,6 +18,7 @@ class TextFeildWidget extends StatelessWidget {
       this.suffixIcon,
       this.autovalidateMode,
       this.validator,
+      this.errorStyle = false,
       this.focusNode,
       this.enabled,
       this.isDense,
@@ -54,6 +55,7 @@ class TextFeildWidget extends StatelessWidget {
   final FloatingLabelBehavior? floatingLabelBehavior;
   final EdgeInsetsGeometry? contentPadding;
   final bool? obscureText;
+  final bool errorStyle;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -70,6 +72,7 @@ class TextFeildWidget extends StatelessWidget {
         suffixIcon: suffixIcon,
         hintText: hintText,
         isDense: isDense,
+        errorStyle: errorStyle ? const TextStyle(fontSize: 0.01) : null,
         constraints: constraints,
         contentPadding: contentPadding,
       ),

@@ -60,6 +60,7 @@ class SaleSideWidget extends StatelessWidget {
         totalVatNotifier.value = 0;
         totalPayableNotifier.value = 0;
         customerIdNotifier.value = null;
+        customerNameNotifier.value = null;
         return true;
       },
       child: SizedBox(

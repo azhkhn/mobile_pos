@@ -19,6 +19,9 @@ class PaymentTypeWidget extends StatelessWidget {
 
   final num totalPayable;
 
+  //========== Global Keys ==========
+  static final GlobalKey<FormState> formKey = GlobalKey();
+
   //========== DropDown Controllers ==========
   static String? payingByController;
 
@@ -42,84 +45,92 @@ class PaymentTypeWidget extends StatelessWidget {
         height: 200,
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  //========== Rate Field ==========
-                  Flexible(
-                    flex: 1,
-                    child: TextFeildWidget(
-                      labelText: 'Amount *',
-                      controller: amountController,
-                      inputBorder: const OutlineInputBorder(),
-                      textInputType: TextInputType.number,
-                      inputFormatters: Converter.digitsOnly,
-                      onChanged: (value) => amountChanged(value ?? '0'),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      constraints: const BoxConstraints(maxHeight: 45),
-                      contentPadding: const EdgeInsets.all(10),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'This field is required*';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-
-                  kWidth20,
-
-                  //========== Type DropDown ==========
-                  Flexible(
-                    flex: 1,
-                    child: DropdownButtonFormField(
-                      isExpanded: true,
-                      decoration: const InputDecoration(
-                        constraints: BoxConstraints(maxHeight: 45),
-                        fillColor: kWhite,
-                        filled: true,
-                        isDense: true,
-                        contentPadding: EdgeInsets.all(10),
+          child: Form(
+            key: formKey,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    //========== Rate Field ==========
+                    Flexible(
+                      flex: 1,
+                      child: TextFeildWidget(
+                        labelText: 'Amount *',
+                        controller: amountController,
+                        inputBorder: const OutlineInputBorder(),
+                        textInputType: TextInputType.number,
+                        inputFormatters: Converter.digitsOnly,
+                        onChanged: (value) => amountChanged(value ?? '0'),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
-                        label: Text('Paying By *',
-                            style: TextStyle(color: klabelColorBlack)),
-                        border: OutlineInputBorder(),
+                        constraints: const BoxConstraints(maxHeight: 45),
+                        contentPadding: const EdgeInsets.all(10),
+                        errorStyle: true,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'This field is required*';
+                          } else if (num.parse(value) > totalPayable) {
+                            return 'Amount is higher than payable*';
+                          }
+                          return null;
+                        },
                       ),
-                      items: types
-                          .map((values) => DropdownMenuItem<String>(
-                                value: values,
-                                child: Text(values),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        payingByController = value.toString();
-                        log(payingByController!);
-                      },
-                      validator: (value) {
-                        if (value == null) {
-                          return 'This field is required*';
-                        }
-                        return null;
-                      },
                     ),
-                  ),
-                ],
-              ),
-              kHeight20,
-              Flexible(
-                flex: 1,
-                child: TextFeildWidget(
-                  labelText: 'Payment Note',
-                  controller: payingNoteController,
-                  inputBorder: const OutlineInputBorder(),
-                  textInputType: TextInputType.text,
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  maxLines: 3,
+
+                    kWidth20,
+
+                    //========== Type DropDown ==========
+                    Flexible(
+                      flex: 1,
+                      child: DropdownButtonFormField(
+                        isExpanded: true,
+                        decoration: const InputDecoration(
+                          constraints: BoxConstraints(maxHeight: 45),
+                          fillColor: kWhite,
+                          filled: true,
+                          isDense: true,
+                          errorStyle: TextStyle(fontSize: 0.01),
+                          contentPadding: EdgeInsets.all(10),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          label: Text('Paying By *',
+                              style: TextStyle(color: klabelColorBlack)),
+                          border: OutlineInputBorder(),
+                        ),
+                        items: types
+                            .map((values) => DropdownMenuItem<String>(
+                                  value: values,
+                                  child: Text(values),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          payingByController = value.toString();
+                          log(payingByController!);
+                        },
+                        validator: (value) {
+                          if (value == null) {
+                            return 'This field is required*';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                kHeight20,
+                Flexible(
+                  flex: 1,
+                  child: TextFeildWidget(
+                    labelText: 'Payment Note',
+                    controller: payingNoteController,
+                    inputBorder: const OutlineInputBorder(),
+                    textInputType: TextInputType.text,
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    maxLines: 3,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

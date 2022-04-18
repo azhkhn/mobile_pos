@@ -286,7 +286,7 @@ class _SignUpFieldsState extends State<SignUpFields> {
               kHeight20,
 
               //========== Login Buttons and Actions ==========
-              LoginAndSignUpButtons.signUp(
+              LoginAndSignUpButtons(
                 type: 0,
                 shopName: SignUpFields.shopNameController.text.trim(),
                 countryName: SignUpFields.countryNameController.text.trim(),

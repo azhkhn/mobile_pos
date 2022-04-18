@@ -35,72 +35,72 @@ class EzDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path,
-        version: 1, onCreate: _createDB, onUpgrade: _upgradeDB);
+        version: 3, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
-    const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    const textType = 'TEXT NOT NULL';
-    // const textNull = 'TEXT';
-    const intNull = 'INTEGER';
-    const intType = 'INTEGER NOT NULL';
+    // const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    // const textType = 'TEXT NOT NULL';
+    // // const textNull = 'TEXT';
+    // const intNull = 'INTEGER';
+    // const intType = 'INTEGER NOT NULL';
 
-    await db.rawQuery('DROP TABLE $tableSales');
-    await db.rawQuery('DROP TABLE $tableSalesItems');
-    await db.rawQuery('DROP TABLE $tableTransactions');
+    // await db.rawQuery('DROP IF EXISTS TABLE $tableSales');
+    // await db.rawQuery('DROP IF EXISTS TABLE $tableSalesItems');
+    // await db.rawQuery('DROP IF EXISTS TABLE $tableTransactions');
 
-    //========== Table Sales ==========
-    await db.execute('''CREATE TABLE $tableSales (
-      ${SalesFields.id} $idAuto,
-      ${SalesFields.invoiceNumber} $textType,
-      ${SalesFields.salesNote} $textType,
-      ${SalesFields.dateTime} $textType,
-      ${SalesFields.cusomerId} $textType, 
-      ${SalesFields.customerName} $textType,
-      ${SalesFields.billerName} $textType,
-      ${SalesFields.totalItems} $textType,
-      ${SalesFields.vatAmount} $textType,
-      ${SalesFields.subTotal} $textType,
-      ${SalesFields.discount} $textType,
-      ${SalesFields.grantTotal} $textType,
-      ${SalesFields.paid} $textType,
-      ${SalesFields.balance} $textType,
-      ${SalesFields.paymentType} $textType,
-      ${SalesFields.salesStatus} $textType,
-      ${SalesFields.paymentStatus} $textType,
-      ${SalesFields.createdBy} $textType)''');
+    // //========== Table Sales ==========
+    // await db.execute('''CREATE TABLE $tableSales (
+    //   ${SalesFields.id} $idAuto,
+    //   ${SalesFields.invoiceNumber} $textType,
+    //   ${SalesFields.salesNote} $textType,
+    //   ${SalesFields.dateTime} $textType,
+    //   ${SalesFields.cusomerId} $intType,
+    //   ${SalesFields.customerName} $textType,
+    //   ${SalesFields.billerName} $textType,
+    //   ${SalesFields.totalItems} $textType,
+    //   ${SalesFields.vatAmount} $textType,
+    //   ${SalesFields.subTotal} $textType,
+    //   ${SalesFields.discount} $textType,
+    //   ${SalesFields.grantTotal} $textType,
+    //   ${SalesFields.paid} $textType,
+    //   ${SalesFields.balance} $textType,
+    //   ${SalesFields.paymentType} $textType,
+    //   ${SalesFields.salesStatus} $textType,
+    //   ${SalesFields.paymentStatus} $textType,
+    //   ${SalesFields.createdBy} $textType)''');
 
-    //========== Table Sales Items ==========
-    await db.execute('''CREATE TABLE $tableSalesItems (
-      ${SalesItemsFields.id} $idAuto,
-      ${SalesItemsFields.salesId} $intType,
-      ${SalesItemsFields.productId} $textType,
-      ${SalesItemsFields.productType} $textType,
-      ${SalesItemsFields.productName} $textType, 
-      ${SalesItemsFields.category} $textType,
-      ${SalesItemsFields.productCode} $textType,
-      ${SalesItemsFields.unitPrice} $textType,
-      ${SalesItemsFields.productCost} $textType,
-      ${SalesItemsFields.quantity} $textType,
-      ${SalesItemsFields.subTotal} $textType,
-      ${SalesItemsFields.vatId} $textType,
-      ${SalesItemsFields.vatTotal} $textType,
-      ${SalesItemsFields.unitCode} $textType,
-      ${SalesItemsFields.netUnitPrice} $textType,
-      ${SalesItemsFields.vatPercentage} $textType)''');
+    // //========== Table Sales Items ==========
+    // await db.execute('''CREATE TABLE $tableSalesItems (
+    //   ${SalesItemsFields.id} $idAuto,
+    //   ${SalesItemsFields.salesId} $intType,
+    //   ${SalesItemsFields.productId} $textType,
+    //   ${SalesItemsFields.productType} $textType,
+    //   ${SalesItemsFields.productName} $textType,
+    //   ${SalesItemsFields.category} $textType,
+    //   ${SalesItemsFields.productCode} $textType,
+    //   ${SalesItemsFields.unitPrice} $textType,
+    //   ${SalesItemsFields.productCost} $textType,
+    //   ${SalesItemsFields.quantity} $textType,
+    //   ${SalesItemsFields.subTotal} $textType,
+    //   ${SalesItemsFields.vatId} $textType,
+    //   ${SalesItemsFields.vatTotal} $textType,
+    //   ${SalesItemsFields.unitCode} $textType,
+    //   ${SalesItemsFields.netUnitPrice} $textType,
+    //   ${SalesItemsFields.vatPercentage} $textType)''');
 
-    //========== Table Transactions ==========
-    await db.execute('''CREATE TABLE $tableTransactions (
-      ${TransactionsField.id} $idAuto,
-      ${TransactionsField.category} $textType,
-      ${TransactionsField.transactionType} $textType,
-      ${TransactionsField.dateTime} $textType,
-      ${TransactionsField.amount} $textType,
-      ${TransactionsField.status} $textType,
-      ${TransactionsField.description} $textType,
-      ${TransactionsField.salesId} $intNull,
-      ${TransactionsField.purchaseId} $intNull)''');
+    // //========== Table Transactions ==========
+    // await db.execute('''CREATE TABLE $tableTransactions (
+    //   ${TransactionsField.id} $idAuto,
+    //   ${TransactionsField.category} $textType,
+    //   ${TransactionsField.transactionType} $textType,
+    //   ${TransactionsField.dateTime} $textType,
+    //   ${TransactionsField.amount} $textType,
+    //   ${TransactionsField.status} $textType,
+    //   ${TransactionsField.description} $textType,
+    //   ${TransactionsField.salesId} $intNull,
+    //   ${TransactionsField.purchaseId} $intNull)''');
   }
 
   Future close() async {
@@ -267,7 +267,7 @@ class EzDatabase {
       ${SalesFields.invoiceNumber} $textType,
       ${SalesFields.salesNote} $textType,
       ${SalesFields.dateTime} $textType,
-      ${SalesFields.cusomerId} $textType, 
+      ${SalesFields.cusomerId} $intType, 
       ${SalesFields.customerName} $textType,
       ${SalesFields.billerName} $textType,
       ${SalesFields.totalItems} $textType,

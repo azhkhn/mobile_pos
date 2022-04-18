@@ -10,37 +10,31 @@ import 'package:shop_ez/model/auth/user_model.dart';
 import '../../../core/utils/snackbar/snackbar.dart';
 
 class LoginAndSignUpButtons extends StatelessWidget {
-  LoginAndSignUpButtons.logIn({
+  const LoginAndSignUpButtons({
     Key? key,
     required this.type,
-    required this.username,
-    required this.password,
     required this.formKey,
-  }) : super(key: key);
-  LoginAndSignUpButtons.signUp({
-    Key? key,
-    required this.type,
-    required this.mobileNumber,
-    required this.password,
-    required this.email,
-    required this.shopName,
-    required this.countryName,
-    required this.shopCategory,
-    required this.formKey,
-    required this.callback,
+    this.username,
+    this.password,
+    this.mobileNumber,
+    this.email,
+    this.shopName,
+    this.countryName,
+    this.shopCategory,
+    this.callback,
   }) : super(key: key);
 
-  int type;
-  late final String username,
+  final int type;
+  final String? username,
       password,
       mobileNumber,
       email,
       shopName,
       countryName,
       shopCategory;
-  late final Function callback;
+  final Function? callback;
 
-  GlobalKey<FormState> formKey;
+  final GlobalKey<FormState> formKey;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +46,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
           onPressed: () {
             if (type == 0) {
               log('Getting Values...');
-              callback();
+              callback!();
               onSignUp(context);
             } else {
               onLogin(context);
@@ -108,7 +102,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
 
     if (isFormValid.validate()) {
       try {
-        await UserDatabase.instance.loginUser(username, password);
+        await UserDatabase.instance.loginUser(username!, password!);
         log('User Signed Successfully!');
         Navigator.pushReplacementNamed(context, routeHome);
       } catch (e) {
@@ -129,11 +123,11 @@ class LoginAndSignUpButtons extends StatelessWidget {
 
 //========== SignUp and Verification ==========
   Future<void> onSignUp(BuildContext context) async {
-    final String _shopName = shopName,
-        _countryName = countryName,
-        _shopCategory = shopCategory,
-        _mobileNumber = mobileNumber,
-        _password = password;
+    final String _shopName = shopName!,
+        _countryName = countryName!,
+        _shopCategory = shopCategory!,
+        _mobileNumber = mobileNumber!,
+        _password = password!;
     final String? _email = email;
 
     final isFormValid = formKey.currentState!;

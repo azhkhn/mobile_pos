@@ -161,7 +161,7 @@ class _SignInFieldsState extends State<SignInFields> {
                     )
                   ],
                 ),
-                LoginAndSignUpButtons.logIn(
+                LoginAndSignUpButtons(
                   type: 1,
                   username: widget._usernameController.text.trim(),
                   password: widget._passwordController.text,
