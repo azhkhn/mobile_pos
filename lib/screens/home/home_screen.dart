@@ -1,17 +1,18 @@
 import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/user/user.dart';
-import 'package:shop_ez/db/db_functions/auth/user_db.dart';
-import 'package:shop_ez/model/auth/user_model.dart';
-import 'package:shop_ez/screens/home/widgets/home_drawer.dart';
-import 'package:shop_ez/screens/home/widgets/home_grid.dart';
-import 'package:shop_ez/widgets/floating_popup_widget/floating_add_options.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
 
+import '../../core/constant/colors.dart';
+import '../../core/routes/router.dart';
+import '../../core/utils/device/device.dart';
+import '../../core/utils/user/user.dart';
+import '../../db/db_functions/auth/user_db.dart';
+import '../../model/auth/user_model.dart';
 import '../../model/business_profile/business_profile_model.dart';
+import '../../widgets/floating_popup_widget/floating_add_options.dart';
+import 'widgets/home_card_widget.dart';
+import 'widgets/home_drawer.dart';
+import 'widgets/home_grid.dart';
 
 class ScreenHome extends StatelessWidget {
   ScreenHome({this.initialEntry, Key? key}) : super(key: key);
@@ -93,111 +94,7 @@ class ScreenHome extends StatelessWidget {
               padding: EdgeInsets.only(top: _screenSize.height / 6),
               child: Column(
                 children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: _screenSize.width * 0.07),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Card(
-                          elevation: 5,
-                          color: Colors.blue[300],
-                          child: SizedBox(
-                            width: _screenSize.width / 4,
-                            height: _screenSize.width / 12,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Today Cash',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: kButtonTextWhite,
-                                      fontSize: _screenSize.width * 0.025),
-                                ),
-                                // kHeight5,
-                                Text(
-                                  '13840',
-                                  textAlign: TextAlign.center,
-                                  softWrap: false,
-                                  overflow: TextOverflow.fade,
-                                  style: TextStyle(
-                                    color: kButtonTextWhite,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: _screenSize.width * 0.03,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Card(
-                          elevation: 5,
-                          color: Colors.green[300],
-                          child: SizedBox(
-                            width: _screenSize.width / 4,
-                            height: _screenSize.width / 12,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Total Cash',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: kButtonTextWhite,
-                                      fontSize: _screenSize.width * 0.025),
-                                ),
-                                // kHeight5,
-                                Text(
-                                  '1856750',
-                                  softWrap: false,
-                                  overflow: TextOverflow.fade,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: kButtonTextWhite,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: _screenSize.width * 0.03,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Card(
-                          elevation: 5,
-                          color: Colors.red[300],
-                          child: SizedBox(
-                            width: _screenSize.width / 4,
-                            height: _screenSize.width / 12,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Today Sale',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: kButtonTextWhite,
-                                      fontSize: _screenSize.width * 0.025),
-                                ),
-                                // kHeight5,
-                                Text(
-                                  '160',
-                                  softWrap: false,
-                                  overflow: TextOverflow.fade,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: kButtonTextWhite,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: _screenSize.width * 0.03,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  const HomeCardWidget(),
                   Expanded(
                     child: GridView.count(
                       padding: EdgeInsets.all(_screenSize.width / 50),

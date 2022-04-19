@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
-import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_side_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';

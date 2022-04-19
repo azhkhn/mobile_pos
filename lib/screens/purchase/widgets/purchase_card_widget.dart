@@ -1,52 +1,19 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
-import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/container/background_container_widget.dart';
-import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
-class ScreenSales extends StatelessWidget {
-  const ScreenSales({Key? key}) : super(key: key);
+import '../../../core/constant/sizes.dart';
+import '../../../core/constant/text.dart';
+import '../../../core/utils/text/converters.dart';
+import '../../../model/purchase/purchase_model.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBarWidget(
-        title: 'Sales',
-      ),
-      body: BackgroundContainerWidget(
-        child: ItemScreenPaddingWidget(
-          child: FutureBuilder(
-              future: SalesDatabase.instance.getAllSales(),
-              builder: (context, AsyncSnapshot<List<SalesModel?>?> snapshot) {
-                final List<SalesModel?> _sales = snapshot.data!;
-                return ListView.separated(
-                  itemCount: _sales.length,
-                  separatorBuilder: (BuildContext context, int index) =>
-                      kHeight5,
-                  itemBuilder: (BuildContext context, int index) {
-                    return SalesCardWidget(index: index, sales: _sales);
-                  },
-                );
-              }),
-        ),
-      ),
-    );
-  }
-}
-
-class SalesCardWidget extends StatelessWidget {
-  const SalesCardWidget({
+class PurchaseCardWidget extends StatelessWidget {
+  const PurchaseCardWidget({
     required this.index,
-    required this.sales,
+    required this.purchases,
     Key? key,
   }) : super(key: key);
   final int index;
-  final List<SalesModel?> sales;
+  final List<PurchaseModel> purchases;
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +66,7 @@ class SalesCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          sales[index]!.invoiceNumber!,
+                          purchases[index].invoiceNumber!,
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -122,8 +89,8 @@ class SalesCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.dateFormat
-                              .format(DateTime.parse(sales[index]!.dateTime)),
+                          Converter.dateFormat.format(
+                              DateTime.parse(purchases[index].dateTime)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -146,7 +113,7 @@ class SalesCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          sales[index]!.customerName,
+                          purchases[index].supplierName,
                           overflow: TextOverflow.ellipsis,
                           style: kBoldTextSalesCard,
                           maxLines: 1,
@@ -178,7 +145,7 @@ class SalesCardWidget extends StatelessWidget {
                       Expanded(
                         child: AutoSizeText(
                           Converter.currency
-                              .format(num.parse(sales[index]!.grantTotal)),
+                              .format(num.parse(purchases[index].grantTotal)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -202,7 +169,7 @@ class SalesCardWidget extends StatelessWidget {
                       Expanded(
                         child: AutoSizeText(
                           Converter.currency
-                              .format(num.parse(sales[index]!.paid)),
+                              .format(num.parse(purchases[index].paid)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -226,7 +193,7 @@ class SalesCardWidget extends StatelessWidget {
                       Expanded(
                         child: AutoSizeText(
                           Converter.currency
-                              .format(num.parse(sales[index]!.balance)),
+                              .format(num.parse(purchases[index].balance)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -249,7 +216,7 @@ class SalesCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          sales[index]!.paymentStatus,
+                          purchases[index].paymentStatus,
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,

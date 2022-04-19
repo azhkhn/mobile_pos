@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shop_ez/core/routes/route_generator.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/database.dart';
@@ -6,6 +7,9 @@ import 'package:shop_ez/db/database.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EzDatabase.instance.initDB();
+  await SystemChrome.setPreferredOrientations(
+    [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
+  );
   runApp(const MyApp());
 }
 

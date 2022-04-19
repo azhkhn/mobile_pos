@@ -61,6 +61,9 @@ class HomeGrid extends StatelessWidget {
                 case 5:
                   Navigator.pushNamed(context, routeExpense);
                   break;
+                case 6:
+                  Navigator.pushNamed(context, routeStock);
+                  break;
                 default:
               }
             },

@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/screens/auth/pages/login_screen.dart';
-import 'package:shop_ez/screens/auth/pages/signup_screen.dart';
-import 'package:shop_ez/screens/brand/screen_brand.dart';
-import 'package:shop_ez/screens/business_profile/business_profile_screen.dart';
-import 'package:shop_ez/screens/category/screen_category.dart';
-import 'package:shop_ez/screens/customer/screen_customer.dart';
-import 'package:shop_ez/screens/expense/screen_expense.dart';
-import 'package:shop_ez/screens/expense/screen_expense_category.dart';
-import 'package:shop_ez/screens/home/home_screen.dart';
-import 'package:shop_ez/screens/item_master/screen_item_master.dart';
-import 'package:shop_ez/screens/payments/partial_payment/screen_partial_payment.dart';
-import 'package:shop_ez/screens/pos/screen_pos.dart';
-import 'package:shop_ez/screens/purchase/screen_purchase.dart';
-import 'package:shop_ez/screens/sales/screen_sales.dart';
-import 'package:shop_ez/screens/splash/splash_screen.dart';
-import 'package:shop_ez/screens/sub-category/screen_sub_category.dart';
-import 'package:shop_ez/screens/supplier/manage_supplier_screen.dart';
-import 'package:shop_ez/screens/unit/screen_unit.dart';
-import 'package:shop_ez/screens/vat/vat_screen.dart';
+import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
+import 'package:shop_ez/screens/stock/screen_stock.dart';
+
+import '../../screens/auth/pages/login_screen.dart';
+import '../../screens/auth/pages/signup_screen.dart';
+import '../../screens/brand/screen_brand.dart';
+import '../../screens/business_profile/business_profile_screen.dart';
+import '../../screens/category/screen_category.dart';
+import '../../screens/customer/screen_customer.dart';
+import '../../screens/expense/screen_expense.dart';
+import '../../screens/expense/screen_expense_category.dart';
+import '../../screens/home/home_screen.dart';
+import '../../screens/item_master/screen_item_master.dart';
+import '../../screens/payments/partial_payment/screen_partial_payment.dart';
+import '../../screens/pos/screen_pos.dart';
+import '../../screens/purchase/pages/screen_add_purchase.dart';
+import '../../screens/purchase/pages/screen_purchase.dart';
+import '../../screens/sales/pages/screen_sales.dart';
+import '../../screens/sales/pages/screen_sales_list.dart';
+import '../../screens/splash/splash_screen.dart';
+import '../../screens/sub-category/screen_sub_category.dart';
+import '../../screens/supplier/manage_supplier_screen.dart';
+import '../../screens/unit/screen_unit.dart';
+import '../../screens/vat/vat_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -63,13 +68,22 @@ class RouteGenerator {
           return MaterialPageRoute(
               builder: (_) => PartialPayment(
                     paymentDetails: args,
+                    purchase: args.containsKey('purchase'),
                   ));
         }
         return _errorRoute();
       case routeSales:
         return MaterialPageRoute(builder: (_) => const ScreenSales());
+      case routeSalesList:
+        return MaterialPageRoute(builder: (_) => const SalesList());
       case routePurchase:
         return MaterialPageRoute(builder: (_) => const ScreenPurchase());
+      case routeAddPurchase:
+        return MaterialPageRoute(builder: (_) => const Purchase());
+      case routeListPurchase:
+        return MaterialPageRoute(builder: (_) => const PurchasesList());
+      case routeStock:
+        return MaterialPageRoute(builder: (_) => const ScreenStock());
 
       default:
         return _errorRoute();

@@ -3,14 +3,15 @@ import 'dart:developer' show log;
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
-import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
-import 'package:shop_ez/db/db_functions/sales/sales_items_database.dart';
+import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
+import 'package:shop_ez/db/db_functions/purchase/purchase_items_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
-import 'package:shop_ez/model/sales/sales_items_model.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/model/purchase/purchase_items_model.dart';
+import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_side_widget.dart';
 
@@ -29,8 +30,8 @@ class PurchaseButtonsWidget extends StatelessWidget {
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       try {
-        await SalesDatabase.instance.getAllSales();
-        await SalesItemsDatabase.instance.getAllSalesItems();
+        await PurchaseDatabase.instance.getAllPurchases();
+        await PurchaseItemsDatabase.instance.getAllPurchaseItems();
         await TransactionDatabase.instance.getAllTransactions();
       } catch (e) {
         log(e.toString());
@@ -122,31 +123,14 @@ class PurchaseButtonsWidget extends StatelessWidget {
                           content:
                               'Please select any Products to add Purchase!');
                     } else {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) {
-                          return AlertDialog(
-                            title: const Text(
-                              'Purchase',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                            content:
-                                const Text('Do you want to add this purchase?'),
-                            actions: [
-                              TextButton(
-                                  onPressed: () => Navigator.pop(ctx),
-                                  child: const Text('Cancel')),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(ctx);
-                                    // addSale(context);
-                                  },
-                                  child: const Text('Accept')),
-                            ],
-                          );
-                        },
-                      );
+                      Navigator.pushNamed(context, routePartialPayment,
+                          arguments: {
+                            'totalPayable':
+                                PurchaseSideWidget.totalPayableNotifier.value,
+                            'totalItems':
+                                PurchaseSideWidget.totalItemsNotifier.value,
+                            'purchase': true,
+                          });
                     }
                   },
                   padding: const EdgeInsets.all(5),
@@ -171,21 +155,21 @@ class PurchaseButtonsWidget extends StatelessWidget {
   }
 
 //========================================          ========================================
-//======================================== Add Sale ========================================
+//======================================== Add Purchase ========================================
 //========================================          ========================================
-  addSale(
+  addPurchase(
     BuildContext context, {
-    String? argBalance,
-    String? argPaymentStatus,
-    String? argPaymentType,
-    String? argPaid,
+    required String argBalance,
+    required String argPaymentStatus,
+    required String argPaymentType,
+    required String argPaid,
   }) async {
-    int? salesId;
-    int cusomerId;
+    int? purchaseId;
+    int supplierId;
     final String dateTime,
-        customerName,
+        supplierName,
         billerName,
-        salesNote,
+        purchaseNote,
         totalItems,
         vatAmount,
         subTotal,
@@ -194,12 +178,13 @@ class PurchaseButtonsWidget extends StatelessWidget {
         paid,
         balance,
         paymentType,
-        salesStatus,
+        purchaseStatus,
         paymentStatus,
         createdBy;
 
-    final SalesDatabase salesDB = SalesDatabase.instance;
-    final SalesItemsDatabase salesItemDB = SalesItemsDatabase.instance;
+    final PurchaseDatabase _purchaseDB = PurchaseDatabase.instance;
+    final PurchaseItemsDatabase _purchaseItemsDB =
+        PurchaseItemsDatabase.instance;
     final TransactionDatabase transactionDB = TransactionDatabase.instance;
 
     final _loggedUser = await UserUtils.instance.loggedUser;
@@ -210,50 +195,29 @@ class PurchaseButtonsWidget extends StatelessWidget {
     final String _biller = _businessProfile!.billerName;
     log('Biller Name ==== $_biller');
 
-//Checking if it's Partial Payment then Including Balance Amount
-    if (argPaymentStatus != null) {
-      paymentStatus = argPaymentStatus;
-    } else {
-      paymentStatus = 'Paid';
-    }
-
-    if (argBalance != null) {
-      balance = argBalance;
-    } else {
-      balance = '0';
-    }
-
-    if (argPaymentType != null) {
-      paymentType = argPaymentType;
-    } else {
-      paymentType = 'Cash';
-    }
-
-    if (argPaid != null) {
-      paid = argPaid;
-    } else {
-      paid = PurchaseSideWidget.totalPayableNotifier.value.toString();
-    }
-
     dateTime = DateTime.now().toIso8601String();
-    cusomerId = PurchaseSideWidget.supplierIdNotifier.value!;
-    customerName = PurchaseSideWidget.supplierNameNotifier.value!;
+    supplierId = PurchaseSideWidget.supplierIdNotifier.value!;
+    supplierName = PurchaseSideWidget.supplierNameNotifier.value!;
     billerName = _biller;
-    salesNote = 'New Sale';
+    purchaseNote = 'New Purchase';
     totalItems = PurchaseSideWidget.totalItemsNotifier.value.toString();
     vatAmount = PurchaseSideWidget.totalVatNotifier.value.toString();
     subTotal = PurchaseSideWidget.totalAmountNotifier.value.toString();
     discount = '';
     grantTotal = PurchaseSideWidget.totalPayableNotifier.value.toString();
-    salesStatus = 'Completed';
+    paid = argPaid;
+    balance = argBalance;
+    paymentType = argPaymentType;
+    purchaseStatus = 'Completed';
+    paymentStatus = argPaymentStatus;
     createdBy = _user;
 
-    final SalesModel _salesModel = SalesModel(
+    final PurchaseModel _purchaseModel = PurchaseModel(
         dateTime: dateTime,
-        cusomerId: cusomerId,
-        customerName: customerName,
+        supplierId: supplierId,
+        supplierName: supplierName,
         billerName: billerName,
-        salesNote: salesNote,
+        purchaseNote: purchaseNote,
         totalItems: totalItems,
         vatAmount: vatAmount,
         subTotal: subTotal,
@@ -262,13 +226,13 @@ class PurchaseButtonsWidget extends StatelessWidget {
         paid: paid,
         balance: balance,
         paymentType: paymentType,
-        salesStatus: salesStatus,
+        purchaseStatus: purchaseStatus,
         paymentStatus: paymentStatus,
         createdBy: createdBy);
 
     try {
-      //==================== Create Sales ====================
-      salesId = await salesDB.createSales(_salesModel);
+      //==================== Create Purchase ====================
+      purchaseId = await _purchaseDB.createPurchase(_purchaseModel);
 
       final num items = PurchaseSideWidget.totalItemsNotifier.value;
       for (var i = 0; i < items; i++) {
@@ -301,7 +265,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
             unitCode =
                 PurchaseSideWidget.selectedProductsNotifier.value[i].unit;
 
-        log(' Sales Id == $salesId');
+        log(' Purchase Id == $purchaseId');
         log(' Product id == $productId');
         log(' Product Type == $productType');
         log(' Product Code == $productCode');
@@ -318,8 +282,8 @@ class PurchaseButtonsWidget extends StatelessWidget {
         log(' VAT Total == $vatTotal');
         log('\n==============================================\n');
 
-        final SalesItemsModel _salesItemsModel = SalesItemsModel(
-            salesId: salesId,
+        final PurchaseItemsModel _purchaseItemsModel = PurchaseItemsModel(
+            purchaseId: purchaseId,
             productId: productId,
             productType: productType,
             productCode: productCode,
@@ -335,18 +299,18 @@ class PurchaseButtonsWidget extends StatelessWidget {
             vatPercentage: vatPercentage,
             vatTotal: vatTotal);
 
-        //==================== Create Sales Items ====================
-        await salesItemDB.createSalesItems(_salesItemsModel);
+        //==================== Create Purchase Items ====================
+        await _purchaseItemsDB.createPurchaseItems(_purchaseItemsModel);
       }
 
       final TransactionsModel _transaction = TransactionsModel(
-        category: 'Sales',
-        transactionType: 'Income',
+        category: 'Purchase',
+        transactionType: 'Expense',
         dateTime: dateTime,
         amount: grantTotal,
         status: paymentStatus,
-        description: 'Transaction $salesId',
-        salesId: salesId,
+        description: 'Transaction Completed Successfully!',
+        purchaseId: purchaseId,
       );
 
       //==================== Create Transactions ====================
@@ -359,7 +323,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
           Icons.done,
           color: kSnackBarIconColor,
         ),
-        content: "Sale Added Successfully!",
+        content: "Purchase Added Successfully!",
       );
     } catch (e) {
       log('$e');

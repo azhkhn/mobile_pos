@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_details_table_widget.dart';
 import 'package:shop_ez/screens/payments/partial_payment/widgets/quick_cash_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/payment_buttons_widget.dart';
+import 'package:shop_ez/screens/purchase/widgets/purchase_button_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import '../../../core/constant/sizes.dart';
 import 'widgets/payment_type_widget.dart';
@@ -10,9 +13,11 @@ class PartialPayment extends StatelessWidget {
   const PartialPayment({
     Key? key,
     required this.paymentDetails,
+    this.purchase = false,
   }) : super(key: key);
 
   final Map paymentDetails;
+  final bool purchase;
   @override
   Widget build(BuildContext context) {
     final Size _screenSize = MediaQuery.of(context).size;
@@ -84,20 +89,59 @@ class PartialPayment extends StatelessWidget {
                             .toString();
 
                         final String _paymentStatus =
-                            _balance == '0' ? 'Paid' : 'Partial';
+                            _balance == '0.0' ? 'Paid' : 'Partial';
+
+                        log(_balance);
 
                         final String _paymentType =
                             PaymentTypeWidget.payingByController!;
 
-                        const PaymentButtonsWidget().addSale(
-                          context,
-                          argBalance: _balance,
-                          argPaymentStatus: _paymentStatus,
-                          argPaymentType: _paymentType,
-                          argPaid: _paid,
+                        showDialog(
+                          context: context,
+                          builder: (ctx) {
+                            return AlertDialog(
+                              title: const Text(
+                                'Purchase',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              content: const Text(
+                                  'Do you want to add this purchase?'),
+                              actions: [
+                                TextButton(
+                                    onPressed: () => Navigator.pop(ctx),
+                                    child: const Text('Cancel')),
+                                TextButton(
+                                    onPressed: () {
+                                      if (purchase) {
+                                        //========== Purchase Payment ==========
+                                        const PurchaseButtonsWidget()
+                                            .addPurchase(
+                                          context,
+                                          argBalance: _balance,
+                                          argPaymentStatus: _paymentStatus,
+                                          argPaymentType: _paymentType,
+                                          argPaid: _paid,
+                                        );
+                                      } else {
+                                        //========== Sale Payment ==========
+                                        const PaymentButtonsWidget().addSale(
+                                          context,
+                                          argBalance: _balance,
+                                          argPaymentStatus: _paymentStatus,
+                                          argPaymentType: _paymentType,
+                                          argPaid: _paid,
+                                        );
+                                      }
+                                      PaymentTypeWidget.amountController
+                                          .clear();
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Accept')),
+                              ],
+                            );
+                          },
                         );
-                        PaymentTypeWidget.amountController.clear();
-                        Navigator.pop(context);
                       }
                     },
                     buttonText: 'Submit'),

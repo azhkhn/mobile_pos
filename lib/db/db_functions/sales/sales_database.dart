@@ -44,7 +44,7 @@ class SalesDatabase {
   }
 
 //========== Get All Sales ==========
-  Future<List<SalesModel?>?> getAllSales() async {
+  Future<List<SalesModel>> getAllSales() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableSales);
     // db.delete(tableSales);

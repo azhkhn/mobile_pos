@@ -1,31 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/screens/pos/widgets/product_side_widget.dart';
-import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
+import 'package:shop_ez/screens/purchase/widgets/purchase_product_side_widget.dart';
+import 'package:shop_ez/screens/purchase/widgets/purchase_side_widget.dart';
 
-import '../../core/constant/colors.dart';
+import '../../../core/constant/colors.dart';
 
-class PosScreen extends StatefulWidget {
-  const PosScreen({Key? key}) : super(key: key);
+class Purchase extends StatefulWidget {
+  const Purchase({Key? key}) : super(key: key);
 
   @override
-  State<PosScreen> createState() => _PosScreenState();
+  State<Purchase> createState() => _PurchaseState();
 }
 
-class _PosScreenState extends State<PosScreen> {
+class _PurchaseState extends State<Purchase> {
   @override
   void initState() {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     super.initState();
-  }
-
-  @override
-  dispose() {
-    SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    super.dispose();
   }
 
 //==================== MediaQuery Screen Size ====================
@@ -56,17 +49,17 @@ class _PosScreenState extends State<PosScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   //========================================                  ========================================
-                  //======================================== Sale Side Widget ========================================
+                  //======================================== Purchase Side Widget ========================================
                   //========================================                  ========================================
-                  SaleSideWidget(),
+                  PurchaseSideWidget(),
 
                   //==================== Constant Width ====================
                   kWidth20,
 
                   //========================================                     ========================================
-                  //======================================== Product Side Widget ========================================
+                  //======================================== Purchase Product Side Widget ========================================
                   //========================================                     ========================================
-                  ProductSideWidget()
+                  PurchaseProductSideWidget()
                 ],
               ),
             ),
