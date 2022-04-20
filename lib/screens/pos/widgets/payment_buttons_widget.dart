@@ -7,6 +7,7 @@ import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
+import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_items_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
@@ -313,9 +314,11 @@ class PaymentButtonsWidget extends StatelessWidget {
         paymentStatus,
         createdBy;
 
+    //==================== Database Instances ====================
     final SalesDatabase salesDB = SalesDatabase.instance;
     final SalesItemsDatabase salesItemDB = SalesItemsDatabase.instance;
     final TransactionDatabase transactionDB = TransactionDatabase.instance;
+    final ItemMasterDatabase itemMasterDB = ItemMasterDatabase.instance;
 
     final _loggedUser = await UserUtils.instance.loggedUser;
     final String _user = _loggedUser!.shopName;
@@ -451,6 +454,11 @@ class PaymentButtonsWidget extends StatelessWidget {
 
         //==================== Create Sales Items ====================
         await salesItemDB.createSalesItems(_salesItemsModel);
+
+        //==================== Substracting Item Quantity ====================
+        itemMasterDB.substractItemQty(
+            SaleSideWidget.selectedProductsNotifier.value[i],
+            num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(

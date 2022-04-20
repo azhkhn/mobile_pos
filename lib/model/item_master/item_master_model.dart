@@ -62,6 +62,48 @@ class ItemMasterModel {
     this.itemImage,
   });
 
+  ItemMasterModel copyWith({
+    final int? id,
+    final String? productType,
+    itemName,
+    itemNameArabic,
+    itemCode,
+    itemCategory,
+    itemCost,
+    sellingPrice,
+    vatId,
+    productVAT,
+    unit,
+    vatMethod,
+    itemSubCategory,
+    itemBrand,
+    secondarySellingPrice,
+    openingStock,
+    alertQuantity,
+    itemImage,
+  }) =>
+      ItemMasterModel(
+        id: id ?? this.id,
+        productType: productType ?? this.productType,
+        itemName: itemName ?? this.itemName,
+        itemNameArabic: itemNameArabic ?? this.itemNameArabic,
+        itemCode: itemCode ?? this.itemCode,
+        itemCategory: itemCategory ?? this.itemCategory,
+        itemCost: itemCost ?? this.itemCost,
+        sellingPrice: sellingPrice ?? this.sellingPrice,
+        vatId: vatId ?? this.vatId,
+        productVAT: productVAT ?? this.productVAT,
+        unit: unit ?? this.unit,
+        vatMethod: vatMethod ?? this.vatMethod,
+        itemSubCategory: itemSubCategory ?? this.itemSubCategory,
+        itemBrand: itemBrand ?? this.itemBrand,
+        secondarySellingPrice:
+            secondarySellingPrice ?? this.secondarySellingPrice,
+        openingStock: openingStock ?? this.openingStock,
+        alertQuantity: alertQuantity ?? this.alertQuantity,
+        itemImage: itemImage ?? this.itemImage,
+      );
+
   Map<String, Object?> toJson() => {
         ItemMasterFields.id: id,
         ItemMasterFields.productType: productType,

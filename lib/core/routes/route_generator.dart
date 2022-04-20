@@ -83,7 +83,7 @@ class RouteGenerator {
       case routeListPurchase:
         return MaterialPageRoute(builder: (_) => const PurchasesList());
       case routeStock:
-        return MaterialPageRoute(builder: (_) => const ScreenStock());
+        return MaterialPageRoute(builder: (_) => ScreenStock());
 
       default:
         return _errorRoute();

@@ -85,6 +85,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                   ),
                   contentPadding: const EdgeInsets.all(10),
                   hintText: 'Search product by name/code',
+                  hintStyle: const TextStyle(fontSize: 12),
                   border: const OutlineInputBorder(),
                 )),
             noItemsFoundBuilder: (context) => const SizedBox(

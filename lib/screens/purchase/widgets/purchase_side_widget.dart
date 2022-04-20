@@ -99,6 +99,7 @@ class PurchaseSideWidget extends StatelessWidget {
                           ),
                           contentPadding: const EdgeInsets.all(10),
                           hintText: 'Supplier',
+                          hintStyle: const TextStyle(fontSize: 12),
                           border: const OutlineInputBorder(),
                         )),
                     noItemsFoundBuilder: (context) => const SizedBox(

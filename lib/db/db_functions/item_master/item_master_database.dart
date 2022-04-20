@@ -89,13 +89,31 @@ class ItemMasterDatabase {
   Future<List<ItemMasterModel>> getProductSuggestions(String pattern) async {
     final db = await dbInstance.database;
     final res = await db.rawQuery(
-        "select * from $tableItemMaster where ${ItemMasterFields.itemName} LIKE '%$pattern%'");
+        "select * from $tableItemMaster where ${ItemMasterFields.itemName} LIKE '%$pattern%' OR ${ItemMasterFields.itemCode} LIKE '%$pattern%'");
 
     List<ItemMasterModel> list = res.isNotEmpty
         ? res.map((c) => ItemMasterModel.fromJson(c)).toList()
         : [];
 
     return list;
+  }
+
+  //========== Substract Item Quantity ==========
+  Future<void> substractItemQty(
+      ItemMasterModel itemMasterModel, num soldQty) async {
+    final db = await dbInstance.database;
+    final num currentQty = num.parse(itemMasterModel.openingStock!);
+    log('Current Quantity == $currentQty');
+    final num newQty = currentQty - soldQty;
+    log('New Item Quantity == $newQty');
+    final newModel = itemMasterModel.copyWith(openingStock: '$newQty');
+    await db.update(
+      tableItemMaster,
+      newModel.toJson(),
+      where: '${ItemMasterFields.id} = ?',
+      whereArgs: [newModel.id],
+    );
+    log('Item Quantity Updated!');
   }
 
   //========== Get All Items ==========

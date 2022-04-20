@@ -6,10 +6,16 @@ class CustomDropDownField extends StatelessWidget {
     Key? key,
     required this.labelText,
     required this.snapshot,
+    required this.onChanged,
+    this.border = false,
+    this.isDesne = false,
+    this.errorStyle = false,
     this.dropdownKey,
     this.prefixIcon,
     this.validator,
-    required this.onChanged,
+    this.constraints,
+    this.contentPadding,
+    this.floatingLabelBehavior,
   }) : super(key: key);
 
   final String labelText;
@@ -18,6 +24,12 @@ class CustomDropDownField extends StatelessWidget {
   final String? Function(String?)? validator;
   final void Function(String?)? onChanged;
   final GlobalKey? dropdownKey;
+  final bool border;
+  final bool isDesne;
+  final BoxConstraints? constraints;
+  final bool errorStyle;
+  final EdgeInsetsGeometry? contentPadding;
+  final FloatingLabelBehavior? floatingLabelBehavior;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +41,12 @@ class CustomDropDownField extends StatelessWidget {
           style: const TextStyle(color: klabelColorBlack),
         ),
         prefixIcon: prefixIcon,
+        border: border ? const OutlineInputBorder() : null,
+        isDense: isDesne,
+        errorStyle: errorStyle ? const TextStyle(fontSize: 0.01) : null,
+        constraints: constraints,
+        contentPadding: contentPadding,
+        floatingLabelBehavior: floatingLabelBehavior,
       ),
       isExpanded: true,
       items: snapshot!.hasData
