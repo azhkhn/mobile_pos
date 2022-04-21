@@ -1,4 +1,7 @@
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+
 import 'dart:developer' show log;
+import 'package:flutter/material.dart';
 import 'package:shop_ez/db/database.dart';
 import 'package:shop_ez/model/category/category_model.dart';
 
@@ -6,6 +9,10 @@ class CategoryDatabase {
   static final CategoryDatabase instance = CategoryDatabase._init();
   final dbInstance = EzDatabase.instance;
   CategoryDatabase._init();
+
+  //========== Value Notifiers ==========
+  static final ValueNotifier<List<CategoryModel>> categoryNotifiers =
+      ValueNotifier([]);
 
 //========== Create Category ==========
   Future<void> createCategory(CategoryModel _categoryModel) async {
@@ -17,11 +24,22 @@ class CategoryDatabase {
       throw Exception('Category Already Exist!');
     } else {
       log('Category Created!');
-      final id = await db.rawInsert(
-          'INSERT INTO $tableCategory(${CategoryFields.category}) VALUES(?)',
-          [_categoryModel.category]);
+      final id = await db.insert(tableCategory, _categoryModel.toJson());
+      categoryNotifiers.value.add(_categoryModel.copyWith(id: id));
+      categoryNotifiers.notifyListeners();
+
       log('Category Id == $id');
     }
+  }
+
+  //========== Delete Category ==========
+  Future<void> deleteCategory(int id) async {
+    final db = await dbInstance.database;
+    await db.delete(tableCategory,
+        where: '${CategoryFields.id} = ? ', whereArgs: [id]);
+    log('Category $id Deleted Successfully!');
+    categoryNotifiers.value.removeWhere((categories) => categories.id == id);
+    categoryNotifiers.notifyListeners();
   }
 
 //========== Get All Categories ==========

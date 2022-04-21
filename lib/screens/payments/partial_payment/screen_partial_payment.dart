@@ -133,8 +133,7 @@ class PartialPayment extends StatelessWidget {
                                           argPaid: _paid,
                                         );
                                       }
-                                      PaymentTypeWidget.amountController
-                                          .clear();
+
                                       Navigator.of(context).pop();
                                     },
                                     child: const Text('Accept')),

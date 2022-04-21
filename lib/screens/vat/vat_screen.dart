@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -14,14 +16,9 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';
 
-class VatScreen extends StatefulWidget {
-  const VatScreen({Key? key}) : super(key: key);
+class VatScreen extends StatelessWidget {
+  VatScreen({Key? key}) : super(key: key);
 
-  @override
-  State<VatScreen> createState() => _VatScreenState();
-}
-
-class _VatScreenState extends State<VatScreen> {
   //========== Global Keys ==========
   final _formKey = GlobalKey<FormState>();
 
@@ -38,12 +35,6 @@ class _VatScreenState extends State<VatScreen> {
   final _nameController = TextEditingController();
   final _codeController = TextEditingController();
   final _rateController = TextEditingController();
-
-  @override
-  void initState() {
-    vatDB.getAllVats();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,9 +110,7 @@ class _VatScreenState extends State<VatScreen> {
                                 ))
                             .toList(),
                         onChanged: (value) {
-                          setState(() {
-                            _vatType = value.toString();
-                          });
+                          _vatType = value.toString();
                         },
                         validator: (value) {
                           if (value == null) {
@@ -138,7 +127,7 @@ class _VatScreenState extends State<VatScreen> {
 
                 //========== Submit Button ==========
                 CustomMaterialBtton(
-                  onPressed: () => addVat(),
+                  onPressed: () => addVat(context),
                   buttonText: 'Submit',
                 ),
 
@@ -165,7 +154,6 @@ class _VatScreenState extends State<VatScreen> {
                                   trailing: IconButton(
                                       onPressed: () async {
                                         await vatDB.deleteVAT(item.id);
-                                        setState(() {});
                                       },
                                       icon: const Icon(Icons.delete)),
                                 );
@@ -189,7 +177,7 @@ class _VatScreenState extends State<VatScreen> {
   }
 
   //========== Add VAT ==========
-  addVat() async {
+  addVat(BuildContext context) async {
     final String name, code, rate, type;
 
     //Retrieving values from TextFields
@@ -214,7 +202,6 @@ class _VatScreenState extends State<VatScreen> {
               color: kSnackBarIconColor,
             ),
             content: 'Vat added successfully!');
-        return setState(() {});
       } catch (e) {
         if (e == 'VAT Already Exist!') {
           kSnackBar(

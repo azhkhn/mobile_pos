@@ -104,7 +104,7 @@ class PurchaseCardWidget extends StatelessWidget {
                   Row(
                     children: [
                       const AutoSizeText(
-                        'Customer:  ',
+                        'Supplier:  ',
                         overflow: TextOverflow.ellipsis,
                         style: kTextSalesCard,
                         maxLines: 1,

@@ -1,5 +1,8 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
+
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:shop_ez/db/database.dart';
 import 'package:shop_ez/model/vat/vat_model.dart';
 
@@ -7,6 +10,9 @@ class VatDatabase {
   static final VatDatabase instance = VatDatabase._init();
   EzDatabase dbInstance = EzDatabase.instance;
   VatDatabase._init();
+
+  //========== Value Notifiers ==========
+  static final ValueNotifier<List<VatModel>> vatNotifer = ValueNotifier([]);
 
 //========== Create VAT ==========
   Future<void> createVAT(VatModel _vatModel) async {
@@ -19,6 +25,8 @@ class VatDatabase {
     } else {
       log('VAT Created!');
       final id = await db.insert(tableVat, _vatModel.toJson());
+      vatNotifer.value.add(_vatModel.copyWith(id: id));
+      vatNotifer.notifyListeners();
       log('VAT id == $id');
     }
   }
@@ -47,6 +55,8 @@ class VatDatabase {
     final db = await dbInstance.database;
     final _result = await db
         .delete(tableVat, where: '${VatFields.id} = ?', whereArgs: [id]);
+    vatNotifer.value.removeWhere((vats) => vats.id == id);
+    vatNotifer.notifyListeners();
     log('VAT $id Deleted == $_result');
   }
 }

@@ -44,21 +44,21 @@ class RouteGenerator {
       case routeManageSupplier:
         return MaterialPageRoute(builder: (_) => ScreenManageSupplier());
       case routeCategory:
-        return MaterialPageRoute(builder: (_) => const CategoryScreen());
+        return MaterialPageRoute(builder: (_) => CategoryScreen());
       case routeSubCategory:
-        return MaterialPageRoute(builder: (_) => const SubCategoryScreen());
+        return MaterialPageRoute(builder: (_) => SubCategoryScreen());
       case routeBrand:
-        return MaterialPageRoute(builder: (_) => const BrandScreen());
+        return MaterialPageRoute(builder: (_) => BrandScreen());
       case routeCustomer:
         return MaterialPageRoute(builder: (_) => const CustomerScreen());
       case routeUnit:
-        return MaterialPageRoute(builder: (_) => const UnitScreen());
+        return MaterialPageRoute(builder: (_) => UnitScreen());
       case routeExpense:
         return MaterialPageRoute(builder: (_) => const ManageExpenseScreen());
       case routeBusinessProfile:
         return MaterialPageRoute(builder: (_) => const BusinessProfile());
       case routeVat:
-        return MaterialPageRoute(builder: (_) => const VatScreen());
+        return MaterialPageRoute(builder: (_) => VatScreen());
       case routeExpenseCategory:
         return MaterialPageRoute(builder: (_) => const ExpenseCategory());
       case routePos:
@@ -73,11 +73,11 @@ class RouteGenerator {
         }
         return _errorRoute();
       case routeSales:
-        return MaterialPageRoute(builder: (_) => const ScreenSales());
+        return MaterialPageRoute(builder: (_) => ScreenSales());
       case routeSalesList:
         return MaterialPageRoute(builder: (_) => const SalesList());
       case routePurchase:
-        return MaterialPageRoute(builder: (_) => const ScreenPurchase());
+        return MaterialPageRoute(builder: (_) => ScreenPurchase());
       case routeAddPurchase:
         return MaterialPageRoute(builder: (_) => const Purchase());
       case routeListPurchase:

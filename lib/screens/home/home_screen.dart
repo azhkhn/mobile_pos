@@ -1,5 +1,4 @@
 import 'dart:developer' show log;
-
 import 'package:flutter/material.dart';
 
 import '../../core/constant/colors.dart';
@@ -69,9 +68,27 @@ class ScreenHome extends StatelessWidget {
           ),
           actions: [
             IconButton(
-              onPressed: () async => await UserDatabase.instance.logout().then(
-                    (_) => Navigator.pushReplacementNamed(context, routeLogin),
+              onPressed: () async {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Sign out'),
+                    content: const Text('Are you sure you want to sign out?'),
+                    actions: [
+                      TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Cancel')),
+                      TextButton(
+                          onPressed: () async =>
+                              await UserDatabase.instance.logout().then(
+                                    (_) => Navigator.pushReplacementNamed(
+                                        context, routeLogin),
+                                  ),
+                          child: const Text('Sign out')),
+                    ],
                   ),
+                );
+              },
               icon: const Icon(Icons.logout),
             )
           ],
@@ -88,13 +105,14 @@ class ScreenHome extends StatelessWidget {
                 image: AssetImage('assets/images/home.jpg'),
               ),
             ),
-
-            //========== Home GridView Widget ==========
             child: Padding(
               padding: EdgeInsets.only(top: _screenSize.height / 6),
               child: Column(
                 children: [
+                  //========== Home Card Widget ==========
                   const HomeCardWidget(),
+
+                  //========== Home GridView Widget ==========
                   Expanded(
                     child: GridView.count(
                       padding: EdgeInsets.all(_screenSize.width / 50),

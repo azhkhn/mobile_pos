@@ -98,11 +98,29 @@ class ItemMasterDatabase {
     return list;
   }
 
-  //========== Substract Item Quantity ==========
-  Future<void> substractItemQty(
+  //========== Increase Item Quantity ==========
+  Future<void> additionItemQty(
+      ItemMasterModel itemMasterModel, num purchasedQty) async {
+    final db = await dbInstance.database;
+    final num currentQty = num.parse(itemMasterModel.openingStock);
+    log('Current Quantity == $currentQty');
+    final num newQty = currentQty + purchasedQty;
+    log('New Item Quantity == $newQty');
+    final newModel = itemMasterModel.copyWith(openingStock: '$newQty');
+    await db.update(
+      tableItemMaster,
+      newModel.toJson(),
+      where: '${ItemMasterFields.id} = ?',
+      whereArgs: [newModel.id],
+    );
+    log('Item Quantity Updated!');
+  }
+
+  //========== Decrease Item Quantity ==========
+  Future<void> subtractItemQty(
       ItemMasterModel itemMasterModel, num soldQty) async {
     final db = await dbInstance.database;
-    final num currentQty = num.parse(itemMasterModel.openingStock!);
+    final num currentQty = num.parse(itemMasterModel.openingStock);
     log('Current Quantity == $currentQty');
     final num newQty = currentQty - soldQty;
     log('New Item Quantity == $newQty');

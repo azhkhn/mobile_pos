@@ -1,5 +1,8 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
+
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:shop_ez/db/database.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
 
@@ -7,6 +10,10 @@ class SubCategoryDatabase {
   static final SubCategoryDatabase instance = SubCategoryDatabase._init();
   EzDatabase dbInstance = EzDatabase.instance;
   SubCategoryDatabase._init();
+
+  //========== Value Notifiers ==========
+  static final ValueNotifier<List<SubCategoryModel>> subCategoryNotifiers =
+      ValueNotifier([]);
 
 //========== Create Sub-Category ==========
   Future<void> createSubCategory(SubCategoryModel _subCategoryModel) async {
@@ -19,6 +26,8 @@ class SubCategoryDatabase {
     } else {
       log('Sub-Category Created!');
       final id = await db.insert(tableSubCategory, _subCategoryModel.toJson());
+      subCategoryNotifiers.value.add(_subCategoryModel.copyWith(id: id));
+      subCategoryNotifiers.notifyListeners();
       log('Sub-Category id == $id');
     }
   }
@@ -50,10 +59,14 @@ class SubCategoryDatabase {
   }
 
   //========== Delete Sub-Category ==========
-  Future<void> deleteVAT(int id) async {
+  Future<void> deleteSubCategory(int id) async {
     final db = await dbInstance.database;
     final _result = await db.delete(tableSubCategory,
         where: '${SubCategoryFields.id} = ?', whereArgs: [id]);
+    subCategoryNotifiers.value.removeWhere(
+      (subCategories) => subCategories.id == id,
+    );
+    subCategoryNotifiers.notifyListeners();
     log('Sub-Category $id Deleted == $_result');
   }
 }

@@ -6,34 +6,14 @@ import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 
 import '../../core/constant/colors.dart';
 
-class PosScreen extends StatefulWidget {
+class PosScreen extends StatelessWidget {
   const PosScreen({Key? key}) : super(key: key);
 
   @override
-  State<PosScreen> createState() => _PosScreenState();
-}
-
-class _PosScreenState extends State<PosScreen> {
-  @override
-  void initState() {
+  Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
-    super.initState();
-  }
-
-  @override
-  dispose() {
-    SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    super.dispose();
-  }
-
-//==================== MediaQuery Screen Size ====================
-  late Size _screenSize;
-
-  @override
-  Widget build(BuildContext context) {
-    _screenSize = MediaQuery.of(context).size;
+    Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         SystemChrome.setPreferredOrientations(

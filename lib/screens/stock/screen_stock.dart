@@ -49,7 +49,7 @@ class ScreenStock extends StatelessWidget {
   List categories = [], subCategories = [], brands = [], itemsList = [];
 
 //========== FutureBuilder Database ==========
-  Future<List<dynamic>>? futureGrid = ItemMasterDatabase.instance.getAllItems();
+  Future<List<dynamic>>? futureGrid;
 
   @override
   Widget build(BuildContext context) {
@@ -687,7 +687,7 @@ class ScreenStock extends StatelessWidget {
 
         if (stock == 'Negative Stock') {
           for (var i = 0; i < _items.length; i++) {
-            final qty = num.tryParse(_items[i].openingStock!);
+            final qty = num.tryParse(_items[i].openingStock);
             if (qty! < 0) {
               _results.add(_items[i]);
             }
@@ -695,7 +695,7 @@ class ScreenStock extends StatelessWidget {
           itemsNotifier.value = _results;
         } else if (stock == 'Zero Stock') {
           for (var i = 0; i < _items.length; i++) {
-            final qty = num.tryParse(_items[i].openingStock!);
+            final qty = num.tryParse(_items[i].openingStock);
             if (qty! == 0) {
               _results.add(_items[i]);
             }

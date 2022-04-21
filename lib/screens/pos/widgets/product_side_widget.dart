@@ -21,6 +21,9 @@ class ProductSideWidget extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
+  //========== Value Notifiers ==========
+  static final ValueNotifier<List<dynamic>> itemsNotifier = ValueNotifier([]);
+
   @override
   State<ProductSideWidget> createState() => _ProductSideWidgetState();
 }
@@ -36,21 +39,25 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
   Future<List<dynamic>>? futureGrid = ItemMasterDatabase.instance.getAllItems();
 
   //========== FutureBuilder ModelClass by Integer ==========
-  int? builderModel;
+  int? _builderModel;
+
+  //========== Lists ==========
+  List categories = [], subCategories = [], brands = [], itemsList = [];
 
   //========== MediaQuery Screen Size ==========
   late Size _screenSize;
 
   //========== Device Type ==========
-  late bool isTablet;
+  late bool _isTablet;
 
   //========== TextEditing Controllers ==========
   final _productController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    isTablet = DeviceUtil.isTablet;
+    _isTablet = DeviceUtil.isTablet;
     _screenSize = MediaQuery.of(context).size;
+    _builderModel = null;
     return SizedBox(
       width: _screenSize.width / 1.9,
       child: Column(
@@ -75,11 +82,16 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       child: const Icon(Icons.clear),
-                      onTap: () {
+                      onTap: () async {
                         _productController.clear();
-                        builderModel = null;
-                        futureGrid = itemMasterDB.getAllItems();
-                        setState(() {});
+                        _builderModel = null;
+                        futureGrid = ItemMasterDatabase.instance.getAllItems();
+                        if (itemsList.isNotEmpty) {
+                          ProductSideWidget.itemsNotifier.value = itemsList;
+                        } else {
+                          itemsList = await itemMasterDB.getAllItems();
+                          ProductSideWidget.itemsNotifier.value = itemsList;
+                        }
                       },
                     ),
                   ),
@@ -99,18 +111,19 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                   suggestion.itemName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: isTablet ? 12 : 10),
+                  style: TextStyle(fontSize: _isTablet ? 12 : 10),
                   minFontSize: 10,
                   maxFontSize: 12,
                 ),
               );
             },
-            onSuggestionSelected: (ItemMasterModel suggestion) {
+            onSuggestionSelected: (ItemMasterModel suggestion) async {
               final itemId = suggestion.id;
               _productController.text = suggestion.itemName;
               futureGrid = itemMasterDB.getProductById(itemId!);
-              builderModel = null;
-              setState(() {});
+              _builderModel = null;
+              ProductSideWidget.itemsNotifier.value =
+                  await itemMasterDB.getProductById(itemId);
               log(suggestion.itemName);
             },
           ),
@@ -122,10 +135,15 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                 flex: 4,
                 child: CustomMaterialBtton(
                     buttonColor: Colors.blue,
-                    onPressed: () {
-                      futureGrid = categoryDB.getAllCategories();
-                      builderModel = 0;
-                      setState(() {});
+                    onPressed: () async {
+                      _builderModel = 0;
+
+                      if (categories.isNotEmpty) {
+                        ProductSideWidget.itemsNotifier.value = categories;
+                      } else {
+                        categories = await categoryDB.getAllCategories();
+                        ProductSideWidget.itemsNotifier.value = categories;
+                      }
                     },
                     buttonText: 'Categories'),
               ),
@@ -133,10 +151,15 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
               Expanded(
                 flex: 5,
                 child: CustomMaterialBtton(
-                    onPressed: () {
-                      futureGrid = subCategoryDB.getAllSubCategories();
-                      builderModel = 1;
-                      setState(() {});
+                    onPressed: () async {
+                      _builderModel = 1;
+                      if (subCategories.isNotEmpty) {
+                        ProductSideWidget.itemsNotifier.value = subCategories;
+                      } else {
+                        subCategories =
+                            await subCategoryDB.getAllSubCategories();
+                        ProductSideWidget.itemsNotifier.value = subCategories;
+                      }
                     },
                     buttonColor: Colors.orange,
                     buttonText: 'Sub Categories'),
@@ -145,10 +168,14 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
               Expanded(
                 flex: 3,
                 child: CustomMaterialBtton(
-                  onPressed: () {
-                    futureGrid = brandDB.getAllBrands();
-                    builderModel = 2;
-                    setState(() {});
+                  onPressed: () async {
+                    _builderModel = 2;
+                    if (brands.isNotEmpty) {
+                      ProductSideWidget.itemsNotifier.value = brands;
+                    } else {
+                      brands = await brandDB.getAllBrands();
+                      ProductSideWidget.itemsNotifier.value = brands;
+                    }
                   },
                   buttonColor: Colors.indigo,
                   buttonText: 'Brands',
@@ -158,11 +185,16 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
               Expanded(
                 flex: 2,
                 child: MaterialButton(
-                  onPressed: () {
+                  onPressed: () async {
                     _productController.clear();
-                    builderModel = null;
-                    futureGrid = itemMasterDB.getAllItems();
-                    setState(() {});
+                    _builderModel = null;
+
+                    if (itemsList.isNotEmpty) {
+                      ProductSideWidget.itemsNotifier.value = itemsList;
+                    } else {
+                      itemsList = await itemMasterDB.getAllItems();
+                      ProductSideWidget.itemsNotifier.value = itemsList;
+                    }
                   },
                   color: Colors.blue,
                   child: const Icon(
@@ -177,185 +209,255 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
           //==================== Product Listing Grid ====================
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: FutureBuilder(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: FutureBuilder(
                   future: futureGrid,
                   builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-                    final dynamic itemList;
-                    if (snapshot.hasData) {
-                      itemList = snapshot.data!;
-                    } else {
-                      itemList = [];
-                    }
-                    log('Total Products == ${itemList.length}');
+                    log('Future Builder() => Called!');
+
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
-                    } else if (snapshot.hasError) {
-                      const Center(
-                        child: AutoSizeText('No Item Found!'),
-                      );
                     }
-                    return snapshot.hasData && itemList.isNotEmpty
-                        ? GridView.builder(
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 5,
-                              childAspectRatio: (1 / .75),
-                            ),
-                            itemCount: itemList.length,
-                            itemBuilder: (context, index) {
-                              return InkWell(
-                                onTap: () {
-                                  if (builderModel == 0) {
-                                    log(itemList[index].category);
-                                    final category = itemList[index].category;
-                                    builderModel = null;
-                                    futureGrid = itemMasterDB
-                                        .getProductByCategory(category);
-                                    setState(() {});
-                                  } else if (builderModel == 1) {
-                                    log(itemList[index].subCategory);
-                                    final subCategory =
-                                        itemList[index].subCategory;
-                                    builderModel = null;
-                                    futureGrid = itemMasterDB
-                                        .getProductBySubCategory(subCategory);
-                                    setState(() {});
-                                  } else if (builderModel == 2) {
-                                    log(itemList[index].brand);
-                                    final brand = itemList[index].brand;
-                                    builderModel = null;
-                                    futureGrid =
-                                        itemMasterDB.getProductByBrand(brand);
-                                    setState(() {});
-                                  } else {
-//===================================== if the Product Already Added ====================================
-                                    isProductAlreadyAdded(itemList, index);
-//=======================================================================================================
-
-                                    SaleSideWidget.selectedProductsNotifier
-                                        .notifyListeners();
-
-                                    SaleSideWidget
-                                        .totalQuantityNotifier.value++;
-                                  }
-                                },
-                                child: Card(
-                                  elevation: 10,
-                                  child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5.0, horizontal: 5.0),
-                                      child: builderModel == null
-                                          ? Column(
-                                              children: [
-                                                Expanded(
-                                                  flex: 4,
-                                                  child: AutoSizeText(
-                                                    itemList[index].itemName ??
-                                                        '',
-                                                    textAlign: TextAlign.center,
-                                                    softWrap: true,
-                                                    style: TextStyle(
-                                                        fontSize:
-                                                            isTablet ? 10 : 7),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 2,
-                                                    minFontSize: 7,
-                                                    maxFontSize: 10,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: AutoSizeText(
-                                                    'Qty : ' +
-                                                        itemList[index]
-                                                            .openingStock,
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                        fontSize:
-                                                            isTablet ? 10 : 7),
-                                                    maxLines: 1,
-                                                    minFontSize: 7,
-                                                    maxFontSize: 10,
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: AutoSizeText(
-                                                    Converter.currency.format(
-                                                        num.tryParse(
-                                                            itemList[index]
-                                                                .sellingPrice)),
-                                                    style: TextStyle(
-                                                        fontSize:
-                                                            isTablet ? 10 : 7),
-                                                    maxLines: 1,
-                                                    minFontSize: 7,
-                                                    maxFontSize: 10,
-                                                  ),
-                                                )
-                                              ],
-                                            )
-                                          : Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                AutoSizeText(
-                                                  builderModel == 0
-                                                      ? itemList[index].category
-                                                      : builderModel == 1
-                                                          ? itemList[index]
-                                                              .subCategory
-                                                          : builderModel == 2
-                                                              ? itemList[index]
-                                                                  .brand
-                                                              : '',
-                                                  textAlign: TextAlign.center,
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      fontSize:
-                                                          isTablet ? 10 : 8),
-                                                  minFontSize: 8,
-                                                  maxFontSize: 10,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: builderModel == 0 &&
-                                                          itemList[index]
-                                                              .category
-                                                              .toString()
-                                                              .contains(' ')
-                                                      ? 2
-                                                      : builderModel == 1 &&
-                                                              itemList[index]
-                                                                  .subCategory
-                                                                  .toString()
-                                                                  .contains(' ')
-                                                          ? 2
-                                                          : builderModel == 2 &&
-                                                                  itemList[
-                                                                          index]
-                                                                      .brand
-                                                                      .toString()
-                                                                      .contains(
-                                                                          ' ')
-                                                              ? 2
-                                                              : 1,
-                                                ),
-                                              ],
-                                            )),
-                                ),
-                              );
-                            },
-                          )
-                        : const Center(
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      case ConnectionState.done:
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
                             child: AutoSizeText('No Item Found!'),
                           );
-                  }),
-            ),
+                        }
+                        if (snapshot.hasData) {
+                          ProductSideWidget.itemsNotifier.value =
+                              snapshot.data!;
+                        } else {
+                          ProductSideWidget.itemsNotifier.value = [];
+                        }
+
+                        return snapshot.hasData &&
+                                ProductSideWidget.itemsNotifier.value.isNotEmpty
+                            ? ValueListenableBuilder(
+                                valueListenable:
+                                    ProductSideWidget.itemsNotifier,
+                                builder: (context, List<dynamic> itemList, _) {
+                                  log('Total Products == ${ProductSideWidget.itemsNotifier.value.length}');
+
+                                  return ProductSideWidget
+                                          .itemsNotifier.value.isNotEmpty
+                                      ? GridView.builder(
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 5,
+                                            childAspectRatio: (1 / .75),
+                                          ),
+                                          itemCount: itemList.length,
+                                          itemBuilder: (context, index) {
+                                            return InkWell(
+                                              onTap: () async {
+                                                if (_builderModel == 0) {
+                                                  log(itemList[index].category);
+                                                  final category =
+                                                      itemList[index].category;
+                                                  _builderModel = null;
+                                                  ProductSideWidget
+                                                          .itemsNotifier.value =
+                                                      await itemMasterDB
+                                                          .getProductByCategory(
+                                                              category);
+                                                } else if (_builderModel == 1) {
+                                                  log(itemList[index]
+                                                      .subCategory);
+                                                  final subCategory =
+                                                      itemList[index]
+                                                          .subCategory;
+                                                  _builderModel = null;
+                                                  ProductSideWidget
+                                                          .itemsNotifier.value =
+                                                      await itemMasterDB
+                                                          .getProductBySubCategory(
+                                                              subCategory);
+                                                } else if (_builderModel == 2) {
+                                                  log(itemList[index].brand);
+                                                  final brand =
+                                                      itemList[index].brand;
+                                                  _builderModel = null;
+                                                  ProductSideWidget
+                                                          .itemsNotifier.value =
+                                                      await itemMasterDB
+                                                          .getProductByBrand(
+                                                              brand);
+                                                } else {
+//===================================== if the Product Already Added ====================================
+                                                  isProductAlreadyAdded(
+                                                      itemList, index);
+//=======================================================================================================
+
+                                                  SaleSideWidget
+                                                      .selectedProductsNotifier
+                                                      .notifyListeners();
+
+                                                  SaleSideWidget
+                                                      .totalQuantityNotifier
+                                                      .value++;
+                                                }
+                                              },
+                                              child: Card(
+                                                elevation: 10,
+                                                child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 5.0,
+                                                        horizontal: 5.0),
+                                                    child: _builderModel == null
+                                                        ? Column(
+                                                            children: [
+                                                              Expanded(
+                                                                flex: 4,
+                                                                child:
+                                                                    AutoSizeText(
+                                                                  itemList[index]
+                                                                          .itemName ??
+                                                                      '',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  softWrap:
+                                                                      true,
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          _isTablet
+                                                                              ? 10
+                                                                              : 7),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  maxLines: 2,
+                                                                  minFontSize:
+                                                                      7,
+                                                                  maxFontSize:
+                                                                      10,
+                                                                ),
+                                                              ),
+                                                              const Spacer(),
+                                                              Expanded(
+                                                                flex: 2,
+                                                                child:
+                                                                    AutoSizeText(
+                                                                  'Qty : ' +
+                                                                      itemList[
+                                                                              index]
+                                                                          .openingStock,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          _isTablet
+                                                                              ? 10
+                                                                              : 7),
+                                                                  maxLines: 1,
+                                                                  minFontSize:
+                                                                      7,
+                                                                  maxFontSize:
+                                                                      10,
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                flex: 2,
+                                                                child:
+                                                                    AutoSizeText(
+                                                                  Converter
+                                                                      .currency
+                                                                      .format(num.tryParse(
+                                                                          itemList[index]
+                                                                              .sellingPrice)),
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          _isTablet
+                                                                              ? 10
+                                                                              : 7),
+                                                                  maxLines: 1,
+                                                                  minFontSize:
+                                                                      7,
+                                                                  maxFontSize:
+                                                                      10,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          )
+                                                        : Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              AutoSizeText(
+                                                                _builderModel ==
+                                                                        0
+                                                                    ? itemList[
+                                                                            index]
+                                                                        .category
+                                                                    : _builderModel ==
+                                                                            1
+                                                                        ? itemList[index]
+                                                                            .subCategory
+                                                                        : _builderModel ==
+                                                                                2
+                                                                            ? itemList[index].brand
+                                                                            : '',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                softWrap: true,
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        _isTablet
+                                                                            ? 10
+                                                                            : 8),
+                                                                minFontSize: 8,
+                                                                maxFontSize: 10,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: _builderModel ==
+                                                                            0 &&
+                                                                        itemList[index]
+                                                                            .category
+                                                                            .toString()
+                                                                            .contains(
+                                                                                ' ')
+                                                                    ? 2
+                                                                    : _builderModel ==
+                                                                                1 &&
+                                                                            itemList[index].subCategory.toString().contains(
+                                                                                ' ')
+                                                                        ? 2
+                                                                        : _builderModel == 2 &&
+                                                                                itemList[index].brand.toString().contains(' ')
+                                                                            ? 2
+                                                                            : 1,
+                                                              ),
+                                                            ],
+                                                          )),
+                                              ),
+                                            );
+                                          },
+                                        )
+                                      : const Center(
+                                          child: AutoSizeText('No Item Found!'),
+                                        );
+                                },
+                              )
+                            : const Center(
+                                child: AutoSizeText('No Item Found!'),
+                              );
+                    }
+                  },
+                )),
           )
         ],
       ),

@@ -12,17 +12,19 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';
 
-class UnitScreen extends StatefulWidget {
-  const UnitScreen({Key? key}) : super(key: key);
+class UnitScreen extends StatelessWidget {
+  UnitScreen({Key? key}) : super(key: key);
 
-  @override
-  State<UnitScreen> createState() => _UnitScreenState();
-}
-
-class _UnitScreenState extends State<UnitScreen> {
+  //========== Text Editing Controllers ==========
   final _unitEditingController = TextEditingController();
+  //========== Global Keys ==========
   final _formKey = GlobalKey<FormState>();
+  //========== Database Instances ==========
   final unitDB = UnitDatabase.instance;
+
+  //========== Value Notifiers ==========
+  final unitNotifiers = UnitDatabase.unitNotifiers;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +72,6 @@ class _UnitScreenState extends State<UnitScreen> {
                           ),
                           content: 'Unit "$unit" added successfully!');
                       _unitEditingController.clear();
-                      return setState(() {});
                     } catch (e) {
                       kSnackBar(
                           context: context,
@@ -91,28 +92,43 @@ class _UnitScreenState extends State<UnitScreen> {
                 child: FutureBuilder<dynamic>(
                   future: unitDB.getAllUnits(),
                   builder: (context, snapshot) {
-                    return snapshot.hasData
-                        ? ListView.separated(
-                            itemBuilder: (context, index) {
-                              final item = snapshot.data[index];
-                              log('item == $item');
-                              return ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: kTransparentColor,
-                                  child: Text(
-                                    '${index + 1}'.toString(),
-                                    style:
-                                        const TextStyle(color: kTextColorBlack),
-                                  ),
-                                ),
-                                title: Text(item.unit),
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(child: CircularProgressIndicator());
+                      case ConnectionState.done:
+                      default:
+                        if (snapshot.hasData) {
+                          unitNotifiers.value = snapshot.data;
+                        }
+                        return ValueListenableBuilder(
+                            valueListenable: unitNotifiers,
+                            builder: (context, List<UnitModel> units, _) {
+                              return ListView.separated(
+                                itemBuilder: (context, index) {
+                                  final item = units[index];
+                                  log('item == $item');
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: kTransparentColor,
+                                      child: Text(
+                                        '${index + 1}'.toString(),
+                                        style: const TextStyle(
+                                            color: kTextColorBlack),
+                                      ),
+                                    ),
+                                    title: Text(item.unit),
+                                    trailing: IconButton(
+                                        onPressed: () =>
+                                            unitDB.deleteUnit(item.id!),
+                                        icon: const Icon(Icons.delete)),
+                                  );
+                                },
+                                separatorBuilder: (context, index) =>
+                                    const Divider(),
+                                itemCount: snapshot.data.length,
                               );
-                            },
-                            separatorBuilder: (context, index) =>
-                                const Divider(),
-                            itemCount: snapshot.data.length,
-                          )
-                        : const Center(child: CircularProgressIndicator());
+                            });
+                    }
                   },
                 ),
               )

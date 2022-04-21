@@ -14,6 +14,9 @@ import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart'
 import 'package:shop_ez/model/sales/sales_items_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
+import 'package:shop_ez/screens/home/widgets/home_card_widget.dart';
+import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_type_widget.dart';
+import 'package:shop_ez/screens/pos/widgets/product_side_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 
 import '../../../core/constant/sizes.dart';
@@ -31,9 +34,9 @@ class PaymentButtonsWidget extends StatelessWidget {
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       try {
-        await SalesDatabase.instance.getAllSales();
-        await SalesItemsDatabase.instance.getAllSalesItems();
-        await TransactionDatabase.instance.getAllTransactions();
+        // await SalesDatabase.instance.getAllSales();
+        // await SalesItemsDatabase.instance.getAllSalesItems();
+        // await TransactionDatabase.instance.getAllTransactions();
       } catch (e) {
         log(e.toString());
       }
@@ -455,8 +458,8 @@ class PaymentButtonsWidget extends StatelessWidget {
         //==================== Create Sales Items ====================
         await salesItemDB.createSalesItems(_salesItemsModel);
 
-        //==================== Substracting Item Quantity ====================
-        itemMasterDB.substractItemQty(
+        //==================== Decreasing Item Quantity ====================
+        itemMasterDB.subtractItemQty(
             SaleSideWidget.selectedProductsNotifier.value[i],
             num.parse(quantity));
       }
@@ -473,6 +476,13 @@ class PaymentButtonsWidget extends StatelessWidget {
 
       //==================== Create Transactions ====================
       await transactionDB.createTransaction(_transaction);
+
+      PaymentTypeWidget.amountController.clear();
+
+      HomeCardWidget.detailsCardLoaded = false;
+
+      ProductSideWidget.itemsNotifier.value =
+          await ItemMasterDatabase.instance.getAllItems();
 
       kSnackBar(
         context: context,

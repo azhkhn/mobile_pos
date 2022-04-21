@@ -1,3 +1,8 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'category_model.freezed.dart';
+part 'category_model.g.dart';
+
 const String tableCategory = 'category';
 
 class CategoryFields {
@@ -5,23 +10,16 @@ class CategoryFields {
   static const String category = 'category';
 }
 
-class CategoryModel {
-  final int? id;
-  final String category;
-  CategoryModel({
-    this.id,
-    required this.category,
-  });
+@freezed
+class CategoryModel with _$CategoryModel {
+  const CategoryModel._();
+  const factory CategoryModel({
+    @JsonKey(name: '_id') int? id,
+    required String category,
+  }) = _CategoryModel;
 
-  Map<String, Object?> toJson() => {
-        CategoryFields.id: id,
-        CategoryFields.category: category,
-      };
-
-  static CategoryModel fromJson(Map<String, Object?> json) => CategoryModel(
-        id: json[CategoryFields.id] as int,
-        category: json[CategoryFields.category] as String,
-      );
+  factory CategoryModel.fromJson(Map<String, dynamic> json) =>
+      _$CategoryModelFromJson(json);
 
   String get() {
     return category;

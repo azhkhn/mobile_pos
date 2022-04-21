@@ -7,12 +7,15 @@ import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
+import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_items_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
 import 'package:shop_ez/model/purchase/purchase_items_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
+import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_type_widget.dart';
+import 'package:shop_ez/screens/purchase/widgets/purchase_product_side_widget.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_side_widget.dart';
 
 import '../../../core/constant/sizes.dart';
@@ -185,7 +188,8 @@ class PurchaseButtonsWidget extends StatelessWidget {
     final PurchaseDatabase _purchaseDB = PurchaseDatabase.instance;
     final PurchaseItemsDatabase _purchaseItemsDB =
         PurchaseItemsDatabase.instance;
-    final TransactionDatabase transactionDB = TransactionDatabase.instance;
+    final TransactionDatabase _transactionDB = TransactionDatabase.instance;
+    final ItemMasterDatabase _itemMasterDB = ItemMasterDatabase.instance;
 
     final _loggedUser = await UserUtils.instance.loggedUser;
     final String _user = _loggedUser!.shopName;
@@ -301,6 +305,11 @@ class PurchaseButtonsWidget extends StatelessWidget {
 
         //==================== Create Purchase Items ====================
         await _purchaseItemsDB.createPurchaseItems(_purchaseItemsModel);
+
+        //==================== Decreasing Item Quantity ====================
+        _itemMasterDB.additionItemQty(
+            PurchaseSideWidget.selectedProductsNotifier.value[i],
+            num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(
@@ -314,7 +323,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
       );
 
       //==================== Create Transactions ====================
-      await transactionDB.createTransaction(_transaction);
+      await _transactionDB.createTransaction(_transaction);
 
       kSnackBar(
         context: context,
@@ -325,6 +334,13 @@ class PurchaseButtonsWidget extends StatelessWidget {
         ),
         content: "Purchase Added Successfully!",
       );
+
+      PaymentTypeWidget.amountController.clear();
+
+      PurchaseProductSideWidget.itemsNotifier.value =
+          await ItemMasterDatabase.instance.getAllItems();
+
+      Navigator.pop(context);
     } catch (e) {
       log('$e');
       kSnackBar(

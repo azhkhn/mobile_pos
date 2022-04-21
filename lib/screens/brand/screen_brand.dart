@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
+
 import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
@@ -12,21 +14,18 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';
 
-class BrandScreen extends StatefulWidget {
-  const BrandScreen({Key? key}) : super(key: key);
+class BrandScreen extends StatelessWidget {
+  BrandScreen({Key? key}) : super(key: key);
 
-  @override
-  State<BrandScreen> createState() => _BrandScreenState();
-}
-
-class _BrandScreenState extends State<BrandScreen> {
   final _brandEditingController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final brandDB = BrandDatabase.instance;
+  final brandNotifier = BrandDatabase.brandNotifier;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBarWidget(
         title: 'Brand',
       ),
@@ -71,8 +70,8 @@ class _BrandScreenState extends State<BrandScreen> {
                           ),
                           content: 'Brand "$brand" added successfully!');
                       _brandEditingController.clear();
-                      return setState(() {});
                     } catch (e) {
+                      log(e.toString());
                       kSnackBar(
                           context: context,
                           color: kSnackBarErrorColor,
@@ -92,29 +91,48 @@ class _BrandScreenState extends State<BrandScreen> {
                 child: FutureBuilder<dynamic>(
                   future: brandDB.getAllBrands(),
                   builder: (context, snapshot) {
-                    return snapshot.hasData
-                        ? ListView.separated(
-                            itemBuilder: (context, index) {
-                              final item = snapshot.data[index];
-                              log('item == $item');
-                              return ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: kTransparentColor,
-                                  child: Text(
-                                    '${index + 1}'.toString(),
-                                    style:
-                                        const TextStyle(color: kTextColorBlack),
-                                  ),
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(child: CircularProgressIndicator());
+
+                      case ConnectionState.done:
+
+                      default:
+                        if (snapshot.hasData) {
+                          brandNotifier.value = snapshot.data;
+                        }
+
+                        return ValueListenableBuilder(
+                            valueListenable: brandNotifier,
+                            builder: (context, List<BrandModel> brands, _) {
+                              return ListView.separated(
+                                itemBuilder: (context, index) {
+                                  final item = brands[index];
+                                  log('item == $item');
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: kTransparentColor,
+                                      child: Text(
+                                        '${index + 1}'.toString(),
+                                        style: const TextStyle(
+                                            color: kTextColorBlack),
+                                      ),
+                                    ),
+                                    title: Text(item.brand),
+                                    trailing: IconButton(
+                                        onPressed: () => BrandDatabase.instance
+                                            .deleteBrand(item.id!),
+                                        icon: const Icon(Icons.delete)),
+                                  );
+                                },
+                                separatorBuilder: (context, index) =>
+                                    const Divider(
+                                  thickness: 1,
                                 ),
-                                title: Text(item.brand),
+                                itemCount: snapshot.data.length,
                               );
-                            },
-                            separatorBuilder: (context, index) => const Divider(
-                              thickness: 1,
-                            ),
-                            itemCount: snapshot.data.length,
-                          )
-                        : const Center(child: CircularProgressIndicator());
+                            });
+                    }
                   },
                 ),
               )

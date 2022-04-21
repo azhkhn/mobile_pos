@@ -8,11 +8,13 @@ class SalesOptionsCard extends StatelessWidget {
   const SalesOptionsCard({
     Key? key,
     required this.title,
-    required this.amount,
+    required this.value,
+    this.currency = true,
   }) : super(key: key);
 
   final String title;
-  final num amount;
+  final num value;
+  final bool currency;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,7 @@ class SalesOptionsCard extends StatelessWidget {
             kHeight5,
             FittedBox(
               child: Text(
-                Converter.currency.format(amount),
+                currency ? Converter.currency.format(value) : '$value',
                 textAlign: TextAlign.center,
                 softWrap: false,
                 overflow: TextOverflow.fade,

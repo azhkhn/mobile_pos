@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
+import 'package:shop_ez/model/purchase/purchase_model.dart';
 
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
@@ -9,10 +11,32 @@ import '../../../widgets/padding_widget/item_screen_padding_widget.dart';
 import '../widgets/purchase_options_card.dart';
 
 class ScreenPurchase extends StatelessWidget {
-  const ScreenPurchase({Key? key}) : super(key: key);
+  ScreenPurchase({
+    Key? key,
+  }) : super(key: key);
+
+  //========== Value Notifiers ==========
+  final ValueNotifier<num> totalPurchasesNotifier = ValueNotifier(0),
+      totalAmountNotifier = ValueNotifier(0),
+      paidAmountNotifier = ValueNotifier(0),
+      balanceAmountNotifier = ValueNotifier(0),
+      taxAmountNotifier = ValueNotifier(0),
+      overDueAmountNotifier = ValueNotifier(0);
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      final List<PurchaseModel> purchaseModel =
+          await PurchaseDatabase.instance.getAllPurchases();
+      totalPurchasesNotifier.value = purchaseModel.length;
+      for (var i = 0; i < purchaseModel.length; i++) {
+        totalAmountNotifier.value += num.parse(purchaseModel[i].grantTotal);
+        paidAmountNotifier.value += num.parse(purchaseModel[i].paid);
+        balanceAmountNotifier.value += num.parse(purchaseModel[i].balance);
+        taxAmountNotifier.value += num.parse(purchaseModel[i].vatAmount);
+        overDueAmountNotifier.value += num.parse(purchaseModel[i].balance);
+      }
+    });
     return Scaffold(
       appBar: AppBarWidget(
         title: 'Purchase',
@@ -30,48 +54,73 @@ class ScreenPurchase extends StatelessWidget {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: const [
+                        children: [
                           Expanded(
-                            child: PurchaseOptionsCard(
-                              title: 'Total Sales',
-                              amount: 16655,
-                            ),
+                            child: ValueListenableBuilder(
+                                valueListenable: totalPurchasesNotifier,
+                                builder: (context, num totalPurchases, _) {
+                                  return PurchaseOptionsCard(
+                                    title: 'Total Purchases',
+                                    value: totalPurchases,
+                                    currency: false,
+                                  );
+                                }),
                           ),
                           Expanded(
-                            child: PurchaseOptionsCard(
-                              title: 'Total Amount',
-                              amount: 1499655,
-                            ),
+                            child: ValueListenableBuilder(
+                                valueListenable: totalAmountNotifier,
+                                builder: (context, num totalAmount, _) {
+                                  return PurchaseOptionsCard(
+                                    title: 'Total Amount',
+                                    value: totalAmount,
+                                  );
+                                }),
                           ),
                           Expanded(
-                            child: PurchaseOptionsCard(
-                              title: 'Paid Amount',
-                              amount: 16655,
-                            ),
+                            child: ValueListenableBuilder(
+                                valueListenable: paidAmountNotifier,
+                                builder: (context, num paidAmount, _) {
+                                  return PurchaseOptionsCard(
+                                    title: 'Paid Amount',
+                                    value: paidAmount,
+                                  );
+                                }),
                           ),
                         ],
                       ),
                       kHeight10,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: const [
+                        children: [
                           Expanded(
-                            child: PurchaseOptionsCard(
-                              title: 'Balance Amount',
-                              amount: 16655,
-                            ),
+                            child: ValueListenableBuilder(
+                                valueListenable: balanceAmountNotifier,
+                                builder: (context, num balanceAmount, _) {
+                                  return PurchaseOptionsCard(
+                                    title: 'Balance Amount',
+                                    value: balanceAmount,
+                                  );
+                                }),
                           ),
                           Expanded(
-                            child: PurchaseOptionsCard(
-                              title: 'Tax Amount',
-                              amount: 1499655,
-                            ),
+                            child: ValueListenableBuilder(
+                                valueListenable: taxAmountNotifier,
+                                builder: (context, num taxAmount, _) {
+                                  return PurchaseOptionsCard(
+                                    title: 'Tax Amount',
+                                    value: taxAmount,
+                                  );
+                                }),
                           ),
                           Expanded(
-                            child: PurchaseOptionsCard(
-                              title: 'Over Due Amount',
-                              amount: 16655,
-                            ),
+                            child: ValueListenableBuilder(
+                                valueListenable: overDueAmountNotifier,
+                                builder: (context, num overDueAmount, _) {
+                                  return PurchaseOptionsCard(
+                                    title: 'Over Due Amount',
+                                    value: overDueAmount,
+                                  );
+                                }),
                           ),
                         ],
                       ),

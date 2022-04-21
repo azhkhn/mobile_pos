@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
@@ -13,21 +13,23 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';
 
-class CategoryScreen extends StatefulWidget {
-  const CategoryScreen({Key? key}) : super(key: key);
-  @override
-  State<CategoryScreen> createState() => _CategoryScreenState();
-}
+class CategoryScreen extends StatelessWidget {
+  CategoryScreen({Key? key}) : super(key: key);
 
-class _CategoryScreenState extends State<CategoryScreen> {
+  //========== TextEditing Controllers ==========
   final _categoryEditingController = TextEditingController();
+
+  //========== Global Keys ==========
   final _formKey = GlobalKey<FormState>();
 
+  //========== Databse Instances ==========
   final categoryDB = CategoryDatabase.instance;
+
+  //========== Value Notifiers ==========
+  final categoryNotifiers = CategoryDatabase.categoryNotifiers;
 
   @override
   Widget build(BuildContext context) {
-    categoryDB.getAllCategories();
     return Scaffold(
       appBar: AppBarWidget(
         title: 'Category',
@@ -73,7 +75,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           ),
                           content: 'Category "$category" added successfully!');
                       _categoryEditingController.clear();
-                      return setState(() {});
                     } catch (e) {
                       kSnackBar(
                           context: context,
@@ -95,28 +96,44 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 child: FutureBuilder<dynamic>(
                   future: categoryDB.getAllCategories(),
                   builder: (context, snapshot) {
-                    return snapshot.hasData
-                        ? ListView.separated(
-                            itemBuilder: (context, index) {
-                              final item = snapshot.data[index];
-                              log('item == $item');
-                              return ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: kTransparentColor,
-                                  child: Text(
-                                    '${index + 1}'.toString(),
-                                    style:
-                                        const TextStyle(color: kTextColorBlack),
-                                  ),
-                                ),
-                                title: Text(item.category),
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(child: CircularProgressIndicator());
+                      case ConnectionState.done:
+                      default:
+                        if (snapshot.hasData) {
+                          categoryNotifiers.value = snapshot.data;
+                        }
+                        return ValueListenableBuilder(
+                            valueListenable: categoryNotifiers,
+                            builder:
+                                (context, List<CategoryModel> categories, _) {
+                              return ListView.separated(
+                                itemBuilder: (context, index) {
+                                  final item = categories[index];
+                                  log('item == $item');
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: kTransparentColor,
+                                      child: Text(
+                                        '${index + 1}'.toString(),
+                                        style: const TextStyle(
+                                            color: kTextColorBlack),
+                                      ),
+                                    ),
+                                    title: Text(item.category),
+                                    trailing: IconButton(
+                                        onPressed: () =>
+                                            categoryDB.deleteCategory(item.id!),
+                                        icon: const Icon(Icons.delete)),
+                                  );
+                                },
+                                separatorBuilder: (context, index) =>
+                                    const Divider(),
+                                itemCount: snapshot.data.length,
                               );
-                            },
-                            separatorBuilder: (context, index) =>
-                                const Divider(),
-                            itemCount: snapshot.data.length,
-                          )
-                        : const Center(child: CircularProgressIndicator());
+                            });
+                    }
                   },
                 ),
               )

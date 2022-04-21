@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -15,17 +17,17 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';
 
-class SubCategoryScreen extends StatefulWidget {
-  const SubCategoryScreen({Key? key}) : super(key: key);
+class SubCategoryScreen extends StatelessWidget {
+  SubCategoryScreen({Key? key}) : super(key: key);
 
-  @override
-  State<SubCategoryScreen> createState() => _SubCategoryScreenState();
-}
-
-class _SubCategoryScreenState extends State<SubCategoryScreen> {
   final _formKey = GlobalKey<FormState>();
+
+  //========== Databse Instances ==========
   final categoryDB = CategoryDatabase.instance;
   final subCategoryDB = SubCategoryDatabase.instance;
+
+  //========== Value Notifiers ==========
+  final subCategoryNotifiers = SubCategoryDatabase.subCategoryNotifiers;
 
   final _subCategoryController = TextEditingController();
   String _categoryController = 'null';
@@ -50,9 +52,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                       labelText: 'Choose Category *',
                       snapshot: snapshot,
                       onChanged: (value) {
-                        setState(() {
-                          _categoryController = value.toString();
-                        });
+                        _categoryController = value.toString();
                       },
                       validator: (value) {
                         if (value == null || _categoryController == 'null') {
@@ -106,7 +106,6 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                             content:
                                 'Category "$subCategory" added successfully!');
                         _subCategoryController.clear();
-                        return setState(() {});
                       } catch (e) {
                         kSnackBar(
                             context: context,
@@ -128,35 +127,48 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                   child: FutureBuilder<dynamic>(
                     future: subCategoryDB.getAllSubCategories(),
                     builder: (context, snapshot) {
-                      return snapshot.hasData
-                          ? ListView.separated(
-                              itemBuilder: (context, index) {
-                                final item = snapshot.data[index];
-                                log('item == $item');
-                                return ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundColor: kTransparentColor,
-                                    child: Text(
-                                      '${index + 1}'.toString(),
-                                      style: const TextStyle(
-                                          color: kTextColorBlack),
-                                    ),
-                                  ),
-                                  title: Text(item.subCategory),
-                                  subtitle: Text(item.category),
-                                  trailing: IconButton(
-                                      onPressed: () async {
-                                        await subCategoryDB.deleteVAT(item.id);
-                                        setState(() {});
-                                      },
-                                      icon: const Icon(Icons.delete)),
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        case ConnectionState.done:
+                        default:
+                          if (snapshot.hasData) {
+                            subCategoryNotifiers.value = snapshot.data;
+                          }
+                          return ValueListenableBuilder(
+                              valueListenable: subCategoryNotifiers,
+                              builder: (context,
+                                  List<SubCategoryModel> subCategories, _) {
+                                return ListView.separated(
+                                  itemBuilder: (context, index) {
+                                    final item = subCategories[index];
+                                    log('item == $item');
+                                    return ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundColor: kTransparentColor,
+                                        child: Text(
+                                          '${index + 1}'.toString(),
+                                          style: const TextStyle(
+                                              color: kTextColorBlack),
+                                        ),
+                                      ),
+                                      title: Text(item.subCategory),
+                                      subtitle: Text(item.category),
+                                      trailing: IconButton(
+                                          onPressed: () async {
+                                            await subCategoryDB
+                                                .deleteSubCategory(item.id!);
+                                          },
+                                          icon: const Icon(Icons.delete)),
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) =>
+                                      const Divider(),
+                                  itemCount: snapshot.data.length,
                                 );
-                              },
-                              separatorBuilder: (context, index) =>
-                                  const Divider(),
-                              itemCount: snapshot.data.length,
-                            )
-                          : const Center(child: CircularProgressIndicator());
+                              });
+                      }
                     },
                   ),
                 )
@@ -166,11 +178,5 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _subCategoryController.clear();
-    super.dispose();
   }
 }

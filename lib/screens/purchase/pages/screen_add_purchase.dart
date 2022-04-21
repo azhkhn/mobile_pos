@@ -6,27 +6,14 @@ import 'package:shop_ez/screens/purchase/widgets/purchase_side_widget.dart';
 
 import '../../../core/constant/colors.dart';
 
-class Purchase extends StatefulWidget {
+class Purchase extends StatelessWidget {
   const Purchase({Key? key}) : super(key: key);
 
   @override
-  State<Purchase> createState() => _PurchaseState();
-}
-
-class _PurchaseState extends State<Purchase> {
-  @override
-  void initState() {
+  Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
-    super.initState();
-  }
-
-//==================== MediaQuery Screen Size ====================
-  late Size _screenSize;
-
-  @override
-  Widget build(BuildContext context) {
-    _screenSize = MediaQuery.of(context).size;
+    Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         SystemChrome.setPreferredOrientations(

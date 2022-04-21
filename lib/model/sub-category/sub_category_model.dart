@@ -1,3 +1,8 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'sub_category_model.freezed.dart';
+part 'sub_category_model.g.dart';
+
 const String tableSubCategory = 'sub_category';
 
 class SubCategoryFields {
@@ -6,28 +11,17 @@ class SubCategoryFields {
   static const String subCategory = 'subCategory';
 }
 
-class SubCategoryModel {
-  final int? id;
-  final String category;
-  final String subCategory;
-  SubCategoryModel({
-    this.id,
-    required this.category,
-    required this.subCategory,
-  });
+@freezed
+class SubCategoryModel with _$SubCategoryModel {
+  const SubCategoryModel._();
+  const factory SubCategoryModel({
+    @JsonKey(name: '_id') int? id,
+    required String category,
+    required String subCategory,
+  }) = _CategoryModel;
 
-  Map<String, Object?> toJson() => {
-        SubCategoryFields.id: id,
-        SubCategoryFields.category: category,
-        SubCategoryFields.subCategory: subCategory,
-      };
-
-  static SubCategoryModel fromJson(Map<String, Object?> json) =>
-      SubCategoryModel(
-        id: json[SubCategoryFields.id] as int,
-        category: json[SubCategoryFields.category] as String,
-        subCategory: json[SubCategoryFields.subCategory] as String,
-      );
+  factory SubCategoryModel.fromJson(Map<String, dynamic> json) =>
+      _$SubCategoryModelFromJson(json);
 
   String get() {
     return subCategory;

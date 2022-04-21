@@ -1,4 +1,9 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
+import 'package:shop_ez/model/sales/sales_model.dart';
 
 import '../../../core/constant/colors.dart';
 
@@ -7,8 +12,38 @@ class HomeCardWidget extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  //========== Value Notifiers ==========
+  static final ValueNotifier<num> todaySaleNotifier = ValueNotifier(0),
+      todayCashNotifier = ValueNotifier(0),
+      totalAmountNotifier = ValueNotifier(0);
+
+  static bool detailsCardLoaded = false;
+
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      if (!detailsCardLoaded) {
+        final _date = DateTime.now();
+        final _today = Converter.dateFormatReverse.format(_date);
+
+        final List<SalesModel> todaySales =
+            await SalesDatabase.instance.getTodaySales(_today);
+        todaySaleNotifier.value = todaySales.length;
+
+        for (var i = 0; i < todaySales.length; i++) {
+          todayCashNotifier.value += num.parse(todaySales[i].grantTotal);
+        }
+
+        final List<SalesModel> salesModel =
+            await SalesDatabase.instance.getAllSales();
+
+        for (var i = 0; i < salesModel.length; i++) {
+          totalAmountNotifier.value += num.parse(salesModel[i].grantTotal);
+        }
+      }
+
+      detailsCardLoaded = true;
+    });
     final Size _screenSize = MediaQuery.of(context).size;
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -27,25 +62,35 @@ class HomeCardWidget extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Today Cash',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
+                  const FittedBox(
+                    child: Text(
+                      "Today's Cash",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
                         color: kButtonTextWhite,
-                        fontSize: _screenSize.width * 0.025),
-                  ),
-                  // kHeight5,
-                  Text(
-                    '13840',
-                    textAlign: TextAlign.center,
-                    softWrap: false,
-                    overflow: TextOverflow.fade,
-                    style: TextStyle(
-                      color: kButtonTextWhite,
-                      fontWeight: FontWeight.bold,
-                      fontSize: _screenSize.width * 0.03,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                      ),
                     ),
                   ),
+                  // kHeight5,
+                  ValueListenableBuilder(
+                      valueListenable: todayCashNotifier,
+                      builder: (context, num todayCash, _) {
+                        return FittedBox(
+                          child: Text(
+                            Converter.currency.format(todayCash),
+                            textAlign: TextAlign.center,
+                            softWrap: false,
+                            overflow: TextOverflow.fade,
+                            style: const TextStyle(
+                              color: kButtonTextWhite,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11,
+                            ),
+                          ),
+                        );
+                      }),
                 ],
               ),
             ),
@@ -59,25 +104,34 @@ class HomeCardWidget extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Total Cash',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: kButtonTextWhite,
-                        fontSize: _screenSize.width * 0.025),
-                  ),
-                  // kHeight5,
-                  Text(
-                    '1856750',
-                    softWrap: false,
-                    overflow: TextOverflow.fade,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: kButtonTextWhite,
-                      fontWeight: FontWeight.bold,
-                      fontSize: _screenSize.width * 0.03,
+                  const FittedBox(
+                    child: Text(
+                      'Total Cash',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: kButtonTextWhite,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10),
                     ),
                   ),
+                  // kHeight5,
+                  ValueListenableBuilder(
+                      valueListenable: totalAmountNotifier,
+                      builder: (context, num totalAmount, _) {
+                        return FittedBox(
+                          child: Text(
+                            Converter.currency.format(totalAmount),
+                            textAlign: TextAlign.center,
+                            softWrap: false,
+                            overflow: TextOverflow.fade,
+                            style: const TextStyle(
+                              color: kButtonTextWhite,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11,
+                            ),
+                          ),
+                        );
+                      }),
                 ],
               ),
             ),
@@ -91,25 +145,34 @@ class HomeCardWidget extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Today Sale',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: kButtonTextWhite,
-                        fontSize: _screenSize.width * 0.025),
-                  ),
-                  // kHeight5,
-                  Text(
-                    '160',
-                    softWrap: false,
-                    overflow: TextOverflow.fade,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: kButtonTextWhite,
-                      fontWeight: FontWeight.bold,
-                      fontSize: _screenSize.width * 0.03,
+                  const FittedBox(
+                    child: Text(
+                      "Today's Sale",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: kButtonTextWhite,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10),
                     ),
                   ),
+                  // kHeight5,
+                  ValueListenableBuilder(
+                      valueListenable: todaySaleNotifier,
+                      builder: (context, num totalSale, _) {
+                        return FittedBox(
+                          child: Text(
+                            '$totalSale',
+                            textAlign: TextAlign.center,
+                            softWrap: false,
+                            overflow: TextOverflow.fade,
+                            style: const TextStyle(
+                              color: kButtonTextWhite,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11,
+                            ),
+                          ),
+                        );
+                      }),
                 ],
               ),
             ),

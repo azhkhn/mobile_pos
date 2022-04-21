@@ -1,3 +1,8 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'brand_model.freezed.dart';
+part 'brand_model.g.dart';
+
 const String tableBrand = 'brand';
 
 class BrandFields {
@@ -5,23 +10,17 @@ class BrandFields {
   static const String brand = 'brand';
 }
 
-class BrandModel {
-  final int? id;
-  final String brand;
-  BrandModel({
-    this.id,
-    required this.brand,
-  });
+@freezed
+class BrandModel with _$BrandModel {
+  const BrandModel._();
 
-  Map<String, Object?> toJson() => {
-        BrandFields.id: id,
-        BrandFields.brand: brand,
-      };
+  const factory BrandModel({
+    @JsonKey(name: '_id') int? id,
+    required String brand,
+  }) = _BrandModel;
 
-  static BrandModel fromJson(Map<String, Object?> json) => BrandModel(
-        id: json[BrandFields.id] as int,
-        brand: json[BrandFields.brand] as String,
-      );
+  factory BrandModel.fromJson(Map<String, dynamic> json) =>
+      _$BrandModelFromJson(json);
 
   String get() {
     return brand;

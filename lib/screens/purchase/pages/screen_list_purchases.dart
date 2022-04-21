@@ -22,16 +22,26 @@ class PurchasesList extends StatelessWidget {
           child: FutureBuilder(
               future: PurchaseDatabase.instance.getAllPurchases(),
               builder: (context, AsyncSnapshot<List<PurchaseModel>> snapshot) {
-                final List<PurchaseModel> _purchases = snapshot.data!;
-                return ListView.separated(
-                  itemCount: _purchases.length,
-                  separatorBuilder: (BuildContext context, int index) =>
-                      kHeight5,
-                  itemBuilder: (BuildContext context, int index) {
-                    return PurchaseCardWidget(
-                        index: index, purchases: _purchases);
-                  },
-                );
+                final List<PurchaseModel> _purchases;
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const Center(child: CircularProgressIndicator());
+
+                  case ConnectionState.done:
+
+                  default:
+                    _purchases = snapshot.data!;
+
+                    return ListView.separated(
+                      itemCount: _purchases.length,
+                      separatorBuilder: (BuildContext context, int index) =>
+                          kHeight5,
+                      itemBuilder: (BuildContext context, int index) {
+                        return PurchaseCardWidget(
+                            index: index, purchases: _purchases);
+                      },
+                    );
+                }
               }),
         ),
       ),

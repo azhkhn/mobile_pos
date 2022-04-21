@@ -140,6 +140,15 @@ class DrawerItemsWidget extends StatelessWidget {
       onTap: () {
         Navigator.pop(context);
         switch (index) {
+          case 0:
+            Navigator.pushNamed(context, routeSales);
+            break;
+          case 1:
+            Navigator.pushNamed(context, routePos);
+            break;
+          case 2:
+            Navigator.pushNamed(context, routePurchase);
+            break;
           case 3:
             Navigator.pushNamed(context, routeExpense);
             break;
