@@ -12,7 +12,7 @@ import '../../../../widgets/text_field_widgets/text_field_widgets.dart';
 const List types = ['Cash', 'Card'];
 
 class PaymentTypeWidget extends StatelessWidget {
-  PaymentTypeWidget({
+  const PaymentTypeWidget({
     required this.totalPayable,
     Key? key,
   }) : super(key: key);
@@ -27,7 +27,7 @@ class PaymentTypeWidget extends StatelessWidget {
 
   //========== Text Editing Controllers ==========
   static final amountController = TextEditingController();
-  final payingNoteController = TextEditingController();
+  static final payingNoteController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +37,7 @@ class PaymentTypeWidget extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         amountController.clear();
+        payingNoteController.clear();
         return true;
       },
       child: Container(

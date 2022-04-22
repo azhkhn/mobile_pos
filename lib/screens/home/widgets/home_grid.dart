@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 
 const List homeGridIcons = [
   'assets/images/stock_module.png',
@@ -44,10 +45,12 @@ class HomeGrid extends StatelessWidget {
               color: Colors.grey.withOpacity(0.2),
               borderRadius: BorderRadius.circular(20.0)),
           child: InkWell(
-            onTap: () {
+            onTap: () async {
               switch (index) {
                 case 0:
-                  Navigator.pushNamed(context, routePos);
+                  DeviceUtil.isLandscape = true;
+                  await Navigator.pushNamed(context, routePos);
+                  await DeviceUtil.toPortrait();
                   break;
                 case 1:
                   Navigator.pushNamed(context, routeSales);
@@ -62,7 +65,9 @@ class HomeGrid extends StatelessWidget {
                   Navigator.pushNamed(context, routeExpense);
                   break;
                 case 6:
-                  Navigator.pushNamed(context, routeStock);
+                  DeviceUtil.isLandscape = true;
+                  await Navigator.pushNamed(context, routeStock);
+                  await DeviceUtil.toPortrait();
                   break;
                 default:
               }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 
@@ -140,8 +141,12 @@ class ScreenPurchase extends StatelessWidget {
                         Expanded(
                           child: MaterialButton(
                             height: 50,
-                            onPressed: () =>
-                                Navigator.pushNamed(context, routeAddPurchase),
+                            onPressed: () async {
+                              DeviceUtil.isLandscape = true;
+                              await Navigator.pushNamed(
+                                  context, routeAddPurchase);
+                              await DeviceUtil.toPortrait();
+                            },
                             color: Colors.green,
                             textColor: kWhite,
                             child: const Text(

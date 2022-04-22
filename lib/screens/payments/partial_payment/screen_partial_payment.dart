@@ -96,6 +96,10 @@ class PartialPayment extends StatelessWidget {
                         final String _paymentType =
                             PaymentTypeWidget.payingByController!;
 
+                        final String? _paymentNote =
+                            PaymentTypeWidget.payingNoteController.text == ''
+                                ? null
+                                : PaymentTypeWidget.payingNoteController.text;
                         showDialog(
                           context: context,
                           builder: (ctx) {
@@ -116,13 +120,13 @@ class PartialPayment extends StatelessWidget {
                                       if (purchase) {
                                         //========== Purchase Payment ==========
                                         const PurchaseButtonsWidget()
-                                            .addPurchase(
-                                          context,
-                                          argBalance: _balance,
-                                          argPaymentStatus: _paymentStatus,
-                                          argPaymentType: _paymentType,
-                                          argPaid: _paid,
-                                        );
+                                            .addPurchase(context,
+                                                argBalance: _balance,
+                                                argPaymentStatus:
+                                                    _paymentStatus,
+                                                argPaymentType: _paymentType,
+                                                argPaid: _paid,
+                                                argPurchaseNote: _paymentNote);
                                       } else {
                                         //========== Sale Payment ==========
                                         const PaymentButtonsWidget().addSale(
@@ -131,6 +135,7 @@ class PartialPayment extends StatelessWidget {
                                           argPaymentStatus: _paymentStatus,
                                           argPaymentType: _paymentType,
                                           argPaid: _paid,
+                                          argSalesNote: _paymentNote,
                                         );
                                       }
 

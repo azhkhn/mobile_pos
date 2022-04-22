@@ -89,7 +89,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
               child: SizedBox(
                 height: _screenSize.width / 25,
                 child: MaterialButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.of(context).pop(),
                   padding: const EdgeInsets.all(5),
                   color: Colors.red[400],
                   child: Center(
@@ -166,6 +166,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
     required String argPaymentStatus,
     required String argPaymentType,
     required String argPaid,
+    required String? argPurchaseNote,
   }) async {
     int? purchaseId;
     int supplierId;
@@ -203,7 +204,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
     supplierId = PurchaseSideWidget.supplierIdNotifier.value!;
     supplierName = PurchaseSideWidget.supplierNameNotifier.value!;
     billerName = _biller;
-    purchaseNote = 'New Purchase';
+    purchaseNote = argPurchaseNote ?? '';
     totalItems = PurchaseSideWidget.totalItemsNotifier.value.toString();
     vatAmount = PurchaseSideWidget.totalVatNotifier.value.toString();
     subTotal = PurchaseSideWidget.totalAmountNotifier.value.toString();

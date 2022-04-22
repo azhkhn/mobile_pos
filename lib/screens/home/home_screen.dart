@@ -25,6 +25,8 @@ class ScreenHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      // await SystemChrome.setPreferredOrientations(
+      //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
       _userModel ??= await UserUtils.instance.loggedUser;
       _businessProfileModel ??= await UserUtils.instance.businessProfile;
     });

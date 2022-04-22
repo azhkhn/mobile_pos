@@ -225,7 +225,9 @@ class PaymentButtonsWidget extends StatelessWidget {
               child: SizedBox(
                 height: _screenSize.width / 25,
                 child: MaterialButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   padding: const EdgeInsets.all(5),
                   color: Colors.red[400],
                   child: Center(
@@ -298,6 +300,7 @@ class PaymentButtonsWidget extends StatelessWidget {
     String? argPaymentStatus,
     String? argPaymentType,
     String? argPaid,
+    String? argSalesNote,
   }) async {
     int? salesId;
     int cusomerId;
@@ -360,7 +363,7 @@ class PaymentButtonsWidget extends StatelessWidget {
     cusomerId = SaleSideWidget.customerIdNotifier.value!;
     customerName = SaleSideWidget.customerNameNotifier.value!;
     billerName = _biller;
-    salesNote = 'New Sale';
+    salesNote = argSalesNote ?? '';
     totalItems = SaleSideWidget.totalItemsNotifier.value.toString();
     vatAmount = SaleSideWidget.totalVatNotifier.value.toString();
     subTotal = SaleSideWidget.totalAmountNotifier.value.toString();
@@ -483,6 +486,8 @@ class PaymentButtonsWidget extends StatelessWidget {
 
       ProductSideWidget.itemsNotifier.value =
           await ItemMasterDatabase.instance.getAllItems();
+
+      Navigator.pop(context);
 
       kSnackBar(
         context: context,

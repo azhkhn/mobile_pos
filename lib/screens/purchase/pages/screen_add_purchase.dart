@@ -1,6 +1,9 @@
+import 'dart:developer' show log;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_product_side_widget.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_side_widget.dart';
 
@@ -11,44 +14,45 @@ class Purchase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      log('============================== landscape ============================');
+
+      if (DeviceUtil.isLandscape) {
+        await SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight
+        ]);
+      }
+    });
     Size _screenSize = MediaQuery.of(context).size;
-    return WillPopScope(
-      onWillPop: () async {
-        SystemChrome.setPreferredOrientations(
-            [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-        return true;
-      },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: kBackgroundGrey,
-        body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: _screenSize.width * .01,
-                horizontal: _screenSize.width * .02),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              //==================== Both Sides ====================
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  //========================================                  ========================================
-                  //======================================== Purchase Side Widget ========================================
-                  //========================================                  ========================================
-                  PurchaseSideWidget(),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: kBackgroundGrey,
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              vertical: _screenSize.width * .01,
+              horizontal: _screenSize.width * .02),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            //==================== Both Sides ====================
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                //========================================                  ========================================
+                //======================================== Purchase Side Widget ========================================
+                //========================================                  ========================================
+                PurchaseSideWidget(),
 
-                  //==================== Constant Width ====================
-                  kWidth20,
+                //==================== Constant Width ====================
+                kWidth20,
 
-                  //========================================                     ========================================
-                  //======================================== Purchase Product Side Widget ========================================
-                  //========================================                     ========================================
-                  PurchaseProductSideWidget()
-                ],
-              ),
+                //========================================                     ========================================
+                //======================================== Purchase Product Side Widget ========================================
+                //========================================                     ========================================
+                PurchaseProductSideWidget()
+              ],
             ),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -141,8 +142,11 @@ class ScreenSales extends StatelessWidget {
                         Expanded(
                           child: MaterialButton(
                             height: 50,
-                            onPressed: () =>
-                                Navigator.pushNamed(context, routePos),
+                            onPressed: () async {
+                              DeviceUtil.isLandscape = true;
+                              await Navigator.pushNamed(context, routePos);
+                              await DeviceUtil.toPortrait();
+                            },
                             color: Colors.green,
                             textColor: kWhite,
                             child: const Text(

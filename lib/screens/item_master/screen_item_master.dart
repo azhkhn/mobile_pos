@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:developer';
 import 'dart:io';
 
@@ -24,16 +26,12 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';
 
-class ScreenItemMaster extends StatefulWidget {
-  const ScreenItemMaster({Key? key}) : super(key: key);
+const vatMethodList = ['Exclusive', 'Inclusive'];
+const productTypeList = ['Standard', 'Service'];
 
-  static const vatMethodList = ['Exclusive', 'Inclusive'];
-  static const productTypeList = ['Standard', 'Service'];
-  @override
-  State<ScreenItemMaster> createState() => _ScreenItemMasterState();
-}
+class ScreenItemMaster extends StatelessWidget {
+  ScreenItemMaster({Key? key}) : super(key: key);
 
-class _ScreenItemMasterState extends State<ScreenItemMaster> {
   //========== MediaQuery Screen Size ==========
   late Size _screenSize;
 
@@ -70,7 +68,11 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
   String? _vatMethodController;
 
   //========== Image File Path ==========
-  File? image, selectedImage;
+  File? image;
+
+  //========== Value Notifiers ==========
+  ValueNotifier<File?> selectedImageNotifier = ValueNotifier(null);
+  ValueNotifier<String?> itemCategoryNotifier = ValueNotifier(null);
 
   //========== Focus Node for TextFields ==========
   FocusNode itemNameFocusNode = FocusNode();
@@ -103,16 +105,14 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                       ),
                     ),
                     isExpanded: true,
-                    items: ScreenItemMaster.productTypeList.map((String item) {
+                    items: productTypeList.map((String item) {
                       return DropdownMenuItem<String>(
                         value: item,
                         child: Text(item),
                       );
                     }).toList(),
                     onChanged: (value) {
-                      setState(() {
-                        _productTypeController = value.toString();
-                      });
+                      _productTypeController = value.toString();
                     },
                     validator: (value) {
                       if (value == null || _productTypeController == null) {
@@ -176,10 +176,9 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                         labelText: 'Item Category *',
                         snapshot: snapshot,
                         onChanged: (value) {
-                          setState(() {
-                            _dropdownKey.currentState!.reset();
-                            _itemCategoryController = value.toString();
-                          });
+                          _dropdownKey.currentState!.reset();
+                          _itemCategoryController = value.toString();
+                          itemCategoryNotifier.value = value.toString();
                         },
                         validator: (value) {
                           if (value == null ||
@@ -194,20 +193,24 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                   kHeight10,
 
                   //========== Item Sub-Category Dropdown ==========
-                  FutureBuilder(
-                    future: subCategoryDB.getSubCategoryByCategory(
-                        category: _itemCategoryController ?? ''),
-                    builder: (context, dynamic snapshot) {
-                      return CustomDropDownField(
-                        dropdownKey: _dropdownKey,
-                        labelText: 'Item Sub-Category',
-                        snapshot: snapshot,
-                        onChanged: (value) {
-                          _itemSubCategoryController = value.toString();
-                        },
-                      );
-                    },
-                  ),
+                  ValueListenableBuilder(
+                      valueListenable: itemCategoryNotifier,
+                      builder: (context, String? category, _) {
+                        return FutureBuilder(
+                          future: subCategoryDB.getSubCategoryByCategory(
+                              category: category ?? ''),
+                          builder: (context, dynamic snapshot) {
+                            return CustomDropDownField(
+                              dropdownKey: _dropdownKey,
+                              labelText: 'Item Sub-Category',
+                              snapshot: snapshot,
+                              onChanged: (value) {
+                                _itemSubCategoryController = value.toString();
+                              },
+                            );
+                          },
+                        );
+                      }),
                   kHeight10,
 
                   //========== Item Brand Dropdown ==========
@@ -335,16 +338,14 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                       ),
                     ),
                     isExpanded: true,
-                    items: ScreenItemMaster.vatMethodList.map((String item) {
+                    items: vatMethodList.map((String item) {
                       return DropdownMenuItem<String>(
                         value: item,
                         child: Text(item),
                       );
                     }).toList(),
                     onChanged: (value) {
-                      setState(() {
-                        _vatMethodController = value.toString();
-                      });
+                      _vatMethodController = value.toString();
                     },
                     validator: (value) {
                       if (value == null || _vatMethodController == null) {
@@ -369,20 +370,24 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       kHeight10,
-                      InkWell(
-                        onTap: () => imagePopUp(context),
-                        child: selectedImage != null
-                            ? Image.file(
-                                selectedImage!,
-                                width: _screenSize.width / 2.5,
-                                height: _screenSize.width / 2.5,
-                                fit: BoxFit.fill,
-                              )
-                            : Icon(
-                                Icons.add_photo_alternate_outlined,
-                                size: _screenSize.width / 10,
-                              ),
-                      ),
+                      ValueListenableBuilder(
+                          valueListenable: selectedImageNotifier,
+                          builder: (context, File? selectedImage, _) {
+                            return InkWell(
+                              onTap: () => imagePopUp(context),
+                              child: selectedImage != null
+                                  ? Image.file(
+                                      selectedImage,
+                                      width: _screenSize.width / 2.5,
+                                      height: _screenSize.width / 2.5,
+                                      fit: BoxFit.fill,
+                                    )
+                                  : Icon(
+                                      Icons.add_photo_alternate_outlined,
+                                      size: _screenSize.width / 10,
+                                    ),
+                            );
+                          }),
                       kHeight10,
                       const Text(
                         'Item Image',
@@ -447,10 +452,8 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
       final imageFile = await imagePicker.pickImage(source: imageSource);
       if (imageFile == null) return;
 
-      selectedImage = File(imageFile.path);
-      log('selected Image = $selectedImage');
-
-      setState(() {});
+      selectedImageNotifier.value = File(imageFile.path);
+      log('selected Image = ${selectedImageNotifier.value}');
 
       // blobImage = await selectedImage.readAsBytes();
     } on PlatformException catch (e) {
@@ -496,7 +499,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
     vatMethod = _vatMethodController!;
     alertQuantity = _alertQuantityController.text.trim();
 
-    if (selectedImage != null) {
+    if (selectedImageNotifier.value != null) {
       //========== Getting Directory Path ==========
       final Directory extDir = await getApplicationDocumentsDirectory();
       String dirPath = extDir.path;
@@ -505,7 +508,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
       final String filePath = '$dirPath/$fileName.jpg';
 
       //========== Coping Image to new path ==========
-      image = await selectedImage!.copy(filePath);
+      image = await selectedImageNotifier.value!.copy(filePath);
       itemImage = image!.path;
     } else {
       itemImage = '';

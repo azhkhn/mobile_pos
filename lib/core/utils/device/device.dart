@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 enum DeviceType { phone, tablet }
 
@@ -17,5 +18,13 @@ class DeviceUtil {
 
   static bool get isTablet {
     return _getDeviceType == DeviceType.tablet;
+  }
+
+  //========== Portrait and Landscape ==========
+  static bool isLandscape = false;
+  static Future<void> toPortrait() async {
+    isLandscape = false;
+    await SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   }
 }
