@@ -11,15 +11,16 @@ class ItemMasterModel with _$ItemMasterModel {
     required String itemNameArabic,
     required String itemCode,
     required String itemCategory,
-    required String itemCost,
-    required String sellingPrice,
-    required String vatId,
-    required String productVAT,
-    required String unit,
-    required String vatMethod,
     required String itemSubCategory,
     required String itemBrand,
+    required String itemCost,
+    required String sellingPrice,
     required String secondarySellingPrice,
+    required String vatMethod,
+    required String productVAT,
+    required String vatId,
+    required String unit,
+    required String expiryDate,
     required String openingStock,
     required String alertQuantity,
     required String itemImage,
@@ -43,11 +44,12 @@ class ItemMasterFields {
   static const itemCost = 'itemCost';
   static const sellingPrice = 'sellingPrice';
   static const secondarySellingPrice = 'secondarySellingPrice';
-  static const vatId = 'vatId';
-  static const productVAT = 'productVAT';
-  static const unit = 'unit';
-  static const openingStock = 'openingStock';
   static const vatMethod = 'vatMethod';
+  static const productVAT = 'productVAT';
+  static const vatId = 'vatId';
+  static const unit = 'unit';
+  static const expiryDate = 'expiryDate';
+  static const openingStock = 'openingStock';
   static const alertQuantity = 'alertQuantity';
   static const itemImage = 'itemImage';
 }

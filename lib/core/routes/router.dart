@@ -23,3 +23,4 @@ const routePurchase = '/purchase';
 const routeAddPurchase = '/add_purchase';
 const routeListPurchase = '/list_purchase';
 const routeStock = '/stock';
+const routeBarcode = '/barcode';

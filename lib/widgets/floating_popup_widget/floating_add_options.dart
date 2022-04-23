@@ -71,6 +71,11 @@ class FloatingAddOptions extends StatelessWidget {
           label: 'Tax Rate',
           onTap: () => Navigator.pushNamed(context, routeVat),
         ),
+        SpeedDialChild(
+          child: const Icon(Icons.qr_code_2_outlined),
+          label: 'Barcode',
+          onTap: () => Navigator.pushNamed(context, routeBarcode),
+        ),
       ],
     );
   }

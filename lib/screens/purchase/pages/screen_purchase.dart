@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
@@ -27,15 +29,19 @@ class ScreenPurchase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      final List<PurchaseModel> purchaseModel =
-          await PurchaseDatabase.instance.getAllPurchases();
-      totalPurchasesNotifier.value = purchaseModel.length;
-      for (var i = 0; i < purchaseModel.length; i++) {
-        totalAmountNotifier.value += num.parse(purchaseModel[i].grantTotal);
-        paidAmountNotifier.value += num.parse(purchaseModel[i].paid);
-        balanceAmountNotifier.value += num.parse(purchaseModel[i].balance);
-        taxAmountNotifier.value += num.parse(purchaseModel[i].vatAmount);
-        overDueAmountNotifier.value += num.parse(purchaseModel[i].balance);
+      try {
+        final List<PurchaseModel> purchaseModel =
+            await PurchaseDatabase.instance.getAllPurchases();
+        totalPurchasesNotifier.value = purchaseModel.length;
+        for (var i = 0; i < purchaseModel.length; i++) {
+          totalAmountNotifier.value += num.parse(purchaseModel[i].grantTotal);
+          paidAmountNotifier.value += num.parse(purchaseModel[i].paid);
+          balanceAmountNotifier.value += num.parse(purchaseModel[i].balance);
+          taxAmountNotifier.value += num.parse(purchaseModel[i].vatAmount);
+          overDueAmountNotifier.value += num.parse(purchaseModel[i].balance);
+        }
+      } catch (e) {
+        log(e.toString());
       }
     });
     return Scaffold(

@@ -42,7 +42,7 @@ class SaleSideWidget extends StatelessWidget {
   static final ValueNotifier<num> totalPayableNotifier = ValueNotifier(0);
 
   //==================== TextEditing Controllers ====================
-  static final _customerController = TextEditingController();
+  static final customerController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class SaleSideWidget extends StatelessWidget {
         selectedProductsNotifier.value.clear();
         subTotalNotifier.value.clear();
         itemTotalVatNotifier.value.clear();
-        _customerController.clear();
+        customerController.clear();
         quantityNotifier.value.clear();
         totalItemsNotifier.value = 0;
         totalQuantityNotifier.value = 0;
@@ -78,7 +78,8 @@ class SaleSideWidget extends StatelessWidget {
                     debounceDuration: const Duration(milliseconds: 500),
                     hideSuggestionsOnKeyboardHide: false,
                     textFieldConfiguration: TextFieldConfiguration(
-                        controller: _customerController,
+                        controller: customerController,
+                        style: const TextStyle(fontSize: 12),
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
@@ -93,7 +94,7 @@ class SaleSideWidget extends StatelessWidget {
                               child: const Icon(Icons.clear),
                               onTap: () {
                                 customerIdNotifier.value = null;
-                                _customerController.clear();
+                                customerController.clear();
                               },
                             ),
                           ),
@@ -123,7 +124,7 @@ class SaleSideWidget extends StatelessWidget {
                       );
                     },
                     onSuggestionSelected: (CustomerModel suggestion) {
-                      _customerController.text = suggestion.customer;
+                      customerController.text = suggestion.customer;
                       customerNameNotifier.value = suggestion.customer;
                       customerIdNotifier.value = suggestion.id;
                       log(suggestion.company);
@@ -135,47 +136,47 @@ class SaleSideWidget extends StatelessWidget {
                 //========== View Customer Button ==========
                 Flexible(
                   flex: 1,
-                  child: IconButton(
-                      constraints: const BoxConstraints(
-                        minHeight: 40,
-                      ),
-                      onPressed: () {
-                        if (customerIdNotifier.value != null) {
-                          log('$customerIdNotifier');
+                  child: FittedBox(
+                    child: IconButton(
+                        constraints: const BoxConstraints(minHeight: 45),
+                        onPressed: () {
+                          if (customerIdNotifier.value != null) {
+                            log('$customerIdNotifier');
 
-                          showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              backgroundColor: kTransparentColor,
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(20))),
-                              builder: (context) => DismissibleWidget(
-                                    context: context,
-                                    child: CustomBottomSheetWidget(
-                                        id: customerIdNotifier.value),
-                                  ));
-                        } else {
-                          kSnackBar(
-                              context: context,
-                              content:
-                                  'Please select any Customer to show details!');
-                        }
-                      },
-                      icon: const Icon(
-                        Icons.visibility,
-                        color: Colors.blue,
-                      )),
+                            showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                backgroundColor: kTransparentColor,
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20))),
+                                builder: (context) => DismissibleWidget(
+                                      context: context,
+                                      child: CustomBottomSheetWidget(
+                                          id: customerIdNotifier.value),
+                                    ));
+                          } else {
+                            kSnackBar(
+                                context: context,
+                                content:
+                                    'Please select any Customer to show details!');
+                          }
+                        },
+                        icon: const Icon(
+                          Icons.visibility,
+                          color: Colors.blue,
+                        )),
+                  ),
                 ),
 
                 //========== Add Customer Button ==========
                 Flexible(
                   flex: 1,
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.person_add, color: Colors.blue),
-                    constraints: const BoxConstraints(
-                      minHeight: 40,
+                  child: FittedBox(
+                    child: IconButton(
+                      constraints: const BoxConstraints(minHeight: 45),
+                      onPressed: () {},
+                      icon: const Icon(Icons.person_add, color: Colors.blue),
                     ),
                   ),
                 ),

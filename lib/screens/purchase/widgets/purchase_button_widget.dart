@@ -89,7 +89,21 @@ class PurchaseButtonsWidget extends StatelessWidget {
               child: SizedBox(
                 height: _screenSize.width / 25,
                 child: MaterialButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    PurchaseSideWidget.selectedProductsNotifier.value.clear();
+                    PurchaseSideWidget.subTotalNotifier.value.clear();
+                    PurchaseSideWidget.itemTotalVatNotifier.value.clear();
+                    PurchaseSideWidget.supplierController.clear();
+                    PurchaseSideWidget.quantityNotifier.value.clear();
+                    PurchaseSideWidget.totalItemsNotifier.value = 0;
+                    PurchaseSideWidget.totalQuantityNotifier.value = 0;
+                    PurchaseSideWidget.totalAmountNotifier.value = 0;
+                    PurchaseSideWidget.totalVatNotifier.value = 0;
+                    PurchaseSideWidget.totalPayableNotifier.value = 0;
+                    PurchaseSideWidget.supplierIdNotifier.value = null;
+                    PurchaseSideWidget.supplierNameNotifier.value = null;
+                    Navigator.of(context).pop();
+                  },
                   padding: const EdgeInsets.all(5),
                   color: Colors.red[400],
                   child: Center(

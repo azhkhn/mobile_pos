@@ -20,7 +20,7 @@ import '../../core/utils/device/device.dart';
 import '../../core/utils/text/converters.dart';
 
 //========== DropDown Items ==========
-const List types = ['Negative Stock', 'Zero Stock'];
+const List types = ['Negative Stock', 'Zero Stock', 'Expired Stock'];
 
 class ScreenStock extends StatelessWidget {
   ScreenStock({Key? key}) : super(key: key);
@@ -83,6 +83,7 @@ class ScreenStock extends StatelessWidget {
                     hideSuggestionsOnKeyboardHide: false,
                     textFieldConfiguration: TextFieldConfiguration(
                         controller: _productController,
+                        style: const TextStyle(fontSize: 12),
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
@@ -697,10 +698,22 @@ class ScreenStock extends StatelessWidget {
             }
           }
           itemsNotifier.value = _results;
+        } else if (stock == 'Expired Stock') {
+          for (var i = 0; i < _items.length; i++) {
+            final DateTime? expDate = DateTime.tryParse(_items[i].expiryDate);
+
+            if (expDate != null) {
+              if (expDate.isBefore(DateTime.now())) {
+                _results.add(_items[i]);
+              }
+            }
+          }
+          itemsNotifier.value = _results;
         }
-        //========== Brand Base Filtering ==========
+        //========== Category Base Filtering ==========
       } else if (category != null) {
         itemsNotifier.value = await itemMasterDB.getProductByCategory(category);
+        //========== Brand Base Filtering ==========
       } else if (brand != null) {
         itemsNotifier.value = await itemMasterDB.getProductByBrand(brand);
       }

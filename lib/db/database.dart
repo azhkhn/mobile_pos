@@ -37,60 +37,121 @@ class EzDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path,
-        version: 4, onCreate: _createDB, onUpgrade: _upgradeDB);
+        version: 6, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
-    const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    const textType = 'TEXT NOT NULL';
-    // const textNull = 'TEXT';
+    // const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    // const textType = 'TEXT NOT NULL';
+    // // const textNull = 'TEXT';
     // const intNull = 'INTEGER';
-    const intType = 'INTEGER NOT NULL';
+    // const intType = 'INTEGER NOT NULL';
 
-    // await db.rawQuery('DROP IF EXISTS TABLE $tableSales');
-    // await db.rawQuery('DROP IF EXISTS TABLE $tableSalesItems');
-    // await db.rawQuery('DROP IF EXISTS TABLE $tableTransactions');
+    // await db.execute(
+    //     "ALTER TABLE $tableItemMaster ADD COLUMN ${ItemMasterFields.expiryDate} $textType DEFAULT ''");
 
-    //========== Table Purchase ==========
-    await db.execute('''CREATE TABLE $tablePurchase (
-      ${PurchaseFields.id} $idAuto,
-      ${PurchaseFields.invoiceNumber} $textType,
-      ${PurchaseFields.purchaseNote} $textType,
-      ${PurchaseFields.dateTime} $textType,
-      ${PurchaseFields.supplierId} $intType, 
-      ${PurchaseFields.supplierName} $textType,
-      ${PurchaseFields.billerName} $textType,
-      ${PurchaseFields.totalItems} $textType,
-      ${PurchaseFields.vatAmount} $textType,
-      ${PurchaseFields.subTotal} $textType,
-      ${PurchaseFields.discount} $textType,
-      ${PurchaseFields.grantTotal} $textType,
-      ${PurchaseFields.paid} $textType,
-      ${PurchaseFields.balance} $textType,
-      ${PurchaseFields.paymentType} $textType,
-      ${PurchaseFields.purchaseStatus} $textType,
-      ${PurchaseFields.paymentStatus} $textType,
-      ${PurchaseFields.createdBy} $textType)''');
+    // await db.execute(
+    //     "ALTER TABLE $tableItemMaster ADD COLUMN ${ItemMasterFields.expiryDate} $textType DEFAULT ''");
 
-//========== Table Purchase Items ==========
-    await db.execute('''CREATE TABLE $tablePurchaseItems (
-      ${PurchaseItemsFields.id} $idAuto,
-      ${PurchaseItemsFields.purchaseId} $intType,
-      ${PurchaseItemsFields.productId} $textType,
-      ${PurchaseItemsFields.productType} $textType,
-      ${PurchaseItemsFields.productName} $textType, 
-      ${PurchaseItemsFields.category} $textType,
-      ${PurchaseItemsFields.productCode} $textType,
-      ${PurchaseItemsFields.unitPrice} $textType,
-      ${PurchaseItemsFields.productCost} $textType,
-      ${PurchaseItemsFields.quantity} $textType,
-      ${PurchaseItemsFields.subTotal} $textType,
-      ${PurchaseItemsFields.vatId} $textType,
-      ${PurchaseItemsFields.vatTotal} $textType,
-      ${PurchaseItemsFields.unitCode} $textType,
-      ${PurchaseItemsFields.netUnitPrice} $textType,
-      ${PurchaseItemsFields.vatPercentage} $textType)''');
+//     await db.rawQuery('DROP TABLE IF EXISTS $tableSales');
+//     await db.rawQuery('DROP TABLE IF EXISTS $tableSalesItems');
+//     await db.rawQuery('DROP TABLE IF EXISTS $tableTransactions');
+//     await db.rawQuery('DROP TABLE IF EXISTS $tablePurchase');
+//     await db.rawQuery('DROP TABLE IF EXISTS $tablePurchaseItems');
+//     await db.rawQuery('DROP TABLE IF EXISTS nons');
+
+//     //========== Table Purchase ==========
+//     await db.execute('''CREATE TABLE $tablePurchase (
+//       ${PurchaseFields.id} $idAuto,
+//       ${PurchaseFields.invoiceNumber} $textType,
+//       ${PurchaseFields.purchaseNote} $textType,
+//       ${PurchaseFields.dateTime} $textType,
+//       ${PurchaseFields.supplierId} $intType,
+//       ${PurchaseFields.supplierName} $textType,
+//       ${PurchaseFields.billerName} $textType,
+//       ${PurchaseFields.totalItems} $textType,
+//       ${PurchaseFields.vatAmount} $textType,
+//       ${PurchaseFields.subTotal} $textType,
+//       ${PurchaseFields.discount} $textType,
+//       ${PurchaseFields.grantTotal} $textType,
+//       ${PurchaseFields.paid} $textType,
+//       ${PurchaseFields.balance} $textType,
+//       ${PurchaseFields.paymentType} $textType,
+//       ${PurchaseFields.purchaseStatus} $textType,
+//       ${PurchaseFields.paymentStatus} $textType,
+//       ${PurchaseFields.createdBy} $textType)''');
+
+// //========== Table Purchase Items ==========
+//     await db.execute('''CREATE TABLE $tablePurchaseItems (
+//       ${PurchaseItemsFields.id} $idAuto,
+//       ${PurchaseItemsFields.purchaseId} $intType,
+//       ${PurchaseItemsFields.productId} $textType,
+//       ${PurchaseItemsFields.productType} $textType,
+//       ${PurchaseItemsFields.productName} $textType,
+//       ${PurchaseItemsFields.category} $textType,
+//       ${PurchaseItemsFields.productCode} $textType,
+//       ${PurchaseItemsFields.unitPrice} $textType,
+//       ${PurchaseItemsFields.productCost} $textType,
+//       ${PurchaseItemsFields.quantity} $textType,
+//       ${PurchaseItemsFields.subTotal} $textType,
+//       ${PurchaseItemsFields.vatId} $textType,
+//       ${PurchaseItemsFields.vatTotal} $textType,
+//       ${PurchaseItemsFields.unitCode} $textType,
+//       ${PurchaseItemsFields.netUnitPrice} $textType,
+//       ${PurchaseItemsFields.vatPercentage} $textType)''');
+
+//     //========== Table Sales ==========
+//     await db.execute('''CREATE TABLE $tableSales (
+//       ${SalesFields.id} $idAuto,
+//       ${SalesFields.invoiceNumber} $textType,
+//       ${SalesFields.salesNote} $textType,
+//       ${SalesFields.dateTime} $textType,
+//       ${SalesFields.cusomerId} $intType,
+//       ${SalesFields.customerName} $textType,
+//       ${SalesFields.billerName} $textType,
+//       ${SalesFields.totalItems} $textType,
+//       ${SalesFields.vatAmount} $textType,
+//       ${SalesFields.subTotal} $textType,
+//       ${SalesFields.discount} $textType,
+//       ${SalesFields.grantTotal} $textType,
+//       ${SalesFields.paid} $textType,
+//       ${SalesFields.balance} $textType,
+//       ${SalesFields.paymentType} $textType,
+//       ${SalesFields.salesStatus} $textType,
+//       ${SalesFields.paymentStatus} $textType,
+//       ${SalesFields.createdBy} $textType)''');
+
+// //========== Table Sales Items ==========
+//     await db.execute('''CREATE TABLE $tableSalesItems (
+//       ${SalesItemsFields.id} $idAuto,
+//       ${SalesItemsFields.salesId} $intType,
+//       ${SalesItemsFields.productId} $textType,
+//       ${SalesItemsFields.productType} $textType,
+//       ${SalesItemsFields.productName} $textType,
+//       ${SalesItemsFields.category} $textType,
+//       ${SalesItemsFields.productCode} $textType,
+//       ${SalesItemsFields.unitPrice} $textType,
+//       ${SalesItemsFields.productCost} $textType,
+//       ${SalesItemsFields.quantity} $textType,
+//       ${SalesItemsFields.subTotal} $textType,
+//       ${SalesItemsFields.vatId} $textType,
+//       ${SalesItemsFields.vatTotal} $textType,
+//       ${SalesItemsFields.unitCode} $textType,
+//       ${SalesItemsFields.netUnitPrice} $textType,
+//       ${SalesItemsFields.vatPercentage} $textType)''');
+
+// //========== Table Transactions ==========
+//     await db.execute('''CREATE TABLE $tableTransactions (
+//       ${TransactionsField.id} $idAuto,
+//       ${TransactionsField.category} $textType,
+//       ${TransactionsField.transactionType} $textType,
+//       ${TransactionsField.dateTime} $textType,
+//       ${TransactionsField.amount} $textType,
+//       ${TransactionsField.status} $textType,
+//       ${TransactionsField.description} $textType,
+//       ${TransactionsField.salesId} $intNull,
+//       ${TransactionsField.purchaseId} $intNull)''');
   }
 
   Future close() async {
@@ -203,6 +264,7 @@ class EzDatabase {
       ${ItemMasterFields.vatId} $textType,
       ${ItemMasterFields.productVAT} $textType,
       ${ItemMasterFields.unit} $textType,
+      ${ItemMasterFields.expiryDate} $textType,
       ${ItemMasterFields.openingStock} $textType,
       ${ItemMasterFields.vatMethod} $textType,
       ${ItemMasterFields.alertQuantity} $textType,

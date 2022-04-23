@@ -56,6 +56,10 @@ class ScreenItemMaster extends StatelessWidget {
   final _secondarySellingPriceController = TextEditingController();
   final _openingStockController = TextEditingController();
   final _alertQuantityController = TextEditingController();
+  final _dateController = TextEditingController();
+
+  //========== Date to String ==========
+  String? _selectedDate;
 
   //========== Dropdown Field ==========
   String? _productTypeController;
@@ -103,6 +107,7 @@ class ScreenItemMaster extends StatelessWidget {
                         'Product Type *',
                         style: TextStyle(color: Colors.black),
                       ),
+                      contentPadding: EdgeInsets.all(10),
                     ),
                     isExpanded: true,
                     items: productTypeList.map((String item) {
@@ -175,6 +180,7 @@ class ScreenItemMaster extends StatelessWidget {
                       return CustomDropDownField(
                         labelText: 'Item Category *',
                         snapshot: snapshot,
+                        contentPadding: const EdgeInsets.all(10),
                         onChanged: (value) {
                           _dropdownKey.currentState!.reset();
                           _itemCategoryController = value.toString();
@@ -204,6 +210,7 @@ class ScreenItemMaster extends StatelessWidget {
                               dropdownKey: _dropdownKey,
                               labelText: 'Item Sub-Category',
                               snapshot: snapshot,
+                              contentPadding: const EdgeInsets.all(10),
                               onChanged: (value) {
                                 _itemSubCategoryController = value.toString();
                               },
@@ -220,14 +227,9 @@ class ScreenItemMaster extends StatelessWidget {
                       return CustomDropDownField(
                         labelText: 'Item Brand',
                         snapshot: snapshot,
+                        contentPadding: const EdgeInsets.all(10),
                         onChanged: (value) {
                           _itemBrandController = value.toString();
-                        },
-                        validator: (value) {
-                          if (value == null || _itemBrandController == null) {
-                            return 'This field is required*';
-                          }
-                          return null;
                         },
                       );
                     },
@@ -282,6 +284,7 @@ class ScreenItemMaster extends StatelessWidget {
                       return CustomDropDownField(
                         labelText: 'Product VAT *',
                         snapshot: snapshot,
+                        contentPadding: const EdgeInsets.all(10),
                         onChanged: (value) async {
                           _productVatController = value.toString();
                           final _vat = await vatDB.getVatByName(value!);
@@ -299,36 +302,6 @@ class ScreenItemMaster extends StatelessWidget {
                   ),
                   kHeight10,
 
-                  //========== Unit Dropdown ==========
-                  FutureBuilder(
-                    future: unitDB.getAllUnits(),
-                    builder: (context, dynamic snapshot) {
-                      return CustomDropDownField(
-                        labelText: 'Unit *',
-                        snapshot: snapshot,
-                        onChanged: (value) {
-                          _unitController = value.toString();
-                        },
-                        validator: (value) {
-                          if (value == null || _unitController == null) {
-                            return 'This field is required*';
-                          }
-                          return null;
-                        },
-                      );
-                    },
-                  ),
-                  kHeight10,
-
-                  //========== Opening Stock ==========
-                  TextFeildWidget(
-                    labelText: 'Opening Stock',
-                    textInputType: TextInputType.number,
-                    inputFormatters: Converter.digitsOnly,
-                    controller: _openingStockController,
-                  ),
-                  kHeight10,
-
                   //========== VAT Method Dropdown ==========
                   DropdownButtonFormField(
                     decoration: const InputDecoration(
@@ -336,6 +309,7 @@ class ScreenItemMaster extends StatelessWidget {
                         'VAT Method *',
                         style: TextStyle(color: Colors.black),
                       ),
+                      contentPadding: EdgeInsets.all(10),
                     ),
                     isExpanded: true,
                     items: vatMethodList.map((String item) {
@@ -353,6 +327,64 @@ class ScreenItemMaster extends StatelessWidget {
                       }
                       return null;
                     },
+                  ),
+                  kHeight10,
+
+                  //========== Unit Dropdown ==========
+                  FutureBuilder(
+                    future: unitDB.getAllUnits(),
+                    builder: (context, dynamic snapshot) {
+                      return CustomDropDownField(
+                        labelText: 'Unit *',
+                        snapshot: snapshot,
+                        contentPadding: const EdgeInsets.all(10),
+                        onChanged: (value) {
+                          _unitController = value.toString();
+                        },
+                        validator: (value) {
+                          if (value == null || _unitController == null) {
+                            return 'This field is required*';
+                          }
+                          return null;
+                        },
+                      );
+                    },
+                  ),
+                  kHeight10,
+
+                  //========== Date ==========
+                  TextFeildWidget(
+                    labelText: 'Expiry Date',
+                    controller: _dateController,
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_month_outlined),
+                      color: kSuffixIconColorBlack,
+                      onPressed: () {},
+                    ),
+                    readOnly: true,
+                    onTap: () async {
+                      final _date = await datePicker(context);
+
+                      if (_date != null) {
+                        //Date to String for Database
+                        _selectedDate = _date.toIso8601String();
+
+                        log('selected date == $_selectedDate');
+                        log('back to time == ${DateTime.parse(_selectedDate!)}');
+
+                        final parseDate = Converter.dateFormat.format(_date);
+                        _dateController.text = parseDate.toString();
+                      }
+                    },
+                  ),
+                  kHeight10,
+
+                  //========== Opening Stock ==========
+                  TextFeildWidget(
+                    labelText: 'Opening Stock',
+                    textInputType: TextInputType.number,
+                    inputFormatters: Converter.digitsOnly,
+                    controller: _openingStockController,
                   ),
                   kHeight10,
 
@@ -412,6 +444,18 @@ class ScreenItemMaster extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  //========== Date Picker ==========
+  Future<DateTime?> datePicker(BuildContext context) {
+    return showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(
+        const Duration(days: 30),
+      ),
+      lastDate: DateTime.now().add(const Duration(days: 36500)),
     );
   }
 
@@ -476,67 +520,71 @@ class ScreenItemMaster extends StatelessWidget {
         vatId,
         productVAT,
         unit,
+        expiryDate,
         openingStock,
         vatMethod,
         alertQuantity,
         itemImage;
 
-    //Retieving values from TextFields to String
-    productType = _productTypeController!;
-    itemName = _itemNameController.text.trim();
-    itemNameArabic = _itemNameArabicController.text.trim();
-    itemCode = _itemCodeController.text.trim();
-    itemCategory = _itemCategoryController!;
-    itemSubCategory = _itemSubCategoryController!;
-    itemBrand = _itemBrandController!;
-    itemCost = _itemCostController.text.trim();
-    sellingPrice = _sellingPriceController.text.trim();
-    secondarySellingPrice = _secondarySellingPriceController.text.trim();
-    vatId = _vatId!;
-    productVAT = _productVatController!;
-    unit = _unitController!;
-    openingStock = _openingStockController.text.trim();
-    vatMethod = _vatMethodController!;
-    alertQuantity = _alertQuantityController.text.trim();
-
-    if (selectedImageNotifier.value != null) {
-      //========== Getting Directory Path ==========
-      final Directory extDir = await getApplicationDocumentsDirectory();
-      String dirPath = extDir.path;
-      final fileName = DateTime.now().microsecondsSinceEpoch.toString();
-      // final fileName = basename(selectedImage!.path);
-      final String filePath = '$dirPath/$fileName.jpg';
-
-      //========== Coping Image to new path ==========
-      image = await selectedImageNotifier.value!.copy(filePath);
-      itemImage = image!.path;
-    } else {
-      itemImage = '';
-    }
-
     //========== Validating Text Form Fields ==========
     final _formState = _formKey.currentState!;
 
     if (_formState.validate()) {
+      //Retieving values from TextFields to String
+      productType = _productTypeController!;
+      itemName = _itemNameController.text.trim();
+      itemNameArabic = _itemNameArabicController.text.trim();
+      itemCode = _itemCodeController.text.trim();
+      itemCategory = _itemCategoryController!;
+      itemSubCategory = _itemSubCategoryController ?? '';
+      itemBrand = _itemBrandController ?? '';
+      itemCost = _itemCostController.text.trim();
+      sellingPrice = _sellingPriceController.text.trim();
+      secondarySellingPrice = _secondarySellingPriceController.text.trim();
+      vatId = _vatId!;
+      productVAT = _productVatController!;
+      unit = _unitController!;
+      expiryDate = _selectedDate ?? '';
+      openingStock = _openingStockController.text.isEmpty
+          ? '0'
+          : _openingStockController.text.trim();
+      vatMethod = _vatMethodController!;
+      alertQuantity = _alertQuantityController.text.trim();
+
+      if (selectedImageNotifier.value != null) {
+        //========== Getting Directory Path ==========
+        final Directory extDir = await getApplicationDocumentsDirectory();
+        String dirPath = extDir.path;
+        final fileName = DateTime.now().microsecondsSinceEpoch.toString();
+        // final fileName = basename(selectedImage!.path);
+        final String filePath = '$dirPath/$fileName.jpg';
+
+        //========== Coping Image to new path ==========
+        image = await selectedImageNotifier.value!.copy(filePath);
+        itemImage = image!.path;
+      } else {
+        itemImage = '';
+      }
+
       final _itemMasterModel = ItemMasterModel(
-        productType: productType,
-        itemName: itemName,
-        itemNameArabic: itemNameArabic,
-        itemCode: itemCode,
-        itemCategory: itemCategory,
-        itemCost: itemCost,
-        sellingPrice: sellingPrice,
-        vatId: vatId,
-        productVAT: productVAT,
-        unit: unit,
-        vatMethod: vatMethod,
-        itemSubCategory: itemSubCategory,
-        itemBrand: itemBrand,
-        secondarySellingPrice: secondarySellingPrice,
-        openingStock: openingStock,
-        alertQuantity: alertQuantity,
-        itemImage: itemImage,
-      );
+          productType: productType,
+          itemName: itemName,
+          itemNameArabic: itemNameArabic,
+          itemCode: itemCode,
+          itemCategory: itemCategory,
+          itemSubCategory: itemSubCategory,
+          itemBrand: itemBrand,
+          itemCost: itemCost,
+          sellingPrice: sellingPrice,
+          secondarySellingPrice: secondarySellingPrice,
+          vatMethod: vatMethod,
+          productVAT: productVAT,
+          vatId: vatId,
+          unit: unit,
+          expiryDate: expiryDate,
+          openingStock: openingStock,
+          alertQuantity: alertQuantity,
+          itemImage: itemImage);
       try {
         await itemMasterDB.createItem(_itemMasterModel);
         log('Item $itemName Added!');
@@ -576,18 +624,16 @@ class ScreenItemMaster extends StatelessWidget {
         }
       }
     } else {
-      if (itemName.isEmpty) {
+      if (_itemNameController.text.isEmpty) {
         itemNameFocusNode.requestFocus();
-      } else if (itemNameArabic.isEmpty) {
+      } else if (_itemNameArabicController.text.isEmpty) {
         itemNameArabicFocusNode.requestFocus();
-      } else if (itemCode.isEmpty) {
+      } else if (_itemCodeController.text.isEmpty) {
         itemCodeFocusNode.requestFocus();
-      } else if (itemCost.isEmpty) {
+      } else if (_itemCostController.text.isEmpty) {
         itemCostFocusNode.requestFocus();
-      } else if (sellingPrice.isEmpty) {
+      } else if (_sellingPriceController.text.isEmpty) {
         sellingPriceFocusNode.requestFocus();
-      } else if (itemCost.isEmpty) {
-        itemCostFocusNode.requestFocus();
       }
     }
   }

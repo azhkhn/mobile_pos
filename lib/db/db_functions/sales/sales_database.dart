@@ -49,9 +49,13 @@ class SalesDatabase {
     final _result = await db.rawQuery(
         "SELECT * FROM $tableSales WHERE ${SalesFields.dateTime} LIKE '%$today%'");
     log('Sales of Today === $_result');
-    final _todaySales =
-        _result.map((json) => SalesModel.fromJson(json)).toList();
-    return _todaySales;
+    if (_result.isNotEmpty) {
+      final _todaySales =
+          _result.map((json) => SalesModel.fromJson(json)).toList();
+      return _todaySales;
+    } else {
+      throw 'Sales of Today is Empty!';
+    }
   }
 
 //========== Get All Sales ==========

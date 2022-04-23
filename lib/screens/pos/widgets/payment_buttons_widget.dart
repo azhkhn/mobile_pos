@@ -117,7 +117,9 @@ class PaymentButtonsWidget extends StatelessWidget {
                                 const Text('Do you want to add this sale?'),
                             actions: [
                               TextButton(
-                                  onPressed: () => Navigator.pop(ctx),
+                                  onPressed: () {
+                                    Navigator.pop(ctx);
+                                  },
                                   child: const Text('Cancel')),
                               TextButton(
                                   onPressed: () {
@@ -226,6 +228,18 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
+                    SaleSideWidget.selectedProductsNotifier.value.clear();
+                    SaleSideWidget.subTotalNotifier.value.clear();
+                    SaleSideWidget.itemTotalVatNotifier.value.clear();
+                    SaleSideWidget.customerController.clear();
+                    SaleSideWidget.quantityNotifier.value.clear();
+                    SaleSideWidget.totalItemsNotifier.value = 0;
+                    SaleSideWidget.totalQuantityNotifier.value = 0;
+                    SaleSideWidget.totalAmountNotifier.value = 0;
+                    SaleSideWidget.totalVatNotifier.value = 0;
+                    SaleSideWidget.totalPayableNotifier.value = 0;
+                    SaleSideWidget.customerIdNotifier.value = null;
+                    SaleSideWidget.customerNameNotifier.value = null;
                     Navigator.pop(context);
                   },
                   padding: const EdgeInsets.all(5),
@@ -359,6 +373,8 @@ class PaymentButtonsWidget extends StatelessWidget {
       paid = SaleSideWidget.totalPayableNotifier.value.toString();
     }
 
+    // Save sale in a old date in Database
+    // dateTime = DateTime(2022, 4, 22, 17, 45).toIso8601String();
     dateTime = DateTime.now().toIso8601String();
     cusomerId = SaleSideWidget.customerIdNotifier.value!;
     customerName = SaleSideWidget.customerNameNotifier.value!;
@@ -486,8 +502,6 @@ class PaymentButtonsWidget extends StatelessWidget {
 
       ProductSideWidget.itemsNotifier.value =
           await ItemMasterDatabase.instance.getAllItems();
-
-      Navigator.pop(context);
 
       kSnackBar(
         context: context,

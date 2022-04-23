@@ -27,15 +27,16 @@ mixin _$ItemMasterModel {
   String get itemNameArabic => throw _privateConstructorUsedError;
   String get itemCode => throw _privateConstructorUsedError;
   String get itemCategory => throw _privateConstructorUsedError;
-  String get itemCost => throw _privateConstructorUsedError;
-  String get sellingPrice => throw _privateConstructorUsedError;
-  String get vatId => throw _privateConstructorUsedError;
-  String get productVAT => throw _privateConstructorUsedError;
-  String get unit => throw _privateConstructorUsedError;
-  String get vatMethod => throw _privateConstructorUsedError;
   String get itemSubCategory => throw _privateConstructorUsedError;
   String get itemBrand => throw _privateConstructorUsedError;
+  String get itemCost => throw _privateConstructorUsedError;
+  String get sellingPrice => throw _privateConstructorUsedError;
   String get secondarySellingPrice => throw _privateConstructorUsedError;
+  String get vatMethod => throw _privateConstructorUsedError;
+  String get productVAT => throw _privateConstructorUsedError;
+  String get vatId => throw _privateConstructorUsedError;
+  String get unit => throw _privateConstructorUsedError;
+  String get expiryDate => throw _privateConstructorUsedError;
   String get openingStock => throw _privateConstructorUsedError;
   String get alertQuantity => throw _privateConstructorUsedError;
   String get itemImage => throw _privateConstructorUsedError;
@@ -58,15 +59,16 @@ abstract class $ItemMasterModelCopyWith<$Res> {
       String itemNameArabic,
       String itemCode,
       String itemCategory,
-      String itemCost,
-      String sellingPrice,
-      String vatId,
-      String productVAT,
-      String unit,
-      String vatMethod,
       String itemSubCategory,
       String itemBrand,
+      String itemCost,
+      String sellingPrice,
       String secondarySellingPrice,
+      String vatMethod,
+      String productVAT,
+      String vatId,
+      String unit,
+      String expiryDate,
       String openingStock,
       String alertQuantity,
       String itemImage});
@@ -89,15 +91,16 @@ class _$ItemMasterModelCopyWithImpl<$Res>
     Object? itemNameArabic = freezed,
     Object? itemCode = freezed,
     Object? itemCategory = freezed,
-    Object? itemCost = freezed,
-    Object? sellingPrice = freezed,
-    Object? vatId = freezed,
-    Object? productVAT = freezed,
-    Object? unit = freezed,
-    Object? vatMethod = freezed,
     Object? itemSubCategory = freezed,
     Object? itemBrand = freezed,
+    Object? itemCost = freezed,
+    Object? sellingPrice = freezed,
     Object? secondarySellingPrice = freezed,
+    Object? vatMethod = freezed,
+    Object? productVAT = freezed,
+    Object? vatId = freezed,
+    Object? unit = freezed,
+    Object? expiryDate = freezed,
     Object? openingStock = freezed,
     Object? alertQuantity = freezed,
     Object? itemImage = freezed,
@@ -127,30 +130,6 @@ class _$ItemMasterModelCopyWithImpl<$Res>
           ? _value.itemCategory
           : itemCategory // ignore: cast_nullable_to_non_nullable
               as String,
-      itemCost: itemCost == freezed
-          ? _value.itemCost
-          : itemCost // ignore: cast_nullable_to_non_nullable
-              as String,
-      sellingPrice: sellingPrice == freezed
-          ? _value.sellingPrice
-          : sellingPrice // ignore: cast_nullable_to_non_nullable
-              as String,
-      vatId: vatId == freezed
-          ? _value.vatId
-          : vatId // ignore: cast_nullable_to_non_nullable
-              as String,
-      productVAT: productVAT == freezed
-          ? _value.productVAT
-          : productVAT // ignore: cast_nullable_to_non_nullable
-              as String,
-      unit: unit == freezed
-          ? _value.unit
-          : unit // ignore: cast_nullable_to_non_nullable
-              as String,
-      vatMethod: vatMethod == freezed
-          ? _value.vatMethod
-          : vatMethod // ignore: cast_nullable_to_non_nullable
-              as String,
       itemSubCategory: itemSubCategory == freezed
           ? _value.itemSubCategory
           : itemSubCategory // ignore: cast_nullable_to_non_nullable
@@ -159,9 +138,37 @@ class _$ItemMasterModelCopyWithImpl<$Res>
           ? _value.itemBrand
           : itemBrand // ignore: cast_nullable_to_non_nullable
               as String,
+      itemCost: itemCost == freezed
+          ? _value.itemCost
+          : itemCost // ignore: cast_nullable_to_non_nullable
+              as String,
+      sellingPrice: sellingPrice == freezed
+          ? _value.sellingPrice
+          : sellingPrice // ignore: cast_nullable_to_non_nullable
+              as String,
       secondarySellingPrice: secondarySellingPrice == freezed
           ? _value.secondarySellingPrice
           : secondarySellingPrice // ignore: cast_nullable_to_non_nullable
+              as String,
+      vatMethod: vatMethod == freezed
+          ? _value.vatMethod
+          : vatMethod // ignore: cast_nullable_to_non_nullable
+              as String,
+      productVAT: productVAT == freezed
+          ? _value.productVAT
+          : productVAT // ignore: cast_nullable_to_non_nullable
+              as String,
+      vatId: vatId == freezed
+          ? _value.vatId
+          : vatId // ignore: cast_nullable_to_non_nullable
+              as String,
+      unit: unit == freezed
+          ? _value.unit
+          : unit // ignore: cast_nullable_to_non_nullable
+              as String,
+      expiryDate: expiryDate == freezed
+          ? _value.expiryDate
+          : expiryDate // ignore: cast_nullable_to_non_nullable
               as String,
       openingStock: openingStock == freezed
           ? _value.openingStock
@@ -193,15 +200,16 @@ abstract class _$ItemMasterModelCopyWith<$Res>
       String itemNameArabic,
       String itemCode,
       String itemCategory,
-      String itemCost,
-      String sellingPrice,
-      String vatId,
-      String productVAT,
-      String unit,
-      String vatMethod,
       String itemSubCategory,
       String itemBrand,
+      String itemCost,
+      String sellingPrice,
       String secondarySellingPrice,
+      String vatMethod,
+      String productVAT,
+      String vatId,
+      String unit,
+      String expiryDate,
       String openingStock,
       String alertQuantity,
       String itemImage});
@@ -226,15 +234,16 @@ class __$ItemMasterModelCopyWithImpl<$Res>
     Object? itemNameArabic = freezed,
     Object? itemCode = freezed,
     Object? itemCategory = freezed,
-    Object? itemCost = freezed,
-    Object? sellingPrice = freezed,
-    Object? vatId = freezed,
-    Object? productVAT = freezed,
-    Object? unit = freezed,
-    Object? vatMethod = freezed,
     Object? itemSubCategory = freezed,
     Object? itemBrand = freezed,
+    Object? itemCost = freezed,
+    Object? sellingPrice = freezed,
     Object? secondarySellingPrice = freezed,
+    Object? vatMethod = freezed,
+    Object? productVAT = freezed,
+    Object? vatId = freezed,
+    Object? unit = freezed,
+    Object? expiryDate = freezed,
     Object? openingStock = freezed,
     Object? alertQuantity = freezed,
     Object? itemImage = freezed,
@@ -264,30 +273,6 @@ class __$ItemMasterModelCopyWithImpl<$Res>
           ? _value.itemCategory
           : itemCategory // ignore: cast_nullable_to_non_nullable
               as String,
-      itemCost: itemCost == freezed
-          ? _value.itemCost
-          : itemCost // ignore: cast_nullable_to_non_nullable
-              as String,
-      sellingPrice: sellingPrice == freezed
-          ? _value.sellingPrice
-          : sellingPrice // ignore: cast_nullable_to_non_nullable
-              as String,
-      vatId: vatId == freezed
-          ? _value.vatId
-          : vatId // ignore: cast_nullable_to_non_nullable
-              as String,
-      productVAT: productVAT == freezed
-          ? _value.productVAT
-          : productVAT // ignore: cast_nullable_to_non_nullable
-              as String,
-      unit: unit == freezed
-          ? _value.unit
-          : unit // ignore: cast_nullable_to_non_nullable
-              as String,
-      vatMethod: vatMethod == freezed
-          ? _value.vatMethod
-          : vatMethod // ignore: cast_nullable_to_non_nullable
-              as String,
       itemSubCategory: itemSubCategory == freezed
           ? _value.itemSubCategory
           : itemSubCategory // ignore: cast_nullable_to_non_nullable
@@ -296,9 +281,37 @@ class __$ItemMasterModelCopyWithImpl<$Res>
           ? _value.itemBrand
           : itemBrand // ignore: cast_nullable_to_non_nullable
               as String,
+      itemCost: itemCost == freezed
+          ? _value.itemCost
+          : itemCost // ignore: cast_nullable_to_non_nullable
+              as String,
+      sellingPrice: sellingPrice == freezed
+          ? _value.sellingPrice
+          : sellingPrice // ignore: cast_nullable_to_non_nullable
+              as String,
       secondarySellingPrice: secondarySellingPrice == freezed
           ? _value.secondarySellingPrice
           : secondarySellingPrice // ignore: cast_nullable_to_non_nullable
+              as String,
+      vatMethod: vatMethod == freezed
+          ? _value.vatMethod
+          : vatMethod // ignore: cast_nullable_to_non_nullable
+              as String,
+      productVAT: productVAT == freezed
+          ? _value.productVAT
+          : productVAT // ignore: cast_nullable_to_non_nullable
+              as String,
+      vatId: vatId == freezed
+          ? _value.vatId
+          : vatId // ignore: cast_nullable_to_non_nullable
+              as String,
+      unit: unit == freezed
+          ? _value.unit
+          : unit // ignore: cast_nullable_to_non_nullable
+              as String,
+      expiryDate: expiryDate == freezed
+          ? _value.expiryDate
+          : expiryDate // ignore: cast_nullable_to_non_nullable
               as String,
       openingStock: openingStock == freezed
           ? _value.openingStock
@@ -326,15 +339,16 @@ class _$_ItemMasterModel implements _ItemMasterModel {
       required this.itemNameArabic,
       required this.itemCode,
       required this.itemCategory,
-      required this.itemCost,
-      required this.sellingPrice,
-      required this.vatId,
-      required this.productVAT,
-      required this.unit,
-      required this.vatMethod,
       required this.itemSubCategory,
       required this.itemBrand,
+      required this.itemCost,
+      required this.sellingPrice,
       required this.secondarySellingPrice,
+      required this.vatMethod,
+      required this.productVAT,
+      required this.vatId,
+      required this.unit,
+      required this.expiryDate,
       required this.openingStock,
       required this.alertQuantity,
       required this.itemImage});
@@ -356,23 +370,25 @@ class _$_ItemMasterModel implements _ItemMasterModel {
   @override
   final String itemCategory;
   @override
-  final String itemCost;
-  @override
-  final String sellingPrice;
-  @override
-  final String vatId;
-  @override
-  final String productVAT;
-  @override
-  final String unit;
-  @override
-  final String vatMethod;
-  @override
   final String itemSubCategory;
   @override
   final String itemBrand;
   @override
+  final String itemCost;
+  @override
+  final String sellingPrice;
+  @override
   final String secondarySellingPrice;
+  @override
+  final String vatMethod;
+  @override
+  final String productVAT;
+  @override
+  final String vatId;
+  @override
+  final String unit;
+  @override
+  final String expiryDate;
   @override
   final String openingStock;
   @override
@@ -382,7 +398,7 @@ class _$_ItemMasterModel implements _ItemMasterModel {
 
   @override
   String toString() {
-    return 'ItemMasterModel(id: $id, productType: $productType, itemName: $itemName, itemNameArabic: $itemNameArabic, itemCode: $itemCode, itemCategory: $itemCategory, itemCost: $itemCost, sellingPrice: $sellingPrice, vatId: $vatId, productVAT: $productVAT, unit: $unit, vatMethod: $vatMethod, itemSubCategory: $itemSubCategory, itemBrand: $itemBrand, secondarySellingPrice: $secondarySellingPrice, openingStock: $openingStock, alertQuantity: $alertQuantity, itemImage: $itemImage)';
+    return 'ItemMasterModel(id: $id, productType: $productType, itemName: $itemName, itemNameArabic: $itemNameArabic, itemCode: $itemCode, itemCategory: $itemCategory, itemSubCategory: $itemSubCategory, itemBrand: $itemBrand, itemCost: $itemCost, sellingPrice: $sellingPrice, secondarySellingPrice: $secondarySellingPrice, vatMethod: $vatMethod, productVAT: $productVAT, vatId: $vatId, unit: $unit, expiryDate: $expiryDate, openingStock: $openingStock, alertQuantity: $alertQuantity, itemImage: $itemImage)';
   }
 
   @override
@@ -399,19 +415,21 @@ class _$_ItemMasterModel implements _ItemMasterModel {
             const DeepCollectionEquality().equals(other.itemCode, itemCode) &&
             const DeepCollectionEquality()
                 .equals(other.itemCategory, itemCategory) &&
-            const DeepCollectionEquality().equals(other.itemCost, itemCost) &&
-            const DeepCollectionEquality()
-                .equals(other.sellingPrice, sellingPrice) &&
-            const DeepCollectionEquality().equals(other.vatId, vatId) &&
-            const DeepCollectionEquality()
-                .equals(other.productVAT, productVAT) &&
-            const DeepCollectionEquality().equals(other.unit, unit) &&
-            const DeepCollectionEquality().equals(other.vatMethod, vatMethod) &&
             const DeepCollectionEquality()
                 .equals(other.itemSubCategory, itemSubCategory) &&
             const DeepCollectionEquality().equals(other.itemBrand, itemBrand) &&
+            const DeepCollectionEquality().equals(other.itemCost, itemCost) &&
+            const DeepCollectionEquality()
+                .equals(other.sellingPrice, sellingPrice) &&
             const DeepCollectionEquality()
                 .equals(other.secondarySellingPrice, secondarySellingPrice) &&
+            const DeepCollectionEquality().equals(other.vatMethod, vatMethod) &&
+            const DeepCollectionEquality()
+                .equals(other.productVAT, productVAT) &&
+            const DeepCollectionEquality().equals(other.vatId, vatId) &&
+            const DeepCollectionEquality().equals(other.unit, unit) &&
+            const DeepCollectionEquality()
+                .equals(other.expiryDate, expiryDate) &&
             const DeepCollectionEquality()
                 .equals(other.openingStock, openingStock) &&
             const DeepCollectionEquality()
@@ -421,26 +439,28 @@ class _$_ItemMasterModel implements _ItemMasterModel {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(id),
-      const DeepCollectionEquality().hash(productType),
-      const DeepCollectionEquality().hash(itemName),
-      const DeepCollectionEquality().hash(itemNameArabic),
-      const DeepCollectionEquality().hash(itemCode),
-      const DeepCollectionEquality().hash(itemCategory),
-      const DeepCollectionEquality().hash(itemCost),
-      const DeepCollectionEquality().hash(sellingPrice),
-      const DeepCollectionEquality().hash(vatId),
-      const DeepCollectionEquality().hash(productVAT),
-      const DeepCollectionEquality().hash(unit),
-      const DeepCollectionEquality().hash(vatMethod),
-      const DeepCollectionEquality().hash(itemSubCategory),
-      const DeepCollectionEquality().hash(itemBrand),
-      const DeepCollectionEquality().hash(secondarySellingPrice),
-      const DeepCollectionEquality().hash(openingStock),
-      const DeepCollectionEquality().hash(alertQuantity),
-      const DeepCollectionEquality().hash(itemImage));
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        const DeepCollectionEquality().hash(id),
+        const DeepCollectionEquality().hash(productType),
+        const DeepCollectionEquality().hash(itemName),
+        const DeepCollectionEquality().hash(itemNameArabic),
+        const DeepCollectionEquality().hash(itemCode),
+        const DeepCollectionEquality().hash(itemCategory),
+        const DeepCollectionEquality().hash(itemSubCategory),
+        const DeepCollectionEquality().hash(itemBrand),
+        const DeepCollectionEquality().hash(itemCost),
+        const DeepCollectionEquality().hash(sellingPrice),
+        const DeepCollectionEquality().hash(secondarySellingPrice),
+        const DeepCollectionEquality().hash(vatMethod),
+        const DeepCollectionEquality().hash(productVAT),
+        const DeepCollectionEquality().hash(vatId),
+        const DeepCollectionEquality().hash(unit),
+        const DeepCollectionEquality().hash(expiryDate),
+        const DeepCollectionEquality().hash(openingStock),
+        const DeepCollectionEquality().hash(alertQuantity),
+        const DeepCollectionEquality().hash(itemImage)
+      ]);
 
   @JsonKey(ignore: true)
   @override
@@ -461,15 +481,16 @@ abstract class _ItemMasterModel implements ItemMasterModel {
       required final String itemNameArabic,
       required final String itemCode,
       required final String itemCategory,
-      required final String itemCost,
-      required final String sellingPrice,
-      required final String vatId,
-      required final String productVAT,
-      required final String unit,
-      required final String vatMethod,
       required final String itemSubCategory,
       required final String itemBrand,
+      required final String itemCost,
+      required final String sellingPrice,
       required final String secondarySellingPrice,
+      required final String vatMethod,
+      required final String productVAT,
+      required final String vatId,
+      required final String unit,
+      required final String expiryDate,
       required final String openingStock,
       required final String alertQuantity,
       required final String itemImage}) = _$_ItemMasterModel;
@@ -491,23 +512,25 @@ abstract class _ItemMasterModel implements ItemMasterModel {
   @override
   String get itemCategory => throw _privateConstructorUsedError;
   @override
-  String get itemCost => throw _privateConstructorUsedError;
-  @override
-  String get sellingPrice => throw _privateConstructorUsedError;
-  @override
-  String get vatId => throw _privateConstructorUsedError;
-  @override
-  String get productVAT => throw _privateConstructorUsedError;
-  @override
-  String get unit => throw _privateConstructorUsedError;
-  @override
-  String get vatMethod => throw _privateConstructorUsedError;
-  @override
   String get itemSubCategory => throw _privateConstructorUsedError;
   @override
   String get itemBrand => throw _privateConstructorUsedError;
   @override
+  String get itemCost => throw _privateConstructorUsedError;
+  @override
+  String get sellingPrice => throw _privateConstructorUsedError;
+  @override
   String get secondarySellingPrice => throw _privateConstructorUsedError;
+  @override
+  String get vatMethod => throw _privateConstructorUsedError;
+  @override
+  String get productVAT => throw _privateConstructorUsedError;
+  @override
+  String get vatId => throw _privateConstructorUsedError;
+  @override
+  String get unit => throw _privateConstructorUsedError;
+  @override
+  String get expiryDate => throw _privateConstructorUsedError;
   @override
   String get openingStock => throw _privateConstructorUsedError;
   @override

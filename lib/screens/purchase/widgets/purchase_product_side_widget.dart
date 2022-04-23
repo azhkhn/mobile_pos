@@ -71,6 +71,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
             hideSuggestionsOnKeyboardHide: false,
             textFieldConfiguration: TextFieldConfiguration(
                 controller: _productController,
+                style: const TextStyle(fontSize: 12),
                 decoration: InputDecoration(
                   fillColor: Colors.white,
                   filled: true,

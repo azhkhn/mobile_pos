@@ -42,7 +42,7 @@ class PurchaseSideWidget extends StatelessWidget {
   static final ValueNotifier<num> totalPayableNotifier = ValueNotifier(0);
 
   //==================== TextEditing Controllers ====================
-  static final _supplierController = TextEditingController();
+  static final supplierController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class PurchaseSideWidget extends StatelessWidget {
         selectedProductsNotifier.value.clear();
         subTotalNotifier.value.clear();
         itemTotalVatNotifier.value.clear();
-        _supplierController.clear();
+        supplierController.clear();
         quantityNotifier.value.clear();
         totalItemsNotifier.value = 0;
         totalQuantityNotifier.value = 0;
@@ -78,7 +78,8 @@ class PurchaseSideWidget extends StatelessWidget {
                     debounceDuration: const Duration(milliseconds: 500),
                     hideSuggestionsOnKeyboardHide: false,
                     textFieldConfiguration: TextFieldConfiguration(
-                        controller: _supplierController,
+                        controller: supplierController,
+                        style: const TextStyle(fontSize: 12),
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
@@ -93,7 +94,7 @@ class PurchaseSideWidget extends StatelessWidget {
                               child: const Icon(Icons.clear),
                               onTap: () {
                                 supplierIdNotifier.value = null;
-                                _supplierController.clear();
+                                supplierController.clear();
                               },
                             ),
                           ),
@@ -123,7 +124,7 @@ class PurchaseSideWidget extends StatelessWidget {
                       );
                     },
                     onSuggestionSelected: (SupplierModel suggestion) {
-                      _supplierController.text = suggestion.supplier;
+                      supplierController.text = suggestion.supplier;
                       supplierNameNotifier.value = suggestion.supplier;
                       supplierIdNotifier.value = suggestion.id;
                       log(suggestion.company);
@@ -135,49 +136,53 @@ class PurchaseSideWidget extends StatelessWidget {
                 //========== View supplier Button ==========
                 Flexible(
                   flex: 1,
-                  child: IconButton(
-                      constraints: const BoxConstraints(
-                        minHeight: 40,
-                      ),
-                      onPressed: () {
-                        if (supplierIdNotifier.value != null) {
-                          log('$supplierIdNotifier');
+                  child: FittedBox(
+                    child: IconButton(
+                        constraints: const BoxConstraints(
+                          minHeight: 45,
+                        ),
+                        onPressed: () {
+                          if (supplierIdNotifier.value != null) {
+                            log('$supplierIdNotifier');
 
-                          showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              backgroundColor: kTransparentColor,
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(20))),
-                              builder: (context) => DismissibleWidget(
-                                    context: context,
-                                    child: CustomBottomSheetWidget(
-                                      id: supplierIdNotifier.value,
-                                      supplier: true,
-                                    ),
-                                  ));
-                        } else {
-                          kSnackBar(
-                              context: context,
-                              content:
-                                  'Please select any Supplier to show details!');
-                        }
-                      },
-                      icon: const Icon(
-                        Icons.visibility,
-                        color: Colors.blue,
-                      )),
+                            showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                backgroundColor: kTransparentColor,
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20))),
+                                builder: (context) => DismissibleWidget(
+                                      context: context,
+                                      child: CustomBottomSheetWidget(
+                                        id: supplierIdNotifier.value,
+                                        supplier: true,
+                                      ),
+                                    ));
+                          } else {
+                            kSnackBar(
+                                context: context,
+                                content:
+                                    'Please select any Supplier to show details!');
+                          }
+                        },
+                        icon: const Icon(
+                          Icons.visibility,
+                          color: Colors.blue,
+                        )),
+                  ),
                 ),
 
                 //========== Add supplier Button ==========
                 Flexible(
                   flex: 1,
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.person_add, color: Colors.blue),
-                    constraints: const BoxConstraints(
-                      minHeight: 40,
+                  child: FittedBox(
+                    child: IconButton(
+                      constraints: const BoxConstraints(
+                        minHeight: 45,
+                      ),
+                      onPressed: () {},
+                      icon: const Icon(Icons.person_add, color: Colors.blue),
                     ),
                   ),
                 ),

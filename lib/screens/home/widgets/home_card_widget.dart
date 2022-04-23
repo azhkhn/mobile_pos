@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
@@ -23,22 +25,30 @@ class HomeCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (!detailsCardLoaded) {
-        final _date = DateTime.now();
-        final _today = Converter.dateFormatReverse.format(_date);
+        try {
+          final _date = DateTime.now();
+          final _today = Converter.dateFormatReverse.format(_date);
 
-        final List<SalesModel> todaySales =
-            await SalesDatabase.instance.getTodaySales(_today);
-        todaySaleNotifier.value = todaySales.length;
+          final List<SalesModel> todaySales =
+              await SalesDatabase.instance.getTodaySales(_today);
+          todaySaleNotifier.value = todaySales.length;
 
-        for (var i = 0; i < todaySales.length; i++) {
-          todayCashNotifier.value += num.parse(todaySales[i].grantTotal);
+          for (var i = 0; i < todaySales.length; i++) {
+            todayCashNotifier.value += num.parse(todaySales[i].grantTotal);
+          }
+        } catch (e) {
+          log(e.toString());
         }
 
-        final List<SalesModel> salesModel =
-            await SalesDatabase.instance.getAllSales();
+        try {
+          final List<SalesModel> salesModel =
+              await SalesDatabase.instance.getAllSales();
 
-        for (var i = 0; i < salesModel.length; i++) {
-          totalAmountNotifier.value += num.parse(salesModel[i].grantTotal);
+          for (var i = 0; i < salesModel.length; i++) {
+            totalAmountNotifier.value += num.parse(salesModel[i].grantTotal);
+          }
+        } catch (e) {
+          log(e.toString());
         }
       }
 
