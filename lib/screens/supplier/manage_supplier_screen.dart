@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
@@ -274,21 +273,13 @@ class ScreenManageSupplier extends StatelessWidget {
         log('Supplier $supplier Added!');
         kSnackBar(
             context: context,
-            color: kSnackBarSuccessColor,
-            icon: const Icon(
-              Icons.done,
-              color: kSnackBarIconColor,
-            ),
+            success: true,
             content: 'Supplier "$supplier" added successfully!');
       } catch (e) {
         log('Commpany $company Already Exist!');
         kSnackBar(
             context: context,
-            color: kSnackBarErrorColor,
-            icon: const Icon(
-              Icons.new_releases_outlined,
-              color: kSnackBarIconColor,
-            ),
+            error: true,
             content: 'Company "$company" already exist!');
       }
     }

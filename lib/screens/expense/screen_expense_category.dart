@@ -72,11 +72,7 @@ class _ExpenseCategoryState extends State<ExpenseCategory> {
                           .createExpenseCategory(_expenseCategoryModel);
                       kSnackBar(
                           context: context,
-                          color: kSnackBarSuccessColor,
-                          icon: const Icon(
-                            Icons.done,
-                            color: kSnackBarIconColor,
-                          ),
+                          success: true,
                           content:
                               'Expense "$_expenseCategory" added successfully!');
                       _expenseEditingController.clear();
@@ -84,11 +80,7 @@ class _ExpenseCategoryState extends State<ExpenseCategory> {
                     } catch (e) {
                       kSnackBar(
                           context: context,
-                          color: kSnackBarErrorColor,
-                          icon: const Icon(
-                            Icons.new_releases_outlined,
-                            color: kSnackBarIconColor,
-                          ),
+                          error: true,
                           content:
                               'Expense "$_expenseCategory" already exist!');
                     }

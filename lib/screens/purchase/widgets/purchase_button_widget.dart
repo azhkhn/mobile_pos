@@ -342,11 +342,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
 
       kSnackBar(
         context: context,
-        color: kSnackBarSuccessColor,
-        icon: const Icon(
-          Icons.done,
-          color: kSnackBarIconColor,
-        ),
+        success: true,
         content: "Purchase Added Successfully!",
       );
 
@@ -359,13 +355,10 @@ class PurchaseButtonsWidget extends StatelessWidget {
     } catch (e) {
       log('$e');
       kSnackBar(
-          context: context,
-          content: 'Something went wrong! Please try again later.',
-          color: kSnackBarErrorColor,
-          icon: const Icon(
-            Icons.new_releases_outlined,
-            color: kSnackBarIconColor,
-          ));
+        context: context,
+        content: 'Something went wrong! Please try again later.',
+        error: true,
+      );
     }
   }
 }

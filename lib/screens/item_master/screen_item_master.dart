@@ -590,11 +590,7 @@ class ScreenItemMaster extends StatelessWidget {
         log('Item $itemName Added!');
         kSnackBar(
             context: context,
-            color: kSnackBarSuccessColor,
-            icon: const Icon(
-              Icons.done,
-              color: kSnackBarIconColor,
-            ),
+            success: true,
             content: 'Item "$itemName" added successfully!');
       } catch (e) {
         if (e == 'Item Already Exist!') {
@@ -602,11 +598,7 @@ class ScreenItemMaster extends StatelessWidget {
           itemNameFocusNode.requestFocus();
           kSnackBar(
             context: context,
-            color: kSnackBarErrorColor,
-            icon: const Icon(
-              Icons.new_releases_outlined,
-              color: kSnackBarIconColor,
-            ),
+            error: true,
             content: 'Item name already exist!',
           );
         } else if (e == 'ItemCode Already Exist!') {
@@ -614,11 +606,7 @@ class ScreenItemMaster extends StatelessWidget {
           itemCodeFocusNode.requestFocus();
           kSnackBar(
             context: context,
-            color: kSnackBarErrorColor,
-            icon: const Icon(
-              Icons.new_releases_outlined,
-              color: kSnackBarIconColor,
-            ),
+            error: true,
             content: 'Item code already exist!',
           );
         }

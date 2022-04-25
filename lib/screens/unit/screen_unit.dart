@@ -65,21 +65,13 @@ class UnitScreen extends StatelessWidget {
                       await unitDB.createUnit(_unit);
                       kSnackBar(
                           context: context,
-                          color: kSnackBarSuccessColor,
-                          icon: const Icon(
-                            Icons.done,
-                            color: kSnackBarIconColor,
-                          ),
+                          success: true,
                           content: 'Unit "$unit" added successfully!');
                       _unitEditingController.clear();
                     } catch (e) {
                       kSnackBar(
                           context: context,
-                          color: kSnackBarErrorColor,
-                          icon: const Icon(
-                            Icons.new_releases_outlined,
-                            color: kSnackBarIconColor,
-                          ),
+                          error: true,
                           content: 'Unit "$unit" already exist!');
                     }
                   }

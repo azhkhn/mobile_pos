@@ -138,7 +138,12 @@ class SaleSideWidget extends StatelessWidget {
                   flex: 1,
                   child: FittedBox(
                     child: IconButton(
-                        constraints: const BoxConstraints(minHeight: 45),
+                        padding: const EdgeInsets.all(5),
+                        alignment: Alignment.center,
+                        constraints: const BoxConstraints(
+                          minHeight: 30,
+                          maxHeight: 30,
+                        ),
                         onPressed: () {
                           if (customerIdNotifier.value != null) {
                             log('$customerIdNotifier');
@@ -165,6 +170,7 @@ class SaleSideWidget extends StatelessWidget {
                         icon: const Icon(
                           Icons.visibility,
                           color: Colors.blue,
+                          size: 25,
                         )),
                   ),
                 ),
@@ -174,9 +180,18 @@ class SaleSideWidget extends StatelessWidget {
                   flex: 1,
                   child: FittedBox(
                     child: IconButton(
-                      constraints: const BoxConstraints(minHeight: 45),
+                      padding: const EdgeInsets.all(5),
+                      alignment: Alignment.center,
+                      constraints: const BoxConstraints(
+                        minHeight: 30,
+                        maxHeight: 30,
+                      ),
                       onPressed: () {},
-                      icon: const Icon(Icons.person_add, color: Colors.blue),
+                      icon: const Icon(
+                        Icons.person_add,
+                        color: Colors.blue,
+                        size: 25,
+                      ),
                     ),
                   ),
                 ),

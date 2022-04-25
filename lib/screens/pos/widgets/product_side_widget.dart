@@ -3,6 +3,8 @@
 import 'dart:developer';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
@@ -62,75 +64,106 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
       width: _screenSize.width / 1.9,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          //========== Get All Products Search Field ==========
-          TypeAheadField(
-            debounceDuration: const Duration(milliseconds: 500),
-            hideSuggestionsOnKeyboardHide: false,
-            textFieldConfiguration: TextFieldConfiguration(
-                controller: _productController,
-                style: const TextStyle(fontSize: 12),
-                decoration: InputDecoration(
-                  fillColor: Colors.white,
-                  filled: true,
-                  isDense: true,
-                  suffixIconConstraints: const BoxConstraints(
-                    minWidth: 10,
-                    minHeight: 10,
-                  ),
-                  suffixIcon: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                      child: const Icon(Icons.clear),
-                      onTap: () async {
-                        _productController.clear();
-                        _builderModel = null;
-                        futureGrid = ItemMasterDatabase.instance.getAllItems();
-                        if (itemsList.isNotEmpty) {
-                          ProductSideWidget.itemsNotifier.value = itemsList;
-                        } else {
-                          itemsList = await itemMasterDB.getAllItems();
-                          ProductSideWidget.itemsNotifier.value = itemsList;
-                        }
-                      },
-                    ),
-                  ),
-                  contentPadding: const EdgeInsets.all(10),
-                  hintText: 'Search product by name/code',
-                  hintStyle: const TextStyle(fontSize: 12),
-                  border: const OutlineInputBorder(),
-                )),
-            noItemsFoundBuilder: (context) => const SizedBox(
-                height: 50, child: Center(child: Text('No Product Found!'))),
-            suggestionsCallback: (pattern) async {
-              return itemMasterDB.getProductSuggestions(pattern);
-            },
-            itemBuilder: (context, ItemMasterModel suggestion) {
-              return ListTile(
-                title: AutoSizeText(
-                  suggestion.itemName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: _isTablet ? 12 : 10),
-                  minFontSize: 10,
-                  maxFontSize: 12,
+          //==================== Get All Products Search Field ====================
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Flexible(
+                flex: 9,
+                child: TypeAheadField(
+                  debounceDuration: const Duration(milliseconds: 500),
+                  hideSuggestionsOnKeyboardHide: false,
+                  textFieldConfiguration: TextFieldConfiguration(
+                      controller: _productController,
+                      style: const TextStyle(fontSize: 12),
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        isDense: true,
+                        suffixIconConstraints: const BoxConstraints(
+                          minWidth: 10,
+                          minHeight: 10,
+                        ),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            child: const Icon(Icons.clear),
+                            onTap: () async {
+                              _productController.clear();
+                              _builderModel = null;
+                              futureGrid =
+                                  ItemMasterDatabase.instance.getAllItems();
+                              if (itemsList.isNotEmpty) {
+                                ProductSideWidget.itemsNotifier.value =
+                                    itemsList;
+                              } else {
+                                itemsList = await itemMasterDB.getAllItems();
+                                ProductSideWidget.itemsNotifier.value =
+                                    itemsList;
+                              }
+                            },
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.all(10),
+                        hintText: 'Search product by name/code',
+                        hintStyle: const TextStyle(fontSize: 12),
+                        border: const OutlineInputBorder(),
+                      )),
+                  noItemsFoundBuilder: (context) => const SizedBox(
+                      height: 50,
+                      child: Center(child: Text('No Product Found!'))),
+                  suggestionsCallback: (pattern) async {
+                    return itemMasterDB.getProductSuggestions(pattern);
+                  },
+                  itemBuilder: (context, ItemMasterModel suggestion) {
+                    return ListTile(
+                      title: AutoSizeText(
+                        suggestion.itemName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: _isTablet ? 12 : 10),
+                        minFontSize: 10,
+                        maxFontSize: 12,
+                      ),
+                    );
+                  },
+                  onSuggestionSelected: (ItemMasterModel suggestion) async {
+                    final itemId = suggestion.id;
+                    _productController.text = suggestion.itemName;
+                    futureGrid = itemMasterDB.getProductById(itemId!);
+                    _builderModel = null;
+                    ProductSideWidget.itemsNotifier.value =
+                        await itemMasterDB.getProductById(itemId);
+                    log(suggestion.itemName);
+                  },
                 ),
-              );
-            },
-            onSuggestionSelected: (ItemMasterModel suggestion) async {
-              final itemId = suggestion.id;
-              _productController.text = suggestion.itemName;
-              futureGrid = itemMasterDB.getProductById(itemId!);
-              _builderModel = null;
-              ProductSideWidget.itemsNotifier.value =
-                  await itemMasterDB.getProductById(itemId);
-              log(suggestion.itemName);
-            },
+              ),
+              kWidth5,
+              //========== Barcode Scanner Button ==========
+              Flexible(
+                flex: 1,
+                child: FittedBox(
+                  child: IconButton(
+                    padding: const EdgeInsets.all(5),
+                    alignment: Alignment.center,
+                    constraints: const BoxConstraints(
+                      minHeight: 30,
+                      maxHeight: 30,
+                    ),
+                    onPressed: () async => await onBarcodeScan(),
+                    icon: const Icon(Icons.qr_code, color: Colors.blue),
+                  ),
+                ),
+              ),
+            ],
           ),
 
           //==================== Quick Filter Buttons ====================
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 flex: 4,
@@ -505,5 +538,30 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
     const SaleSideWidget().getTotalAmount();
     const SaleSideWidget().getTotalVAT();
     const SaleSideWidget().getTotalPayable();
+  }
+
+  Future onBarcodeScan() async {
+    final String _scanResult;
+
+    try {
+      _scanResult = await FlutterBarcodeScanner.scanBarcode(
+        scannerColor,
+        'Cancel',
+        true,
+        ScanMode.BARCODE,
+      );
+      log('Item Code == $_scanResult');
+      if (_scanResult == '-1') return;
+      final String _itemCode = _scanResult;
+      _builderModel = null;
+      ProductSideWidget.itemsNotifier.value =
+          await itemMasterDB.getProductByItemCode(_itemCode);
+    } on PlatformException catch (_) {
+      log('Failed to get Platform version!');
+    } catch (e) {
+      log(e.toString());
+    }
+
+    if (!mounted) return;
   }
 }

@@ -85,6 +85,20 @@ class ItemMasterDatabase {
     return _items;
   }
 
+  //========== Get Product By ItemCode ==========
+  Future<List<ItemMasterModel>> getProductByItemCode(String itemCode) async {
+    final db = await dbInstance.database;
+    final _result = await db.query(
+      tableItemMaster,
+      where: '${ItemMasterFields.itemCode} = ?',
+      whereArgs: [itemCode],
+    );
+    log('Product by $itemCode === $_result');
+    final _items =
+        _result.map((json) => ItemMasterModel.fromJson(json)).toList();
+    return _items;
+  }
+
   //========== Get All Products By Query ==========
   Future<List<ItemMasterModel>> getProductSuggestions(String pattern) async {
     final db = await dbInstance.database;

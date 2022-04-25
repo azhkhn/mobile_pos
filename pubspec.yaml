@@ -28,10 +28,12 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   auto_size_text: ^3.0.0
+  barcode_widget: ^2.0.2
   cupertino_icons: ^1.0.2
   file_picker: ^4.5.1
   flutter:
     sdk: flutter
+  flutter_barcode_scanner: ^2.0.0
   flutter_bloc: ^8.0.1
   flutter_speed_dial: ^5.0.0+1
   flutter_typeahead: ^3.2.4

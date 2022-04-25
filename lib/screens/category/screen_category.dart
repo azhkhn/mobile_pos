@@ -68,21 +68,13 @@ class CategoryScreen extends StatelessWidget {
                       await categoryDB.createCategory(_category);
                       kSnackBar(
                           context: context,
-                          color: kSnackBarSuccessColor,
-                          icon: const Icon(
-                            Icons.done,
-                            color: kSnackBarIconColor,
-                          ),
+                          success: true,
                           content: 'Category "$category" added successfully!');
                       _categoryEditingController.clear();
                     } catch (e) {
                       kSnackBar(
                           context: context,
-                          color: kSnackBarErrorColor,
-                          icon: const Icon(
-                            Icons.new_releases_outlined,
-                            color: kSnackBarIconColor,
-                          ),
+                          error: true,
                           content: 'Category "$category" already exist!');
                       // _categoryEditingController.clear();
                     }

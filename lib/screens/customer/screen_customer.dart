@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
@@ -424,11 +423,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
         log('Customer $customer Added!');
         kSnackBar(
             context: context,
-            color: kSnackBarSuccessColor,
-            icon: const Icon(
-              Icons.done,
-              color: kSnackBarIconColor,
-            ),
+            success: true,
             content: 'Customer "$customer" added successfully!');
       } catch (e) {
         if (e == 'Company Already Exist!') {
@@ -436,22 +431,14 @@ class _CustomerScreenState extends State<CustomerScreen> {
           companyFocusNode.requestFocus();
           kSnackBar(
             context: context,
-            color: kSnackBarErrorColor,
-            icon: const Icon(
-              Icons.new_releases_outlined,
-              color: kSnackBarIconColor,
-            ),
+            error: true,
             content: 'Company name already exist!',
           );
         } else if (e == 'VAT Number already exist!') {
           vatNumberFocusNode.requestFocus();
           kSnackBar(
             context: context,
-            color: kSnackBarErrorColor,
-            icon: const Icon(
-              Icons.new_releases_outlined,
-              color: kSnackBarIconColor,
-            ),
+            error: true,
             content: 'VAT number already exist!',
           );
         }

@@ -3,11 +3,15 @@
 import 'dart:developer';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
+import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
+import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -24,7 +28,10 @@ class ScreenBarcode extends StatefulWidget {
 class _ScreenBarcodeState extends State<ScreenBarcode> {
 //========== TextEditing Controllers ==========
   final _productController = TextEditingController();
-  final List<TextEditingController> _itemsControllers = [];
+  final List<TextEditingController> _quantityControllers = [];
+
+//========== FocusNodes ==========
+  final FocusNode _productFocusNode = FocusNode();
 
 //========== Database Instances ==========
   final ItemMasterDatabase _itemMasterDB = ItemMasterDatabase.instance;
@@ -35,7 +42,6 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
   @override
   Widget build(BuildContext context) {
     final bool _isTablet = DeviceUtil.isTablet;
-
     return Scaffold(
       appBar: AppBarWidget(title: 'Barcode'),
       body: BackgroundContainerWidget(
@@ -45,11 +51,13 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
               Column(
                 children: [
                   kHeight10,
+                  //==================== Product Search Bar ====================
                   TypeAheadField(
                     debounceDuration: const Duration(milliseconds: 500),
                     hideSuggestionsOnKeyboardHide: false,
                     textFieldConfiguration: TextFieldConfiguration(
                         controller: _productController,
+                        focusNode: _productFocusNode,
                         style: const TextStyle(fontSize: 12),
                         decoration: InputDecoration(
                           fillColor: Colors.white,
@@ -101,12 +109,14 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                       for (var i = 0; i < itemNotifier.value.length; i++) {
                         if (_selectedItem.first.id ==
                             itemNotifier.value[i].id) {
-                          final num qty = num.parse(_itemsControllers[i].text);
-                          _itemsControllers[i].text = (qty + 1).toString();
+                          final num qty =
+                              num.parse(_quantityControllers[i].text);
+                          _quantityControllers[i].text = (qty + 1).toString();
                           return;
                         }
                       }
-                      _itemsControllers.add(TextEditingController(text: '1'));
+                      _quantityControllers
+                          .add(TextEditingController(text: '1'));
                       itemNotifier.value.add(_selectedItem.first);
                       itemNotifier.notifyListeners();
 
@@ -139,6 +149,8 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                       trailing: const Icon(
                         Icons.delete,
                       )),
+
+                  const Divider(height: 1, color: kBlack),
 
                   Flexible(
                     child: ValueListenableBuilder(
@@ -173,7 +185,7 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                                               alignment: Alignment.topCenter,
                                               child: TextFormField(
                                                 controller:
-                                                    _itemsControllers[index],
+                                                    _quantityControllers[index],
                                                 keyboardType:
                                                     TextInputType.number,
                                                 textAlign: TextAlign.center,
@@ -204,7 +216,7 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                                         constraints:
                                             const BoxConstraints(maxWidth: 30),
                                         onPressed: () {
-                                          _itemsControllers.removeAt(index);
+                                          _quantityControllers.removeAt(index);
                                           itemNotifier.value.removeAt(index);
                                           itemNotifier.notifyListeners();
                                         },
@@ -218,12 +230,14 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                   )
                 ],
               ),
+
+              //==================== Print Button ====================
               Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
                     child: MaterialButton(
-                      onPressed: () {},
+                      onPressed: () => onPrint(),
                       color: mainColor,
                       minWidth: double.infinity,
                       child: Row(
@@ -247,5 +261,160 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
         ),
       ),
     );
+  }
+
+  void onPrint() {
+    final items = itemNotifier.value;
+    final quantities = _quantityControllers;
+    num totalQuantity = 0;
+
+    if (items.isNotEmpty) {
+      for (var i = 0; i < quantities.length; i++) {
+        totalQuantity += num.parse(quantities[i].value.text);
+      }
+
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          // contentPadding: const EdgeInsets.all(20),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Preview!',
+                style: kText12,
+              ),
+              kHeight5,
+              Card(
+                shadowColor: mainColor,
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            BarcodeWidget(
+                              data: items.first.itemCode,
+                              barcode: Barcode.code128(),
+                              width: 150,
+                              height: 150,
+                            ),
+                            kHeight5,
+                            Text(
+                              items.first.itemName,
+                              style: const TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.bold),
+                              maxLines: 2,
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            FittedBox(
+                              child: Text(
+                                Converter.currency.format(
+                                    num.parse(items.first.sellingPrice)),
+                                style: const TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              kHeight15,
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Expanded(
+                        flex: 3,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'Total Products',
+                            style: kText12Bold,
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                      ),
+                      const Text(
+                        ' :  ',
+                        style: kText12Bold,
+                        textAlign: TextAlign.start,
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: Text(
+                          '${items.length}',
+                          style: kText12Bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Expanded(
+                        flex: 3,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'Total Quantity',
+                            style: kText12Bold,
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                      ),
+                      const Text(
+                        ' :  ',
+                        style: kText12Bold,
+                        textAlign: TextAlign.start,
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: Text(
+                          '$totalQuantity',
+                          style: kText12Bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.print_outlined),
+              label: const Text('Print'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      _productFocusNode.requestFocus();
+      kSnackBar(
+        context: context,
+        content: 'Please select any Product!',
+      );
+    }
   }
 }

@@ -63,22 +63,14 @@ class BrandScreen extends StatelessWidget {
                       await brandDB.createBrand(_brand);
                       kSnackBar(
                           context: context,
-                          color: kSnackBarSuccessColor,
-                          icon: const Icon(
-                            Icons.done,
-                            color: kSnackBarIconColor,
-                          ),
+                          success: true,
                           content: 'Brand "$brand" added successfully!');
                       _brandEditingController.clear();
                     } catch (e) {
                       log(e.toString());
                       kSnackBar(
                           context: context,
-                          color: kSnackBarErrorColor,
-                          icon: const Icon(
-                            Icons.new_releases_outlined,
-                            color: kSnackBarIconColor,
-                          ),
+                          error: true,
                           content: 'Brand "$brand" already exist!');
                     }
                   }

@@ -505,23 +505,16 @@ class PaymentButtonsWidget extends StatelessWidget {
 
       kSnackBar(
         context: context,
-        color: kSnackBarSuccessColor,
-        icon: const Icon(
-          Icons.done,
-          color: kSnackBarIconColor,
-        ),
+        success: true,
         content: "Sale Added Successfully!",
       );
     } catch (e) {
       log('$e');
       kSnackBar(
-          context: context,
-          content: 'Something went wrong! Please try again later.',
-          color: kSnackBarErrorColor,
-          icon: const Icon(
-            Icons.new_releases_outlined,
-            color: kSnackBarIconColor,
-          ));
+        context: context,
+        content: 'Something went wrong! Please try again later.',
+        error: true,
+      );
     }
   }
 }

@@ -109,11 +109,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
         log(e.toString());
         kSnackBar(
           context: context,
-          color: kSnackBarErrorColor,
-          icon: const Icon(
-            Icons.new_releases_outlined,
-            color: kSnackBarIconColor,
-          ),
+          error: true,
           content: 'Incorrect username or password!',
         );
         return;
@@ -149,11 +145,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
         await UserDatabase.instance.createUser(_user, _mobileNumber);
         kSnackBar(
           context: context,
-          color: kSnackBarSuccessColor,
-          icon: const Icon(
-            Icons.done,
-            color: kSnackBarIconColor,
-          ),
+          success: true,
           content: "User Registered Successfully!",
         );
         Navigator.pushReplacementNamed(context, routeHome);
@@ -161,11 +153,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
       } catch (e) {
         kSnackBar(
           context: context,
-          color: kSnackBarErrorColor,
-          icon: const Icon(
-            Icons.new_releases_outlined,
-            color: kSnackBarIconColor,
-          ),
+          error: true,
           content: "Username Already Exist!",
         );
         return;

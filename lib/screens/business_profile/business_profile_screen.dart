@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/db/db_functions/busiess_profile/business_profile_database.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
@@ -482,11 +481,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
 
         kSnackBar(
             context: context,
-            color: kSnackBarSuccessColor,
-            icon: const Icon(
-              Icons.done,
-              color: kSnackBarIconColor,
-            ),
+            success: true,
             content: 'Profile updated successfully!');
       } catch (e) {
         log(e.toString());

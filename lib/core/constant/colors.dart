@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'package:hexcolor/hexcolor.dart';
+
+//========= Color Code ==========
+const scannerColor = '#ff6666';
 
 //======== Hex Color ==========
 Color mainColor = const Color(0xFF0A99AB);

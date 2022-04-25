@@ -275,20 +275,12 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
         await expenseDB.createExpense(_expenseModel);
         kSnackBar(
             context: context,
-            color: kSnackBarSuccessColor,
-            icon: const Icon(
-              Icons.done,
-              color: kSnackBarIconColor,
-            ),
+            success: true,
             content: 'Expense "$expenseTitle" added!');
       } catch (e) {
         kSnackBar(
           context: context,
-          color: kSnackBarErrorColor,
-          icon: const Icon(
-            Icons.new_releases_outlined,
-            color: kSnackBarIconColor,
-          ),
+          error: true,
           content: 'Something went wrong, Please try again!',
         );
       }

@@ -138,8 +138,11 @@ class PurchaseSideWidget extends StatelessWidget {
                   flex: 1,
                   child: FittedBox(
                     child: IconButton(
+                        padding: const EdgeInsets.all(5),
+                        alignment: Alignment.center,
                         constraints: const BoxConstraints(
-                          minHeight: 45,
+                          minHeight: 30,
+                          maxHeight: 30,
                         ),
                         onPressed: () {
                           if (supplierIdNotifier.value != null) {
@@ -169,6 +172,7 @@ class PurchaseSideWidget extends StatelessWidget {
                         icon: const Icon(
                           Icons.visibility,
                           color: Colors.blue,
+                          size: 25,
                         )),
                   ),
                 ),
@@ -178,12 +182,18 @@ class PurchaseSideWidget extends StatelessWidget {
                   flex: 1,
                   child: FittedBox(
                     child: IconButton(
-                      constraints: const BoxConstraints(
-                        minHeight: 45,
-                      ),
-                      onPressed: () {},
-                      icon: const Icon(Icons.person_add, color: Colors.blue),
-                    ),
+                        padding: const EdgeInsets.all(5),
+                        alignment: Alignment.center,
+                        constraints: const BoxConstraints(
+                          minHeight: 30,
+                          maxHeight: 30,
+                        ),
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.person_add,
+                          color: Colors.blue,
+                          size: 25,
+                        )),
                   ),
                 ),
               ],

@@ -98,11 +98,7 @@ class SubCategoryScreen extends StatelessWidget {
                         await subCategoryDB.createSubCategory(_subCategory);
                         kSnackBar(
                             context: context,
-                            color: kSnackBarSuccessColor,
-                            icon: const Icon(
-                              Icons.done,
-                              color: kSnackBarIconColor,
-                            ),
+                            success: true,
                             content:
                                 'Category "$subCategory" added successfully!');
                         _subCategoryController.clear();
@@ -110,10 +106,7 @@ class SubCategoryScreen extends StatelessWidget {
                         kSnackBar(
                             context: context,
                             color: kSnackBarErrorColor,
-                            icon: const Icon(
-                              Icons.new_releases_outlined,
-                              color: kSnackBarIconColor,
-                            ),
+                            error: true,
                             content:
                                 'Sub-Category "$subCategory" already exist!');
                       }

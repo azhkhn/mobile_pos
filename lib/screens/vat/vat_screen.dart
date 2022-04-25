@@ -25,6 +25,9 @@ class VatScreen extends StatelessWidget {
   //========== Database Instances ==========
   final vatDB = VatDatabase.instance;
 
+  //========== Value Notifiers ==========
+  final vatNotifier = VatDatabase.vatNotifer;
+
   //========== DropDown Items ==========
   static const types = ['Percentage', 'Fixed'];
 
@@ -137,34 +140,47 @@ class VatScreen extends StatelessWidget {
                   child: FutureBuilder<dynamic>(
                     future: vatDB.getAllVats(),
                     builder: (context, snapshot) {
-                      return snapshot.hasData
-                          ? ListView.separated(
-                              itemBuilder: (context, index) {
-                                final item = snapshot.data[index];
-                                return ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundColor: kTransparentColor,
-                                    child: Text(
-                                      '${index + 1}'.toString(),
-                                      style: const TextStyle(
-                                          color: kTextColorBlack),
-                                    ),
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        case ConnectionState.done:
+                        default:
+                          if (snapshot.hasData) {
+                            vatNotifier.value = snapshot.data;
+                          }
+                          return ValueListenableBuilder(
+                              valueListenable: vatNotifier,
+                              builder: (context, List<VatModel> vats, _) {
+                                return ListView.separated(
+                                  itemBuilder: (context, index) {
+                                    final vat = vats[index];
+                                    log('vat == $vat');
+                                    return ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundColor: kTransparentColor,
+                                        child: Text(
+                                          '${index + 1}'.toString(),
+                                          style: const TextStyle(
+                                              color: kTextColorBlack),
+                                        ),
+                                      ),
+                                      title: Text(vat.name),
+                                      trailing: IconButton(
+                                          onPressed: () async {
+                                            await vatDB.deleteVAT(vat.id!);
+                                          },
+                                          icon: const Icon(Icons.delete)),
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) =>
+                                      const Divider(
+                                    thickness: 1,
                                   ),
-                                  title: Text(item.name),
-                                  trailing: IconButton(
-                                      onPressed: () async {
-                                        await vatDB.deleteVAT(item.id);
-                                      },
-                                      icon: const Icon(Icons.delete)),
+                                  itemCount: snapshot.data.length,
                                 );
-                              },
-                              separatorBuilder: (context, index) =>
-                                  const Divider(
-                                thickness: 1,
-                              ),
-                              itemCount: snapshot.data.length,
-                            )
-                          : const Center(child: CircularProgressIndicator());
+                              });
+                      }
                     },
                   ),
                 )
@@ -194,24 +210,15 @@ class VatScreen extends StatelessWidget {
       try {
         await vatDB.createVAT(_vatModel);
         log('VAT Created Successfully');
+
         kSnackBar(
             context: context,
-            color: kSnackBarSuccessColor,
-            icon: const Icon(
-              Icons.done,
-              color: kSnackBarIconColor,
-            ),
+            success: true,
             content: 'Vat added successfully!');
       } catch (e) {
         if (e == 'VAT Already Exist!') {
           kSnackBar(
-              context: context,
-              color: kSnackBarErrorColor,
-              icon: const Icon(
-                Icons.error_outline,
-                color: kSnackBarIconColor,
-              ),
-              content: 'VAT already exist!');
+              context: context, error: true, content: 'VAT already exist!');
           return;
         }
         log(e.toString());
