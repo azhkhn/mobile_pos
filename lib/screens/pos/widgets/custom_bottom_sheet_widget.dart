@@ -46,15 +46,27 @@ class CustomBottomSheetWidget extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const AutoSizeText(
-                                    'Customer Type :     ',
-                                    maxFontSize: 50,
-                                    style: TextStyle(fontSize: 20),
+                                  const Expanded(
+                                    flex: 5,
+                                    child: AutoSizeText(
+                                      'Customer Type',
+                                      maxFontSize: 20,
+                                      style: TextStyle(fontSize: 12),
+                                    ),
                                   ),
-                                  AutoSizeText(
-                                    snapshot.data!.customerType,
-                                    maxFontSize: 50,
-                                    style: const TextStyle(fontSize: 20),
+                                  const Expanded(
+                                      child: Text(
+                                    ' : ',
+                                    textAlign: TextAlign.center,
+                                  )),
+                                  Expanded(
+                                    flex: 7,
+                                    child: AutoSizeText(
+                                      snapshot.data!.customerType,
+                                      textAlign: TextAlign.end,
+                                      maxFontSize: 20,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -63,131 +75,210 @@ class CustomBottomSheetWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const AutoSizeText(
-                              'Company :     ',
-                              maxFontSize: 50,
-                              style: TextStyle(
-                                fontSize: 20,
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'Company',
+                                maxFontSize: 20,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
-                            AutoSizeText(
-                              snapshot.data!.company,
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        kHeight10,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const AutoSizeText(
-                              'Company Arabic :     ',
-                              maxFontSize: 50,
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            AutoSizeText(
-                              snapshot.data!.companyArabic,
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        kHeight10,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AutoSizeText(
-                              supplier
-                                  ? 'Supplier Name :     '
-                                  : 'Customer Name :     ',
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                            AutoSizeText(
-                              supplier
-                                  ? snapshot.data!.supplier
-                                  : snapshot.data!.customer,
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        kHeight10,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AutoSizeText(
-                              supplier
-                                  ? 'Supplier Name Arabic :     '
-                                  : 'Customer Name Arabic :     ',
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                            AutoSizeText(
-                              supplier
-                                  ? snapshot.data!.supplierArabic
-                                  : snapshot.data!.customerArabic,
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        kHeight10,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const AutoSizeText(
-                              'VAT Number :     ',
-                              maxFontSize: 50,
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            AutoSizeText(
-                              snapshot.data!.vatNumber!,
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        kHeight10,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const AutoSizeText(
-                              'Email :     ',
-                              maxFontSize: 50,
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            AutoSizeText(
-                              snapshot.data!.email!,
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        kHeight10,
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const AutoSizeText(
-                              'Address :     ',
-                              maxFontSize: 50,
-                              style: TextStyle(fontSize: 20),
-                            ),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
                             Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                snapshot.data!.company,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                        kHeight10,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'Company Arabic',
+                                maxFontSize: 20,
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                snapshot.data!.companyArabic,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                        kHeight10,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                supplier ? 'Supplier Name' : 'Customer Name',
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                supplier
+                                    ? snapshot.data!.supplier
+                                    : snapshot.data!.customer,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                        kHeight10,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                supplier
+                                    ? 'Supplier Name Arabic'
+                                    : 'Customer Name Arabic',
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                supplier
+                                    ? snapshot.data!.supplierArabic
+                                    : snapshot.data!.customerArabic,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                        kHeight10,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'VAT Number',
+                                maxFontSize: 20,
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                snapshot.data!.vatNumber!,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                        kHeight10,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'Email',
+                                maxFontSize: 20,
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                snapshot.data!.email!,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                        kHeight10,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'Address',
+                                maxFontSize: 20,
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
                               child: AutoSizeText(
                                 snapshot.data!.address!,
-                                minFontSize: 20,
-                                maxFontSize: 50,
                                 textAlign: TextAlign.end,
+                                minFontSize: 12,
+                                maxFontSize: 20,
                                 maxLines: 2,
-                                style: const TextStyle(fontSize: 20),
+                                style: const TextStyle(fontSize: 12),
                               ),
                             ),
                           ],
@@ -197,19 +288,28 @@ class CustomBottomSheetWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const AutoSizeText(
-                              'Address Arabic :     ',
-                              maxFontSize: 50,
-                              style: TextStyle(fontSize: 20),
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'Address Arabic',
+                                maxFontSize: 20,
+                                style: TextStyle(fontSize: 12),
+                              ),
                             ),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
                             Expanded(
+                              flex: 7,
                               child: AutoSizeText(
                                 snapshot.data!.addressArabic!,
-                                minFontSize: 20,
-                                maxFontSize: 50,
-                                maxLines: 2,
                                 textAlign: TextAlign.end,
-                                style: const TextStyle(fontSize: 20),
+                                minFontSize: 12,
+                                maxFontSize: 20,
+                                maxLines: 2,
+                                style: const TextStyle(fontSize: 12),
                               ),
                             ),
                           ],
@@ -219,32 +319,27 @@ class CustomBottomSheetWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const AutoSizeText(
-                              'City :     ',
-                              maxFontSize: 50,
-                              style: TextStyle(fontSize: 20),
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'City',
+                                maxFontSize: 20,
+                                style: TextStyle(fontSize: 12),
+                              ),
                             ),
-                            AutoSizeText(
-                              snapshot.data!.city!,
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        kHeight10,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const AutoSizeText(
-                              'City Arabic :     ',
-                              maxFontSize: 50,
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            AutoSizeText(
-                              snapshot.data!.cityArabic!,
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                snapshot.data!.city!,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
                             ),
                           ],
                         ),
@@ -253,32 +348,27 @@ class CustomBottomSheetWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const AutoSizeText(
-                              'State :     ',
-                              maxFontSize: 50,
-                              style: TextStyle(fontSize: 20),
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'City Arabic',
+                                maxFontSize: 20,
+                                style: TextStyle(fontSize: 12),
+                              ),
                             ),
-                            AutoSizeText(
-                              snapshot.data!.state!,
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        kHeight10,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const AutoSizeText(
-                              'State Arabic :     ',
-                              maxFontSize: 50,
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            AutoSizeText(
-                              snapshot.data!.stateArabic!,
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                snapshot.data!.cityArabic!,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
                             ),
                           ],
                         ),
@@ -287,32 +377,27 @@ class CustomBottomSheetWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const AutoSizeText(
-                              'Country :     ',
-                              maxFontSize: 50,
-                              style: TextStyle(fontSize: 20),
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'State',
+                                maxFontSize: 20,
+                                style: TextStyle(fontSize: 12),
+                              ),
                             ),
-                            AutoSizeText(
-                              snapshot.data!.country!,
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        kHeight10,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const AutoSizeText(
-                              'Country Arabic :     ',
-                              maxFontSize: 50,
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            AutoSizeText(
-                              snapshot.data!.countryArabic!,
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                snapshot.data!.state!,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
                             ),
                           ],
                         ),
@@ -321,15 +406,114 @@ class CustomBottomSheetWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const AutoSizeText(
-                              'PO Box :     ',
-                              maxFontSize: 50,
-                              style: TextStyle(fontSize: 20),
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'State Arabic',
+                                maxFontSize: 20,
+                                style: TextStyle(fontSize: 12),
+                              ),
                             ),
-                            AutoSizeText(
-                              snapshot.data!.poBox!,
-                              maxFontSize: 50,
-                              style: const TextStyle(fontSize: 20),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                snapshot.data!.stateArabic!,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                        kHeight10,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'Country',
+                                maxFontSize: 20,
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                snapshot.data!.country!,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                        kHeight10,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'Country Arabic',
+                                maxFontSize: 20,
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                snapshot.data!.countryArabic!,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                        kHeight10,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'PO Box',
+                                maxFontSize: 20,
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                snapshot.data!.poBox!,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
                             ),
                           ],
                         ),

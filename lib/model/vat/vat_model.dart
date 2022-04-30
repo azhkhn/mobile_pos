@@ -20,7 +20,7 @@ class VatModel with _$VatModel {
     @JsonKey(name: '_id') int? id,
     required String name,
     required String code,
-    required String rate,
+    required int rate,
     required String type,
   }) = _VatModel;
 

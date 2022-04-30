@@ -168,7 +168,29 @@ class VatScreen extends StatelessWidget {
                                       title: Text(vat.name),
                                       trailing: IconButton(
                                           onPressed: () async {
-                                            await vatDB.deleteVAT(vat.id!);
+                                            showDialog(
+                                              context: context,
+                                              builder: (ctx) => AlertDialog(
+                                                content: const Text(
+                                                    'Are you sure you want to delete this item?'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: const Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      await vatDB
+                                                          .deleteVAT(vat.id!);
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: const Text('Delete'),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
                                           },
                                           icon: const Icon(Icons.delete)),
                                     );
@@ -194,12 +216,13 @@ class VatScreen extends StatelessWidget {
 
   //========== Add VAT ==========
   addVat(BuildContext context) async {
-    final String name, code, rate, type;
+    final String name, code, type;
+    final int rate;
 
     //Retrieving values from TextFields
     name = _nameController.text.trim();
     code = _codeController.text.trim();
-    rate = _rateController.text.trim();
+    rate = _rateController.text.trim() as int;
     type = _vatType;
 
     final _formState = _formKey.currentState!;

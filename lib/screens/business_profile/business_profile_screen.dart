@@ -248,6 +248,17 @@ class _BusinessProfileState extends State<BusinessProfile> {
                   TextFeildWidget(
                     labelText: 'VAT Number',
                     controller: _vatNumberController,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value!.isNotEmpty) {
+                        if (value.length != 15) {
+                          return 'Please enter a valid VAT number';
+                        } else {
+                          return null;
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   kHeight10,
 

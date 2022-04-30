@@ -10,7 +10,7 @@ _$_VatModel _$$_VatModelFromJson(Map<String, dynamic> json) => _$_VatModel(
       id: json['_id'] as int?,
       name: json['name'] as String,
       code: json['code'] as String,
-      rate: json['rate'] as String,
+      rate: json['rate'] as int,
       type: json['type'] as String,
     );
 

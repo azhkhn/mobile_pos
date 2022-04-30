@@ -45,7 +45,7 @@ class CustomDropDownField extends StatelessWidget {
         isDense: isDesne,
         errorStyle: errorStyle ? const TextStyle(fontSize: 0.01) : null,
         constraints: constraints,
-        contentPadding: contentPadding,
+        contentPadding: contentPadding ?? const EdgeInsets.all(10),
         floatingLabelBehavior: floatingLabelBehavior,
       ),
       isExpanded: true,

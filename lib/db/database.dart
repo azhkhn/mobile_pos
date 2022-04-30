@@ -37,7 +37,7 @@ class EzDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path,
-        version: 8, onCreate: _createDB, onUpgrade: _upgradeDB);
+        version: 9, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -46,7 +46,10 @@ class EzDatabase {
     // const textType = 'TEXT NOT NULL';
     // // const textNull = 'TEXT';
     // const intNull = 'INTEGER';
-    // const intType = 'INTEGER NOT NULL';
+    const intType = 'INTEGER NOT NULL';
+
+    await db.execute(
+        "ALTER TABLE $tableItemMaster ADD COLUMN vatRate $intType DEFAULT 15");
 
     //**
     //

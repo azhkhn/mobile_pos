@@ -532,8 +532,10 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
     SaleSideWidget.totalItemsNotifier.value++;
 
-    const SaleSideWidget()
-        .getItemVat(vatMethod: vatMethod, amount: itemList[index].sellingPrice);
+    const SaleSideWidget().getItemVat(
+        vatMethod: vatMethod,
+        amount: itemList[index].sellingPrice,
+        vatRate: itemList[index].vatRate);
     const SaleSideWidget().getTotalAmount();
     const SaleSideWidget().getTotalVAT();
     const SaleSideWidget().getTotalPayable();

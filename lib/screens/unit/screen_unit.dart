@@ -55,7 +55,8 @@ class UnitScreen extends StatelessWidget {
               CustomMaterialBtton(
                 buttonText: 'Submit',
                 onPressed: () async {
-                  final unit = _unitEditingController.text.trim();
+                  final unit =
+                      _unitEditingController.text.trim().replaceAll("'", "''");
                   final isFormValid = _formKey.currentState!;
                   if (isFormValid.validate()) {
                     log('Unit == ' + unit);
@@ -110,8 +111,31 @@ class UnitScreen extends StatelessWidget {
                                     ),
                                     title: Text(item.unit),
                                     trailing: IconButton(
-                                        onPressed: () =>
-                                            unitDB.deleteUnit(item.id!),
+                                        onPressed: () async {
+                                          showDialog(
+                                            context: context,
+                                            builder: (ctx) => AlertDialog(
+                                              content: const Text(
+                                                  'Are you sure you want to delete this item?'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('Cancel'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    await unitDB
+                                                        .deleteUnit(item.id!);
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('Delete'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
                                         icon: const Icon(Icons.delete)),
                                   );
                                 },

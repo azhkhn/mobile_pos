@@ -3,6 +3,7 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/db/db_functions/category/category_db.dart';
 import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -10,8 +11,6 @@ import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
-
-import '../../core/utils/snackbar/snackbar.dart';
 
 class CategoryScreen extends StatelessWidget {
   CategoryScreen({Key? key}) : super(key: key);
@@ -58,7 +57,9 @@ class CategoryScreen extends StatelessWidget {
               CustomMaterialBtton(
                 buttonText: 'Submit',
                 onPressed: () async {
-                  final category = _categoryEditingController.text.trim();
+                  final category = _categoryEditingController.text
+                      .trim()
+                      .replaceAll("'", "''");
                   final isFormValid = _formKey.currentState!;
                   if (isFormValid.validate()) {
                     log('Category == ' + category);
@@ -72,11 +73,11 @@ class CategoryScreen extends StatelessWidget {
                           content: 'Category "$category" added successfully!');
                       _categoryEditingController.clear();
                     } catch (e) {
+                      log(e.toString());
                       kSnackBar(
                           context: context,
                           error: true,
                           content: 'Category "$category" already exist!');
-                      // _categoryEditingController.clear();
                     }
                   }
                 },
@@ -115,9 +116,33 @@ class CategoryScreen extends StatelessWidget {
                                     ),
                                     title: Text(item.category),
                                     trailing: IconButton(
-                                        onPressed: () =>
-                                            categoryDB.deleteCategory(item.id!),
-                                        icon: const Icon(Icons.delete)),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (ctx) => AlertDialog(
+                                            content: const Text(
+                                                'Are you sure you want to delete this item?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () async {
+                                                  await categoryDB
+                                                      .deleteCategory(item.id!);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text('Delete'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.delete),
+                                    ),
                                   );
                                 },
                                 separatorBuilder: (context, index) =>

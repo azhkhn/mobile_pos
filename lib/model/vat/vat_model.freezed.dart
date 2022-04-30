@@ -24,7 +24,7 @@ mixin _$VatModel {
   int? get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get code => throw _privateConstructorUsedError;
-  String get rate => throw _privateConstructorUsedError;
+  int get rate => throw _privateConstructorUsedError;
   String get type => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -41,7 +41,7 @@ abstract class $VatModelCopyWith<$Res> {
       {@JsonKey(name: '_id') int? id,
       String name,
       String code,
-      String rate,
+      int rate,
       String type});
 }
 
@@ -77,7 +77,7 @@ class _$VatModelCopyWithImpl<$Res> implements $VatModelCopyWith<$Res> {
       rate: rate == freezed
           ? _value.rate
           : rate // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       type: type == freezed
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -95,7 +95,7 @@ abstract class _$VatModelCopyWith<$Res> implements $VatModelCopyWith<$Res> {
       {@JsonKey(name: '_id') int? id,
       String name,
       String code,
-      String rate,
+      int rate,
       String type});
 }
 
@@ -132,7 +132,7 @@ class __$VatModelCopyWithImpl<$Res> extends _$VatModelCopyWithImpl<$Res>
       rate: rate == freezed
           ? _value.rate
           : rate // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       type: type == freezed
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -163,7 +163,7 @@ class _$_VatModel extends _VatModel {
   @override
   final String code;
   @override
-  final String rate;
+  final int rate;
   @override
   final String type;
 
@@ -210,7 +210,7 @@ abstract class _VatModel extends VatModel {
       {@JsonKey(name: '_id') final int? id,
       required final String name,
       required final String code,
-      required final String rate,
+      required final int rate,
       required final String type}) = _$_VatModel;
   const _VatModel._() : super._();
 
@@ -224,7 +224,7 @@ abstract class _VatModel extends VatModel {
   @override
   String get code => throw _privateConstructorUsedError;
   @override
-  String get rate => throw _privateConstructorUsedError;
+  int get rate => throw _privateConstructorUsedError;
   @override
   String get type => throw _privateConstructorUsedError;
   @override

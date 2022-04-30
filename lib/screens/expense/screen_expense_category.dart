@@ -26,6 +26,10 @@ class _ExpenseCategoryState extends State<ExpenseCategory> {
   //========== Global Keys ==========
   final _formKey = GlobalKey<FormState>();
 
+  //========== Value Notifiers ==========
+  final expenseCategoryNotifiers =
+      ExpenseCategoryDatabase.expenseCategoryNotifiers;
+
   //========== Database Instances ==========
   final expenseCategoryDB = ExpenseCategoryDatabase.instance;
 
@@ -59,8 +63,9 @@ class _ExpenseCategoryState extends State<ExpenseCategory> {
               CustomMaterialBtton(
                 buttonText: 'Submit',
                 onPressed: () async {
-                  final _expenseCategory =
-                      _expenseEditingController.text.trim();
+                  final _expenseCategory = _expenseEditingController.text
+                      .trim()
+                      .replaceAll("'", "''");
                   final isFormValid = _formKey.currentState!;
                   if (isFormValid.validate()) {
                     log('Expense Category == ' + _expenseCategory);
@@ -94,29 +99,73 @@ class _ExpenseCategoryState extends State<ExpenseCategory> {
                 child: FutureBuilder<dynamic>(
                   future: expenseCategoryDB.getAllExpenseCategories(),
                   builder: (context, snapshot) {
-                    return snapshot.hasData
-                        ? ListView.separated(
-                            itemBuilder: (context, index) {
-                              final item = snapshot.data[index];
-                              log('item == $item');
-                              return ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: kTransparentColor,
-                                  child: Text(
-                                    '${index + 1}'.toString(),
-                                    style:
-                                        const TextStyle(color: kTextColorBlack),
-                                  ),
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(child: CircularProgressIndicator());
+                      case ConnectionState.done:
+                      default:
+                        if (snapshot.hasData) {
+                          expenseCategoryNotifiers.value = snapshot.data;
+                        }
+                        return ValueListenableBuilder(
+                            valueListenable: expenseCategoryNotifiers,
+                            builder: (context,
+                                List<ExpenseCategoryModel> expenseCategories,
+                                _) {
+                              return ListView.separated(
+                                itemBuilder: (context, index) {
+                                  final expenseCategory =
+                                      expenseCategories[index];
+                                  log('item == $expenseCategory');
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: kTransparentColor,
+                                      child: Text(
+                                        '${index + 1}'.toString(),
+                                        style: const TextStyle(
+                                            color: kTextColorBlack),
+                                      ),
+                                    ),
+                                    title: Text(expenseCategory.expense),
+                                    trailing: IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (ctx) => AlertDialog(
+                                            content: const Text(
+                                                'Are you sure you want to delete this item?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () async {
+                                                  await expenseCategoryDB
+                                                      .deleteExpenseCategory(
+                                                          expenseCategory.id!);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text('Delete'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.delete),
+                                    ),
+                                  );
+                                },
+                                separatorBuilder: (context, index) =>
+                                    const Divider(
+                                  thickness: 1,
                                 ),
-                                title: Text(item.expense),
+                                itemCount: snapshot.data.length,
                               );
-                            },
-                            separatorBuilder: (context, index) => const Divider(
-                              thickness: 1,
-                            ),
-                            itemCount: snapshot.data.length,
-                          )
-                        : const Center(child: CircularProgressIndicator());
+                            });
+                    }
                   },
                 ),
               )

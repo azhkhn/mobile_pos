@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/utils/text/validators.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -77,11 +78,11 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   //========== Company Field ==========
                   DropdownButtonFormField(
                     decoration: const InputDecoration(
-                      label: Text(
-                        'Customer Type *',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
+                        label: Text(
+                          'Customer Type *',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        contentPadding: EdgeInsets.all(10)),
                     isExpanded: true,
                     focusNode: customerTypeFocusNode,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -103,37 +104,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                       return null;
                     },
                   ),
-
-                  //========== Company Field ==========
-                  TextFeildWidget(
-                    controller: _companyController,
-                    labelText: 'Company *',
-                    focusNode: companyFocusNode,
-                    textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
-                  ),
-                  kHeight10,
-
-                  //========== Company Arabic Field ==========
-                  TextFeildWidget(
-                    controller: _companyArabicController,
-                    labelText: 'Company Arabic *',
-                    textDirection: TextDirection.rtl,
-                    focusNode: companyArabicFocusNode,
-                    textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
-                  ),
-                  kHeight10,
 
                   //========== Customer Field ==========
                   TextFeildWidget(
@@ -166,16 +136,66 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   ),
                   kHeight10,
 
+                  //========== Company Field ==========
+                  TextFeildWidget(
+                    controller: _companyController,
+                    labelText: 'Company',
+                    focusNode: companyFocusNode,
+                    textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field is required*';
+                      }
+                      return null;
+                    },
+                  ),
+                  kHeight10,
+
+                  //========== Company Arabic Field ==========
+                  TextFeildWidget(
+                    controller: _companyArabicController,
+                    labelText: 'Company Arabic',
+                    textDirection: TextDirection.rtl,
+                    focusNode: companyArabicFocusNode,
+                    textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field is required*';
+                      }
+                      return null;
+                    },
+                  ),
+                  kHeight10,
+
                   //========== VAT Number Field ==========
                   TextFeildWidget(
                     controller: _vatNumberController,
                     labelText: 'VAT Number',
                     focusNode: vatNumberFocusNode,
                     textInputType: TextInputType.text,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
                       if (_customerTypeController == 'Credit Customer') {
                         if (value == null || value.isEmpty) {
                           return 'This field is required*';
+                        } else {
+                          if (value.isNotEmpty) {
+                            if (value.length != 15) {
+                              return 'Please enter a valid VAT number';
+                            } else {
+                              return null;
+                            }
+                          }
+                        }
+                      } else {
+                        if (value!.isNotEmpty) {
+                          if (value.isNotEmpty) {
+                            if (value.length != 15) {
+                              return 'Please enter a valid VAT number';
+                            } else {
+                              return null;
+                            }
+                          }
                         }
                       }
                       return null;
@@ -188,6 +208,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     controller: _emailController,
                     labelText: 'Email',
                     textInputType: TextInputType.emailAddress,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      // Check if the entered email has the right format
+                      if (value!.isNotEmpty) {
+                        if (!emailValidator.hasMatch(value)) {
+                          return 'Please enter a valid Email';
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   kHeight10,
 

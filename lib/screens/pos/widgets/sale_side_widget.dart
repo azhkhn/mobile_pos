@@ -417,15 +417,19 @@ class SaleSideWidget extends StatelessWidget {
   }
 
   //==================== Get Item VAT ====================
-  void getItemVat({String? vatMethod, String? amount}) {
+  void getItemVat({
+    required String vatMethod,
+    required String amount,
+    required int vatRate,
+  }) {
     num? itemTotalVat;
-    num sellingPrice = num.parse(amount!);
+    num sellingPrice = num.parse(amount);
 
     if (vatMethod == 'Inclusive') {
       sellingPrice = getExclusiveAmount('$sellingPrice');
     }
 
-    itemTotalVat = sellingPrice * 15 / 100;
+    itemTotalVat = sellingPrice * vatRate / 100;
     log('Item Total VAT == $itemTotalVat');
     itemTotalVatNotifier.value.add('$itemTotalVat');
   }

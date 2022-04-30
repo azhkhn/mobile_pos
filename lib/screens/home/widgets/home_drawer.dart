@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/db/db_functions/busiess_profile/business_profile_database.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 
@@ -141,14 +142,16 @@ class DrawerItemsWidget extends StatelessWidget {
         drawerListItem[index],
         style: const TextStyle(color: kTextColorBlack),
       ),
-      onTap: () {
+      onTap: () async {
         Navigator.pop(context);
         switch (index) {
           case 0:
             Navigator.pushNamed(context, routeSales);
             break;
           case 1:
-            Navigator.pushNamed(context, routePos);
+            DeviceUtil.isLandscape = true;
+            await Navigator.pushNamed(context, routePos);
+            await DeviceUtil.toPortrait();
             break;
           case 2:
             Navigator.pushNamed(context, routePurchase);

@@ -36,7 +36,7 @@ class PurchasePriceSectionWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           AutoSizeText(
-                            'items',
+                            'Items',
                             style: TextStyle(fontSize: isTablet ? 12 : 10),
                             minFontSize: 10,
                           ),

@@ -68,6 +68,7 @@ class ScreenItemMaster extends StatelessWidget {
   String? _itemBrandController;
   String? _productVatController;
   String? _vatId;
+  int? _vatRate;
   String? _unitController;
   String? _vatMethodController;
 
@@ -145,9 +146,10 @@ class ScreenItemMaster extends StatelessWidget {
 
                   //========== Item Name in Arabic ==========
                   TextFeildWidget(
-                    labelText: 'Item Name in Arabic *',
+                    labelText: 'Item Name Arabic *',
                     textInputType: TextInputType.text,
                     controller: _itemNameArabicController,
+                    textDirection: TextDirection.rtl,
                     focusNode: itemNameArabicFocusNode,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -289,6 +291,8 @@ class ScreenItemMaster extends StatelessWidget {
                           _productVatController = value.toString();
                           final _vat = await vatDB.getVatByName(value!);
                           _vatId = '${_vat.id}';
+                          _vatRate = _vat.rate;
+
                           log('VAT id = $_vatId');
                         },
                         validator: (value) {
@@ -507,6 +511,7 @@ class ScreenItemMaster extends StatelessWidget {
 
   //========== Add Item ==========
   Future<void> addItem({context}) async {
+    final int vatRate;
     final String productType,
         itemName,
         itemNameArabic,
@@ -542,6 +547,7 @@ class ScreenItemMaster extends StatelessWidget {
       sellingPrice = _sellingPriceController.text.trim();
       secondarySellingPrice = _secondarySellingPriceController.text.trim();
       vatId = _vatId!;
+      vatRate = _vatRate!;
       productVAT = _productVatController!;
       unit = _unitController!;
       expiryDate = _selectedDate ?? '';
@@ -567,24 +573,26 @@ class ScreenItemMaster extends StatelessWidget {
       }
 
       final _itemMasterModel = ItemMasterModel(
-          productType: productType,
-          itemName: itemName,
-          itemNameArabic: itemNameArabic,
-          itemCode: itemCode,
-          itemCategory: itemCategory,
-          itemSubCategory: itemSubCategory,
-          itemBrand: itemBrand,
-          itemCost: itemCost,
-          sellingPrice: sellingPrice,
-          secondarySellingPrice: secondarySellingPrice,
-          vatMethod: vatMethod,
-          productVAT: productVAT,
-          vatId: vatId,
-          unit: unit,
-          expiryDate: expiryDate,
-          openingStock: openingStock,
-          alertQuantity: alertQuantity,
-          itemImage: itemImage);
+        productType: productType,
+        itemName: itemName,
+        itemNameArabic: itemNameArabic,
+        itemCode: itemCode,
+        itemCategory: itemCategory,
+        itemSubCategory: itemSubCategory,
+        itemBrand: itemBrand,
+        itemCost: itemCost,
+        sellingPrice: sellingPrice,
+        secondarySellingPrice: secondarySellingPrice,
+        vatMethod: vatMethod,
+        productVAT: productVAT,
+        vatId: vatId,
+        vatRate: vatRate,
+        unit: unit,
+        expiryDate: expiryDate,
+        openingStock: openingStock,
+        alertQuantity: alertQuantity,
+        itemImage: itemImage,
+      );
       try {
         await itemMasterDB.createItem(_itemMasterModel);
         log('Item $itemName Added!');

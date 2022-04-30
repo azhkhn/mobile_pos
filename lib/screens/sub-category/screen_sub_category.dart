@@ -84,7 +84,9 @@ class SubCategoryScreen extends StatelessWidget {
                   buttonText: 'Submit',
                   onPressed: () async {
                     final category = _categoryController;
-                    final subCategory = _subCategoryController.text.trim();
+                    final subCategory = _subCategoryController.text
+                        .trim()
+                        .replaceAll("'", "''");
 
                     final isFormValid = _formKey.currentState!;
                     if (isFormValid.validate()) {
@@ -100,7 +102,7 @@ class SubCategoryScreen extends StatelessWidget {
                             context: context,
                             success: true,
                             content:
-                                'Category "$subCategory" added successfully!');
+                                'Sub-Category "$subCategory" added successfully!');
                         _subCategoryController.clear();
                       } catch (e) {
                         kSnackBar(
@@ -150,8 +152,30 @@ class SubCategoryScreen extends StatelessWidget {
                                       subtitle: Text(item.category),
                                       trailing: IconButton(
                                           onPressed: () async {
-                                            await subCategoryDB
-                                                .deleteSubCategory(item.id!);
+                                            showDialog(
+                                              context: context,
+                                              builder: (ctx) => AlertDialog(
+                                                content: const Text(
+                                                    'Are you sure you want to delete this item?'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: const Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      await subCategoryDB
+                                                          .deleteSubCategory(
+                                                              item.id!);
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: const Text('Delete'),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
                                           },
                                           icon: const Icon(Icons.delete)),
                                     );

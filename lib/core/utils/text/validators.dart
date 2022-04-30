@@ -10,3 +10,6 @@ class Validators {
     return null;
   }
 }
+
+//Validating email pattern that user entered
+RegExp emailValidator = RegExp(r'\S+@\S+\.\S+');

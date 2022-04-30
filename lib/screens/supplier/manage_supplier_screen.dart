@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/utils/text/validators.dart';
 import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -69,7 +70,8 @@ class ScreenManageSupplier extends StatelessWidget {
                   //========== Company Arabic Field ==========
                   TextFeildWidget(
                     controller: _companyArabicController,
-                    labelText: 'Company in Arabic *',
+                    textDirection: TextDirection.rtl,
+                    labelText: 'Company Arabic *',
                     textInputType: TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -97,6 +99,7 @@ class ScreenManageSupplier extends StatelessWidget {
                   //========== Supplier Arabic Field ==========
                   TextFeildWidget(
                     controller: _supplierArabicController,
+                    textDirection: TextDirection.rtl,
                     labelText: 'Supplier Name Arabic *',
                     textInputType: TextInputType.text,
                     validator: (value) {
@@ -113,6 +116,17 @@ class ScreenManageSupplier extends StatelessWidget {
                     controller: _vatNumberController,
                     labelText: 'VAT Number',
                     textInputType: TextInputType.text,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value!.isNotEmpty) {
+                        if (value.length != 15) {
+                          return 'Please enter a valid VAT number';
+                        } else {
+                          return null;
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   kHeight10,
 
@@ -121,7 +135,18 @@ class ScreenManageSupplier extends StatelessWidget {
                     controller: _emailController,
                     labelText: 'Email',
                     textInputType: TextInputType.emailAddress,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      // Check if the entered email has the right format
+                      if (value!.isNotEmpty) {
+                        if (!emailValidator.hasMatch(value)) {
+                          return 'Please enter a valid Email';
+                        }
+                      }
+                      return null;
+                    },
                   ),
+
                   kHeight10,
 
                   //========== Address Field ==========
@@ -135,7 +160,8 @@ class ScreenManageSupplier extends StatelessWidget {
                   //========== Address Arabic Field ==========
                   TextFeildWidget(
                     controller: _addressArabicController,
-                    labelText: 'Address in Arabic',
+                    textDirection: TextDirection.rtl,
+                    labelText: 'Address Arabic',
                     textInputType: TextInputType.text,
                   ),
                   kHeight10,
@@ -151,7 +177,8 @@ class ScreenManageSupplier extends StatelessWidget {
                   //========== City Arabic Field ==========
                   TextFeildWidget(
                     controller: _cityArabicController,
-                    labelText: 'City in Arabic',
+                    textDirection: TextDirection.rtl,
+                    labelText: 'City Arabic',
                     textInputType: TextInputType.text,
                   ),
                   kHeight10,
@@ -167,7 +194,8 @@ class ScreenManageSupplier extends StatelessWidget {
                   //========== State Arabic Field ==========
                   TextFeildWidget(
                     controller: _stateArabicController,
-                    labelText: 'State in Arabic',
+                    textDirection: TextDirection.rtl,
+                    labelText: 'State Arabic',
                     textInputType: TextInputType.text,
                   ),
                   kHeight10,
@@ -183,7 +211,8 @@ class ScreenManageSupplier extends StatelessWidget {
                   //========== Country Arabic Field ==========
                   TextFeildWidget(
                     controller: _countryArabicController,
-                    labelText: 'Country in Arabic',
+                    textDirection: TextDirection.rtl,
+                    labelText: 'Country Arabic',
                     textInputType: TextInputType.text,
                   ),
                   kHeight10,

@@ -36,7 +36,7 @@ class ScreenStock extends StatelessWidget {
   static final ValueNotifier<List<dynamic>> itemsNotifier = ValueNotifier([]);
 
   //========== TextEditing Controllers ==========
-  final _productController = TextEditingController();
+  static final _productController = TextEditingController();
 
   //========== FutureBuilder ModelClass by Integer ==========
   late int? _builderModel;
@@ -580,6 +580,9 @@ class ScreenStock extends StatelessWidget {
       } else if (brand != null) {
         itemsNotifier.value = await itemMasterDB.getProductByBrand(brand);
       }
+
+      log('message');
+      _productController.clear();
       Navigator.pop(context);
     }
   }

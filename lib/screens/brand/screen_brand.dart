@@ -25,7 +25,6 @@ class BrandScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBarWidget(
         title: 'Brand',
       ),
@@ -53,7 +52,8 @@ class BrandScreen extends StatelessWidget {
               CustomMaterialBtton(
                 buttonText: 'Submit',
                 onPressed: () async {
-                  final brand = _brandEditingController.text.trim();
+                  final brand =
+                      _brandEditingController.text.trim().replaceAll("'", "''");
                   final isFormValid = _formKey.currentState!;
                   if (isFormValid.validate()) {
                     log('Brand == ' + brand);
@@ -112,8 +112,31 @@ class BrandScreen extends StatelessWidget {
                                     ),
                                     title: Text(item.brand),
                                     trailing: IconButton(
-                                        onPressed: () => BrandDatabase.instance
-                                            .deleteBrand(item.id!),
+                                        onPressed: () async {
+                                          showDialog(
+                                            context: context,
+                                            builder: (ctx) => AlertDialog(
+                                              content: const Text(
+                                                  'Are you sure you want to delete this item?'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('Cancel'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    await brandDB
+                                                        .deleteBrand(item.id!);
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('Delete'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
                                         icon: const Icon(Icons.delete)),
                                   );
                                 },

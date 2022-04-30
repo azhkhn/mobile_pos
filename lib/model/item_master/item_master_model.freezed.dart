@@ -35,6 +35,7 @@ mixin _$ItemMasterModel {
   String get vatMethod => throw _privateConstructorUsedError;
   String get productVAT => throw _privateConstructorUsedError;
   String get vatId => throw _privateConstructorUsedError;
+  int get vatRate => throw _privateConstructorUsedError;
   String get unit => throw _privateConstructorUsedError;
   String get expiryDate => throw _privateConstructorUsedError;
   String get openingStock => throw _privateConstructorUsedError;
@@ -67,6 +68,7 @@ abstract class $ItemMasterModelCopyWith<$Res> {
       String vatMethod,
       String productVAT,
       String vatId,
+      int vatRate,
       String unit,
       String expiryDate,
       String openingStock,
@@ -99,6 +101,7 @@ class _$ItemMasterModelCopyWithImpl<$Res>
     Object? vatMethod = freezed,
     Object? productVAT = freezed,
     Object? vatId = freezed,
+    Object? vatRate = freezed,
     Object? unit = freezed,
     Object? expiryDate = freezed,
     Object? openingStock = freezed,
@@ -162,6 +165,10 @@ class _$ItemMasterModelCopyWithImpl<$Res>
           ? _value.vatId
           : vatId // ignore: cast_nullable_to_non_nullable
               as String,
+      vatRate: vatRate == freezed
+          ? _value.vatRate
+          : vatRate // ignore: cast_nullable_to_non_nullable
+              as int,
       unit: unit == freezed
           ? _value.unit
           : unit // ignore: cast_nullable_to_non_nullable
@@ -208,6 +215,7 @@ abstract class _$ItemMasterModelCopyWith<$Res>
       String vatMethod,
       String productVAT,
       String vatId,
+      int vatRate,
       String unit,
       String expiryDate,
       String openingStock,
@@ -242,6 +250,7 @@ class __$ItemMasterModelCopyWithImpl<$Res>
     Object? vatMethod = freezed,
     Object? productVAT = freezed,
     Object? vatId = freezed,
+    Object? vatRate = freezed,
     Object? unit = freezed,
     Object? expiryDate = freezed,
     Object? openingStock = freezed,
@@ -305,6 +314,10 @@ class __$ItemMasterModelCopyWithImpl<$Res>
           ? _value.vatId
           : vatId // ignore: cast_nullable_to_non_nullable
               as String,
+      vatRate: vatRate == freezed
+          ? _value.vatRate
+          : vatRate // ignore: cast_nullable_to_non_nullable
+              as int,
       unit: unit == freezed
           ? _value.unit
           : unit // ignore: cast_nullable_to_non_nullable
@@ -347,6 +360,7 @@ class _$_ItemMasterModel implements _ItemMasterModel {
       required this.vatMethod,
       required this.productVAT,
       required this.vatId,
+      required this.vatRate,
       required this.unit,
       required this.expiryDate,
       required this.openingStock,
@@ -386,6 +400,8 @@ class _$_ItemMasterModel implements _ItemMasterModel {
   @override
   final String vatId;
   @override
+  final int vatRate;
+  @override
   final String unit;
   @override
   final String expiryDate;
@@ -398,7 +414,7 @@ class _$_ItemMasterModel implements _ItemMasterModel {
 
   @override
   String toString() {
-    return 'ItemMasterModel(id: $id, productType: $productType, itemName: $itemName, itemNameArabic: $itemNameArabic, itemCode: $itemCode, itemCategory: $itemCategory, itemSubCategory: $itemSubCategory, itemBrand: $itemBrand, itemCost: $itemCost, sellingPrice: $sellingPrice, secondarySellingPrice: $secondarySellingPrice, vatMethod: $vatMethod, productVAT: $productVAT, vatId: $vatId, unit: $unit, expiryDate: $expiryDate, openingStock: $openingStock, alertQuantity: $alertQuantity, itemImage: $itemImage)';
+    return 'ItemMasterModel(id: $id, productType: $productType, itemName: $itemName, itemNameArabic: $itemNameArabic, itemCode: $itemCode, itemCategory: $itemCategory, itemSubCategory: $itemSubCategory, itemBrand: $itemBrand, itemCost: $itemCost, sellingPrice: $sellingPrice, secondarySellingPrice: $secondarySellingPrice, vatMethod: $vatMethod, productVAT: $productVAT, vatId: $vatId, vatRate: $vatRate, unit: $unit, expiryDate: $expiryDate, openingStock: $openingStock, alertQuantity: $alertQuantity, itemImage: $itemImage)';
   }
 
   @override
@@ -427,6 +443,7 @@ class _$_ItemMasterModel implements _ItemMasterModel {
             const DeepCollectionEquality()
                 .equals(other.productVAT, productVAT) &&
             const DeepCollectionEquality().equals(other.vatId, vatId) &&
+            const DeepCollectionEquality().equals(other.vatRate, vatRate) &&
             const DeepCollectionEquality().equals(other.unit, unit) &&
             const DeepCollectionEquality()
                 .equals(other.expiryDate, expiryDate) &&
@@ -455,6 +472,7 @@ class _$_ItemMasterModel implements _ItemMasterModel {
         const DeepCollectionEquality().hash(vatMethod),
         const DeepCollectionEquality().hash(productVAT),
         const DeepCollectionEquality().hash(vatId),
+        const DeepCollectionEquality().hash(vatRate),
         const DeepCollectionEquality().hash(unit),
         const DeepCollectionEquality().hash(expiryDate),
         const DeepCollectionEquality().hash(openingStock),
@@ -489,6 +507,7 @@ abstract class _ItemMasterModel implements ItemMasterModel {
       required final String vatMethod,
       required final String productVAT,
       required final String vatId,
+      required final int vatRate,
       required final String unit,
       required final String expiryDate,
       required final String openingStock,
@@ -527,6 +546,8 @@ abstract class _ItemMasterModel implements ItemMasterModel {
   String get productVAT => throw _privateConstructorUsedError;
   @override
   String get vatId => throw _privateConstructorUsedError;
+  @override
+  int get vatRate => throw _privateConstructorUsedError;
   @override
   String get unit => throw _privateConstructorUsedError;
   @override
