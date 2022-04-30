@@ -58,6 +58,33 @@ class SalesDatabase {
     }
   }
 
+  //========== Get All Sales By Query ==========
+  Future<List<SalesModel>> getSalesByInvoiceSuggestions(String pattern) async {
+    final db = await dbInstance.database;
+    final res = await db.rawQuery(
+        "select * from $tableSales where ${SalesFields.invoiceNumber} LIKE '%$pattern%'");
+
+    List<SalesModel> list =
+        res.isNotEmpty ? res.map((c) => SalesModel.fromJson(c)).toList() : [];
+
+    return list;
+  }
+
+  //========== Get All Sales By Query ==========
+  Future<List<SalesModel>> getSalesByCustomerId(String id) async {
+    final db = await dbInstance.database;
+    final res = await db.query(
+      tableSales,
+      where: '${SalesFields.customerId} = ?',
+      whereArgs: [id],
+    );
+
+    List<SalesModel> list =
+        res.isNotEmpty ? res.map((c) => SalesModel.fromJson(c)).toList() : [];
+
+    return list;
+  }
+
 //========== Get All Sales ==========
   Future<List<SalesModel>> getAllSales() async {
     final db = await dbInstance.database;

@@ -7,6 +7,9 @@ class TextFeildWidget extends StatelessWidget {
       {Key? key,
       required this.labelText,
       this.hintText,
+      this.textStyle,
+      this.hintStyle,
+      this.isHint = false,
       this.textInputType,
       this.inputFormatters,
       this.textDirection,
@@ -16,6 +19,7 @@ class TextFeildWidget extends StatelessWidget {
       this.inputBorder,
       this.prefixIcon,
       this.suffixIcon,
+      this.suffixIconConstraints,
       this.autovalidateMode,
       this.validator,
       this.errorStyle = false,
@@ -33,6 +37,9 @@ class TextFeildWidget extends StatelessWidget {
       : super(key: key);
   final String labelText;
   final String? hintText;
+  final TextStyle? textStyle;
+  final TextStyle? hintStyle;
+  final bool isHint;
   final TextInputType? textInputType;
   final List<TextInputFormatter>? inputFormatters;
   final TextDirection? textDirection;
@@ -40,7 +47,8 @@ class TextFeildWidget extends StatelessWidget {
   final String? couterText;
   final InputBorder? inputBorder;
   final Icon? prefixIcon;
-  final IconButton? suffixIcon;
+  final Widget? suffixIcon;
+  final BoxConstraints? suffixIconConstraints;
   final TextEditingController? controller;
   final AutovalidateMode? autovalidateMode;
   final String? Function(String?)? validator;
@@ -60,17 +68,20 @@ class TextFeildWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      style: textStyle,
       decoration: InputDecoration(
         floatingLabelBehavior: floatingLabelBehavior,
         counterText: couterText,
-        labelText: labelText,
+        labelText: isHint ? null : labelText,
         border: inputBorder ?? const UnderlineInputBorder(),
         labelStyle: const TextStyle(color: klabelColorBlack),
         fillColor: kWhite,
         filled: true,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
-        hintText: hintText,
+        suffixIconConstraints: suffixIconConstraints,
+        hintText: isHint ? labelText : hintText,
+        hintStyle: hintStyle,
         isDense: isDense,
         errorStyle: errorStyle ? const TextStyle(fontSize: 0.01) : null,
         constraints: constraints,

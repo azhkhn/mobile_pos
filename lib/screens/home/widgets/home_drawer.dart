@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/db_functions/busiess_profile/business_profile_database.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
@@ -26,7 +27,7 @@ const List drawerListItemImage = [
 
 const List drawerListItem = [
   'Sales',
-  'Pos',
+  'POS',
   'Purchase',
   'Manage Expense',
   'Item Master',
@@ -93,9 +94,12 @@ class HomeDrawer extends StatelessWidget {
                     accountName: Text(snapshot.hasData
                         ? snapshot.data!.business
                         : 'Business Name'),
-                    accountEmail: Text(snapshot.hasData
-                        ? snapshot.data!.vatNumber
-                        : 'Vat Number'),
+                    accountEmail: Text(
+                      snapshot.hasData
+                          ? snapshot.data!.vatNumber
+                          : 'Vat Number',
+                      style: kText12,
+                    ),
                   ),
                   onTap: () {
                     Navigator.pop(context);

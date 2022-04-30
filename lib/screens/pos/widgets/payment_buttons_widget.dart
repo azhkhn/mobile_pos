@@ -91,11 +91,11 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    final int? cusomerId =
+                    final int? customerId =
                         SaleSideWidget.customerIdNotifier.value;
                     final num items = SaleSideWidget.totalItemsNotifier.value;
 
-                    if (cusomerId == null) {
+                    if (customerId == null) {
                       kSnackBar(
                           context: context,
                           content: 'Please select any Customer to add Sale!');
@@ -162,11 +162,11 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    final int? cusomerId =
+                    final int? customerId =
                         SaleSideWidget.customerIdNotifier.value;
                     final num items = SaleSideWidget.totalItemsNotifier.value;
 
-                    if (cusomerId == null) {
+                    if (customerId == null) {
                       kSnackBar(
                           context: context,
                           content: 'Please select any Customer to add Sale!');
@@ -262,11 +262,11 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    final int? cusomerId =
+                    final int? customerId =
                         SaleSideWidget.customerIdNotifier.value;
                     final num items = SaleSideWidget.totalItemsNotifier.value;
 
-                    if (cusomerId == null) {
+                    if (customerId == null) {
                       kSnackBar(
                           context: context,
                           content: 'Please select any Customer to add Sale!');
@@ -317,7 +317,7 @@ class PaymentButtonsWidget extends StatelessWidget {
     String? argSalesNote,
   }) async {
     int? salesId;
-    int cusomerId;
+    int customerId;
     final String dateTime,
         customerName,
         billerName,
@@ -376,7 +376,7 @@ class PaymentButtonsWidget extends StatelessWidget {
     // Save sale in a old date in Database
     // dateTime = DateTime(2022, 4, 22, 17, 45).toIso8601String();
     dateTime = DateTime.now().toIso8601String();
-    cusomerId = SaleSideWidget.customerIdNotifier.value!;
+    customerId = SaleSideWidget.customerIdNotifier.value!;
     customerName = SaleSideWidget.customerNameNotifier.value!;
     billerName = _biller;
     salesNote = argSalesNote ?? '';
@@ -390,7 +390,7 @@ class PaymentButtonsWidget extends StatelessWidget {
 
     final SalesModel _salesModel = SalesModel(
         dateTime: dateTime,
-        cusomerId: cusomerId,
+        customerId: customerId,
         customerName: customerName,
         billerName: billerName,
         salesNote: salesNote,

@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/db/db_functions/auth/user_db.dart';
 import 'package:shop_ez/screens/auth/widgets/login_signup_buttons.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import 'package:shop_ez/widgets/wave_clip.dart';
 
 class ScreenLogin extends StatelessWidget {
-  ScreenLogin({Key? key}) : super(key: key);
-  static late Size _screenSise;
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  const ScreenLogin({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    _screenSise = MediaQuery.of(context).size;
-    UserDatabase.instance.getAllUsers();
+    final Size _screenSise = MediaQuery.of(context).size;
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      // await UserDatabase.instance.getAllUsers();
+    });
     return Scaffold(
       body: SingleChildScrollView(
         child: Stack(
@@ -51,10 +49,7 @@ class ScreenLogin extends StatelessWidget {
                 ),
 
                 //========== SignUp Feilds ==========
-                SignInFields(
-                    screenSise: _screenSise,
-                    usernameController: _usernameController,
-                    passwordController: _passwordController)
+                const SignInFields(),
               ],
             ),
           ],
@@ -64,46 +59,37 @@ class ScreenLogin extends StatelessWidget {
   }
 }
 
-class SignInFields extends StatefulWidget {
+class SignInFields extends StatelessWidget {
   const SignInFields({
     Key? key,
-    required Size screenSise,
-    required TextEditingController usernameController,
-    required TextEditingController passwordController,
-  })  : _screenSise = screenSise,
-        _usernameController = usernameController,
-        _passwordController = passwordController,
-        super(key: key);
+  }) : super(key: key);
 
-  final Size _screenSise;
-  final TextEditingController _usernameController;
-  final TextEditingController _passwordController;
+  static final ValueNotifier<TextEditingController> usernameController =
+      ValueNotifier(TextEditingController());
+  static final ValueNotifier<TextEditingController> passwordController =
+      ValueNotifier(TextEditingController());
   static final _formStateKey = GlobalKey<FormState>();
-  static bool obscureState = false;
+  static ValueNotifier<bool> obscureState = ValueNotifier(false);
 
-  @override
-  State<SignInFields> createState() => _SignInFieldsState();
-}
-
-class _SignInFieldsState extends State<SignInFields> {
   @override
   Widget build(BuildContext context) {
+    final Size _screenSise = MediaQuery.of(context).size;
     return SizedBox(
-      height: widget._screenSise.height / 2,
+      height: _screenSise.height / 2,
       child: Padding(
         padding: const EdgeInsets.all(30.0),
         child: SingleChildScrollView(
           child: Form(
-            key: SignInFields._formStateKey,
+            key: _formStateKey,
             child: Flex(
               direction: Axis.vertical,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: widget._screenSise.height / 2 / 10,
+                  height: _screenSise.height / 2 / 10,
                 ),
                 TextFeildWidget(
-                  controller: widget._usernameController,
+                  controller: usernameController.value,
                   labelText: 'Username',
                   hintText: 'Phone number or email',
                   prefixIcon: const Icon(
@@ -117,38 +103,38 @@ class _SignInFieldsState extends State<SignInFields> {
                     return null;
                   },
                 ),
-                TextFeildWidget(
-                  controller: widget._passwordController,
-                  labelText: 'Password',
-                  prefixIcon: const Icon(
-                    Icons.security,
-                    color: Colors.black,
-                  ),
-                  suffixIcon: IconButton(
-                    color: Colors.black,
-                    onPressed: () {
-                      if (SignInFields.obscureState) {
-                        setState(() {
-                          SignInFields.obscureState = false;
-                        });
-                      } else {
-                        setState(() {
-                          SignInFields.obscureState = true;
-                        });
-                      }
-                    },
-                    icon: SignInFields.obscureState == false
-                        ? const Icon(Icons.visibility_off)
-                        : const Icon(Icons.visibility),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Password can't be empty*";
-                    }
-                    return null;
-                  },
-                  obscureText: !SignInFields.obscureState,
-                ),
+                ValueListenableBuilder(
+                    valueListenable: obscureState,
+                    builder: (context, bool obscure, _) {
+                      return TextFeildWidget(
+                        controller: passwordController.value,
+                        labelText: 'Password',
+                        prefixIcon: const Icon(
+                          Icons.security,
+                          color: Colors.black,
+                        ),
+                        suffixIcon: IconButton(
+                          color: Colors.black,
+                          onPressed: () {
+                            if (obscure) {
+                              obscureState.value = false;
+                            } else {
+                              obscureState.value = true;
+                            }
+                          },
+                          icon: obscureState.value == false
+                              ? const Icon(Icons.visibility_off)
+                              : const Icon(Icons.visibility),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Password can't be empty*";
+                          }
+                          return null;
+                        },
+                        obscureText: !obscureState.value,
+                      );
+                    }),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -163,9 +149,7 @@ class _SignInFieldsState extends State<SignInFields> {
                 ),
                 LoginAndSignUpButtons(
                   type: 1,
-                  username: widget._usernameController.text.trim(),
-                  password: widget._passwordController.text,
-                  formKey: SignInFields._formStateKey,
+                  formKey: _formStateKey,
                 )
               ],
             ),
@@ -173,12 +157,5 @@ class _SignInFieldsState extends State<SignInFields> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    widget._usernameController.dispose();
-    widget._passwordController.dispose();
-    super.dispose();
   }
 }

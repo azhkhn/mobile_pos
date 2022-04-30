@@ -6,6 +6,7 @@ import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/db_functions/auth/user_db.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
+import 'package:shop_ez/screens/auth/pages/login_screen.dart';
 
 import '../../../core/utils/snackbar/snackbar.dart';
 
@@ -95,15 +96,20 @@ class LoginAndSignUpButtons extends StatelessWidget {
 
 //========== Login and Verification ==========
   Future<void> onLogin(BuildContext context) async {
-    log('username == $username');
-    log('password == $password');
+    final String _username = SignInFields.usernameController.value.text.trim();
+    final String _password = SignInFields.passwordController.value.text.trim();
+
+    log('username == $_username');
+    log('password == $_password');
 
     final isFormValid = formKey.currentState!;
 
     if (isFormValid.validate()) {
       try {
-        await UserDatabase.instance.loginUser(username!, password!);
+        await UserDatabase.instance.loginUser(_username, _password);
         log('User Signed Successfully!');
+        SignInFields.usernameController.value.clear();
+        SignInFields.passwordController.value.clear();
         Navigator.pushReplacementNamed(context, routeHome);
       } catch (e) {
         log(e.toString());

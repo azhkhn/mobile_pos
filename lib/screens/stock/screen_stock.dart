@@ -14,8 +14,8 @@ import 'package:shop_ez/db/db_functions/category/category_db.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/sub_category/sub_category_db.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
+import 'package:shop_ez/screens/stock/widgets/stock_filter_bottom_sheet.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
-import 'package:shop_ez/widgets/dropdown_field_widget/dropdown_field_widget.dart';
 
 import '../../core/utils/device/device.dart';
 import '../../core/utils/text/converters.dart';
@@ -32,13 +32,8 @@ class ScreenStock extends StatelessWidget {
   final brandDB = BrandDatabase.instance;
   final itemMasterDB = ItemMasterDatabase.instance;
 
-  //========== Global Keys ==========
-  final GlobalKey<FormState> _formKey = GlobalKey();
-  final GlobalKey<FormFieldState> _categorykey = GlobalKey();
-  final GlobalKey<FormFieldState> _brandKey = GlobalKey();
-
   //========== Value Notifiers ==========
-  final ValueNotifier<List<dynamic>> itemsNotifier = ValueNotifier([]);
+  static final ValueNotifier<List<dynamic>> itemsNotifier = ValueNotifier([]);
 
   //========== TextEditing Controllers ==========
   final _productController = TextEditingController();
@@ -290,6 +285,7 @@ class ScreenStock extends StatelessWidget {
                                         valueListenable: itemsNotifier,
                                         builder: (context,
                                             List<dynamic> itemList, _) {
+                                          log('hellootherererj');
                                           log('Total Products == ${itemsNotifier.value.length}');
 
                                           return itemsNotifier.value.isNotEmpty
@@ -506,177 +502,7 @@ class ScreenStock extends StatelessWidget {
                                     borderRadius: BorderRadius.vertical(
                                         top: Radius.circular(20))),
                                 builder: (ctx) {
-                                  //========== DropDown Controllers ==========
-                                  String? _categoryController,
-                                      _brandController,
-                                      _stockController;
-
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 20.0, horizontal: 100.0),
-                                    child: Form(
-                                      key: _formKey,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              //========== Item Category Dropdown ==========
-                                              Flexible(
-                                                flex: 1,
-                                                child: FutureBuilder(
-                                                  future: categoryDB
-                                                      .getAllCategories(),
-                                                  builder: (context,
-                                                      dynamic snapshot) {
-                                                    return CustomDropDownField(
-                                                      labelText: 'Category',
-                                                      dropdownKey: _categorykey,
-                                                      border: true,
-                                                      isDesne: true,
-                                                      errorStyle: true,
-                                                      constraints:
-                                                          const BoxConstraints(
-                                                              maxHeight: 45),
-                                                      contentPadding:
-                                                          const EdgeInsets.all(
-                                                              10),
-                                                      floatingLabelBehavior:
-                                                          FloatingLabelBehavior
-                                                              .always,
-                                                      snapshot: snapshot,
-                                                      onChanged: (value) {
-                                                        _categoryController =
-                                                            value.toString();
-                                                        _brandController = null;
-                                                        _brandKey.currentState!
-                                                            .reset();
-                                                      },
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                              kWidth10,
-
-                                              //========== Item Brand Dropdown ==========
-                                              Flexible(
-                                                flex: 1,
-                                                child: FutureBuilder(
-                                                  future:
-                                                      brandDB.getAllBrands(),
-                                                  builder: (context,
-                                                      dynamic snapshot) {
-                                                    return CustomDropDownField(
-                                                      labelText: 'Brand',
-                                                      dropdownKey: _brandKey,
-                                                      border: true,
-                                                      isDesne: true,
-                                                      errorStyle: true,
-                                                      constraints:
-                                                          const BoxConstraints(
-                                                              maxHeight: 45),
-                                                      contentPadding:
-                                                          const EdgeInsets.all(
-                                                              10),
-                                                      floatingLabelBehavior:
-                                                          FloatingLabelBehavior
-                                                              .always,
-                                                      snapshot: snapshot,
-                                                      onChanged: (value) {
-                                                        _brandController =
-                                                            value.toString();
-                                                        _categoryController =
-                                                            null;
-                                                        _categorykey
-                                                            .currentState!
-                                                            .reset();
-                                                      },
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          kHeight10,
-                                          //========== Stock Dropdown ==========
-                                          Flexible(
-                                            flex: 1,
-                                            child: DropdownButtonFormField(
-                                              isExpanded: true,
-                                              decoration: const InputDecoration(
-                                                constraints: BoxConstraints(
-                                                    maxHeight: 45),
-                                                fillColor: kWhite,
-                                                filled: true,
-                                                isDense: true,
-                                                errorStyle:
-                                                    TextStyle(fontSize: 0.01),
-                                                contentPadding:
-                                                    EdgeInsets.all(10),
-                                                floatingLabelBehavior:
-                                                    FloatingLabelBehavior
-                                                        .always,
-                                                label: Text('Stock',
-                                                    style: TextStyle(
-                                                        color:
-                                                            klabelColorBlack)),
-                                                border: OutlineInputBorder(),
-                                              ),
-                                              items: types
-                                                  .map((values) =>
-                                                      DropdownMenuItem<String>(
-                                                        value: values,
-                                                        child: Text(values),
-                                                      ))
-                                                  .toList(),
-                                              onChanged: (value) {
-                                                _stockController =
-                                                    value.toString();
-                                                log(_stockController!);
-                                              },
-                                            ),
-                                          ),
-
-                                          kHeight15,
-
-                                          //========== Filter Button ==========
-                                          Flexible(
-                                            flex: 1,
-                                            child: Card(
-                                                elevation: 10,
-                                                child: Container(
-                                                  height: 40,
-                                                  width: 120,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                    border: Border.all(
-                                                        color: kBackgroundGrey),
-                                                  ),
-                                                  child: FittedBox(
-                                                    fit: BoxFit.scaleDown,
-                                                    child: TextButton.icon(
-                                                      onPressed: () => onFilter(
-                                                          context,
-                                                          _categoryController,
-                                                          _brandController,
-                                                          _stockController),
-                                                      icon: const Icon(
-                                                          Icons.filter_list),
-                                                      label:
-                                                          const Text('Filter'),
-                                                    ),
-                                                  ),
-                                                )),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
+                                  return StockFilterBottomSheet();
                                 });
                           },
                           icon: const Icon(Icons.filter_list),
@@ -693,11 +519,19 @@ class ScreenStock extends StatelessWidget {
   }
 
   void onFilter(BuildContext context, String? category, String? brand,
-      String? stock) async {
+      String? stock, GlobalKey<FormState> formKey) async {
     List<ItemMasterModel> _items = [];
     final List<ItemMasterModel> _results = [];
-    final _formState = _formKey.currentState!;
+    final _formState = formKey.currentState!;
     _builderModel = null;
+    log(category.toString());
+    log(brand.toString());
+    log(stock.toString());
+    if (_formState.validate()) {
+      log('valid');
+    } else {
+      log('invalid');
+    }
     if (_formState.validate()) {
       //========== Stock Base Filtering ==========
       if (stock != null) {
@@ -746,7 +580,6 @@ class ScreenStock extends StatelessWidget {
       } else if (brand != null) {
         itemsNotifier.value = await itemMasterDB.getProductByBrand(brand);
       }
-
       Navigator.pop(context);
     }
   }

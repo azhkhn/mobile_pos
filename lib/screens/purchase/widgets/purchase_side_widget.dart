@@ -13,6 +13,7 @@ import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_button_widget.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_price_section_widget.dart';
 import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
+import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
 import '../../../core/utils/device/device.dart';
@@ -43,6 +44,7 @@ class PurchaseSideWidget extends StatelessWidget {
 
   //==================== TextEditing Controllers ====================
   static final supplierController = TextEditingController();
+  static final referenceNumberController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +75,7 @@ class PurchaseSideWidget extends StatelessWidget {
               children: [
                 //==================== Get All Supplier Search Field ====================
                 Flexible(
-                  flex: 8,
+                  flex: 6,
                   child: TypeAheadField(
                     debounceDuration: const Duration(milliseconds: 500),
                     hideSuggestionsOnKeyboardHide: false,
@@ -133,6 +135,38 @@ class PurchaseSideWidget extends StatelessWidget {
                 ),
                 kWidth5,
 
+                Flexible(
+                  flex: 4,
+                  child: TextFeildWidget(
+                    labelText: 'Ref No',
+                    isHint: true,
+                    isDense: true,
+                    suffixIconConstraints: const BoxConstraints(
+                      minWidth: 10,
+                      minHeight: 10,
+                    ),
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: InkWell(
+                        child: const Icon(Icons.clear),
+                        onTap: () {
+                          referenceNumberController.clear();
+                        },
+                      ),
+                    ),
+                    controller: referenceNumberController,
+                    textStyle: const TextStyle(fontSize: 12),
+                    inputBorder: const OutlineInputBorder(),
+                    textInputType: TextInputType.text,
+                    constraints: const BoxConstraints(maxHeight: 40),
+                    hintStyle: const TextStyle(fontSize: 12),
+                    contentPadding: const EdgeInsets.all(10),
+                    errorStyle: true,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                  ),
+                ),
+                kWidth5,
+
                 //========== View supplier Button ==========
                 Flexible(
                   flex: 1,
@@ -141,8 +175,8 @@ class PurchaseSideWidget extends StatelessWidget {
                         padding: const EdgeInsets.all(5),
                         alignment: Alignment.center,
                         constraints: const BoxConstraints(
-                          minHeight: 30,
-                          maxHeight: 30,
+                          minHeight: 45,
+                          maxHeight: 45,
                         ),
                         onPressed: () {
                           if (supplierIdNotifier.value != null) {
@@ -185,8 +219,8 @@ class PurchaseSideWidget extends StatelessWidget {
                         padding: const EdgeInsets.all(5),
                         alignment: Alignment.center,
                         constraints: const BoxConstraints(
-                          minHeight: 30,
-                          maxHeight: 30,
+                          minHeight: 45,
+                          maxHeight: 45,
                         ),
                         onPressed: () {},
                         icon: const Icon(

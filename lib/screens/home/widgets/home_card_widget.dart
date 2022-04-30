@@ -65,6 +65,47 @@ class HomeCardWidget extends StatelessWidget {
         children: [
           Card(
             elevation: 5,
+            color: Colors.red[300],
+            child: SizedBox(
+              width: _screenSize.width / 4,
+              height: _screenSize.width / 12,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const FittedBox(
+                    child: Text(
+                      "Today's Sale",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: kButtonTextWhite,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10),
+                    ),
+                  ),
+                  // kHeight5,
+                  ValueListenableBuilder(
+                      valueListenable: todaySaleNotifier,
+                      builder: (context, num totalSale, _) {
+                        return FittedBox(
+                          child: Text(
+                            '$totalSale',
+                            textAlign: TextAlign.center,
+                            softWrap: false,
+                            overflow: TextOverflow.fade,
+                            style: const TextStyle(
+                              color: kButtonTextWhite,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11,
+                            ),
+                          ),
+                        );
+                      }),
+                ],
+              ),
+            ),
+          ),
+          Card(
+            elevation: 5,
             color: Colors.blue[300],
             child: SizedBox(
               width: _screenSize.width / 4,
@@ -83,7 +124,6 @@ class HomeCardWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // kHeight5,
                   ValueListenableBuilder(
                       valueListenable: todayCashNotifier,
                       builder: (context, num todayCash, _) {
@@ -131,47 +171,6 @@ class HomeCardWidget extends StatelessWidget {
                         return FittedBox(
                           child: Text(
                             Converter.currency.format(totalAmount),
-                            textAlign: TextAlign.center,
-                            softWrap: false,
-                            overflow: TextOverflow.fade,
-                            style: const TextStyle(
-                              color: kButtonTextWhite,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 11,
-                            ),
-                          ),
-                        );
-                      }),
-                ],
-              ),
-            ),
-          ),
-          Card(
-            elevation: 5,
-            color: Colors.red[300],
-            child: SizedBox(
-              width: _screenSize.width / 4,
-              height: _screenSize.width / 12,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const FittedBox(
-                    child: Text(
-                      "Today's Sale",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: kButtonTextWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10),
-                    ),
-                  ),
-                  // kHeight5,
-                  ValueListenableBuilder(
-                      valueListenable: todaySaleNotifier,
-                      builder: (context, num totalSale, _) {
-                        return FittedBox(
-                          child: Text(
-                            '$totalSale',
                             textAlign: TextAlign.center,
                             softWrap: false,
                             overflow: TextOverflow.fade,

@@ -124,12 +124,12 @@ class PurchaseButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    final int? cusomerId =
+                    final int? customerId =
                         PurchaseSideWidget.supplierIdNotifier.value;
                     final num items =
                         PurchaseSideWidget.totalItemsNotifier.value;
 
-                    if (cusomerId == null) {
+                    if (customerId == null) {
                       kSnackBar(
                           context: context,
                           content:
@@ -182,9 +182,10 @@ class PurchaseButtonsWidget extends StatelessWidget {
     required String argPaid,
     required String? argPurchaseNote,
   }) async {
-    int? purchaseId;
-    int supplierId;
-    final String dateTime,
+    final int? purchaseId;
+    final int supplierId;
+    final String referenceNumber,
+        dateTime,
         supplierName,
         billerName,
         purchaseNote,
@@ -214,6 +215,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
     final String _biller = _businessProfile!.billerName;
     log('Biller Name ==== $_biller');
 
+    referenceNumber = PurchaseSideWidget.referenceNumberController.text;
     dateTime = DateTime.now().toIso8601String();
     supplierId = PurchaseSideWidget.supplierIdNotifier.value!;
     supplierName = PurchaseSideWidget.supplierNameNotifier.value!;
@@ -232,6 +234,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
     createdBy = _user;
 
     final PurchaseModel _purchaseModel = PurchaseModel(
+        referenceNumber: referenceNumber,
         dateTime: dateTime,
         supplierId: supplierId,
         supplierName: supplierName,

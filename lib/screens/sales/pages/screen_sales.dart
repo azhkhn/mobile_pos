@@ -27,16 +27,7 @@ class ScreenSales extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      final List<SalesModel> salesModel =
-          await SalesDatabase.instance.getAllSales();
-      totalSalesNotifier.value = salesModel.length;
-      for (var i = 0; i < salesModel.length; i++) {
-        totalAmountNotifier.value += num.parse(salesModel[i].grantTotal);
-        paidAmountNotifier.value += num.parse(salesModel[i].paid);
-        balanceAmountNotifier.value += num.parse(salesModel[i].balance);
-        taxAmountNotifier.value += num.parse(salesModel[i].vatAmount);
-        overDueAmountNotifier.value += num.parse(salesModel[i].balance);
-      }
+      await getSalesDetails();
     });
 
     return Scaffold(
@@ -146,6 +137,7 @@ class ScreenSales extends StatelessWidget {
                               DeviceUtil.isLandscape = true;
                               await Navigator.pushNamed(context, routePos);
                               await DeviceUtil.toPortrait();
+                              await getSalesDetails();
                             },
                             color: Colors.green,
                             textColor: kWhite,
@@ -211,5 +203,28 @@ class ScreenSales extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> getSalesDetails() async {
+    final List<SalesModel> salesModel =
+        await SalesDatabase.instance.getAllSales();
+
+    // Checking if new Sale added!
+    if (totalSalesNotifier.value == salesModel.length) return;
+
+    totalSalesNotifier.value = salesModel.length;
+    totalAmountNotifier.value = 0;
+    paidAmountNotifier.value = 0;
+    balanceAmountNotifier.value = 0;
+    taxAmountNotifier.value = 0;
+    overDueAmountNotifier.value = 0;
+
+    for (var i = 0; i < salesModel.length; i++) {
+      totalAmountNotifier.value += num.parse(salesModel[i].grantTotal);
+      paidAmountNotifier.value += num.parse(salesModel[i].paid);
+      balanceAmountNotifier.value += num.parse(salesModel[i].balance);
+      taxAmountNotifier.value += num.parse(salesModel[i].vatAmount);
+      overDueAmountNotifier.value += num.parse(salesModel[i].balance);
+    }
   }
 }

@@ -23,7 +23,7 @@ const List homeGridName = [
   'EXPENSE',
   'STOCK',
   'REPORTS',
-  'SETTTINGS',
+  'SETTINGS',
 ];
 
 class HomeGrid extends StatelessWidget {

@@ -5,7 +5,7 @@ class SalesFields {
   static const invoiceNumber = 'invoiceNumber';
   static const salesNote = 'salesNote';
   static const dateTime = 'dateTime';
-  static const cusomerId = 'cusomerId';
+  static const customerId = 'customerId';
   static const customerName = 'customerName';
   static const billerName = 'billerName';
   static const totalItems = 'totalItems';
@@ -24,7 +24,7 @@ class SalesFields {
 class SalesModel {
   int? id;
   String? invoiceNumber;
-  final int cusomerId;
+  final int customerId;
   final String dateTime,
       customerName,
       billerName,
@@ -45,7 +45,7 @@ class SalesModel {
     this.id,
     this.invoiceNumber,
     required this.dateTime,
-    required this.cusomerId,
+    required this.customerId,
     required this.customerName,
     required this.billerName,
     required this.salesNote,
@@ -66,7 +66,7 @@ class SalesModel {
     int? id,
     String? invoiceNumber,
     dateTime,
-    cusomerId,
+    customerId,
     customerName,
     billerName,
     salesNote,
@@ -86,7 +86,7 @@ class SalesModel {
         id: id ?? this.id,
         invoiceNumber: invoiceNumber ?? this.invoiceNumber,
         dateTime: dateTime ?? this.dateTime,
-        cusomerId: cusomerId ?? this.cusomerId,
+        customerId: customerId ?? this.customerId,
         customerName: customerName ?? this.customerName,
         billerName: billerName ?? this.billerName,
         salesNote: salesNote ?? this.salesNote,
@@ -107,7 +107,7 @@ class SalesModel {
         SalesFields.id: id,
         SalesFields.invoiceNumber: invoiceNumber,
         SalesFields.dateTime: dateTime,
-        SalesFields.cusomerId: cusomerId,
+        SalesFields.customerId: customerId,
         SalesFields.customerName: customerName,
         SalesFields.billerName: billerName,
         SalesFields.salesNote: salesNote,
@@ -128,7 +128,7 @@ class SalesModel {
         id: json[SalesFields.id] as int,
         dateTime: json[SalesFields.dateTime] as String,
         invoiceNumber: json[SalesFields.invoiceNumber] as String,
-        cusomerId: json[SalesFields.cusomerId] as int,
+        customerId: json[SalesFields.customerId] as int,
         customerName: json[SalesFields.customerName] as String,
         billerName: json[SalesFields.billerName] as String,
         salesNote: json[SalesFields.salesNote] as String,

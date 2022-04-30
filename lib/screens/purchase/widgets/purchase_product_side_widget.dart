@@ -130,14 +130,16 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                       ),
                     );
                   },
-                  onSuggestionSelected: (ItemMasterModel suggestion) async {
-                    final itemId = suggestion.id;
-                    _productController.text = suggestion.itemName;
-                    futureGrid = itemMasterDB.getProductById(itemId!);
+                  onSuggestionSelected: (ItemMasterModel selectedItem) async {
+                    _productController.text = selectedItem.itemName;
+                    Future<List<dynamic>> future() async => [selectedItem];
+                    futureGrid = future();
                     _builderModel = null;
-                    PurchaseProductSideWidget.itemsNotifier.value =
-                        await itemMasterDB.getProductById(itemId);
-                    log(suggestion.itemName);
+                    PurchaseProductSideWidget.itemsNotifier.value = [
+                      selectedItem
+                    ];
+
+                    log(selectedItem.itemName);
                   },
                 ),
               ),

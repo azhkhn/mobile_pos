@@ -44,6 +44,36 @@ class PurchaseDatabase {
     }
   }
 
+  //========== Get All Purchases By Query ==========
+  Future<List<PurchaseModel>> getPurchaseByInvoiceSuggestions(
+      String pattern) async {
+    final db = await dbInstance.database;
+    final res = await db.rawQuery(
+        "select * from $tablePurchase where ${PurchaseFields.invoiceNumber} LIKE '%$pattern%' OR ${PurchaseFields.referenceNumber} LIKE '%$pattern%'");
+
+    List<PurchaseModel> list = res.isNotEmpty
+        ? res.map((c) => PurchaseModel.fromJson(c)).toList()
+        : [];
+
+    return list;
+  }
+
+  //========== Get All Purchases By Query ==========
+  Future<List<PurchaseModel>> getPurchasesBySupplierId(String id) async {
+    final db = await dbInstance.database;
+    final res = await db.query(
+      tablePurchase,
+      where: '${PurchaseFields.supplierId} = ?',
+      whereArgs: [id],
+    );
+
+    List<PurchaseModel> list = res.isNotEmpty
+        ? res.map((c) => PurchaseModel.fromJson(c)).toList()
+        : [];
+
+    return list;
+  }
+
 //========== Get All Purchases ==========
   Future<List<PurchaseModel>> getAllPurchases() async {
     final db = await dbInstance.database;

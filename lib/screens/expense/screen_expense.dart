@@ -9,11 +9,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/db/db_functions/expense/expense_category_database.dart';
 import 'package:shop_ez/db/db_functions/expense/expense_database.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
+import 'package:shop_ez/widgets/dropdown_field_widget/dropdown_field_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
@@ -33,7 +35,9 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
+  //========== Databse Instances ==========
   final expenseDB = ExpenseDatabase.instance;
+  final expenseCategoryDB = ExpenseCategoryDatabase.instance;
 
   Color? textColor = Colors.black;
   dynamic selectedDocument;
@@ -64,31 +68,26 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
               child: Column(
                 children: [
                   //========== Expense Category ==========
-                  DropdownButtonFormField(
-                    decoration: const InputDecoration(
-                        label: Text(
-                      'Expense Category *',
-                      style: TextStyle(color: klabelColorBlack),
-                    )),
-                    items: expenseList
-                        .map(
-                          (value) => DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (value) {
-                      _expenseCategoryController = value.toString();
-                      setState(() {});
-                    },
-                    validator: (value) {
-                      if (value == null || _expenseCategoryController.isEmpty) {
-                        return 'This field is required*';
-                      }
-                      return null;
+                  FutureBuilder(
+                    future: expenseCategoryDB.getAllExpenseCategories(),
+                    builder: (context, dynamic snapshot) {
+                      return CustomDropDownField(
+                        labelText: 'Choose Expense *',
+                        snapshot: snapshot,
+                        onChanged: (value) {
+                          _expenseCategoryController = value.toString();
+                        },
+                        validator: (value) {
+                          if (value == null ||
+                              _expenseCategoryController == 'null') {
+                            return 'This field is required*';
+                          }
+                          return null;
+                        },
+                      );
                     },
                   ),
+                  kHeight10,
                   kHeight10,
 
                   //========== Expense Title ==========

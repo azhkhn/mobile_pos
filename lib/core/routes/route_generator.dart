@@ -37,7 +37,7 @@ class RouteGenerator {
       case routeHome:
         return MaterialPageRoute(builder: (_) => ScreenHome());
       case routeLogin:
-        return MaterialPageRoute(builder: (_) => ScreenLogin());
+        return MaterialPageRoute(builder: (_) => const ScreenLogin());
       case routeSignUp:
         return MaterialPageRoute(builder: (_) => const ScreenSignUp());
       case routeItemMaster:

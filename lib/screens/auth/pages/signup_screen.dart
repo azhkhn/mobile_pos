@@ -172,6 +172,7 @@ class _SignUpFieldsState extends State<SignUpFields> {
                     Icons.store,
                     color: Colors.black,
                   ),
+                  contentPadding: EdgeInsets.all(10),
                 ),
                 isExpanded: true,
                 items: SignUpFields.items.map((String item) {
