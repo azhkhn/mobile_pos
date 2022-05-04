@@ -276,7 +276,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
             unitPrice = PurchaseSideWidget
                 .selectedProductsNotifier.value[i].sellingPrice,
             netUnitPrice = vatMethod == 'Inclusive'
-                ? '${const PurchaseSideWidget().getExclusiveAmount(unitPrice)}'
+                ? '${const PurchaseSideWidget().getExclusiveAmount(sellingPrice: unitPrice, vatRate: PurchaseSideWidget.selectedProductsNotifier.value[i].vatRate)}'
                 : unitPrice,
             quantity = PurchaseSideWidget.quantityNotifier.value[i].text,
             subTotal = PurchaseSideWidget.subTotalNotifier.value[i],

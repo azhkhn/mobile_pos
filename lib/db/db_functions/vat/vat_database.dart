@@ -36,6 +36,7 @@ class VatDatabase {
     final db = await dbInstance.database;
     final _result = await db.query(tableVat);
     log('VATs == $_result');
+    // await db.delete(tableVat);
     final _vats = _result.map((json) => VatModel.fromJson(json)).toList();
     return _vats;
   }

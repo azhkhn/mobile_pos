@@ -14,8 +14,9 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import '../../core/utils/snackbar/snackbar.dart';
 
 class CustomerScreen extends StatefulWidget {
-  const CustomerScreen({Key? key}) : super(key: key);
+  const CustomerScreen({Key? key, this.pos = false}) : super(key: key);
   static const items = ['Cash Customer', 'Credit Customer'];
+  final bool pos;
 
   @override
   State<CustomerScreen> createState() => _CustomerScreenState();
@@ -142,12 +143,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     labelText: 'Company',
                     focusNode: companyFocusNode,
                     textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
                   ),
                   kHeight10,
 
@@ -158,12 +153,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     textDirection: TextDirection.rtl,
                     focusNode: companyArabicFocusNode,
                     textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
                   ),
                   kHeight10,
 
@@ -241,7 +230,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   //========== Address Arabic Field ==========
                   TextFeildWidget(
                     controller: _addressArabicController,
-                    labelText: 'Address in Arabic',
+                    labelText: 'Address Arabic',
                     textDirection: TextDirection.rtl,
                     focusNode: addressArabicFocusNode,
                     textInputType: TextInputType.text,
@@ -276,7 +265,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   //========== City Arabic Field ==========
                   TextFeildWidget(
                     controller: _cityArabicController,
-                    labelText: 'City in Arabic',
+                    labelText: 'City Arabic',
                     textDirection: TextDirection.rtl,
                     focusNode: cityArabicFocusNode,
                     textInputType: TextInputType.text,
@@ -311,7 +300,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   //========== State Arabic Field ==========
                   TextFeildWidget(
                     controller: _stateArabicController,
-                    labelText: 'State in Arabic',
+                    labelText: 'State Arabic',
                     textDirection: TextDirection.rtl,
                     focusNode: stateArabicFocusNode,
                     textInputType: TextInputType.text,
@@ -346,7 +335,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   //========== Country Arabic Field ==========
                   TextFeildWidget(
                     controller: _countryArabicController,
-                    labelText: 'Country in Arabic',
+                    labelText: 'Country Arabic',
                     textDirection: TextDirection.rtl,
                     focusNode: countryArabicFocusNode,
                     textInputType: TextInputType.text,
@@ -449,12 +438,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
         poBox: poBox,
       );
       try {
-        await customerDB.createCustomer(_customerModel);
+        final id = await customerDB.createCustomer(_customerModel);
         log('Customer $customer Added!');
         kSnackBar(
             context: context,
             success: true,
             content: 'Customer "$customer" added successfully!');
+
+        if (widget.pos) {
+          return Navigator.pop(context, id);
+        }
       } catch (e) {
         if (e == 'Company Already Exist!') {
           log('Commpany name Already Exist!');

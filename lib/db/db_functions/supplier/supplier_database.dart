@@ -9,7 +9,7 @@ class SupplierDatabase {
   SupplierDatabase._init();
 
 //========== Create Supplier ==========
-  Future<void> createSupplier(SupplierModel _supplierModel) async {
+  Future<int> createSupplier(SupplierModel _supplierModel) async {
     final db = await dbInstance.database;
     final supplier = await db.rawQuery(
         "SELECT * FROM $tableSupplier WHERE ${SupplierFields.company} = '${_supplierModel.company}'");
@@ -20,6 +20,7 @@ class SupplierDatabase {
       log('Supplier Created!');
       final id = await db.insert(tableSupplier, _supplierModel.toJson());
       log('Supplier id == $id');
+      return id;
     }
   }
 

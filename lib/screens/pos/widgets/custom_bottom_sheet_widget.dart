@@ -75,66 +75,6 @@ class CustomBottomSheetWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Expanded(
-                              flex: 5,
-                              child: AutoSizeText(
-                                'Company',
-                                maxFontSize: 20,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                            const Expanded(
-                                child: Text(
-                              ' : ',
-                              textAlign: TextAlign.center,
-                            )),
-                            Expanded(
-                              flex: 7,
-                              child: AutoSizeText(
-                                snapshot.data!.company,
-                                textAlign: TextAlign.end,
-                                maxFontSize: 20,
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            ),
-                          ],
-                        ),
-                        kHeight10,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Expanded(
-                              flex: 5,
-                              child: AutoSizeText(
-                                'Company Arabic',
-                                maxFontSize: 20,
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ),
-                            const Expanded(
-                                child: Text(
-                              ' : ',
-                              textAlign: TextAlign.center,
-                            )),
-                            Expanded(
-                              flex: 7,
-                              child: AutoSizeText(
-                                snapshot.data!.companyArabic,
-                                textAlign: TextAlign.end,
-                                maxFontSize: 20,
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            ),
-                          ],
-                        ),
-                        kHeight10,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
                             Expanded(
                               flex: 5,
                               child: AutoSizeText(
@@ -187,6 +127,66 @@ class CustomBottomSheetWidget extends StatelessWidget {
                                 supplier
                                     ? snapshot.data!.supplierArabic
                                     : snapshot.data!.customerArabic,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                        kHeight10,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'Company',
+                                maxFontSize: 20,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                snapshot.data!.company,
+                                textAlign: TextAlign.end,
+                                maxFontSize: 20,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                        kHeight10,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Expanded(
+                              flex: 5,
+                              child: AutoSizeText(
+                                'Company Arabic',
+                                maxFontSize: 20,
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const Expanded(
+                                child: Text(
+                              ' : ',
+                              textAlign: TextAlign.center,
+                            )),
+                            Expanded(
+                              flex: 7,
+                              child: AutoSizeText(
+                                snapshot.data!.companyArabic,
                                 textAlign: TextAlign.end,
                                 maxFontSize: 20,
                                 style: const TextStyle(fontSize: 12),

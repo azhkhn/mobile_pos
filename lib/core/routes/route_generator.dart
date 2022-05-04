@@ -43,7 +43,10 @@ class RouteGenerator {
       case routeItemMaster:
         return MaterialPageRoute(builder: (_) => ScreenItemMaster());
       case routeManageSupplier:
-        return MaterialPageRoute(builder: (_) => ScreenManageSupplier());
+        return MaterialPageRoute(
+            builder: (_) => ScreenManageSupplier(
+                  purchase: args == true,
+                ));
       case routeCategory:
         return MaterialPageRoute(builder: (_) => CategoryScreen());
       case routeSubCategory:
@@ -51,7 +54,8 @@ class RouteGenerator {
       case routeBrand:
         return MaterialPageRoute(builder: (_) => BrandScreen());
       case routeCustomer:
-        return MaterialPageRoute(builder: (_) => const CustomerScreen());
+        return MaterialPageRoute(
+            builder: (_) => CustomerScreen(pos: args == true));
       case routeUnit:
         return MaterialPageRoute(builder: (_) => UnitScreen());
       case routeExpense:

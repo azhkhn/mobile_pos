@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
@@ -222,7 +223,26 @@ class PurchaseSideWidget extends StatelessWidget {
                           minHeight: 45,
                           maxHeight: 45,
                         ),
-                        onPressed: () {},
+                        onPressed: () async {
+                          // DeviceUtil.isLandscape = false;
+                          // await DeviceUtil.toPortrait();
+                          final id = await Navigator.pushNamed(
+                              context, routeManageSupplier,
+                              arguments: true);
+
+                          if (id != null) {
+                            final addedSupplier = await SupplierDatabase
+                                .instance
+                                .getSupplierById(id as int);
+
+                            supplierController.text = addedSupplier.supplier;
+                            supplierNameNotifier.value = addedSupplier.supplier;
+                            supplierIdNotifier.value = addedSupplier.id;
+                            log(addedSupplier.company);
+                          }
+
+                          // await DeviceUtil.toLandscape();
+                        },
                         icon: const Icon(
                           Icons.person_add,
                           color: Colors.blue,
@@ -288,7 +308,8 @@ class PurchaseSideWidget extends StatelessWidget {
                                         num.parse(_product.sellingPrice))
                                     : Converter.currency.format(
                                         getExclusiveAmount(
-                                            _product.sellingPrice)),
+                                            sellingPrice: _product.sellingPrice,
+                                            vatRate: _product.vatRate)),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -405,9 +426,10 @@ class PurchaseSideWidget extends StatelessWidget {
   //==================== Get SubTotal Amount ====================
   void getSubTotal(List<ItemMasterModel> selectedProducts, int index, num qty) {
     final cost = num.tryParse(selectedProducts[index].sellingPrice);
+    final vatRate = selectedProducts[index].vatRate;
     if (selectedProducts[index].vatMethod == 'Inclusive') {
-      final _exclusiveCost =
-          getExclusiveAmount(selectedProducts[index].sellingPrice);
+      final _exclusiveCost = getExclusiveAmount(
+          sellingPrice: selectedProducts[index].sellingPrice, vatRate: vatRate);
       final _subTotal = _exclusiveCost * qty;
       subTotalNotifier.value[index] = '$_subTotal';
     } else {
@@ -452,16 +474,21 @@ class PurchaseSideWidget extends StatelessWidget {
   }
 
   //==================== Get Item VAT ====================
-  void getItemVat({String? vatMethod, String? amount}) {
+  void getItemVat({
+    required String vatMethod,
+    required String amount,
+    required int vatRate,
+  }) {
     num? itemTotalVat;
-    num sellingPrice = num.parse(amount!);
+    num sellingPrice = num.parse(amount);
 
     if (vatMethod == 'Inclusive') {
-      sellingPrice = getExclusiveAmount('$sellingPrice');
+      sellingPrice =
+          getExclusiveAmount(sellingPrice: '$sellingPrice', vatRate: vatRate);
     }
 
-    itemTotalVat = sellingPrice * 15 / 100;
-    log('Item Total VAT == $itemTotalVat');
+    itemTotalVat = sellingPrice * vatRate / 100;
+    log('Item VAT == $itemTotalVat');
     itemTotalVatNotifier.value.add('$itemTotalVat');
   }
 
@@ -487,12 +514,14 @@ class PurchaseSideWidget extends StatelessWidget {
   }
 
   //==================== Calculate Exclusive Amount from Inclusive Amount ====================
-  num getExclusiveAmount(String sellingPrice) {
+  //==================== Calculate Exclusive Amount from Inclusive Amount ====================
+  num getExclusiveAmount({required String sellingPrice, required int vatRate}) {
     num _exclusiveAmount = 0;
+    num percentageYouHave = vatRate + 100;
 
     final _inclusiveAmount = num.tryParse(sellingPrice);
 
-    _exclusiveAmount = _inclusiveAmount! * 100 / 115;
+    _exclusiveAmount = _inclusiveAmount! * 100 / percentageYouHave;
 
     // log('Product VAT == ' '${_inclusiveAmount * 15 / 115}');
     // log('Exclusive == ' '${_inclusiveAmount * 100 / 115}');

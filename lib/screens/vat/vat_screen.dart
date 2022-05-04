@@ -137,17 +137,18 @@ class VatScreen extends StatelessWidget {
                 //========== VAT List Field ==========
                 kHeight50,
                 Expanded(
-                  child: FutureBuilder<dynamic>(
+                  child: FutureBuilder<List<VatModel>>(
                     future: vatDB.getAllVats(),
                     builder: (context, snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
                           return const Center(
-                              child: CircularProgressIndicator());
+                            child: CircularProgressIndicator(),
+                          );
                         case ConnectionState.done:
                         default:
                           if (snapshot.hasData) {
-                            vatNotifier.value = snapshot.data;
+                            vatNotifier.value = snapshot.data!;
                           }
                           return ValueListenableBuilder(
                               valueListenable: vatNotifier,
@@ -199,7 +200,7 @@ class VatScreen extends StatelessWidget {
                                       const Divider(
                                     thickness: 1,
                                   ),
-                                  itemCount: snapshot.data.length,
+                                  itemCount: vats.length,
                                 );
                               });
                       }
@@ -219,14 +220,14 @@ class VatScreen extends StatelessWidget {
     final String name, code, type;
     final int rate;
 
-    //Retrieving values from TextFields
-    name = _nameController.text.trim();
-    code = _codeController.text.trim();
-    rate = _rateController.text.trim() as int;
-    type = _vatType;
-
     final _formState = _formKey.currentState!;
     if (_formState.validate()) {
+      //Retrieving values from TextFields
+      name = _nameController.text.trim();
+      code = _codeController.text.trim();
+      rate = int.parse(_rateController.text.trim());
+      type = _vatType;
+
       final _vatModel =
           VatModel(name: name, code: code, rate: rate, type: type);
 

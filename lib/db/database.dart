@@ -37,19 +37,31 @@ class EzDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path,
-        version: 9, onCreate: _createDB, onUpgrade: _upgradeDB);
+        version: 10, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
-    // const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    // const textType = 'TEXT NOT NULL';
-    // // const textNull = 'TEXT';
+    const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const textType = 'TEXT NOT NULL';
+    // const textNull = 'TEXT';
     // const intNull = 'INTEGER';
     const intType = 'INTEGER NOT NULL';
 
-    await db.execute(
-        "ALTER TABLE $tableItemMaster ADD COLUMN vatRate $intType DEFAULT 15");
+    await db.rawQuery('DROP TABLE IF EXISTS $tableVat');
+
+    //========== Table VAT ==========
+    await db.execute('''CREATE TABLE $tableVat (
+      ${VatFields.id} $idAuto, 
+      ${VatFields.name} $textType,
+      ${VatFields.code} $textType,
+      ${VatFields.rate} $intType,
+      ${VatFields.type} $textType)''');
+
+    if (oldVersion == 8) {
+      await db.execute(
+          "ALTER TABLE $tableItemMaster ADD COLUMN vatRate $intType DEFAULT 15");
+    }
 
     //**
     //
@@ -176,6 +188,7 @@ class EzDatabase {
       ${ItemMasterFields.sellingPrice} $textType,
       ${ItemMasterFields.secondarySellingPrice} $textType,
       ${ItemMasterFields.vatId} $textType,
+      ${ItemMasterFields.vatRate} $textType,
       ${ItemMasterFields.productVAT} $textType,
       ${ItemMasterFields.unit} $textType,
       ${ItemMasterFields.expiryDate} $textType,
@@ -219,7 +232,7 @@ class EzDatabase {
       ${VatFields.id} $idAuto, 
       ${VatFields.name} $textType,
       ${VatFields.code} $textType,
-      ${VatFields.rate} $textType,
+      ${VatFields.rate} $intType,
       ${VatFields.type} $textType)''');
 
 //========== Table Expense ==========

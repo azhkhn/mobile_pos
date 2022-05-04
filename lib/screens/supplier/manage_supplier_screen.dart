@@ -14,7 +14,13 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import '../../core/utils/snackbar/snackbar.dart';
 
 class ScreenManageSupplier extends StatelessWidget {
-  ScreenManageSupplier({Key? key}) : super(key: key);
+  ScreenManageSupplier({
+    Key? key,
+    this.purchase = false,
+  }) : super(key: key);
+
+  final bool purchase;
+
   static late Size _screenSize;
   final _formKey = GlobalKey<FormState>();
   final _companyController = TextEditingController();
@@ -298,12 +304,15 @@ class ScreenManageSupplier extends StatelessWidget {
         poBox: poBox,
       );
       try {
-        await supplierDB.createSupplier(_supplierModel);
+        final id = await supplierDB.createSupplier(_supplierModel);
         log('Supplier $supplier Added!');
         kSnackBar(
             context: context,
             success: true,
             content: 'Supplier "$supplier" added successfully!');
+        if (purchase) {
+          Navigator.pop(context, id);
+        }
       } catch (e) {
         log('Commpany $company Already Exist!');
         kSnackBar(

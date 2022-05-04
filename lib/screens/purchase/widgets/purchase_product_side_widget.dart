@@ -534,7 +534,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
     PurchaseSideWidget.selectedProductsNotifier.value.add(itemList[index]);
 
     PurchaseSideWidget.subTotalNotifier.value.add(vatMethod == 'Inclusive'
-        ? '${const PurchaseSideWidget().getExclusiveAmount(itemList[index].sellingPrice)}'
+        ? '${const PurchaseSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: itemList[index].vatRate)}'
         : itemList[index].sellingPrice);
 
     PurchaseSideWidget.quantityNotifier.value
@@ -542,8 +542,10 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
 
     PurchaseSideWidget.totalItemsNotifier.value++;
 
-    const PurchaseSideWidget()
-        .getItemVat(vatMethod: vatMethod, amount: itemList[index].sellingPrice);
+    const PurchaseSideWidget().getItemVat(
+        vatMethod: vatMethod,
+        amount: itemList[index].sellingPrice,
+        vatRate: itemList[index].vatRate);
     const PurchaseSideWidget().getTotalAmount();
     const PurchaseSideWidget().getTotalVAT();
     const PurchaseSideWidget().getTotalPayable();

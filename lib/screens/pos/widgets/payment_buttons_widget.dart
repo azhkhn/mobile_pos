@@ -430,7 +430,7 @@ class PaymentButtonsWidget extends StatelessWidget {
             unitPrice =
                 SaleSideWidget.selectedProductsNotifier.value[i].sellingPrice,
             netUnitPrice = vatMethod == 'Inclusive'
-                ? '${const SaleSideWidget().getExclusiveAmount(unitPrice)}'
+                ? '${const SaleSideWidget().getExclusiveAmount(sellingPrice: unitPrice, vatRate: SaleSideWidget.selectedProductsNotifier.value[i].vatRate)}'
                 : unitPrice,
             quantity = SaleSideWidget.quantityNotifier.value[i].text,
             subTotal = SaleSideWidget.subTotalNotifier.value[i],

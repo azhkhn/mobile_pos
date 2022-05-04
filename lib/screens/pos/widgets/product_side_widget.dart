@@ -506,6 +506,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
     for (var i = 0;
         i < SaleSideWidget.selectedProductsNotifier.value.length;
         i++) {
+      //========== If Product already added ==========
       if (SaleSideWidget.selectedProductsNotifier.value[i].id ==
           itemList[index].id) {
         final _currentQty =
@@ -525,7 +526,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
     SaleSideWidget.selectedProductsNotifier.value.add(itemList[index]);
 
     SaleSideWidget.subTotalNotifier.value.add(vatMethod == 'Inclusive'
-        ? '${const SaleSideWidget().getExclusiveAmount(itemList[index].sellingPrice)}'
+        ? '${const SaleSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: itemList[index].vatRate)}'
         : itemList[index].sellingPrice);
 
     SaleSideWidget.quantityNotifier.value.add(TextEditingController(text: '1'));

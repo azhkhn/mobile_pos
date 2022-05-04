@@ -8,29 +8,27 @@ class CustomerDatabase {
   CustomerDatabase._init();
 
 //========== Create Customer ==========
-  Future<void> createCustomer(CustomerModel _customerModel) async {
+  Future<int> createCustomer(CustomerModel _customerModel) async {
     final db = await dbInstance.database;
 
-    final _company = await db.rawQuery(
-        "select * from $tableCustomer where ${CustomerFields.company} = '${_customerModel.company}'");
+    // final _company = await db.rawQuery(
+    //     "select * from $tableCustomer where ${CustomerFields.company} = '${_customerModel.company}'");
 
-    if (_company.isNotEmpty) {
-      throw 'Company Already Exist!';
-    } else {
-      if (_customerModel.vatNumber!.toString().isNotEmpty) {
-        final _vatNumber = await db.rawQuery(
-            "select * from $tableCustomer where ${CustomerFields.vatNumber} = '${_customerModel.vatNumber}'");
+    if (_customerModel.vatNumber!.toString().isNotEmpty) {
+      final _vatNumber = await db.rawQuery(
+          "select * from $tableCustomer where ${CustomerFields.vatNumber} = '${_customerModel.vatNumber}'");
 
-        if (_vatNumber.isNotEmpty) {
-          throw 'VAT Number already exist!';
-        } else {
-          final id = await db.insert(tableCustomer, _customerModel.toJson());
-          log('Customer id = $id');
-        }
+      if (_vatNumber.isNotEmpty) {
+        throw 'VAT Number already exist!';
       } else {
         final id = await db.insert(tableCustomer, _customerModel.toJson());
         log('Customer id = $id');
+        return id;
       }
+    } else {
+      final id = await db.insert(tableCustomer, _customerModel.toJson());
+      log('Customer id = $id');
+      return id;
     }
   }
 

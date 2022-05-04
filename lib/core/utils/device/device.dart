@@ -27,4 +27,10 @@ class DeviceUtil {
     await SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   }
+
+  static Future<void> toLandscape() async {
+    isLandscape = true;
+    await SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+  }
 }
