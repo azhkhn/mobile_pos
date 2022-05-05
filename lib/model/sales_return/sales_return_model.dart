@@ -1,13 +1,14 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'sales_model.freezed.dart';
-part 'sales_model.g.dart';
+part 'sales_return_model.freezed.dart';
+part 'sales_return_model.g.dart';
 
 @freezed
-class SalesModel with _$SalesModel {
-  const factory SalesModel({
+class SalesReturnModal with _$SalesReturnModal {
+  const factory SalesReturnModal({
     @JsonKey(name: '_id') int? id,
     String? invoiceNumber,
+    required String? originalInvoiceNumber,
     required int customerId,
     required String dateTime,
     required String customerName,
@@ -24,16 +25,18 @@ class SalesModel with _$SalesModel {
     required String salesStatus,
     required String paymentStatus,
     required String createdBy,
-  }) = _SalesModel;
-  factory SalesModel.fromJson(Map<String, dynamic> json) =>
-      _$SalesModelFromJson(json);
+  }) = _SalesReturnModal;
+
+  factory SalesReturnModal.fromJson(Map<String, dynamic> json) =>
+      _$SalesReturnModalFromJson(json);
 }
 
-const String tableSales = 'sales';
+const String tableSalesReturn = 'sales_return';
 
-class SalesFields {
+class SalesReturnFields {
   static const id = '_id';
   static const invoiceNumber = 'invoiceNumber';
+  static const originalInvoiceNumber = 'originalInvoiceNumber';
   static const salesNote = 'salesNote';
   static const dateTime = 'dateTime';
   static const customerId = 'customerId';

@@ -10,17 +10,18 @@ import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
-import 'package:shop_ez/screens/pos/widgets/payment_buttons_widget.dart';
-import 'package:shop_ez/screens/pos/widgets/price_section_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
+import 'package:shop_ez/screens/sales_return/widgets/sales_return_buttons_widget.dart';
+import 'package:shop_ez/screens/sales_return/widgets/sales_return_price_section.dart';
+import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
+import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
 import '../../../core/utils/device/device.dart';
 import '../../../core/utils/snackbar/snackbar.dart';
-import '../../../widgets/gesture_dismissible_widget/dismissible_widget.dart';
 
-class SaleSideWidget extends StatelessWidget {
-  const SaleSideWidget({
+class SalesReturnSideWidget extends StatelessWidget {
+  const SalesReturnSideWidget({
     Key? key,
   }) : super(key: key);
 
@@ -44,6 +45,7 @@ class SaleSideWidget extends StatelessWidget {
 
   //==================== TextEditing Controllers ====================
   static final customerController = TextEditingController();
+  static final saleInvoiceController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +74,9 @@ class SaleSideWidget extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //==================== Get All Customers Search Field ====================
+                //==================== Get All Customer Search Field ====================
                 Flexible(
-                  flex: 8,
+                  flex: 6,
                   child: TypeAheadField(
                     debounceDuration: const Duration(milliseconds: 500),
                     hideSuggestionsOnKeyboardHide: false,
@@ -106,7 +108,7 @@ class SaleSideWidget extends StatelessWidget {
                         )),
                     noItemsFoundBuilder: (context) => const SizedBox(
                         height: 50,
-                        child: Center(child: Text('No Customer Found!'))),
+                        child: Center(child: Text('No customer Found!'))),
                     suggestionsCallback: (pattern) async {
                       return CustomerDatabase.instance
                           .getCustomerSuggestions(pattern);
@@ -134,7 +136,39 @@ class SaleSideWidget extends StatelessWidget {
                 ),
                 kWidth5,
 
-                //========== View Customer Button ==========
+                Flexible(
+                  flex: 4,
+                  child: TextFeildWidget(
+                    labelText: 'Invoice No',
+                    isHint: true,
+                    isDense: true,
+                    suffixIconConstraints: const BoxConstraints(
+                      minWidth: 10,
+                      minHeight: 10,
+                    ),
+                    suffixIcon: Padding(
+                      padding: kClearTextIconPadding,
+                      child: InkWell(
+                        child: const Icon(Icons.clear, size: 15),
+                        onTap: () {
+                          saleInvoiceController.clear();
+                        },
+                      ),
+                    ),
+                    controller: saleInvoiceController,
+                    textStyle: const TextStyle(fontSize: 12),
+                    inputBorder: const OutlineInputBorder(),
+                    textInputType: TextInputType.text,
+                    constraints: const BoxConstraints(maxHeight: 40),
+                    hintStyle: const TextStyle(fontSize: 10),
+                    contentPadding: const EdgeInsets.all(10),
+                    errorStyle: true,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                  ),
+                ),
+                kWidth5,
+
+                //========== View customer Button ==========
                 Flexible(
                   flex: 1,
                   child: FittedBox(
@@ -142,8 +176,8 @@ class SaleSideWidget extends StatelessWidget {
                         padding: const EdgeInsets.all(5),
                         alignment: Alignment.center,
                         constraints: const BoxConstraints(
-                          minHeight: 30,
-                          maxHeight: 30,
+                          minHeight: 45,
+                          maxHeight: 45,
                         ),
                         onPressed: () {
                           if (customerIdNotifier.value != null) {
@@ -159,7 +193,9 @@ class SaleSideWidget extends StatelessWidget {
                                 builder: (context) => DismissibleWidget(
                                       context: context,
                                       child: CustomBottomSheetWidget(
-                                          id: customerIdNotifier.value),
+                                        id: customerIdNotifier.value,
+                                        supplier: true,
+                                      ),
                                     ));
                           } else {
                             kSnackBar(
@@ -176,42 +212,42 @@ class SaleSideWidget extends StatelessWidget {
                   ),
                 ),
 
-                //========== Add Customer Button ==========
+                //========== Add customer Button ==========
                 Flexible(
                   flex: 1,
                   child: FittedBox(
                     child: IconButton(
-                      padding: const EdgeInsets.all(5),
-                      alignment: Alignment.center,
-                      constraints: const BoxConstraints(
-                        minHeight: 30,
-                        maxHeight: 30,
-                      ),
-                      onPressed: () async {
-                        // DeviceUtil.isLandscape = false;
-                        // await DeviceUtil.toPortrait();
-                        final id = await Navigator.pushNamed(
-                            context, routeCustomer,
-                            arguments: true);
+                        padding: const EdgeInsets.all(5),
+                        alignment: Alignment.center,
+                        constraints: const BoxConstraints(
+                          minHeight: 45,
+                          maxHeight: 45,
+                        ),
+                        onPressed: () async {
+                          // DeviceUtil.isLandscape = false;
+                          // await DeviceUtil.toPortrait();
+                          final id = await Navigator.pushNamed(
+                              context, routeCustomer,
+                              arguments: true);
 
-                        if (id != null) {
-                          final addedCustomer = await CustomerDatabase.instance
-                              .getCustomerById(id as int);
+                          if (id != null) {
+                            final addedCustomer = await CustomerDatabase
+                                .instance
+                                .getCustomerById(id as int);
 
-                          customerController.text = addedCustomer.customer;
-                          customerNameNotifier.value = addedCustomer.customer;
-                          customerIdNotifier.value = addedCustomer.id;
-                          log(addedCustomer.company);
-                        }
+                            customerController.text = addedCustomer.customer;
+                            customerNameNotifier.value = addedCustomer.customer;
+                            customerIdNotifier.value = addedCustomer.id;
+                            log(addedCustomer.company);
+                          }
 
-                        // await DeviceUtil.toLandscape();
-                      },
-                      icon: const Icon(
-                        Icons.person_add,
-                        color: Colors.blue,
-                        size: 25,
-                      ),
-                    ),
+                          // await DeviceUtil.toLandscape();
+                        },
+                        icon: const Icon(
+                          Icons.person_add,
+                          color: Colors.blue,
+                          size: 25,
+                        )),
                   ),
                 ),
               ],
@@ -364,10 +400,10 @@ class SaleSideWidget extends StatelessWidget {
             kHeight5,
 
             //==================== Price Sections ====================
-            const PriceSectionWidget(),
+            const SalesReturnPriceSectionWidget(),
 
             //==================== Payment Buttons Widget ====================
-            const PaymentButtonsWidget()
+            const SalesReturnButtonsWidget()
           ],
         ),
       ),
@@ -480,6 +516,7 @@ class SaleSideWidget extends StatelessWidget {
   }
 
   //==================== Calculate Exclusive Amount from Inclusive Amount ====================
+  //==================== Calculate Exclusive Amount from Inclusive Amount ====================
   num getExclusiveAmount({required String sellingPrice, required int vatRate}) {
     num _exclusiveAmount = 0;
     num percentageYouHave = vatRate + 100;
@@ -501,33 +538,5 @@ class SaleSideWidget extends StatelessWidget {
         totalAmountNotifier.value + totalVatNotifier.value;
     totalPayableNotifier.value = _totalPayable;
     log('Total Payable == $_totalPayable');
-  }
-
-//==================== Reset All Values ====================
-  void resetPos() {
-    selectedProductsNotifier.value.clear();
-    subTotalNotifier.value.clear();
-    itemTotalVatNotifier.value.clear();
-    customerController.clear();
-    quantityNotifier.value.clear();
-    totalItemsNotifier.value = 0;
-    totalQuantityNotifier.value = 0;
-    totalAmountNotifier.value = 0;
-    totalVatNotifier.value = 0;
-    totalPayableNotifier.value = 0;
-    customerIdNotifier.value = null;
-    customerNameNotifier.value = null;
-
-    selectedProductsNotifier.notifyListeners();
-    subTotalNotifier.notifyListeners();
-    itemTotalVatNotifier.notifyListeners();
-    quantityNotifier.notifyListeners();
-    totalItemsNotifier.notifyListeners();
-    totalQuantityNotifier.notifyListeners();
-    totalAmountNotifier.notifyListeners();
-    totalVatNotifier.notifyListeners();
-    totalPayableNotifier.notifyListeners();
-    customerIdNotifier.notifyListeners();
-    customerNameNotifier.notifyListeners();
   }
 }

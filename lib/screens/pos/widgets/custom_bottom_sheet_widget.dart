@@ -93,7 +93,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                               child: AutoSizeText(
                                 supplier
                                     ? snapshot.data!.supplier
-                                    : snapshot.data!.customer,
+                                    : snapshot.data!.customerController,
                                 textAlign: TextAlign.end,
                                 maxFontSize: 20,
                                 style: const TextStyle(fontSize: 12),

@@ -92,9 +92,9 @@ class PurchaseSideWidget extends StatelessWidget {
                             minHeight: 10,
                           ),
                           suffixIcon: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: kClearTextIconPadding,
                             child: InkWell(
-                              child: const Icon(Icons.clear),
+                              child: const Icon(Icons.clear, size: 15),
                               onTap: () {
                                 supplierIdNotifier.value = null;
                                 supplierController.clear();
@@ -147,9 +147,9 @@ class PurchaseSideWidget extends StatelessWidget {
                       minHeight: 10,
                     ),
                     suffixIcon: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: kClearTextIconPadding,
                       child: InkWell(
-                        child: const Icon(Icons.clear),
+                        child: const Icon(Icons.clear, size: 15),
                         onTap: () {
                           referenceNumberController.clear();
                         },
@@ -304,11 +304,11 @@ class PurchaseSideWidget extends StatelessWidget {
                               alignment: Alignment.center,
                               child: AutoSizeText(
                                 _product.vatMethod == 'Exclusive'
-                                    ? Converter.currency.format(
-                                        num.parse(_product.sellingPrice))
+                                    ? Converter.currency
+                                        .format(num.parse(_product.itemCost))
                                     : Converter.currency.format(
                                         getExclusiveAmount(
-                                            sellingPrice: _product.sellingPrice,
+                                            itemCost: _product.itemCost,
                                             vatRate: _product.vatRate)),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -425,11 +425,11 @@ class PurchaseSideWidget extends StatelessWidget {
 
   //==================== Get SubTotal Amount ====================
   void getSubTotal(List<ItemMasterModel> selectedProducts, int index, num qty) {
-    final cost = num.tryParse(selectedProducts[index].sellingPrice);
+    final cost = num.tryParse(selectedProducts[index].itemCost);
     final vatRate = selectedProducts[index].vatRate;
     if (selectedProducts[index].vatMethod == 'Inclusive') {
       final _exclusiveCost = getExclusiveAmount(
-          sellingPrice: selectedProducts[index].sellingPrice, vatRate: vatRate);
+          itemCost: selectedProducts[index].itemCost, vatRate: vatRate);
       final _subTotal = _exclusiveCost * qty;
       subTotalNotifier.value[index] = '$_subTotal';
     } else {
@@ -480,14 +480,13 @@ class PurchaseSideWidget extends StatelessWidget {
     required int vatRate,
   }) {
     num? itemTotalVat;
-    num sellingPrice = num.parse(amount);
+    num itemCost = num.parse(amount);
 
     if (vatMethod == 'Inclusive') {
-      sellingPrice =
-          getExclusiveAmount(sellingPrice: '$sellingPrice', vatRate: vatRate);
+      itemCost = getExclusiveAmount(itemCost: '$itemCost', vatRate: vatRate);
     }
 
-    itemTotalVat = sellingPrice * vatRate / 100;
+    itemTotalVat = itemCost * vatRate / 100;
     log('Item VAT == $itemTotalVat');
     itemTotalVatNotifier.value.add('$itemTotalVat');
   }
@@ -495,18 +494,20 @@ class PurchaseSideWidget extends StatelessWidget {
   //==================== Get Total VAT ====================
   void getTotalVAT() {
     num _totalVAT = 0;
-    num? _subTotal = 0;
+    int _vatRate;
+    num _subTotal;
 
     if (subTotalNotifier.value.isEmpty) {
       totalVatNotifier.value = 0;
     } else {
       for (var i = 0; i < subTotalNotifier.value.length; i++) {
-        _subTotal = num.tryParse(subTotalNotifier.value[i]);
-        log('item total vat length == ${itemTotalVatNotifier.value.length}');
-        itemTotalVatNotifier.value[i] = '${_subTotal! * 15 / 100}';
+        _subTotal = num.parse(subTotalNotifier.value[i]);
+        _vatRate = selectedProductsNotifier.value[i].vatRate;
+        itemTotalVatNotifier.value[i] = '${_subTotal * _vatRate / 100}';
+
         log('Item Total VAT == ${itemTotalVatNotifier.value[i]}');
 
-        _totalVAT += _subTotal * 15 / 100;
+        _totalVAT += _subTotal * _vatRate / 100;
       }
       log('Total VAT == $_totalVAT');
       totalVatNotifier.value = _totalVAT;
@@ -515,11 +516,11 @@ class PurchaseSideWidget extends StatelessWidget {
 
   //==================== Calculate Exclusive Amount from Inclusive Amount ====================
   //==================== Calculate Exclusive Amount from Inclusive Amount ====================
-  num getExclusiveAmount({required String sellingPrice, required int vatRate}) {
+  num getExclusiveAmount({required String itemCost, required int vatRate}) {
     num _exclusiveAmount = 0;
     num percentageYouHave = vatRate + 100;
 
-    final _inclusiveAmount = num.tryParse(sellingPrice);
+    final _inclusiveAmount = num.tryParse(itemCost);
 
     _exclusiveAmount = _inclusiveAmount! * 100 / percentageYouHave;
 
@@ -536,5 +537,33 @@ class PurchaseSideWidget extends StatelessWidget {
         totalAmountNotifier.value + totalVatNotifier.value;
     totalPayableNotifier.value = _totalPayable;
     log('Total Payable == $_totalPayable');
+  }
+
+  //==================== Reset All Values ====================
+  void resetPurchase() {
+    selectedProductsNotifier.value.clear();
+    subTotalNotifier.value.clear();
+    itemTotalVatNotifier.value.clear();
+    supplierController.clear();
+    quantityNotifier.value.clear();
+    totalItemsNotifier.value = 0;
+    totalQuantityNotifier.value = 0;
+    totalAmountNotifier.value = 0;
+    totalVatNotifier.value = 0;
+    totalPayableNotifier.value = 0;
+    supplierIdNotifier.value = null;
+    supplierNameNotifier.value = null;
+
+    selectedProductsNotifier.notifyListeners();
+    subTotalNotifier.notifyListeners();
+    itemTotalVatNotifier.notifyListeners();
+    quantityNotifier.notifyListeners();
+    totalItemsNotifier.notifyListeners();
+    totalQuantityNotifier.notifyListeners();
+    totalAmountNotifier.notifyListeners();
+    totalVatNotifier.notifyListeners();
+    totalPayableNotifier.notifyListeners();
+    supplierIdNotifier.notifyListeners();
+    supplierNameNotifier.notifyListeners();
   }
 }

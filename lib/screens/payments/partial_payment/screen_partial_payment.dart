@@ -116,10 +116,10 @@ class PartialPayment extends StatelessWidget {
                                     onPressed: () => Navigator.pop(ctx),
                                     child: const Text('Cancel')),
                                 TextButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (purchase) {
                                         //========== Purchase Payment ==========
-                                        const PurchaseButtonsWidget()
+                                        await const PurchaseButtonsWidget()
                                             .addPurchase(context,
                                                 argBalance: _balance,
                                                 argPaymentStatus:
@@ -129,7 +129,8 @@ class PartialPayment extends StatelessWidget {
                                                 argPurchaseNote: _paymentNote);
                                       } else {
                                         //========== Sale Payment ==========
-                                        const PaymentButtonsWidget().addSale(
+                                        await const PaymentButtonsWidget()
+                                            .addSale(
                                           context,
                                           argBalance: _balance,
                                           argPaymentStatus: _paymentStatus,
@@ -137,9 +138,10 @@ class PartialPayment extends StatelessWidget {
                                           argPaid: _paid,
                                           argSalesNote: _paymentNote,
                                         );
+                                        Navigator.pop(context);
                                       }
 
-                                      Navigator.of(context).pop();
+                                      Navigator.pop(context);
                                     },
                                     child: const Text('Accept')),
                               ],

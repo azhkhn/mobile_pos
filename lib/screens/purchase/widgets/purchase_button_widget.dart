@@ -273,10 +273,10 @@ class PurchaseButtonsWidget extends StatelessWidget {
                 .selectedProductsNotifier.value[i].itemCategory,
             productCost =
                 PurchaseSideWidget.selectedProductsNotifier.value[i].itemCost,
-            unitPrice = PurchaseSideWidget
-                .selectedProductsNotifier.value[i].sellingPrice,
+            unitPrice =
+                PurchaseSideWidget.selectedProductsNotifier.value[i].itemCost,
             netUnitPrice = vatMethod == 'Inclusive'
-                ? '${const PurchaseSideWidget().getExclusiveAmount(sellingPrice: unitPrice, vatRate: PurchaseSideWidget.selectedProductsNotifier.value[i].vatRate)}'
+                ? '${const PurchaseSideWidget().getExclusiveAmount(itemCost: unitPrice, vatRate: PurchaseSideWidget.selectedProductsNotifier.value[i].vatRate)}'
                 : unitPrice,
             quantity = PurchaseSideWidget.quantityNotifier.value[i].text,
             subTotal = PurchaseSideWidget.subTotalNotifier.value[i],
@@ -353,6 +353,8 @@ class PurchaseButtonsWidget extends StatelessWidget {
 
       PurchaseProductSideWidget.itemsNotifier.value =
           await ItemMasterDatabase.instance.getAllItems();
+
+      const PurchaseSideWidget().resetPurchase();
 
       Navigator.pop(context);
     } catch (e) {

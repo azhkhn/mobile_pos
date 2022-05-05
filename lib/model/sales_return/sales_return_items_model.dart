@@ -1,13 +1,14 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'sales_items_model.freezed.dart';
-part 'sales_items_model.g.dart';
+part 'sales_return_items_model.freezed.dart';
+part 'sales_return_items_model.g.dart';
 
 @freezed
-class SalesItemsModel with _$SalesItemsModel {
-  const factory SalesItemsModel({
+class SalesReturnItemsModel with _$SalesReturnItemsModel {
+  const factory SalesReturnItemsModel({
     @JsonKey(name: '_id') int? id,
-    required int salesId,
+    String? originalInvoiceNumber,
+    required int saleReturnId,
     required String productId,
     required String productType,
     required String productCode,
@@ -22,17 +23,18 @@ class SalesItemsModel with _$SalesItemsModel {
     required String vatId,
     required String vatPercentage,
     required String vatTotal,
-  }) = _SalesItemsModel;
+  }) = _SalesReturnItemsModel;
 
-  factory SalesItemsModel.fromJson(Map<String, dynamic> json) =>
-      _$SalesItemsModelFromJson(json);
+  factory SalesReturnItemsModel.fromJson(Map<String, dynamic> json) =>
+      _$SalesReturnItemsModelFromJson(json);
 }
 
-const String tableSalesItems = 'sales_items';
+const String tableSalesReturnItems = 'sales_return_items';
 
-class SalesItemsFields {
+class SalesReturnItemsFields {
   static const id = '_id';
-  static const salesId = 'salesId';
+  static const saleReturnId = 'saleReturnId';
+  static const originalInvoiceNumber = 'originalInvoiceNumber';
   static const productId = 'productId';
   static const productType = 'productType';
   static const productCode = 'productCode';

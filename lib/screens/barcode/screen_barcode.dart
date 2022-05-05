@@ -68,9 +68,9 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                             minHeight: 10,
                           ),
                           suffixIcon: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: kClearTextIconPadding,
                             child: InkWell(
-                              child: const Icon(Icons.clear),
+                              child: const Icon(Icons.clear, size: 15),
                               onTap: () async {
                                 _productController.clear();
                               },

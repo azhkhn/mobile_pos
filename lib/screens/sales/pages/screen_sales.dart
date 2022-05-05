@@ -151,7 +151,13 @@ class ScreenSales extends StatelessWidget {
                         Expanded(
                           child: MaterialButton(
                             height: 50,
-                            onPressed: () {},
+                            onPressed: () async {
+                              DeviceUtil.isLandscape = true;
+                              await Navigator.pushNamed(
+                                  context, routeSalesReturn);
+
+                              await DeviceUtil.toPortrait();
+                            },
                             color: Colors.indigo[400],
                             textColor: kWhite,
                             child: const Text(

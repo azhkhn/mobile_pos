@@ -503,6 +503,8 @@ class PaymentButtonsWidget extends StatelessWidget {
       ProductSideWidget.itemsNotifier.value =
           await ItemMasterDatabase.instance.getAllItems();
 
+      const SaleSideWidget().resetPos();
+
       kSnackBar(
         context: context,
         success: true,

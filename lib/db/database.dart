@@ -11,6 +11,8 @@ import 'package:shop_ez/model/purchase/purchase_items_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/sales/sales_items_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/model/sales_return/sales_return_items_model.dart';
+import 'package:shop_ez/model/sales_return/sales_return_model.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
@@ -37,34 +39,61 @@ class EzDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path,
-        version: 10, onCreate: _createDB, onUpgrade: _upgradeDB);
+        version: 2, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
+
     const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textType = 'TEXT NOT NULL';
     // const textNull = 'TEXT';
     // const intNull = 'INTEGER';
     const intType = 'INTEGER NOT NULL';
 
-    await db.rawQuery('DROP TABLE IF EXISTS $tableVat');
+// ========== Table Sales Return ==========
+    await db.execute('''CREATE TABLE $tableSalesReturn (
+      ${SalesReturnFields.id} $idAuto,
+      ${SalesReturnFields.invoiceNumber} $textType,
+      ${SalesReturnFields.originalInvoiceNumber} $textType,
+      ${SalesReturnFields.salesNote} $textType,
+      ${SalesReturnFields.dateTime} $textType,
+      ${SalesReturnFields.customerId} $intType,
+      ${SalesReturnFields.customerName} $textType,
+      ${SalesReturnFields.billerName} $textType,
+      ${SalesReturnFields.totalItems} $textType,
+      ${SalesReturnFields.vatAmount} $textType,
+      ${SalesReturnFields.subTotal} $textType,
+      ${SalesReturnFields.discount} $textType,
+      ${SalesReturnFields.grantTotal} $textType,
+      ${SalesReturnFields.paid} $textType,
+      ${SalesReturnFields.balance} $textType,
+      ${SalesReturnFields.paymentType} $textType,
+      ${SalesReturnFields.salesStatus} $textType,
+      ${SalesReturnFields.paymentStatus} $textType,
+      ${SalesReturnFields.createdBy} $textType)''');
 
-    //========== Table VAT ==========
-    await db.execute('''CREATE TABLE $tableVat (
-      ${VatFields.id} $idAuto, 
-      ${VatFields.name} $textType,
-      ${VatFields.code} $textType,
-      ${VatFields.rate} $intType,
-      ${VatFields.type} $textType)''');
-
-    if (oldVersion == 8) {
-      await db.execute(
-          "ALTER TABLE $tableItemMaster ADD COLUMN vatRate $intType DEFAULT 15");
-    }
+//========== Table Sales Return Items ==========
+    await db.execute('''CREATE TABLE $tableSalesReturnItems (
+      ${SalesReturnItemsFields.id} $idAuto,
+      ${SalesReturnItemsFields.saleReturnId} $intType,
+      ${SalesReturnItemsFields.originalInvoiceNumber} $textType,
+      ${SalesReturnItemsFields.productId} $textType,
+      ${SalesReturnItemsFields.productType} $textType,
+      ${SalesReturnItemsFields.productName} $textType,
+      ${SalesReturnItemsFields.category} $textType,
+      ${SalesReturnItemsFields.productCode} $textType,
+      ${SalesReturnItemsFields.unitPrice} $textType,
+      ${SalesReturnItemsFields.productCost} $textType,
+      ${SalesReturnItemsFields.quantity} $textType,
+      ${SalesReturnItemsFields.subTotal} $textType,
+      ${SalesReturnItemsFields.vatId} $textType,
+      ${SalesReturnItemsFields.vatTotal} $textType,
+      ${SalesReturnItemsFields.unitCode} $textType,
+      ${SalesReturnItemsFields.netUnitPrice} $textType,
+      ${SalesReturnItemsFields.vatPercentage} $textType)''');
 
     //**
-    //
     //    await db.execute(
     //    "ALTER TABLE TABLE_NAME ADD COLUMN COLUMN_NAME $textType DEFAULT ''");
     //

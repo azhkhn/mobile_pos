@@ -8,7 +8,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
-import 'package:shop_ez/screens/purchase/widgets/purchase_side_widget.dart';
+import 'package:shop_ez/screens/sales_return/widgets/sales_return_side_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
 import '../../../db/db_functions/brand/brand_database.dart';
@@ -18,8 +18,8 @@ import '../../../db/db_functions/sub_category/sub_category_db.dart';
 import '../../../model/item_master/item_master_model.dart';
 import '../../../widgets/button_widgets/material_button_widget.dart';
 
-class PurchaseProductSideWidget extends StatefulWidget {
-  const PurchaseProductSideWidget({
+class SalesReturnProductSideWidget extends StatefulWidget {
+  const SalesReturnProductSideWidget({
     Key? key,
   }) : super(key: key);
 
@@ -27,11 +27,12 @@ class PurchaseProductSideWidget extends StatefulWidget {
   static final ValueNotifier<List<dynamic>> itemsNotifier = ValueNotifier([]);
 
   @override
-  State<PurchaseProductSideWidget> createState() =>
-      _PurchaseProductSideWidgetState();
+  State<SalesReturnProductSideWidget> createState() =>
+      _SalesReturnProductSideWidgetState();
 }
 
-class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
+class _SalesReturnProductSideWidgetState
+    extends State<SalesReturnProductSideWidget> {
   //========== Database Instances ==========
   final categoryDB = CategoryDatabase.instance;
   final subCategoryDB = SubCategoryDatabase.instance;
@@ -97,12 +98,12 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                               futureGrid =
                                   ItemMasterDatabase.instance.getAllItems();
                               if (itemsList.isNotEmpty) {
-                                PurchaseProductSideWidget.itemsNotifier.value =
-                                    itemsList;
+                                SalesReturnProductSideWidget
+                                    .itemsNotifier.value = itemsList;
                               } else {
                                 itemsList = await itemMasterDB.getAllItems();
-                                PurchaseProductSideWidget.itemsNotifier.value =
-                                    itemsList;
+                                SalesReturnProductSideWidget
+                                    .itemsNotifier.value = itemsList;
                               }
                             },
                           ),
@@ -135,7 +136,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                     Future<List<dynamic>> future() async => [selectedItem];
                     futureGrid = future();
                     _builderModel = null;
-                    PurchaseProductSideWidget.itemsNotifier.value = [
+                    SalesReturnProductSideWidget.itemsNotifier.value = [
                       selectedItem
                     ];
 
@@ -175,11 +176,11 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                       _builderModel = 0;
 
                       if (categories.isNotEmpty) {
-                        PurchaseProductSideWidget.itemsNotifier.value =
+                        SalesReturnProductSideWidget.itemsNotifier.value =
                             categories;
                       } else {
                         categories = await categoryDB.getAllCategories();
-                        PurchaseProductSideWidget.itemsNotifier.value =
+                        SalesReturnProductSideWidget.itemsNotifier.value =
                             categories;
                       }
                     },
@@ -192,12 +193,12 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                     onPressed: () async {
                       _builderModel = 1;
                       if (subCategories.isNotEmpty) {
-                        PurchaseProductSideWidget.itemsNotifier.value =
+                        SalesReturnProductSideWidget.itemsNotifier.value =
                             subCategories;
                       } else {
                         subCategories =
                             await subCategoryDB.getAllSubCategories();
-                        PurchaseProductSideWidget.itemsNotifier.value =
+                        SalesReturnProductSideWidget.itemsNotifier.value =
                             subCategories;
                       }
                     },
@@ -211,10 +212,10 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                   onPressed: () async {
                     _builderModel = 2;
                     if (brands.isNotEmpty) {
-                      PurchaseProductSideWidget.itemsNotifier.value = brands;
+                      SalesReturnProductSideWidget.itemsNotifier.value = brands;
                     } else {
                       brands = await brandDB.getAllBrands();
-                      PurchaseProductSideWidget.itemsNotifier.value = brands;
+                      SalesReturnProductSideWidget.itemsNotifier.value = brands;
                     }
                   },
                   buttonColor: Colors.indigo,
@@ -230,10 +231,12 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                     _builderModel = null;
 
                     if (itemsList.isNotEmpty) {
-                      PurchaseProductSideWidget.itemsNotifier.value = itemsList;
+                      SalesReturnProductSideWidget.itemsNotifier.value =
+                          itemsList;
                     } else {
                       itemsList = await itemMasterDB.getAllItems();
-                      PurchaseProductSideWidget.itemsNotifier.value = itemsList;
+                      SalesReturnProductSideWidget.itemsNotifier.value =
+                          itemsList;
                     }
                   },
                   color: Colors.blue,
@@ -273,22 +276,22 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                           );
                         }
                         if (snapshot.hasData) {
-                          PurchaseProductSideWidget.itemsNotifier.value =
+                          SalesReturnProductSideWidget.itemsNotifier.value =
                               snapshot.data!;
                         } else {
-                          PurchaseProductSideWidget.itemsNotifier.value = [];
+                          SalesReturnProductSideWidget.itemsNotifier.value = [];
                         }
 
                         return snapshot.hasData &&
-                                PurchaseProductSideWidget
+                                SalesReturnProductSideWidget
                                     .itemsNotifier.value.isNotEmpty
                             ? ValueListenableBuilder(
                                 valueListenable:
-                                    PurchaseProductSideWidget.itemsNotifier,
+                                    SalesReturnProductSideWidget.itemsNotifier,
                                 builder: (context, List<dynamic> itemList, _) {
-                                  log('Total Products == ${PurchaseProductSideWidget.itemsNotifier.value.length}');
+                                  log('Total Products == ${SalesReturnProductSideWidget.itemsNotifier.value.length}');
 
-                                  return PurchaseProductSideWidget
+                                  return SalesReturnProductSideWidget
                                           .itemsNotifier.value.isNotEmpty
                                       ? GridView.builder(
                                           gridDelegate:
@@ -305,7 +308,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                                   final category =
                                                       itemList[index].category;
                                                   _builderModel = null;
-                                                  PurchaseProductSideWidget
+                                                  SalesReturnProductSideWidget
                                                           .itemsNotifier.value =
                                                       await itemMasterDB
                                                           .getProductByCategory(
@@ -317,7 +320,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                                       itemList[index]
                                                           .subCategory;
                                                   _builderModel = null;
-                                                  PurchaseProductSideWidget
+                                                  SalesReturnProductSideWidget
                                                           .itemsNotifier.value =
                                                       await itemMasterDB
                                                           .getProductBySubCategory(
@@ -327,7 +330,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                                   final brand =
                                                       itemList[index].brand;
                                                   _builderModel = null;
-                                                  PurchaseProductSideWidget
+                                                  SalesReturnProductSideWidget
                                                           .itemsNotifier.value =
                                                       await itemMasterDB
                                                           .getProductByBrand(
@@ -338,11 +341,11 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                                       itemList, index);
 //=======================================================================================================
 
-                                                  PurchaseSideWidget
+                                                  SalesReturnSideWidget
                                                       .selectedProductsNotifier
                                                       .notifyListeners();
 
-                                                  PurchaseSideWidget
+                                                  SalesReturnSideWidget
                                                       .totalQuantityNotifier
                                                       .value++;
                                                 }
@@ -416,7 +419,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                                                       .currency
                                                                       .format(num.tryParse(
                                                                           itemList[index]
-                                                                              .itemCost)),
+                                                                              .sellingPrice)),
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           _isTablet
@@ -512,43 +515,43 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
     log('VAT Method = ' + vatMethod);
 
     for (var i = 0;
-        i < PurchaseSideWidget.selectedProductsNotifier.value.length;
+        i < SalesReturnSideWidget.selectedProductsNotifier.value.length;
         i++) {
-      if (PurchaseSideWidget.selectedProductsNotifier.value[i].id ==
+      if (SalesReturnSideWidget.selectedProductsNotifier.value[i].id ==
           itemList[index].id) {
         final _currentQty = num.tryParse(
-            PurchaseSideWidget.quantityNotifier.value[i].value.text);
+            SalesReturnSideWidget.quantityNotifier.value[i].value.text);
 
-        PurchaseSideWidget.quantityNotifier.value[i].text =
+        SalesReturnSideWidget.quantityNotifier.value[i].text =
             '${_currentQty! + 1}';
 
 //==================== On Item Quantity Changed ====================
-        const PurchaseSideWidget().onItemQuantityChanged(
-          PurchaseSideWidget.quantityNotifier.value[i].text,
-          PurchaseSideWidget.selectedProductsNotifier.value,
+        const SalesReturnSideWidget().onItemQuantityChanged(
+          SalesReturnSideWidget.quantityNotifier.value[i].text,
+          SalesReturnSideWidget.selectedProductsNotifier.value,
           i,
         );
         return;
       }
     }
-    PurchaseSideWidget.selectedProductsNotifier.value.add(itemList[index]);
+    SalesReturnSideWidget.selectedProductsNotifier.value.add(itemList[index]);
 
-    PurchaseSideWidget.subTotalNotifier.value.add(vatMethod == 'Inclusive'
-        ? '${const PurchaseSideWidget().getExclusiveAmount(itemCost: itemList[index].itemCost, vatRate: itemList[index].vatRate)}'
-        : itemList[index].itemCost);
+    SalesReturnSideWidget.subTotalNotifier.value.add(vatMethod == 'Inclusive'
+        ? '${const SalesReturnSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: itemList[index].vatRate)}'
+        : itemList[index].sellingPrice);
 
-    PurchaseSideWidget.quantityNotifier.value
+    SalesReturnSideWidget.quantityNotifier.value
         .add(TextEditingController(text: '1'));
 
-    PurchaseSideWidget.totalItemsNotifier.value++;
+    SalesReturnSideWidget.totalItemsNotifier.value++;
 
-    const PurchaseSideWidget().getItemVat(
+    const SalesReturnSideWidget().getItemVat(
         vatMethod: vatMethod,
-        amount: itemList[index].itemCost,
+        amount: itemList[index].sellingPrice,
         vatRate: itemList[index].vatRate);
-    const PurchaseSideWidget().getTotalAmount();
-    const PurchaseSideWidget().getTotalVAT();
-    const PurchaseSideWidget().getTotalPayable();
+    const SalesReturnSideWidget().getTotalAmount();
+    const SalesReturnSideWidget().getTotalVAT();
+    const SalesReturnSideWidget().getTotalPayable();
   }
 
   Future onBarcodeScan() async {
@@ -565,7 +568,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
       if (_scanResult == '-1') return;
       final String _itemCode = _scanResult;
       _builderModel = null;
-      PurchaseProductSideWidget.itemsNotifier.value =
+      SalesReturnProductSideWidget.itemsNotifier.value =
           await itemMasterDB.getProductByItemCode(_itemCode);
     } on PlatformException catch (_) {
       log('Failed to get Platform version!');
