@@ -98,11 +98,11 @@ class PaymentButtonsWidget extends StatelessWidget {
                     if (customerId == null) {
                       kSnackBar(
                           context: context,
-                          content: 'Please select any Customer to add Sale!');
+                          content: 'Please select any Customer to add sale!');
                     } else if (items == 0) {
                       return kSnackBar(
                           context: context,
-                          content: 'Please select any Products to add Sale!');
+                          content: 'Please select any Products to add sale!');
                     } else {
                       showDialog(
                         context: context,
@@ -169,11 +169,11 @@ class PaymentButtonsWidget extends StatelessWidget {
                     if (customerId == null) {
                       kSnackBar(
                           context: context,
-                          content: 'Please select any Customer to add Sale!');
+                          content: 'Please select any Customer to add sale!');
                     } else if (items == 0) {
                       return kSnackBar(
                           context: context,
-                          content: 'Please select any Products to add Sale!');
+                          content: 'Please select any Products to add sale!');
                     } else {
                       showDialog(
                         context: context,

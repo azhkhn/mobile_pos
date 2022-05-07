@@ -25,3 +25,4 @@ const routeListPurchase = '/list_purchase';
 const routeStock = '/stock';
 const routeBarcode = '/barcode';
 const routeSalesReturn = '/sales_return';
+const routePurchaseReturn = '/purchase_return';

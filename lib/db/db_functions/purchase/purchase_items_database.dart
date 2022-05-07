@@ -16,6 +16,26 @@ class PurchaseItemsDatabase {
     log('Purchase Items Created! ($id)');
   }
 
+  //========== Get All Purchase Items ==========
+  Future<List<PurchaseItemsModel>> getPurchaseItemByPurchaseId(
+      int purchaseId) async {
+    final db = await dbInstance.database;
+    final _result = await db.query(
+      tablePurchaseItems,
+      where: '${PurchaseItemsFields.purchaseId} = ? ',
+      whereArgs: [purchaseId],
+    );
+    // db.delete(tablePurchaseItems);
+    log('Purchase Items By PurchaseId $purchaseId == $_result');
+    if (_result.isNotEmpty) {
+      final _purchaseItems =
+          _result.map((json) => PurchaseItemsModel.fromJson(json)).toList();
+      return _purchaseItems;
+    } else {
+      throw 'Purchase Items is Empty!';
+    }
+  }
+
 //========== Get All Purchase Items ==========
   Future<List<PurchaseItemsModel>> getAllPurchaseItems() async {
     final db = await dbInstance.database;

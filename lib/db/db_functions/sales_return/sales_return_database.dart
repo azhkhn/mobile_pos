@@ -8,7 +8,7 @@ class SalesReturnDatabase {
   SalesReturnDatabase._init();
 
 //==================== Create Sales Return ====================
-  Future<int> createSalesReturn(SalesReturnModal _salesReturnModel) async {
+  Future<List> createSalesReturn(SalesReturnModal _salesReturnModel) async {
     final db = await dbInstance.database;
 
     final _saleReturn = await db.rawQuery(
@@ -32,14 +32,14 @@ class SalesReturnDatabase {
 
         final id = await db.insert(tableSalesReturn, _newSale.toJson());
         log('Sale Returned! ($id)');
-        return id;
+        return [id, _invoiceNumber];
       } else {
         final _newSale = _salesReturnModel.copyWith(invoiceNumber: 'SR-1');
 
         log('New Invoice Number == ' + _newSale.invoiceNumber!);
         final id = await db.insert(tableSalesReturn, _newSale.toJson());
         log('Sale Returned! ($id)');
-        return id;
+        return [id, 'SR-1'];
       }
     }
   }
@@ -100,7 +100,7 @@ class SalesReturnDatabase {
           _result.map((json) => SalesReturnModal.fromJson(json)).toList();
       return _salesReturn;
     } else {
-      throw 'Sales is Empty!';
+      throw 'Sales Return is Empty!';
     }
   }
 }

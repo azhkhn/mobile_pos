@@ -1,3 +1,8 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'transactions_model.freezed.dart';
+part 'transactions_model.g.dart';
+
 const String tableTransactions = 'transactions';
 
 class TransactionsField {
@@ -10,47 +15,26 @@ class TransactionsField {
   static const description = 'description';
   static const salesId = 'salesId';
   static const purchaseId = 'purchaseId';
+  static const salesReturnId = 'salesReturnId';
+  static const purchaseReturnId = 'purchaseReturnId';
 }
 
-class TransactionsModel {
-  int? id;
-  final int? salesId, purchaseId;
-  final String category, transactionType, dateTime, amount, status, description;
+@freezed
+class TransactionsModel with _$TransactionsModel {
+  const factory TransactionsModel({
+    @JsonKey(name: '_id') int? id,
+    required String category,
+    required String transactionType,
+    required String dateTime,
+    required String amount,
+    required String status,
+    required String description,
+    int? salesId,
+    int? purchaseId,
+    int? salesReturnId,
+    int? purchaseReturnId,
+  }) = _TransactionsModel;
 
-  TransactionsModel({
-    this.id,
-    required this.category,
-    required this.transactionType,
-    required this.dateTime,
-    required this.amount,
-    required this.status,
-    required this.description,
-    this.salesId,
-    this.purchaseId,
-  });
-
-  Map<String, Object?> toJson() => {
-        TransactionsField.id: id,
-        TransactionsField.category: category,
-        TransactionsField.transactionType: transactionType,
-        TransactionsField.dateTime: dateTime,
-        TransactionsField.amount: amount,
-        TransactionsField.status: status,
-        TransactionsField.description: description,
-        TransactionsField.salesId: salesId,
-        TransactionsField.purchaseId: purchaseId,
-      };
-
-  static TransactionsModel fromJson(Map<String, Object?> json) =>
-      TransactionsModel(
-        id: json[TransactionsField.id] as int,
-        category: json[TransactionsField.category] as String,
-        transactionType: json[TransactionsField.transactionType] as String,
-        dateTime: json[TransactionsField.dateTime] as String,
-        amount: json[TransactionsField.amount] as String,
-        status: json[TransactionsField.status] as String,
-        description: json[TransactionsField.description] as String,
-        salesId: json[TransactionsField.salesId] as int,
-        purchaseId: json[TransactionsField.purchaseId] as int,
-      );
+  factory TransactionsModel.fromJson(Map<String, dynamic> json) =>
+      _$TransactionsModelFromJson(json);
 }

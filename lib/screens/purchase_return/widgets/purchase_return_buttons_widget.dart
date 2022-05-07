@@ -7,20 +7,20 @@ import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
-import 'package:shop_ez/db/db_functions/sales_return/sales_return_database.dart';
-import 'package:shop_ez/db/db_functions/sales_return/sales_return_items_database.dart';
+import 'package:shop_ez/db/db_functions/purchase_return/purchase_return_database.dart';
+import 'package:shop_ez/db/db_functions/purchase_return/purchase_return_items_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
-import 'package:shop_ez/model/sales_return/sales_return_items_model.dart';
-import 'package:shop_ez/model/sales_return/sales_return_model.dart';
+import 'package:shop_ez/model/purchase_return/purchase_return_items_modal.dart';
+import 'package:shop_ez/model/purchase_return/purchase_return_modal.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
-import 'package:shop_ez/screens/sales_return/widgets/sales_return_product_side.dart';
-import 'package:shop_ez/screens/sales_return/widgets/sales_return_side_widget.dart';
+import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_product_side.dart';
+import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_side_widget.dart';
 
 import '../../../core/constant/sizes.dart';
 import '../../../core/utils/text/converters.dart';
 
-class SalesReturnButtonsWidget extends StatelessWidget {
-  const SalesReturnButtonsWidget({
+class PurchaseReturnButtonsWidget extends StatelessWidget {
+  const PurchaseReturnButtonsWidget({
     Key? key,
   }) : super(key: key);
 
@@ -32,9 +32,9 @@ class SalesReturnButtonsWidget extends StatelessWidget {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       try {
         log('==============================');
-        await SalesReturnDatabase.instance.getAllSalesReturns();
+        await PurchaseReturnDatabase.instance.getAllPurchasesReturns();
         log('==============================');
-        await SalesReturnItemsDatabase.instance.getAllSalesReuturnItems();
+        await PurchaseReturnItemsDatabase.instance.getAllPurchaseReuturnItems();
         log('==============================');
         await TransactionDatabase.instance.getAllTransactions();
       } catch (e) {
@@ -62,7 +62,8 @@ class SalesReturnButtonsWidget extends StatelessWidget {
               kWidth5,
               Flexible(
                 child: ValueListenableBuilder(
-                  valueListenable: SalesReturnSideWidget.totalPayableNotifier,
+                  valueListenable:
+                      PurchaseReturnSideWidget.totalPayableNotifier,
                   builder: (context, totalPayable, child) {
                     return AutoSizeText(
                       totalPayable == 0
@@ -91,19 +92,19 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    SalesReturnSideWidget.selectedProductsNotifier.value
+                    PurchaseReturnSideWidget.selectedProductsNotifier.value
                         .clear();
-                    SalesReturnSideWidget.subTotalNotifier.value.clear();
-                    SalesReturnSideWidget.itemTotalVatNotifier.value.clear();
-                    SalesReturnSideWidget.customerController.clear();
-                    SalesReturnSideWidget.quantityNotifier.value.clear();
-                    SalesReturnSideWidget.totalItemsNotifier.value = 0;
-                    SalesReturnSideWidget.totalQuantityNotifier.value = 0;
-                    SalesReturnSideWidget.totalAmountNotifier.value = 0;
-                    SalesReturnSideWidget.totalVatNotifier.value = 0;
-                    SalesReturnSideWidget.totalPayableNotifier.value = 0;
-                    SalesReturnSideWidget.customerIdNotifier.value = null;
-                    SalesReturnSideWidget.customerNameNotifier.value = null;
+                    PurchaseReturnSideWidget.subTotalNotifier.value.clear();
+                    PurchaseReturnSideWidget.itemTotalVatNotifier.value.clear();
+                    PurchaseReturnSideWidget.supplierController.clear();
+                    PurchaseReturnSideWidget.quantityNotifier.value.clear();
+                    PurchaseReturnSideWidget.totalItemsNotifier.value = 0;
+                    PurchaseReturnSideWidget.totalQuantityNotifier.value = 0;
+                    PurchaseReturnSideWidget.totalAmountNotifier.value = 0;
+                    PurchaseReturnSideWidget.totalVatNotifier.value = 0;
+                    PurchaseReturnSideWidget.totalPayableNotifier.value = 0;
+                    PurchaseReturnSideWidget.supplierIdNotifier.value = null;
+                    PurchaseReturnSideWidget.supplierNameNotifier.value = null;
                     Navigator.of(context).pop();
                   },
                   padding: const EdgeInsets.all(5),
@@ -127,22 +128,22 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                 child: MaterialButton(
                   onPressed: () async {
                     final int? customerId =
-                        SalesReturnSideWidget.customerIdNotifier.value;
+                        PurchaseReturnSideWidget.supplierIdNotifier.value;
                     final num items =
-                        SalesReturnSideWidget.totalItemsNotifier.value;
+                        PurchaseReturnSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {
                       kSnackBar(
                           context: context,
                           content:
-                              'Please select any Customer to return sale!');
+                              'Please select any Supplier to return purchase!');
                     } else if (items == 0) {
                       return kSnackBar(
                           context: context,
                           content:
-                              'Please select any Products to return sale!');
+                              'Please select any Products to return purchase!');
                     } else {
-                      await addSalesReturn(context);
+                      await addPurchaseReturn(context);
                     }
                   },
                   padding: const EdgeInsets.all(5),
@@ -167,23 +168,23 @@ class SalesReturnButtonsWidget extends StatelessWidget {
   }
 
 //========================================                 ========================================
-//======================================== Add Sale Return ========================================
+//======================================== Add Purchase Return ========================================
 //========================================                 ========================================
-  addSalesReturn(
+  addPurchaseReturn(
     BuildContext context, {
     String? argBalance,
     String? argPaymentStatus,
     String? argPaymentType,
     String? argPaid,
-    String? argSalesNote,
+    String? argPurchaseNote,
   }) async {
-    int? originalSaleId;
-    int salesReturnId, customerId;
+    int? originalPurchaseId;
+    int purchaseReturnId, supplierId;
     final String? originalInvoiceNumber;
     final String dateTime,
-        customerName,
+        supplierName,
         billerName,
-        salesNote,
+        purchaseNote,
         totalItems,
         vatAmount,
         subTotal,
@@ -192,15 +193,16 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         paid,
         balance,
         paymentType,
-        salesStatus,
+        purchaseStatus,
         paymentStatus,
         createdBy;
 
     //==================== Database Instances ====================
-    // final SalesDatabase salesDatabase = SalesDatabase.instance;
-    final SalesReturnDatabase salesReturnDB = SalesReturnDatabase.instance;
-    final SalesReturnItemsDatabase salesReturnItemsDB =
-        SalesReturnItemsDatabase.instance;
+    // final PurchaseDatabase purchaseDatabase = PurchaseDatabase.instance;
+    final PurchaseReturnDatabase purchaseReturnDB =
+        PurchaseReturnDatabase.instance;
+    final PurchaseReturnItemsDatabase purchaseReturnItemsDB =
+        PurchaseReturnItemsDatabase.instance;
     final TransactionDatabase transactionDB = TransactionDatabase.instance;
 
     final ItemMasterDatabase itemMasterDB = ItemMasterDatabase.instance;
@@ -235,35 +237,36 @@ class SalesReturnButtonsWidget extends StatelessWidget {
     if (argPaid != null) {
       paid = argPaid;
     } else {
-      paid = SalesReturnSideWidget.totalPayableNotifier.value.toString();
+      paid = PurchaseReturnSideWidget.totalPayableNotifier.value.toString();
     }
 
-    // Save sale in a old date in Database
+    // Save purchase in a old date in Database
     // dateTime = DateTime(2022, 4, 22, 17, 45).toIso8601String();
     dateTime = DateTime.now().toIso8601String();
     originalInvoiceNumber =
-        SalesReturnSideWidget.originalInvoiceNumberNotifier.value;
-    originalSaleId = SalesReturnSideWidget.originalSaleIdNotifier.value;
-    customerId = SalesReturnSideWidget.customerIdNotifier.value!;
-    customerName = SalesReturnSideWidget.customerNameNotifier.value!;
+        PurchaseReturnSideWidget.originalInvoiceNumberNotifier.value;
+    originalPurchaseId =
+        PurchaseReturnSideWidget.originalPurchaseIdNotifier.value;
+    supplierId = PurchaseReturnSideWidget.supplierIdNotifier.value!;
+    supplierName = PurchaseReturnSideWidget.supplierNameNotifier.value!;
     billerName = _biller;
-    salesNote = argSalesNote ?? '';
-    totalItems = SalesReturnSideWidget.totalItemsNotifier.value.toString();
-    vatAmount = SalesReturnSideWidget.totalVatNotifier.value.toString();
-    subTotal = SalesReturnSideWidget.totalAmountNotifier.value.toString();
+    purchaseNote = argPurchaseNote ?? '';
+    totalItems = PurchaseReturnSideWidget.totalItemsNotifier.value.toString();
+    vatAmount = PurchaseReturnSideWidget.totalVatNotifier.value.toString();
+    subTotal = PurchaseReturnSideWidget.totalAmountNotifier.value.toString();
     discount = '';
-    grantTotal = SalesReturnSideWidget.totalPayableNotifier.value.toString();
-    salesStatus = 'Returned';
+    grantTotal = PurchaseReturnSideWidget.totalPayableNotifier.value.toString();
+    purchaseStatus = 'Returned';
     createdBy = _user;
 
-    final SalesReturnModal _salesReturnModel = SalesReturnModal(
+    final PurchaseReturnModel _purchaseReturnModel = PurchaseReturnModel(
       dateTime: dateTime,
-      originalInvoiceNumber: originalInvoiceNumber ?? '',
-      saleId: originalSaleId,
-      customerId: customerId,
-      customerName: customerName,
+      originalInvoiceNumber: originalInvoiceNumber,
+      purchaseid: originalPurchaseId,
+      supplierId: supplierId,
+      supplierName: supplierName,
       billerName: billerName,
-      salesNote: salesNote,
+      purchaseNote: purchaseNote,
       totalItems: totalItems,
       vatAmount: vatAmount,
       subTotal: subTotal,
@@ -272,61 +275,63 @@ class SalesReturnButtonsWidget extends StatelessWidget {
       paid: paid,
       balance: balance,
       paymentType: paymentType,
-      salesStatus: salesStatus,
+      purchaseStatus: purchaseStatus,
       paymentStatus: paymentStatus,
       createdBy: createdBy,
+      referenceNumber: '',
     );
 
     try {
-      //==================== Create Sales Return ====================
-      final idList = await salesReturnDB.createSalesReturn(_salesReturnModel);
-      salesReturnId = idList.first;
+      //==================== Create Purchase Return ====================
+      final idList =
+          await purchaseReturnDB.createPurchaseReturn(_purchaseReturnModel);
+      purchaseReturnId = idList.first;
 
-      // salesReturnInvoiceNumber = idList.last;
+      // purchaseReturnInvoiceNumber = idList.last;
 
-      // //==================== Update Sales with Sales Return Id ====================
-      // if (originalSaleId != null) {
-      //   log('========== Updating Sales with Sales Return! ==========');
-      //   await salesDatabase.updateReturnedSale(
-      //       saleId: originalSaleId,
-      //       salesReturnId: salesReturnId,
-      //       salesReturnInvoice: salesReturnInvoiceNumber);
+      // //==================== Update Purchase with Purchase Return Id ====================
+      // if (originalPurchaseId != null) {
+      //   log('========== Updating Purchase with Purchase Return! ==========');
+      //   await PurchaseDatabase.updateReturnedPurchase(
+      //       purchaseId: originalPurchaseId,
+      //       purchaseReturnId: PurchaseReturnId,
+      //       purchaseReturnInvoice: PurchaseReturnInvoiceNumber);
       // }
 
-      final num items = SalesReturnSideWidget.totalItemsNotifier.value;
+      final num items = PurchaseReturnSideWidget.totalItemsNotifier.value;
       for (var i = 0; i < items; i++) {
-        final vatMethod =
-            SalesReturnSideWidget.selectedProductsNotifier.value[i].vatMethod;
+        final vatMethod = PurchaseReturnSideWidget
+            .selectedProductsNotifier.value[i].vatMethod;
 
         final String productId =
-                '${SalesReturnSideWidget.selectedProductsNotifier.value[i].id}',
-            productType = SalesReturnSideWidget
+                '${PurchaseReturnSideWidget.selectedProductsNotifier.value[i].id}',
+            productType = PurchaseReturnSideWidget
                 .selectedProductsNotifier.value[i].productType,
-            productCode = SalesReturnSideWidget
+            productCode = PurchaseReturnSideWidget
                 .selectedProductsNotifier.value[i].itemCode,
-            productName = SalesReturnSideWidget
+            productName = PurchaseReturnSideWidget
                 .selectedProductsNotifier.value[i].itemName,
-            category = SalesReturnSideWidget
+            category = PurchaseReturnSideWidget
                 .selectedProductsNotifier.value[i].itemCategory,
-            productCost = SalesReturnSideWidget
+            productCost = PurchaseReturnSideWidget
                 .selectedProductsNotifier.value[i].itemCost,
-            unitPrice = SalesReturnSideWidget
+            unitPrice = PurchaseReturnSideWidget
                 .selectedProductsNotifier.value[i].sellingPrice,
             netUnitPrice = vatMethod == 'Inclusive'
-                ? '${const SalesReturnSideWidget().getExclusiveAmount(sellingPrice: unitPrice, vatRate: SalesReturnSideWidget.selectedProductsNotifier.value[i].vatRate)}'
+                ? '${const PurchaseReturnSideWidget().getExclusiveAmount(itemCost: unitPrice, vatRate: PurchaseReturnSideWidget.selectedProductsNotifier.value[i].vatRate)}'
                 : unitPrice,
-            quantity = SalesReturnSideWidget.quantityNotifier.value[i].text,
-            subTotal = SalesReturnSideWidget.subTotalNotifier.value[i],
-            vatId =
-                SalesReturnSideWidget.selectedProductsNotifier.value[i].vatId,
-            vatPercentage = SalesReturnSideWidget
+            quantity = PurchaseReturnSideWidget.quantityNotifier.value[i].text,
+            subTotal = PurchaseReturnSideWidget.subTotalNotifier.value[i],
+            vatId = PurchaseReturnSideWidget
+                .selectedProductsNotifier.value[i].vatId,
+            vatPercentage = PurchaseReturnSideWidget
                 .selectedProductsNotifier.value[i].productVAT,
-            vatTotal = SalesReturnSideWidget.itemTotalVatNotifier.value[i],
+            vatTotal = PurchaseReturnSideWidget.itemTotalVatNotifier.value[i],
             unitCode =
-                SalesReturnSideWidget.selectedProductsNotifier.value[i].unit;
+                PurchaseReturnSideWidget.selectedProductsNotifier.value[i].unit;
 
-        log(' Sales Return Id == $salesReturnId');
-        log(' Sales Id == $originalSaleId');
+        log(' Purchase Return Id == $purchaseReturnId');
+        log(' Purchase Id == $originalPurchaseId');
         log(' Original Invoice Number == $originalInvoiceNumber');
         log(' Product id == $productId');
         log(' Product Type == $productType');
@@ -344,11 +349,11 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         log(' VAT Total == $vatTotal');
         log('\n==============================================\n');
 
-        final SalesReturnItemsModel _salesReturnItemsModel =
-            SalesReturnItemsModel(
-          originalInvoiceNumber: originalInvoiceNumber ?? '',
-          saleId: originalSaleId,
-          saleReturnId: salesReturnId,
+        final PurchaseItemsReturnModel _purchaseReturnItemsModel =
+            PurchaseItemsReturnModel(
+          originalInvoiceNumber: originalInvoiceNumber,
+          purchaseId: originalPurchaseId,
+          purchaseReturnId: purchaseReturnId,
           productId: productId,
           productType: productType,
           productCode: productCode,
@@ -365,24 +370,25 @@ class SalesReturnButtonsWidget extends StatelessWidget {
           vatTotal: vatTotal,
         );
 
-        //==================== Create Sales Return Items ====================
-        await salesReturnItemsDB.createSalesReturnItems(_salesReturnItemsModel);
+        //==================== Create Purchase Return Items ====================
+        await purchaseReturnItemsDB
+            .createPurchaseReturnItems(_purchaseReturnItemsModel);
 
         //==================== Decreasing Item Quantity ====================
         itemMasterDB.additionItemQty(
-            SalesReturnSideWidget.selectedProductsNotifier.value[i],
+            PurchaseReturnSideWidget.selectedProductsNotifier.value[i],
             num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(
-        category: 'Sales Return',
+        category: 'Purchase Return',
         transactionType: 'Expense',
         dateTime: dateTime,
         amount: grantTotal,
         status: paymentStatus,
-        description: 'Transaction $salesReturnId',
-        salesId: originalSaleId,
-        salesReturnId: salesReturnId,
+        description: 'Transaction $purchaseReturnId',
+        purchaseId: originalPurchaseId,
+        purchaseReturnId: purchaseReturnId,
       );
 
       //==================== Create Transactions ====================
@@ -390,15 +396,15 @@ class SalesReturnButtonsWidget extends StatelessWidget {
 
       // HomeCardWidget.detailsCardLoaded = false;
 
-      SalesReturnProductSideWidget.itemsNotifier.value =
+      PurchaseReturnProductSideWidget.itemsNotifier.value =
           await ItemMasterDatabase.instance.getAllItems();
 
-      const SalesReturnSideWidget().resetSalesReturn();
+      const PurchaseReturnSideWidget().resetPurchaseReturn();
 
       kSnackBar(
         context: context,
         success: true,
-        content: "Sale returned successfully!",
+        content: "Purchase returned successfully!",
       );
     } catch (e) {
       log('$e');

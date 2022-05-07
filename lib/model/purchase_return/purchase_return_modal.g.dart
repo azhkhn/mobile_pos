@@ -1,22 +1,24 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'sales_return_model.dart';
+part of 'purchase_return_modal.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_SalesReturnModal _$$_SalesReturnModalFromJson(Map<String, dynamic> json) =>
-    _$_SalesReturnModal(
+_$_PurchaseReturnModel _$$_PurchaseReturnModelFromJson(
+        Map<String, dynamic> json) =>
+    _$_PurchaseReturnModel(
       id: json['_id'] as int?,
-      saleId: json['saleId'] as int?,
       invoiceNumber: json['invoiceNumber'] as String?,
+      purchaseid: json['purchaseid'] as int?,
       originalInvoiceNumber: json['originalInvoiceNumber'] as String?,
-      customerId: json['customerId'] as int,
+      referenceNumber: json['referenceNumber'] as String,
       dateTime: json['dateTime'] as String,
-      customerName: json['customerName'] as String,
+      supplierId: json['supplierId'] as int,
+      supplierName: json['supplierName'] as String,
       billerName: json['billerName'] as String,
-      salesNote: json['salesNote'] as String,
+      purchaseNote: json['purchaseNote'] as String,
       totalItems: json['totalItems'] as String,
       vatAmount: json['vatAmount'] as String,
       subTotal: json['subTotal'] as String,
@@ -25,22 +27,24 @@ _$_SalesReturnModal _$$_SalesReturnModalFromJson(Map<String, dynamic> json) =>
       paid: json['paid'] as String,
       balance: json['balance'] as String,
       paymentType: json['paymentType'] as String,
-      salesStatus: json['salesStatus'] as String,
+      purchaseStatus: json['purchaseStatus'] as String,
       paymentStatus: json['paymentStatus'] as String,
       createdBy: json['createdBy'] as String,
     );
 
-Map<String, dynamic> _$$_SalesReturnModalToJson(_$_SalesReturnModal instance) =>
+Map<String, dynamic> _$$_PurchaseReturnModelToJson(
+        _$_PurchaseReturnModel instance) =>
     <String, dynamic>{
       '_id': instance.id,
-      'saleId': instance.saleId,
       'invoiceNumber': instance.invoiceNumber,
+      'purchaseid': instance.purchaseid,
       'originalInvoiceNumber': instance.originalInvoiceNumber,
-      'customerId': instance.customerId,
+      'referenceNumber': instance.referenceNumber,
       'dateTime': instance.dateTime,
-      'customerName': instance.customerName,
+      'supplierId': instance.supplierId,
+      'supplierName': instance.supplierName,
       'billerName': instance.billerName,
-      'salesNote': instance.salesNote,
+      'purchaseNote': instance.purchaseNote,
       'totalItems': instance.totalItems,
       'vatAmount': instance.vatAmount,
       'subTotal': instance.subTotal,
@@ -49,7 +53,7 @@ Map<String, dynamic> _$$_SalesReturnModalToJson(_$_SalesReturnModal instance) =>
       'paid': instance.paid,
       'balance': instance.balance,
       'paymentType': instance.paymentType,
-      'salesStatus': instance.salesStatus,
+      'purchaseStatus': instance.purchaseStatus,
       'paymentStatus': instance.paymentStatus,
       'createdBy': instance.createdBy,
     };

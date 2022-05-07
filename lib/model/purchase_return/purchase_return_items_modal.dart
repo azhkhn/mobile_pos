@@ -1,13 +1,15 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'purchase_items_model.freezed.dart';
-part 'purchase_items_model.g.dart';
+part 'purchase_return_items_modal.freezed.dart';
+part 'purchase_return_items_modal.g.dart';
 
-const String tablePurchaseItems = 'purchase_items';
+const String tablePurchaseItemsReturn = 'purchase_items_return';
 
-class PurchaseItemsFields {
+class PurchaseItemsReturnFields {
   static const id = '_id';
   static const purchaseId = 'purchaseId';
+  static const purchaseReturnId = 'purchaseReturnId';
+  static const originalInvoiceNumber = 'originalInvoiceNumber';
   static const productId = 'productId';
   static const productType = 'productType';
   static const productCode = 'productCode';
@@ -25,10 +27,12 @@ class PurchaseItemsFields {
 }
 
 @freezed
-class PurchaseItemsModel with _$PurchaseItemsModel {
-  const factory PurchaseItemsModel({
+class PurchaseItemsReturnModel with _$PurchaseItemsReturnModel {
+  const factory PurchaseItemsReturnModel({
     @JsonKey(name: '_id') int? id,
-    required int purchaseId,
+    required int? purchaseId,
+    required int purchaseReturnId,
+    required String? originalInvoiceNumber,
     required String productId,
     required String productType,
     required String productCode,
@@ -43,8 +47,8 @@ class PurchaseItemsModel with _$PurchaseItemsModel {
     required String vatId,
     required String vatPercentage,
     required String vatTotal,
-  }) = _PurchaseItemsModel;
+  }) = _PurchaseItemsReturnModel;
 
-  factory PurchaseItemsModel.fromJson(Map<String, dynamic> json) =>
-      _$PurchaseItemsModelFromJson(json);
+  factory PurchaseItemsReturnModel.fromJson(Map<String, dynamic> json) =>
+      _$PurchaseItemsReturnModelFromJson(json);
 }

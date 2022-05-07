@@ -7,6 +7,7 @@ part 'sales_return_model.g.dart';
 class SalesReturnModal with _$SalesReturnModal {
   const factory SalesReturnModal({
     @JsonKey(name: '_id') int? id,
+    int? saleId,
     String? invoiceNumber,
     required String? originalInvoiceNumber,
     required int customerId,
@@ -35,6 +36,7 @@ const String tableSalesReturn = 'sales_return';
 
 class SalesReturnFields {
   static const id = '_id';
+  static const saleId = 'saleId';
   static const invoiceNumber = 'invoiceNumber';
   static const originalInvoiceNumber = 'originalInvoiceNumber';
   static const salesNote = 'salesNote';

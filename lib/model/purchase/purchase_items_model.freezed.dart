@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
-part of 'sales_return_items_model.dart';
+part of 'purchase_items_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,18 +14,15 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
-SalesReturnItemsModel _$SalesReturnItemsModelFromJson(
-    Map<String, dynamic> json) {
-  return _SalesReturnItemsModel.fromJson(json);
+PurchaseItemsModel _$PurchaseItemsModelFromJson(Map<String, dynamic> json) {
+  return _PurchaseItemsModel.fromJson(json);
 }
 
 /// @nodoc
-mixin _$SalesReturnItemsModel {
+mixin _$PurchaseItemsModel {
   @JsonKey(name: '_id')
   int? get id => throw _privateConstructorUsedError;
-  int? get saleId => throw _privateConstructorUsedError;
-  String? get originalInvoiceNumber => throw _privateConstructorUsedError;
-  int get saleReturnId => throw _privateConstructorUsedError;
+  int get purchaseId => throw _privateConstructorUsedError;
   String get productId => throw _privateConstructorUsedError;
   String get productType => throw _privateConstructorUsedError;
   String get productCode => throw _privateConstructorUsedError;
@@ -43,20 +40,18 @@ mixin _$SalesReturnItemsModel {
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $SalesReturnItemsModelCopyWith<SalesReturnItemsModel> get copyWith =>
+  $PurchaseItemsModelCopyWith<PurchaseItemsModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $SalesReturnItemsModelCopyWith<$Res> {
-  factory $SalesReturnItemsModelCopyWith(SalesReturnItemsModel value,
-          $Res Function(SalesReturnItemsModel) then) =
-      _$SalesReturnItemsModelCopyWithImpl<$Res>;
+abstract class $PurchaseItemsModelCopyWith<$Res> {
+  factory $PurchaseItemsModelCopyWith(
+          PurchaseItemsModel value, $Res Function(PurchaseItemsModel) then) =
+      _$PurchaseItemsModelCopyWithImpl<$Res>;
   $Res call(
       {@JsonKey(name: '_id') int? id,
-      int? saleId,
-      String? originalInvoiceNumber,
-      int saleReturnId,
+      int purchaseId,
       String productId,
       String productType,
       String productCode,
@@ -74,20 +69,18 @@ abstract class $SalesReturnItemsModelCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$SalesReturnItemsModelCopyWithImpl<$Res>
-    implements $SalesReturnItemsModelCopyWith<$Res> {
-  _$SalesReturnItemsModelCopyWithImpl(this._value, this._then);
+class _$PurchaseItemsModelCopyWithImpl<$Res>
+    implements $PurchaseItemsModelCopyWith<$Res> {
+  _$PurchaseItemsModelCopyWithImpl(this._value, this._then);
 
-  final SalesReturnItemsModel _value;
+  final PurchaseItemsModel _value;
   // ignore: unused_field
-  final $Res Function(SalesReturnItemsModel) _then;
+  final $Res Function(PurchaseItemsModel) _then;
 
   @override
   $Res call({
     Object? id = freezed,
-    Object? saleId = freezed,
-    Object? originalInvoiceNumber = freezed,
-    Object? saleReturnId = freezed,
+    Object? purchaseId = freezed,
     Object? productId = freezed,
     Object? productType = freezed,
     Object? productCode = freezed,
@@ -108,17 +101,9 @@ class _$SalesReturnItemsModelCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      saleId: saleId == freezed
-          ? _value.saleId
-          : saleId // ignore: cast_nullable_to_non_nullable
-              as int?,
-      originalInvoiceNumber: originalInvoiceNumber == freezed
-          ? _value.originalInvoiceNumber
-          : originalInvoiceNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      saleReturnId: saleReturnId == freezed
-          ? _value.saleReturnId
-          : saleReturnId // ignore: cast_nullable_to_non_nullable
+      purchaseId: purchaseId == freezed
+          ? _value.purchaseId
+          : purchaseId // ignore: cast_nullable_to_non_nullable
               as int,
       productId: productId == freezed
           ? _value.productId
@@ -181,17 +166,15 @@ class _$SalesReturnItemsModelCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$SalesReturnItemsModelCopyWith<$Res>
-    implements $SalesReturnItemsModelCopyWith<$Res> {
-  factory _$SalesReturnItemsModelCopyWith(_SalesReturnItemsModel value,
-          $Res Function(_SalesReturnItemsModel) then) =
-      __$SalesReturnItemsModelCopyWithImpl<$Res>;
+abstract class _$PurchaseItemsModelCopyWith<$Res>
+    implements $PurchaseItemsModelCopyWith<$Res> {
+  factory _$PurchaseItemsModelCopyWith(
+          _PurchaseItemsModel value, $Res Function(_PurchaseItemsModel) then) =
+      __$PurchaseItemsModelCopyWithImpl<$Res>;
   @override
   $Res call(
       {@JsonKey(name: '_id') int? id,
-      int? saleId,
-      String? originalInvoiceNumber,
-      int saleReturnId,
+      int purchaseId,
       String productId,
       String productType,
       String productCode,
@@ -209,22 +192,20 @@ abstract class _$SalesReturnItemsModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$SalesReturnItemsModelCopyWithImpl<$Res>
-    extends _$SalesReturnItemsModelCopyWithImpl<$Res>
-    implements _$SalesReturnItemsModelCopyWith<$Res> {
-  __$SalesReturnItemsModelCopyWithImpl(_SalesReturnItemsModel _value,
-      $Res Function(_SalesReturnItemsModel) _then)
-      : super(_value, (v) => _then(v as _SalesReturnItemsModel));
+class __$PurchaseItemsModelCopyWithImpl<$Res>
+    extends _$PurchaseItemsModelCopyWithImpl<$Res>
+    implements _$PurchaseItemsModelCopyWith<$Res> {
+  __$PurchaseItemsModelCopyWithImpl(
+      _PurchaseItemsModel _value, $Res Function(_PurchaseItemsModel) _then)
+      : super(_value, (v) => _then(v as _PurchaseItemsModel));
 
   @override
-  _SalesReturnItemsModel get _value => super._value as _SalesReturnItemsModel;
+  _PurchaseItemsModel get _value => super._value as _PurchaseItemsModel;
 
   @override
   $Res call({
     Object? id = freezed,
-    Object? saleId = freezed,
-    Object? originalInvoiceNumber = freezed,
-    Object? saleReturnId = freezed,
+    Object? purchaseId = freezed,
     Object? productId = freezed,
     Object? productType = freezed,
     Object? productCode = freezed,
@@ -240,22 +221,14 @@ class __$SalesReturnItemsModelCopyWithImpl<$Res>
     Object? vatPercentage = freezed,
     Object? vatTotal = freezed,
   }) {
-    return _then(_SalesReturnItemsModel(
+    return _then(_PurchaseItemsModel(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      saleId: saleId == freezed
-          ? _value.saleId
-          : saleId // ignore: cast_nullable_to_non_nullable
-              as int?,
-      originalInvoiceNumber: originalInvoiceNumber == freezed
-          ? _value.originalInvoiceNumber
-          : originalInvoiceNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      saleReturnId: saleReturnId == freezed
-          ? _value.saleReturnId
-          : saleReturnId // ignore: cast_nullable_to_non_nullable
+      purchaseId: purchaseId == freezed
+          ? _value.purchaseId
+          : purchaseId // ignore: cast_nullable_to_non_nullable
               as int,
       productId: productId == freezed
           ? _value.productId
@@ -319,12 +292,10 @@ class __$SalesReturnItemsModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_SalesReturnItemsModel implements _SalesReturnItemsModel {
-  const _$_SalesReturnItemsModel(
+class _$_PurchaseItemsModel implements _PurchaseItemsModel {
+  const _$_PurchaseItemsModel(
       {@JsonKey(name: '_id') this.id,
-      this.saleId,
-      this.originalInvoiceNumber,
-      required this.saleReturnId,
+      required this.purchaseId,
       required this.productId,
       required this.productType,
       required this.productCode,
@@ -340,18 +311,14 @@ class _$_SalesReturnItemsModel implements _SalesReturnItemsModel {
       required this.vatPercentage,
       required this.vatTotal});
 
-  factory _$_SalesReturnItemsModel.fromJson(Map<String, dynamic> json) =>
-      _$$_SalesReturnItemsModelFromJson(json);
+  factory _$_PurchaseItemsModel.fromJson(Map<String, dynamic> json) =>
+      _$$_PurchaseItemsModelFromJson(json);
 
   @override
   @JsonKey(name: '_id')
   final int? id;
   @override
-  final int? saleId;
-  @override
-  final String? originalInvoiceNumber;
-  @override
-  final int saleReturnId;
+  final int purchaseId;
   @override
   final String productId;
   @override
@@ -383,20 +350,17 @@ class _$_SalesReturnItemsModel implements _SalesReturnItemsModel {
 
   @override
   String toString() {
-    return 'SalesReturnItemsModel(id: $id, saleId: $saleId, originalInvoiceNumber: $originalInvoiceNumber, saleReturnId: $saleReturnId, productId: $productId, productType: $productType, productCode: $productCode, productName: $productName, category: $category, productCost: $productCost, netUnitPrice: $netUnitPrice, unitPrice: $unitPrice, quantity: $quantity, unitCode: $unitCode, subTotal: $subTotal, vatId: $vatId, vatPercentage: $vatPercentage, vatTotal: $vatTotal)';
+    return 'PurchaseItemsModel(id: $id, purchaseId: $purchaseId, productId: $productId, productType: $productType, productCode: $productCode, productName: $productName, category: $category, productCost: $productCost, netUnitPrice: $netUnitPrice, unitPrice: $unitPrice, quantity: $quantity, unitCode: $unitCode, subTotal: $subTotal, vatId: $vatId, vatPercentage: $vatPercentage, vatTotal: $vatTotal)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _SalesReturnItemsModel &&
+            other is _PurchaseItemsModel &&
             const DeepCollectionEquality().equals(other.id, id) &&
-            const DeepCollectionEquality().equals(other.saleId, saleId) &&
             const DeepCollectionEquality()
-                .equals(other.originalInvoiceNumber, originalInvoiceNumber) &&
-            const DeepCollectionEquality()
-                .equals(other.saleReturnId, saleReturnId) &&
+                .equals(other.purchaseId, purchaseId) &&
             const DeepCollectionEquality().equals(other.productId, productId) &&
             const DeepCollectionEquality()
                 .equals(other.productType, productType) &&
@@ -424,9 +388,7 @@ class _$_SalesReturnItemsModel implements _SalesReturnItemsModel {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(id),
-      const DeepCollectionEquality().hash(saleId),
-      const DeepCollectionEquality().hash(originalInvoiceNumber),
-      const DeepCollectionEquality().hash(saleReturnId),
+      const DeepCollectionEquality().hash(purchaseId),
       const DeepCollectionEquality().hash(productId),
       const DeepCollectionEquality().hash(productType),
       const DeepCollectionEquality().hash(productCode),
@@ -444,22 +406,19 @@ class _$_SalesReturnItemsModel implements _SalesReturnItemsModel {
 
   @JsonKey(ignore: true)
   @override
-  _$SalesReturnItemsModelCopyWith<_SalesReturnItemsModel> get copyWith =>
-      __$SalesReturnItemsModelCopyWithImpl<_SalesReturnItemsModel>(
-          this, _$identity);
+  _$PurchaseItemsModelCopyWith<_PurchaseItemsModel> get copyWith =>
+      __$PurchaseItemsModelCopyWithImpl<_PurchaseItemsModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_SalesReturnItemsModelToJson(this);
+    return _$$_PurchaseItemsModelToJson(this);
   }
 }
 
-abstract class _SalesReturnItemsModel implements SalesReturnItemsModel {
-  const factory _SalesReturnItemsModel(
+abstract class _PurchaseItemsModel implements PurchaseItemsModel {
+  const factory _PurchaseItemsModel(
       {@JsonKey(name: '_id') final int? id,
-      final int? saleId,
-      final String? originalInvoiceNumber,
-      required final int saleReturnId,
+      required final int purchaseId,
       required final String productId,
       required final String productType,
       required final String productCode,
@@ -473,20 +432,16 @@ abstract class _SalesReturnItemsModel implements SalesReturnItemsModel {
       required final String subTotal,
       required final String vatId,
       required final String vatPercentage,
-      required final String vatTotal}) = _$_SalesReturnItemsModel;
+      required final String vatTotal}) = _$_PurchaseItemsModel;
 
-  factory _SalesReturnItemsModel.fromJson(Map<String, dynamic> json) =
-      _$_SalesReturnItemsModel.fromJson;
+  factory _PurchaseItemsModel.fromJson(Map<String, dynamic> json) =
+      _$_PurchaseItemsModel.fromJson;
 
   @override
   @JsonKey(name: '_id')
   int? get id => throw _privateConstructorUsedError;
   @override
-  int? get saleId => throw _privateConstructorUsedError;
-  @override
-  String? get originalInvoiceNumber => throw _privateConstructorUsedError;
-  @override
-  int get saleReturnId => throw _privateConstructorUsedError;
+  int get purchaseId => throw _privateConstructorUsedError;
   @override
   String get productId => throw _privateConstructorUsedError;
   @override
@@ -517,6 +472,6 @@ abstract class _SalesReturnItemsModel implements SalesReturnItemsModel {
   String get vatTotal => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$SalesReturnItemsModelCopyWith<_SalesReturnItemsModel> get copyWith =>
+  _$PurchaseItemsModelCopyWith<_PurchaseItemsModel> get copyWith =>
       throw _privateConstructorUsedError;
 }

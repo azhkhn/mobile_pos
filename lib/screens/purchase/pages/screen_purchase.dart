@@ -153,7 +153,13 @@ class ScreenPurchase extends StatelessWidget {
                         Expanded(
                           child: MaterialButton(
                             height: 50,
-                            onPressed: () {},
+                            onPressed: () async {
+                              DeviceUtil.isLandscape = true;
+                              await Navigator.pushNamed(
+                                  context, routePurchaseReturn);
+                              await DeviceUtil.toPortrait();
+                              await getPurchaseDetails();
+                            },
                             color: Colors.indigo[400],
                             textColor: kWhite,
                             child: const Text(
@@ -208,6 +214,33 @@ class ScreenPurchase extends StatelessWidget {
   }
 
   Future<void> getPurchasesDetails() async {
+    try {
+      final List<PurchaseModel> purchaseModel =
+          await PurchaseDatabase.instance.getAllPurchases();
+
+      // Checking if new Purchase added!
+      if (totalPurchasesNotifier.value == purchaseModel.length) return;
+
+      totalPurchasesNotifier.value = purchaseModel.length;
+      totalAmountNotifier.value = 0;
+      paidAmountNotifier.value = 0;
+      balanceAmountNotifier.value = 0;
+      taxAmountNotifier.value = 0;
+      overDueAmountNotifier.value = 0;
+
+      for (var i = 0; i < purchaseModel.length; i++) {
+        totalAmountNotifier.value += num.parse(purchaseModel[i].grantTotal);
+        paidAmountNotifier.value += num.parse(purchaseModel[i].paid);
+        balanceAmountNotifier.value += num.parse(purchaseModel[i].balance);
+        taxAmountNotifier.value += num.parse(purchaseModel[i].vatAmount);
+        overDueAmountNotifier.value += num.parse(purchaseModel[i].balance);
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  Future<void> getPurchaseDetails() async {
     try {
       final List<PurchaseModel> purchaseModel =
           await PurchaseDatabase.instance.getAllPurchases();

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
@@ -212,25 +214,29 @@ class ScreenSales extends StatelessWidget {
   }
 
   Future<void> getSalesDetails() async {
-    final List<SalesModel> salesModel =
-        await SalesDatabase.instance.getAllSales();
+    try {
+      final List<SalesModel> salesModel =
+          await SalesDatabase.instance.getAllSales();
 
-    // Checking if new Sale added!
-    if (totalSalesNotifier.value == salesModel.length) return;
+      // Checking if new Sale added!
+      if (totalSalesNotifier.value == salesModel.length) return;
 
-    totalSalesNotifier.value = salesModel.length;
-    totalAmountNotifier.value = 0;
-    paidAmountNotifier.value = 0;
-    balanceAmountNotifier.value = 0;
-    taxAmountNotifier.value = 0;
-    overDueAmountNotifier.value = 0;
+      totalSalesNotifier.value = salesModel.length;
+      totalAmountNotifier.value = 0;
+      paidAmountNotifier.value = 0;
+      balanceAmountNotifier.value = 0;
+      taxAmountNotifier.value = 0;
+      overDueAmountNotifier.value = 0;
 
-    for (var i = 0; i < salesModel.length; i++) {
-      totalAmountNotifier.value += num.parse(salesModel[i].grantTotal);
-      paidAmountNotifier.value += num.parse(salesModel[i].paid);
-      balanceAmountNotifier.value += num.parse(salesModel[i].balance);
-      taxAmountNotifier.value += num.parse(salesModel[i].vatAmount);
-      overDueAmountNotifier.value += num.parse(salesModel[i].balance);
+      for (var i = 0; i < salesModel.length; i++) {
+        totalAmountNotifier.value += num.parse(salesModel[i].grantTotal);
+        paidAmountNotifier.value += num.parse(salesModel[i].paid);
+        balanceAmountNotifier.value += num.parse(salesModel[i].balance);
+        taxAmountNotifier.value += num.parse(salesModel[i].vatAmount);
+        overDueAmountNotifier.value += num.parse(salesModel[i].balance);
+      }
+    } catch (e) {
+      log(e.toString());
     }
   }
 }

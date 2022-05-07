@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/screens/barcode/screen_barcode.dart';
 import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
+import 'package:shop_ez/screens/purchase_return/screen_purchase_return.dart';
 import 'package:shop_ez/screens/sales_return/screen_sales_return.dart';
 import 'package:shop_ez/screens/stock/screen_stock.dart';
 
@@ -94,6 +95,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ScreenBarcode());
       case routeSalesReturn:
         return MaterialPageRoute(builder: (_) => const SalesReturn());
+      case routePurchaseReturn:
+        return MaterialPageRoute(builder: (_) => const PurchaseReturn());
 
       default:
         return _errorRoute();

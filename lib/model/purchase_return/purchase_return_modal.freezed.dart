@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
-part of 'sales_return_model.dart';
+part of 'purchase_return_modal.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,22 +14,23 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
-SalesReturnModal _$SalesReturnModalFromJson(Map<String, dynamic> json) {
-  return _SalesReturnModal.fromJson(json);
+PurchaseReturnModel _$PurchaseReturnModelFromJson(Map<String, dynamic> json) {
+  return _PurchaseReturnModel.fromJson(json);
 }
 
 /// @nodoc
-mixin _$SalesReturnModal {
+mixin _$PurchaseReturnModel {
   @JsonKey(name: '_id')
   int? get id => throw _privateConstructorUsedError;
-  int? get saleId => throw _privateConstructorUsedError;
   String? get invoiceNumber => throw _privateConstructorUsedError;
+  int? get purchaseid => throw _privateConstructorUsedError;
   String? get originalInvoiceNumber => throw _privateConstructorUsedError;
-  int get customerId => throw _privateConstructorUsedError;
+  String get referenceNumber => throw _privateConstructorUsedError;
   String get dateTime => throw _privateConstructorUsedError;
-  String get customerName => throw _privateConstructorUsedError;
+  int get supplierId => throw _privateConstructorUsedError;
+  String get supplierName => throw _privateConstructorUsedError;
   String get billerName => throw _privateConstructorUsedError;
-  String get salesNote => throw _privateConstructorUsedError;
+  String get purchaseNote => throw _privateConstructorUsedError;
   String get totalItems => throw _privateConstructorUsedError;
   String get vatAmount => throw _privateConstructorUsedError;
   String get subTotal => throw _privateConstructorUsedError;
@@ -38,31 +39,32 @@ mixin _$SalesReturnModal {
   String get paid => throw _privateConstructorUsedError;
   String get balance => throw _privateConstructorUsedError;
   String get paymentType => throw _privateConstructorUsedError;
-  String get salesStatus => throw _privateConstructorUsedError;
+  String get purchaseStatus => throw _privateConstructorUsedError;
   String get paymentStatus => throw _privateConstructorUsedError;
   String get createdBy => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $SalesReturnModalCopyWith<SalesReturnModal> get copyWith =>
+  $PurchaseReturnModelCopyWith<PurchaseReturnModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $SalesReturnModalCopyWith<$Res> {
-  factory $SalesReturnModalCopyWith(
-          SalesReturnModal value, $Res Function(SalesReturnModal) then) =
-      _$SalesReturnModalCopyWithImpl<$Res>;
+abstract class $PurchaseReturnModelCopyWith<$Res> {
+  factory $PurchaseReturnModelCopyWith(
+          PurchaseReturnModel value, $Res Function(PurchaseReturnModel) then) =
+      _$PurchaseReturnModelCopyWithImpl<$Res>;
   $Res call(
       {@JsonKey(name: '_id') int? id,
-      int? saleId,
       String? invoiceNumber,
+      int? purchaseid,
       String? originalInvoiceNumber,
-      int customerId,
+      String referenceNumber,
       String dateTime,
-      String customerName,
+      int supplierId,
+      String supplierName,
       String billerName,
-      String salesNote,
+      String purchaseNote,
       String totalItems,
       String vatAmount,
       String subTotal,
@@ -71,31 +73,32 @@ abstract class $SalesReturnModalCopyWith<$Res> {
       String paid,
       String balance,
       String paymentType,
-      String salesStatus,
+      String purchaseStatus,
       String paymentStatus,
       String createdBy});
 }
 
 /// @nodoc
-class _$SalesReturnModalCopyWithImpl<$Res>
-    implements $SalesReturnModalCopyWith<$Res> {
-  _$SalesReturnModalCopyWithImpl(this._value, this._then);
+class _$PurchaseReturnModelCopyWithImpl<$Res>
+    implements $PurchaseReturnModelCopyWith<$Res> {
+  _$PurchaseReturnModelCopyWithImpl(this._value, this._then);
 
-  final SalesReturnModal _value;
+  final PurchaseReturnModel _value;
   // ignore: unused_field
-  final $Res Function(SalesReturnModal) _then;
+  final $Res Function(PurchaseReturnModel) _then;
 
   @override
   $Res call({
     Object? id = freezed,
-    Object? saleId = freezed,
     Object? invoiceNumber = freezed,
+    Object? purchaseid = freezed,
     Object? originalInvoiceNumber = freezed,
-    Object? customerId = freezed,
+    Object? referenceNumber = freezed,
     Object? dateTime = freezed,
-    Object? customerName = freezed,
+    Object? supplierId = freezed,
+    Object? supplierName = freezed,
     Object? billerName = freezed,
-    Object? salesNote = freezed,
+    Object? purchaseNote = freezed,
     Object? totalItems = freezed,
     Object? vatAmount = freezed,
     Object? subTotal = freezed,
@@ -104,7 +107,7 @@ class _$SalesReturnModalCopyWithImpl<$Res>
     Object? paid = freezed,
     Object? balance = freezed,
     Object? paymentType = freezed,
-    Object? salesStatus = freezed,
+    Object? purchaseStatus = freezed,
     Object? paymentStatus = freezed,
     Object? createdBy = freezed,
   }) {
@@ -113,37 +116,41 @@ class _$SalesReturnModalCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      saleId: saleId == freezed
-          ? _value.saleId
-          : saleId // ignore: cast_nullable_to_non_nullable
-              as int?,
       invoiceNumber: invoiceNumber == freezed
           ? _value.invoiceNumber
           : invoiceNumber // ignore: cast_nullable_to_non_nullable
               as String?,
+      purchaseid: purchaseid == freezed
+          ? _value.purchaseid
+          : purchaseid // ignore: cast_nullable_to_non_nullable
+              as int?,
       originalInvoiceNumber: originalInvoiceNumber == freezed
           ? _value.originalInvoiceNumber
           : originalInvoiceNumber // ignore: cast_nullable_to_non_nullable
               as String?,
-      customerId: customerId == freezed
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as int,
+      referenceNumber: referenceNumber == freezed
+          ? _value.referenceNumber
+          : referenceNumber // ignore: cast_nullable_to_non_nullable
+              as String,
       dateTime: dateTime == freezed
           ? _value.dateTime
           : dateTime // ignore: cast_nullable_to_non_nullable
               as String,
-      customerName: customerName == freezed
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
+      supplierId: supplierId == freezed
+          ? _value.supplierId
+          : supplierId // ignore: cast_nullable_to_non_nullable
+              as int,
+      supplierName: supplierName == freezed
+          ? _value.supplierName
+          : supplierName // ignore: cast_nullable_to_non_nullable
               as String,
       billerName: billerName == freezed
           ? _value.billerName
           : billerName // ignore: cast_nullable_to_non_nullable
               as String,
-      salesNote: salesNote == freezed
-          ? _value.salesNote
-          : salesNote // ignore: cast_nullable_to_non_nullable
+      purchaseNote: purchaseNote == freezed
+          ? _value.purchaseNote
+          : purchaseNote // ignore: cast_nullable_to_non_nullable
               as String,
       totalItems: totalItems == freezed
           ? _value.totalItems
@@ -177,9 +184,9 @@ class _$SalesReturnModalCopyWithImpl<$Res>
           ? _value.paymentType
           : paymentType // ignore: cast_nullable_to_non_nullable
               as String,
-      salesStatus: salesStatus == freezed
-          ? _value.salesStatus
-          : salesStatus // ignore: cast_nullable_to_non_nullable
+      purchaseStatus: purchaseStatus == freezed
+          ? _value.purchaseStatus
+          : purchaseStatus // ignore: cast_nullable_to_non_nullable
               as String,
       paymentStatus: paymentStatus == freezed
           ? _value.paymentStatus
@@ -194,22 +201,23 @@ class _$SalesReturnModalCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$SalesReturnModalCopyWith<$Res>
-    implements $SalesReturnModalCopyWith<$Res> {
-  factory _$SalesReturnModalCopyWith(
-          _SalesReturnModal value, $Res Function(_SalesReturnModal) then) =
-      __$SalesReturnModalCopyWithImpl<$Res>;
+abstract class _$PurchaseReturnModelCopyWith<$Res>
+    implements $PurchaseReturnModelCopyWith<$Res> {
+  factory _$PurchaseReturnModelCopyWith(_PurchaseReturnModel value,
+          $Res Function(_PurchaseReturnModel) then) =
+      __$PurchaseReturnModelCopyWithImpl<$Res>;
   @override
   $Res call(
       {@JsonKey(name: '_id') int? id,
-      int? saleId,
       String? invoiceNumber,
+      int? purchaseid,
       String? originalInvoiceNumber,
-      int customerId,
+      String referenceNumber,
       String dateTime,
-      String customerName,
+      int supplierId,
+      String supplierName,
       String billerName,
-      String salesNote,
+      String purchaseNote,
       String totalItems,
       String vatAmount,
       String subTotal,
@@ -218,33 +226,34 @@ abstract class _$SalesReturnModalCopyWith<$Res>
       String paid,
       String balance,
       String paymentType,
-      String salesStatus,
+      String purchaseStatus,
       String paymentStatus,
       String createdBy});
 }
 
 /// @nodoc
-class __$SalesReturnModalCopyWithImpl<$Res>
-    extends _$SalesReturnModalCopyWithImpl<$Res>
-    implements _$SalesReturnModalCopyWith<$Res> {
-  __$SalesReturnModalCopyWithImpl(
-      _SalesReturnModal _value, $Res Function(_SalesReturnModal) _then)
-      : super(_value, (v) => _then(v as _SalesReturnModal));
+class __$PurchaseReturnModelCopyWithImpl<$Res>
+    extends _$PurchaseReturnModelCopyWithImpl<$Res>
+    implements _$PurchaseReturnModelCopyWith<$Res> {
+  __$PurchaseReturnModelCopyWithImpl(
+      _PurchaseReturnModel _value, $Res Function(_PurchaseReturnModel) _then)
+      : super(_value, (v) => _then(v as _PurchaseReturnModel));
 
   @override
-  _SalesReturnModal get _value => super._value as _SalesReturnModal;
+  _PurchaseReturnModel get _value => super._value as _PurchaseReturnModel;
 
   @override
   $Res call({
     Object? id = freezed,
-    Object? saleId = freezed,
     Object? invoiceNumber = freezed,
+    Object? purchaseid = freezed,
     Object? originalInvoiceNumber = freezed,
-    Object? customerId = freezed,
+    Object? referenceNumber = freezed,
     Object? dateTime = freezed,
-    Object? customerName = freezed,
+    Object? supplierId = freezed,
+    Object? supplierName = freezed,
     Object? billerName = freezed,
-    Object? salesNote = freezed,
+    Object? purchaseNote = freezed,
     Object? totalItems = freezed,
     Object? vatAmount = freezed,
     Object? subTotal = freezed,
@@ -253,46 +262,50 @@ class __$SalesReturnModalCopyWithImpl<$Res>
     Object? paid = freezed,
     Object? balance = freezed,
     Object? paymentType = freezed,
-    Object? salesStatus = freezed,
+    Object? purchaseStatus = freezed,
     Object? paymentStatus = freezed,
     Object? createdBy = freezed,
   }) {
-    return _then(_SalesReturnModal(
+    return _then(_PurchaseReturnModel(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      saleId: saleId == freezed
-          ? _value.saleId
-          : saleId // ignore: cast_nullable_to_non_nullable
               as int?,
       invoiceNumber: invoiceNumber == freezed
           ? _value.invoiceNumber
           : invoiceNumber // ignore: cast_nullable_to_non_nullable
               as String?,
+      purchaseid: purchaseid == freezed
+          ? _value.purchaseid
+          : purchaseid // ignore: cast_nullable_to_non_nullable
+              as int?,
       originalInvoiceNumber: originalInvoiceNumber == freezed
           ? _value.originalInvoiceNumber
           : originalInvoiceNumber // ignore: cast_nullable_to_non_nullable
               as String?,
-      customerId: customerId == freezed
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as int,
+      referenceNumber: referenceNumber == freezed
+          ? _value.referenceNumber
+          : referenceNumber // ignore: cast_nullable_to_non_nullable
+              as String,
       dateTime: dateTime == freezed
           ? _value.dateTime
           : dateTime // ignore: cast_nullable_to_non_nullable
               as String,
-      customerName: customerName == freezed
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
+      supplierId: supplierId == freezed
+          ? _value.supplierId
+          : supplierId // ignore: cast_nullable_to_non_nullable
+              as int,
+      supplierName: supplierName == freezed
+          ? _value.supplierName
+          : supplierName // ignore: cast_nullable_to_non_nullable
               as String,
       billerName: billerName == freezed
           ? _value.billerName
           : billerName // ignore: cast_nullable_to_non_nullable
               as String,
-      salesNote: salesNote == freezed
-          ? _value.salesNote
-          : salesNote // ignore: cast_nullable_to_non_nullable
+      purchaseNote: purchaseNote == freezed
+          ? _value.purchaseNote
+          : purchaseNote // ignore: cast_nullable_to_non_nullable
               as String,
       totalItems: totalItems == freezed
           ? _value.totalItems
@@ -326,9 +339,9 @@ class __$SalesReturnModalCopyWithImpl<$Res>
           ? _value.paymentType
           : paymentType // ignore: cast_nullable_to_non_nullable
               as String,
-      salesStatus: salesStatus == freezed
-          ? _value.salesStatus
-          : salesStatus // ignore: cast_nullable_to_non_nullable
+      purchaseStatus: purchaseStatus == freezed
+          ? _value.purchaseStatus
+          : purchaseStatus // ignore: cast_nullable_to_non_nullable
               as String,
       paymentStatus: paymentStatus == freezed
           ? _value.paymentStatus
@@ -344,17 +357,18 @@ class __$SalesReturnModalCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_SalesReturnModal implements _SalesReturnModal {
-  const _$_SalesReturnModal(
+class _$_PurchaseReturnModel implements _PurchaseReturnModel {
+  const _$_PurchaseReturnModel(
       {@JsonKey(name: '_id') this.id,
-      this.saleId,
       this.invoiceNumber,
+      required this.purchaseid,
       required this.originalInvoiceNumber,
-      required this.customerId,
+      required this.referenceNumber,
       required this.dateTime,
-      required this.customerName,
+      required this.supplierId,
+      required this.supplierName,
       required this.billerName,
-      required this.salesNote,
+      required this.purchaseNote,
       required this.totalItems,
       required this.vatAmount,
       required this.subTotal,
@@ -363,32 +377,34 @@ class _$_SalesReturnModal implements _SalesReturnModal {
       required this.paid,
       required this.balance,
       required this.paymentType,
-      required this.salesStatus,
+      required this.purchaseStatus,
       required this.paymentStatus,
       required this.createdBy});
 
-  factory _$_SalesReturnModal.fromJson(Map<String, dynamic> json) =>
-      _$$_SalesReturnModalFromJson(json);
+  factory _$_PurchaseReturnModel.fromJson(Map<String, dynamic> json) =>
+      _$$_PurchaseReturnModelFromJson(json);
 
   @override
   @JsonKey(name: '_id')
   final int? id;
   @override
-  final int? saleId;
-  @override
   final String? invoiceNumber;
+  @override
+  final int? purchaseid;
   @override
   final String? originalInvoiceNumber;
   @override
-  final int customerId;
+  final String referenceNumber;
   @override
   final String dateTime;
   @override
-  final String customerName;
+  final int supplierId;
+  @override
+  final String supplierName;
   @override
   final String billerName;
   @override
-  final String salesNote;
+  final String purchaseNote;
   @override
   final String totalItems;
   @override
@@ -406,7 +422,7 @@ class _$_SalesReturnModal implements _SalesReturnModal {
   @override
   final String paymentType;
   @override
-  final String salesStatus;
+  final String purchaseStatus;
   @override
   final String paymentStatus;
   @override
@@ -414,28 +430,32 @@ class _$_SalesReturnModal implements _SalesReturnModal {
 
   @override
   String toString() {
-    return 'SalesReturnModal(id: $id, saleId: $saleId, invoiceNumber: $invoiceNumber, originalInvoiceNumber: $originalInvoiceNumber, customerId: $customerId, dateTime: $dateTime, customerName: $customerName, billerName: $billerName, salesNote: $salesNote, totalItems: $totalItems, vatAmount: $vatAmount, subTotal: $subTotal, discount: $discount, grantTotal: $grantTotal, paid: $paid, balance: $balance, paymentType: $paymentType, salesStatus: $salesStatus, paymentStatus: $paymentStatus, createdBy: $createdBy)';
+    return 'PurchaseReturnModel(id: $id, invoiceNumber: $invoiceNumber, purchaseid: $purchaseid, originalInvoiceNumber: $originalInvoiceNumber, referenceNumber: $referenceNumber, dateTime: $dateTime, supplierId: $supplierId, supplierName: $supplierName, billerName: $billerName, purchaseNote: $purchaseNote, totalItems: $totalItems, vatAmount: $vatAmount, subTotal: $subTotal, discount: $discount, grantTotal: $grantTotal, paid: $paid, balance: $balance, paymentType: $paymentType, purchaseStatus: $purchaseStatus, paymentStatus: $paymentStatus, createdBy: $createdBy)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _SalesReturnModal &&
+            other is _PurchaseReturnModel &&
             const DeepCollectionEquality().equals(other.id, id) &&
-            const DeepCollectionEquality().equals(other.saleId, saleId) &&
             const DeepCollectionEquality()
                 .equals(other.invoiceNumber, invoiceNumber) &&
             const DeepCollectionEquality()
+                .equals(other.purchaseid, purchaseid) &&
+            const DeepCollectionEquality()
                 .equals(other.originalInvoiceNumber, originalInvoiceNumber) &&
             const DeepCollectionEquality()
-                .equals(other.customerId, customerId) &&
+                .equals(other.referenceNumber, referenceNumber) &&
             const DeepCollectionEquality().equals(other.dateTime, dateTime) &&
             const DeepCollectionEquality()
-                .equals(other.customerName, customerName) &&
+                .equals(other.supplierId, supplierId) &&
+            const DeepCollectionEquality()
+                .equals(other.supplierName, supplierName) &&
             const DeepCollectionEquality()
                 .equals(other.billerName, billerName) &&
-            const DeepCollectionEquality().equals(other.salesNote, salesNote) &&
+            const DeepCollectionEquality()
+                .equals(other.purchaseNote, purchaseNote) &&
             const DeepCollectionEquality()
                 .equals(other.totalItems, totalItems) &&
             const DeepCollectionEquality().equals(other.vatAmount, vatAmount) &&
@@ -448,7 +468,7 @@ class _$_SalesReturnModal implements _SalesReturnModal {
             const DeepCollectionEquality()
                 .equals(other.paymentType, paymentType) &&
             const DeepCollectionEquality()
-                .equals(other.salesStatus, salesStatus) &&
+                .equals(other.purchaseStatus, purchaseStatus) &&
             const DeepCollectionEquality()
                 .equals(other.paymentStatus, paymentStatus) &&
             const DeepCollectionEquality().equals(other.createdBy, createdBy));
@@ -459,14 +479,15 @@ class _$_SalesReturnModal implements _SalesReturnModal {
   int get hashCode => Object.hashAll([
         runtimeType,
         const DeepCollectionEquality().hash(id),
-        const DeepCollectionEquality().hash(saleId),
         const DeepCollectionEquality().hash(invoiceNumber),
+        const DeepCollectionEquality().hash(purchaseid),
         const DeepCollectionEquality().hash(originalInvoiceNumber),
-        const DeepCollectionEquality().hash(customerId),
+        const DeepCollectionEquality().hash(referenceNumber),
         const DeepCollectionEquality().hash(dateTime),
-        const DeepCollectionEquality().hash(customerName),
+        const DeepCollectionEquality().hash(supplierId),
+        const DeepCollectionEquality().hash(supplierName),
         const DeepCollectionEquality().hash(billerName),
-        const DeepCollectionEquality().hash(salesNote),
+        const DeepCollectionEquality().hash(purchaseNote),
         const DeepCollectionEquality().hash(totalItems),
         const DeepCollectionEquality().hash(vatAmount),
         const DeepCollectionEquality().hash(subTotal),
@@ -475,33 +496,35 @@ class _$_SalesReturnModal implements _SalesReturnModal {
         const DeepCollectionEquality().hash(paid),
         const DeepCollectionEquality().hash(balance),
         const DeepCollectionEquality().hash(paymentType),
-        const DeepCollectionEquality().hash(salesStatus),
+        const DeepCollectionEquality().hash(purchaseStatus),
         const DeepCollectionEquality().hash(paymentStatus),
         const DeepCollectionEquality().hash(createdBy)
       ]);
 
   @JsonKey(ignore: true)
   @override
-  _$SalesReturnModalCopyWith<_SalesReturnModal> get copyWith =>
-      __$SalesReturnModalCopyWithImpl<_SalesReturnModal>(this, _$identity);
+  _$PurchaseReturnModelCopyWith<_PurchaseReturnModel> get copyWith =>
+      __$PurchaseReturnModelCopyWithImpl<_PurchaseReturnModel>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_SalesReturnModalToJson(this);
+    return _$$_PurchaseReturnModelToJson(this);
   }
 }
 
-abstract class _SalesReturnModal implements SalesReturnModal {
-  const factory _SalesReturnModal(
+abstract class _PurchaseReturnModel implements PurchaseReturnModel {
+  const factory _PurchaseReturnModel(
       {@JsonKey(name: '_id') final int? id,
-      final int? saleId,
       final String? invoiceNumber,
+      required final int? purchaseid,
       required final String? originalInvoiceNumber,
-      required final int customerId,
+      required final String referenceNumber,
       required final String dateTime,
-      required final String customerName,
+      required final int supplierId,
+      required final String supplierName,
       required final String billerName,
-      required final String salesNote,
+      required final String purchaseNote,
       required final String totalItems,
       required final String vatAmount,
       required final String subTotal,
@@ -510,32 +533,34 @@ abstract class _SalesReturnModal implements SalesReturnModal {
       required final String paid,
       required final String balance,
       required final String paymentType,
-      required final String salesStatus,
+      required final String purchaseStatus,
       required final String paymentStatus,
-      required final String createdBy}) = _$_SalesReturnModal;
+      required final String createdBy}) = _$_PurchaseReturnModel;
 
-  factory _SalesReturnModal.fromJson(Map<String, dynamic> json) =
-      _$_SalesReturnModal.fromJson;
+  factory _PurchaseReturnModel.fromJson(Map<String, dynamic> json) =
+      _$_PurchaseReturnModel.fromJson;
 
   @override
   @JsonKey(name: '_id')
   int? get id => throw _privateConstructorUsedError;
   @override
-  int? get saleId => throw _privateConstructorUsedError;
-  @override
   String? get invoiceNumber => throw _privateConstructorUsedError;
+  @override
+  int? get purchaseid => throw _privateConstructorUsedError;
   @override
   String? get originalInvoiceNumber => throw _privateConstructorUsedError;
   @override
-  int get customerId => throw _privateConstructorUsedError;
+  String get referenceNumber => throw _privateConstructorUsedError;
   @override
   String get dateTime => throw _privateConstructorUsedError;
   @override
-  String get customerName => throw _privateConstructorUsedError;
+  int get supplierId => throw _privateConstructorUsedError;
+  @override
+  String get supplierName => throw _privateConstructorUsedError;
   @override
   String get billerName => throw _privateConstructorUsedError;
   @override
-  String get salesNote => throw _privateConstructorUsedError;
+  String get purchaseNote => throw _privateConstructorUsedError;
   @override
   String get totalItems => throw _privateConstructorUsedError;
   @override
@@ -553,13 +578,13 @@ abstract class _SalesReturnModal implements SalesReturnModal {
   @override
   String get paymentType => throw _privateConstructorUsedError;
   @override
-  String get salesStatus => throw _privateConstructorUsedError;
+  String get purchaseStatus => throw _privateConstructorUsedError;
   @override
   String get paymentStatus => throw _privateConstructorUsedError;
   @override
   String get createdBy => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$SalesReturnModalCopyWith<_SalesReturnModal> get copyWith =>
+  _$PurchaseReturnModelCopyWith<_PurchaseReturnModel> get copyWith =>
       throw _privateConstructorUsedError;
 }

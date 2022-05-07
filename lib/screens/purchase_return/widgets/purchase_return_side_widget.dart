@@ -9,23 +9,23 @@ import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
-import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
-import 'package:shop_ez/db/db_functions/sales/sales_items_database.dart';
+import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
+import 'package:shop_ez/db/db_functions/purchase/purchase_items_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
-import 'package:shop_ez/screens/sales_return/widgets/sales_return_buttons_widget.dart';
-import 'package:shop_ez/screens/sales_return/widgets/sales_return_price_section.dart';
+import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_buttons_widget.dart';
+import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_price_section.dart';
 import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
 import '../../../core/utils/device/device.dart';
 import '../../../core/utils/snackbar/snackbar.dart';
 
-class SalesReturnSideWidget extends StatelessWidget {
-  const SalesReturnSideWidget({
+class PurchaseReturnSideWidget extends StatelessWidget {
+  const PurchaseReturnSideWidget({
     Key? key,
   }) : super(key: key);
 
@@ -40,10 +40,11 @@ class SalesReturnSideWidget extends StatelessWidget {
 
   static final ValueNotifier<String?> originalInvoiceNumberNotifier =
       ValueNotifier(null);
-  static final ValueNotifier<int?> originalSaleIdNotifier = ValueNotifier(null);
+  static final ValueNotifier<int?> originalPurchaseIdNotifier =
+      ValueNotifier(null);
 
-  static final ValueNotifier<int?> customerIdNotifier = ValueNotifier(null);
-  static final ValueNotifier<String?> customerNameNotifier =
+  static final ValueNotifier<int?> supplierIdNotifier = ValueNotifier(null);
+  static final ValueNotifier<String?> supplierNameNotifier =
       ValueNotifier(null);
   static final ValueNotifier<num> totalItemsNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalQuantityNotifier = ValueNotifier(0);
@@ -52,12 +53,13 @@ class SalesReturnSideWidget extends StatelessWidget {
   static final ValueNotifier<num> totalPayableNotifier = ValueNotifier(0);
 
   //==================== TextEditing Controllers ====================
-  static final customerController = TextEditingController();
-  static final saleInvoiceController = TextEditingController();
+  static final supplierController = TextEditingController();
+  static final purchaseInvoiceController = TextEditingController();
 
   //========== Database Instances ==========
-  static final SalesDatabase salesDB = SalesDatabase.instance;
-  static final SalesItemsDatabase salesItemDB = SalesItemsDatabase.instance;
+  static final PurchaseDatabase purchaseDatabase = PurchaseDatabase.instance;
+  static final PurchaseItemsDatabase purchaseItemsDatabase =
+      PurchaseItemsDatabase.instance;
   static final ItemMasterDatabase itemDB = ItemMasterDatabase.instance;
 
   @override
@@ -70,18 +72,18 @@ class SalesReturnSideWidget extends StatelessWidget {
         selectedProductsNotifier.value.clear();
         subTotalNotifier.value.clear();
         itemTotalVatNotifier.value.clear();
-        customerController.clear();
-        saleInvoiceController.clear();
+        supplierController.clear();
+        purchaseInvoiceController.clear();
         quantityNotifier.value.clear();
         totalItemsNotifier.value = 0;
         totalQuantityNotifier.value = 0;
         totalAmountNotifier.value = 0;
         totalVatNotifier.value = 0;
         totalPayableNotifier.value = 0;
-        customerIdNotifier.value = null;
-        customerNameNotifier.value = null;
+        supplierIdNotifier.value = null;
+        supplierNameNotifier.value = null;
         originalInvoiceNumberNotifier.value = null;
-        originalSaleIdNotifier.value = null;
+        originalPurchaseIdNotifier.value = null;
         return true;
       },
       child: SizedBox(
@@ -99,7 +101,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                     debounceDuration: const Duration(milliseconds: 500),
                     hideSuggestionsOnKeyboardHide: true,
                     textFieldConfiguration: TextFieldConfiguration(
-                        controller: customerController,
+                        controller: supplierController,
                         style: const TextStyle(fontSize: 12),
                         decoration: InputDecoration(
                           fillColor: Colors.white,
@@ -114,8 +116,8 @@ class SalesReturnSideWidget extends StatelessWidget {
                             child: InkWell(
                               child: const Icon(Icons.clear, size: 15),
                               onTap: () {
-                                customerIdNotifier.value = null;
-                                customerController.clear();
+                                supplierIdNotifier.value = null;
+                                supplierController.clear();
                               },
                             ),
                           ),
@@ -145,23 +147,23 @@ class SalesReturnSideWidget extends StatelessWidget {
                       );
                     },
                     onSuggestionSelected: (CustomerModel suggestion) {
-                      customerController.text = suggestion.customer;
-                      customerNameNotifier.value = suggestion.customer;
-                      customerIdNotifier.value = suggestion.id;
+                      supplierController.text = suggestion.customer;
+                      supplierNameNotifier.value = suggestion.customer;
+                      supplierIdNotifier.value = suggestion.id;
                       log(suggestion.company);
                     },
                   ),
                 ),
                 kWidth5,
 
-                //==================== Get All Sales Invoices ====================
+                //==================== Get All Purchases Invoices ====================
                 Flexible(
                   flex: 5,
                   child: TypeAheadField(
                     debounceDuration: const Duration(milliseconds: 500),
                     hideSuggestionsOnKeyboardHide: true,
                     textFieldConfiguration: TextFieldConfiguration(
-                        controller: saleInvoiceController,
+                        controller: purchaseInvoiceController,
                         style: const TextStyle(fontSize: 12),
                         decoration: InputDecoration(
                           fillColor: Colors.white,
@@ -179,9 +181,9 @@ class SalesReturnSideWidget extends StatelessWidget {
                                 size: 15,
                               ),
                               onTap: () async {
-                                saleInvoiceController.clear();
+                                purchaseInvoiceController.clear();
                                 originalInvoiceNumberNotifier.value = null;
-                                originalSaleIdNotifier.value = null;
+                                originalPurchaseIdNotifier.value = null;
                               },
                             ),
                           ),
@@ -195,10 +197,10 @@ class SalesReturnSideWidget extends StatelessWidget {
                         child: Center(
                             child: Text('No Invoice Found!', style: kText12))),
                     suggestionsCallback: (pattern) async {
-                      return await salesDB
-                          .getSalesByInvoiceSuggestions(pattern);
+                      return await purchaseDatabase
+                          .getPurchaseByInvoiceSuggestions(pattern);
                     },
-                    itemBuilder: (context, SalesModel suggestion) {
+                    itemBuilder: (context, PurchaseModel suggestion) {
                       return Padding(
                         padding: const EdgeInsets.all(10),
                         child: AutoSizeText(
@@ -211,14 +213,15 @@ class SalesReturnSideWidget extends StatelessWidget {
                         ),
                       );
                     },
-                    onSuggestionSelected: (SalesModel sale) async {
-                      resetSalesReturn();
-                      saleInvoiceController.text = sale.invoiceNumber!;
-                      originalInvoiceNumberNotifier.value = sale.invoiceNumber!;
-                      originalSaleIdNotifier.value = sale.id;
-                      await getSalesDetails(sale);
+                    onSuggestionSelected: (PurchaseModel purchase) async {
+                      resetPurchaseReturn();
+                      purchaseInvoiceController.text = purchase.invoiceNumber!;
+                      originalInvoiceNumberNotifier.value =
+                          purchase.invoiceNumber!;
+                      originalPurchaseIdNotifier.value = purchase.id;
+                      await getPurchaseDetails(purchase);
 
-                      log(sale.invoiceNumber!);
+                      log(purchase.invoiceNumber!);
                     },
                   ),
                 ),
@@ -236,8 +239,8 @@ class SalesReturnSideWidget extends StatelessWidget {
                           maxHeight: 45,
                         ),
                         onPressed: () {
-                          if (customerIdNotifier.value != null) {
-                            log('${customerIdNotifier.value}');
+                          if (supplierIdNotifier.value != null) {
+                            log('${supplierIdNotifier.value}');
 
                             showModalBottomSheet(
                                 context: context,
@@ -249,8 +252,8 @@ class SalesReturnSideWidget extends StatelessWidget {
                                 builder: (context) => DismissibleWidget(
                                       context: context,
                                       child: CustomBottomSheetWidget(
-                                        id: customerIdNotifier.value,
-                                        supplier: false,
+                                        id: supplierIdNotifier.value,
+                                        supplier: true,
                                       ),
                                     ));
                           } else {
@@ -291,9 +294,9 @@ class SalesReturnSideWidget extends StatelessWidget {
                                 .instance
                                 .getCustomerById(id as int);
 
-                            customerController.text = addedCustomer.customer;
-                            customerNameNotifier.value = addedCustomer.customer;
-                            customerIdNotifier.value = addedCustomer.id;
+                            supplierController.text = addedCustomer.customer;
+                            supplierNameNotifier.value = addedCustomer.customer;
+                            supplierIdNotifier.value = addedCustomer.id;
                             log(addedCustomer.company);
                           }
 
@@ -360,11 +363,11 @@ class SalesReturnSideWidget extends StatelessWidget {
                               alignment: Alignment.center,
                               child: AutoSizeText(
                                 _product.vatMethod == 'Exclusive'
-                                    ? Converter.currency.format(
-                                        num.parse(_product.sellingPrice))
+                                    ? Converter.currency
+                                        .format(num.parse(_product.itemCost))
                                     : Converter.currency.format(
                                         getExclusiveAmount(
-                                            sellingPrice: _product.sellingPrice,
+                                            itemCost: _product.itemCost,
                                             vatRate: _product.vatRate)),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -456,10 +459,10 @@ class SalesReturnSideWidget extends StatelessWidget {
             kHeight5,
 
             //==================== Price Sections ====================
-            const SalesReturnPriceSectionWidget(),
+            const PurchaseReturnPriceSectionWidget(),
 
             //==================== Payment Buttons Widget ====================
-            const SalesReturnButtonsWidget()
+            const PurchaseReturnButtonsWidget()
           ],
         ),
       ),
@@ -481,11 +484,11 @@ class SalesReturnSideWidget extends StatelessWidget {
 
   //==================== Get SubTotal Amount ====================
   void getSubTotal(List<ItemMasterModel> selectedProducts, int index, num qty) {
-    final cost = num.tryParse(selectedProducts[index].sellingPrice);
+    final cost = num.tryParse(selectedProducts[index].itemCost);
     final vatRate = selectedProducts[index].vatRate;
     if (selectedProducts[index].vatMethod == 'Inclusive') {
       final _exclusiveCost = getExclusiveAmount(
-          sellingPrice: selectedProducts[index].sellingPrice, vatRate: vatRate);
+          itemCost: selectedProducts[index].itemCost, vatRate: vatRate);
       final _subTotal = _exclusiveCost * qty;
       subTotalNotifier.value[index] = '$_subTotal';
     } else {
@@ -536,14 +539,13 @@ class SalesReturnSideWidget extends StatelessWidget {
     required int vatRate,
   }) {
     num? itemTotalVat;
-    num sellingPrice = num.parse(amount);
+    num itemCost = num.parse(amount);
 
     if (vatMethod == 'Inclusive') {
-      sellingPrice =
-          getExclusiveAmount(sellingPrice: '$sellingPrice', vatRate: vatRate);
+      itemCost = getExclusiveAmount(itemCost: '$itemCost', vatRate: vatRate);
     }
 
-    itemTotalVat = sellingPrice * vatRate / 100;
+    itemTotalVat = itemCost * vatRate / 100;
     log('Item VAT == $itemTotalVat');
     itemTotalVatNotifier.value.add('$itemTotalVat');
   }
@@ -572,11 +574,11 @@ class SalesReturnSideWidget extends StatelessWidget {
   }
 
   //==================== Calculate Exclusive Amount from Inclusive Amount ====================
-  num getExclusiveAmount({required String sellingPrice, required int vatRate}) {
+  num getExclusiveAmount({required String itemCost, required int vatRate}) {
     num _exclusiveAmount = 0;
     num percentageYouHave = vatRate + 100;
 
-    final _inclusiveAmount = num.tryParse(sellingPrice);
+    final _inclusiveAmount = num.tryParse(itemCost);
 
     _exclusiveAmount = _inclusiveAmount! * 100 / percentageYouHave;
 
@@ -596,22 +598,22 @@ class SalesReturnSideWidget extends StatelessWidget {
   }
 
   //==================== Reset All Values ====================
-  void resetSalesReturn() {
+  void resetPurchaseReturn() {
     selectedProductsNotifier.value.clear();
     subTotalNotifier.value.clear();
     itemTotalVatNotifier.value.clear();
-    customerController.clear();
-    saleInvoiceController.clear();
+    supplierController.clear();
+    purchaseInvoiceController.clear();
     quantityNotifier.value.clear();
     totalItemsNotifier.value = 0;
     totalQuantityNotifier.value = 0;
     totalAmountNotifier.value = 0;
     totalVatNotifier.value = 0;
     totalPayableNotifier.value = 0;
-    customerIdNotifier.value = null;
-    customerNameNotifier.value = null;
+    supplierIdNotifier.value = null;
+    supplierNameNotifier.value = null;
     originalInvoiceNumberNotifier.value = null;
-    originalSaleIdNotifier.value = null;
+    originalPurchaseIdNotifier.value = null;
 
     selectedProductsNotifier.notifyListeners();
     subTotalNotifier.notifyListeners();
@@ -622,61 +624,63 @@ class SalesReturnSideWidget extends StatelessWidget {
     totalAmountNotifier.notifyListeners();
     totalVatNotifier.notifyListeners();
     totalPayableNotifier.notifyListeners();
-    customerIdNotifier.notifyListeners();
-    customerNameNotifier.notifyListeners();
+    supplierIdNotifier.notifyListeners();
+    supplierNameNotifier.notifyListeners();
     originalInvoiceNumberNotifier.notifyListeners();
-    originalSaleIdNotifier.notifyListeners();
+    originalPurchaseIdNotifier.notifyListeners();
 
-    log('========== Sales Return values has been cleared! ==========');
+    log('========== Purchase Return values has been cleared! ==========');
   }
 
-  //==================== Get Sales Details ====================
-  Future<void> getSalesDetails(SalesModel sale) async {
-    final List<ItemMasterModel> soldItems = [];
+  //==================== Get Purchase Details ====================
+  Future<void> getPurchaseDetails(PurchaseModel purchase) async {
+    final List<ItemMasterModel> purchasedItems = [];
 
-    customerController.text = sale.customerName;
-    customerIdNotifier.value = sale.customerId;
-    customerNameNotifier.value = sale.customerName;
+    supplierController.text = purchase.supplierName;
+    supplierIdNotifier.value = purchase.supplierId;
+    supplierNameNotifier.value = purchase.supplierName;
 
-    final salesItems = await salesItemDB.getSalesItemBySaleId(sale.id!);
+    final purchaseItems =
+        await purchaseItemsDatabase.getPurchaseItemByPurchaseId(purchase.id!);
 
-    for (var i = 0; i < salesItems.length; i++) {
-      final soldItem = salesItems[i];
-      final items = await itemDB.getProductById(int.parse(soldItem.productId));
+    for (var i = 0; i < purchaseItems.length; i++) {
+      final purchasedItem = purchaseItems[i];
+      final items =
+          await itemDB.getProductById(int.parse(purchasedItem.productId));
       final item = items.first;
 
       log('item Id == ' '${item.id}');
       log('item Name == ' + item.itemName);
-      log('Category == ' + soldItem.category);
-      log('Product Code == ' + soldItem.productCode);
-      log('Cost == ' + soldItem.productCost);
-      log('Unit Price == ' + soldItem.unitPrice);
-      log('Net Unit Price == ' + soldItem.netUnitPrice);
-      log('Quantity == ' + soldItem.quantity);
-      log('Unit Code == ' + soldItem.unitCode);
-      log('Vat Id == ' + soldItem.vatId);
+      log('Category == ' + purchasedItem.category);
+      log('Product Code == ' + purchasedItem.productCode);
+      log('Cost == ' + purchasedItem.productCost);
+      log('Unit Price == ' + purchasedItem.unitPrice);
+      log('Net Unit Price == ' + purchasedItem.netUnitPrice);
+      log('Quantity == ' + purchasedItem.quantity);
+      log('Unit Code == ' + purchasedItem.unitCode);
+      log('Vat Id == ' + purchasedItem.vatId);
       log('Products Vat Method == ' + item.vatMethod);
       log('Vat Method == ' + item.vatMethod);
-      log('Vat Percentage == ' + soldItem.vatPercentage);
-      log('Vat Total == ' + soldItem.vatTotal);
+      log('Vat Percentage == ' + purchasedItem.vatPercentage);
+      log('Vat Total == ' + purchasedItem.vatTotal);
 
-      soldItems.add(ItemMasterModel(
+      purchasedItems.add(ItemMasterModel(
         id: item.id,
-        productType: soldItem.productType,
-        itemName: soldItem.productName,
+        productType: purchasedItem.productType,
+        itemName: purchasedItem.productName,
         itemNameArabic: item.itemNameArabic,
-        itemCode: soldItem.productCode,
-        itemCategory: soldItem.category,
+        itemCode: purchasedItem.productCode,
+        itemCategory: purchasedItem.category,
         itemSubCategory: item.itemSubCategory,
         itemBrand: item.itemBrand,
-        itemCost: soldItem.productCost,
-        sellingPrice: soldItem.unitPrice,
+        itemCost: purchasedItem.productCost,
+        sellingPrice: purchasedItem.unitPrice,
         secondarySellingPrice: item.secondarySellingPrice,
         vatMethod: item.vatMethod,
         productVAT: item.productVAT,
-        vatId: soldItem.vatId,
+        vatId: purchasedItem.vatId,
         vatRate: item.vatRate,
-        unit: soldItem.unitCode,
+        unit: purchasedItem.unitCode,
         expiryDate: item.expiryDate,
         openingStock: item.openingStock,
         alertQuantity: item.alertQuantity,
@@ -684,20 +688,20 @@ class SalesReturnSideWidget extends StatelessWidget {
       ));
 
       quantityNotifier.value
-          .add(TextEditingController(text: soldItem.quantity));
+          .add(TextEditingController(text: purchasedItem.quantity));
 
-      subTotalNotifier.value.add(soldItem.subTotal);
-      itemTotalVatNotifier.value.add(soldItem.vatTotal);
+      subTotalNotifier.value.add(purchasedItem.subTotal);
+      itemTotalVatNotifier.value.add(purchasedItem.vatTotal);
     }
 
-    selectedProductsNotifier.value = soldItems;
+    selectedProductsNotifier.value = purchasedItems;
     await getTotalQuantity();
     log(totalQuantityNotifier.value.toString());
 
-    totalItemsNotifier.value = num.parse(sale.totalItems);
-    totalAmountNotifier.value = num.parse(sale.subTotal);
-    totalVatNotifier.value = num.parse(sale.vatAmount);
-    totalPayableNotifier.value = num.parse(sale.grantTotal);
+    totalItemsNotifier.value = num.parse(purchase.totalItems);
+    totalAmountNotifier.value = num.parse(purchase.subTotal);
+    totalVatNotifier.value = num.parse(purchase.vatAmount);
+    totalPayableNotifier.value = num.parse(purchase.grantTotal);
 
     selectedProductsNotifier.notifyListeners();
     subTotalNotifier.notifyListeners();
@@ -708,9 +712,9 @@ class SalesReturnSideWidget extends StatelessWidget {
     totalAmountNotifier.notifyListeners();
     totalVatNotifier.notifyListeners();
     totalPayableNotifier.notifyListeners();
-    customerIdNotifier.notifyListeners();
-    customerNameNotifier.notifyListeners();
+    supplierIdNotifier.notifyListeners();
+    supplierNameNotifier.notifyListeners();
     originalInvoiceNumberNotifier.notifyListeners();
-    originalSaleIdNotifier.notifyListeners();
+    originalPurchaseIdNotifier.notifyListeners();
   }
 }
