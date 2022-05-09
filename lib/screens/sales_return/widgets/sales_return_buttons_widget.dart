@@ -398,7 +398,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
       kSnackBar(
         context: context,
         success: true,
-        content: "Sale returned successfully!",
+        content: "Sale has been returned successfully!",
       );
     } catch (e) {
       log('$e');

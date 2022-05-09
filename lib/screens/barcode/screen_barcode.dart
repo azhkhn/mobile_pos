@@ -2,7 +2,6 @@
 
 import 'dart:developer';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -88,14 +87,13 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                       return _itemMasterDB.getProductSuggestions(pattern);
                     },
                     itemBuilder: (context, ItemMasterModel suggestion) {
-                      return ListTile(
-                        title: AutoSizeText(
+                      return Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
                           suggestion.itemName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontSize: _isTablet ? 12 : 10),
-                          minFontSize: 10,
-                          maxFontSize: 12,
                         ),
                       );
                     },
@@ -302,8 +300,9 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                             BarcodeWidget(
                               data: items.first.itemCode,
                               barcode: Barcode.code128(),
-                              width: 150,
-                              height: 150,
+                              width: 200,
+                              height: 100,
+                              textPadding: 5,
                             ),
                             kHeight5,
                             Text(

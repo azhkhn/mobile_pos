@@ -404,7 +404,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
       kSnackBar(
         context: context,
         success: true,
-        content: "Purchase returned successfully!",
+        content: "Purchase has been returned successfully!",
       );
     } catch (e) {
       log('$e');

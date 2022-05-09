@@ -7,13 +7,13 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
-import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_items_database.dart';
-import 'package:shop_ez/model/customer/customer_model.dart';
+import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
+import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
 import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_buttons_widget.dart';
@@ -64,8 +64,6 @@ class PurchaseReturnSideWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //========== Device Utils ==========
-    final bool _isTablet = DeviceUtil.isTablet;
     Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
@@ -94,65 +92,72 @@ class PurchaseReturnSideWidget extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //==================== Get All Customer Search Field ====================
+                //==================== Get All Supplier Search Field ====================
                 Flexible(
                   flex: 5,
-                  child: TypeAheadField(
-                    debounceDuration: const Duration(milliseconds: 500),
-                    hideSuggestionsOnKeyboardHide: true,
-                    textFieldConfiguration: TextFieldConfiguration(
-                        controller: supplierController,
-                        style: const TextStyle(fontSize: 12),
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          isDense: true,
-                          suffixIconConstraints: const BoxConstraints(
-                            minWidth: 10,
-                            minHeight: 10,
-                          ),
-                          suffixIcon: Padding(
-                            padding: kClearTextIconPadding,
-                            child: InkWell(
-                              child: const Icon(Icons.clear, size: 15),
-                              onTap: () {
-                                supplierIdNotifier.value = null;
-                                supplierController.clear();
-                              },
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Customer',
-                          hintStyle: const TextStyle(fontSize: 12),
-                          border: const OutlineInputBorder(),
-                        )),
-                    noItemsFoundBuilder: (context) => const SizedBox(
-                        height: 50,
-                        child: Center(child: Text('No customer Found!'))),
-                    suggestionsCallback: (pattern) async {
-                      return CustomerDatabase.instance
-                          .getCustomerSuggestions(pattern);
-                    },
-                    itemBuilder: (context, CustomerModel suggestion) {
-                      return Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: AutoSizeText(
-                          suggestion.customer,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: _isTablet ? 12 : 10),
-                          minFontSize: 10,
-                          maxFontSize: 12,
-                        ),
-                      );
-                    },
-                    onSuggestionSelected: (CustomerModel suggestion) {
-                      supplierController.text = suggestion.customer;
-                      supplierNameNotifier.value = suggestion.customer;
-                      supplierIdNotifier.value = suggestion.id;
-                      log(suggestion.company);
-                    },
-                  ),
+                  child: ValueListenableBuilder(
+                      valueListenable: originalPurchaseIdNotifier,
+                      builder: (context, _, __) {
+                        return TypeAheadField(
+                          debounceDuration: const Duration(milliseconds: 500),
+                          hideSuggestionsOnKeyboardHide: true,
+                          textFieldConfiguration: TextFieldConfiguration(
+                              enabled: originalPurchaseIdNotifier.value == null,
+                              controller: supplierController,
+                              style: kText_10_12,
+                              decoration: InputDecoration(
+                                fillColor: Colors.white,
+                                filled: true,
+                                isDense: true,
+                                suffixIconConstraints: const BoxConstraints(
+                                  minWidth: 10,
+                                  minHeight: 10,
+                                ),
+                                suffixIcon: Padding(
+                                  padding: kClearTextIconPadding,
+                                  child: InkWell(
+                                    child: const Icon(Icons.clear, size: 15),
+                                    onTap: () {
+                                      supplierIdNotifier.value = null;
+                                      supplierController.clear();
+                                    },
+                                  ),
+                                ),
+                                contentPadding: const EdgeInsets.all(10),
+                                hintText: 'Supplier',
+                                hintStyle: kText_10_12,
+                                border: const OutlineInputBorder(),
+                              )),
+                          noItemsFoundBuilder: (context) => SizedBox(
+                              height: 50,
+                              child: Center(
+                                  child: Text(
+                                'No supplier found!',
+                                style: kText_10_12,
+                              ))),
+                          suggestionsCallback: (pattern) async {
+                            return SupplierDatabase.instance
+                                .getSupplierSuggestions(pattern);
+                          },
+                          itemBuilder: (context, SupplierModel suggestion) {
+                            return Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Text(
+                                suggestion.supplier,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: kText_10_12,
+                              ),
+                            );
+                          },
+                          onSuggestionSelected: (SupplierModel suggestion) {
+                            supplierController.text = suggestion.supplier;
+                            supplierNameNotifier.value = suggestion.supplier;
+                            supplierIdNotifier.value = suggestion.id;
+                            log(suggestion.company);
+                          },
+                        );
+                      }),
                 ),
                 kWidth5,
 
@@ -164,7 +169,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                     hideSuggestionsOnKeyboardHide: true,
                     textFieldConfiguration: TextFieldConfiguration(
                         controller: purchaseInvoiceController,
-                        style: const TextStyle(fontSize: 12),
+                        style: kText_10_12,
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
@@ -182,6 +187,11 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                               ),
                               onTap: () async {
                                 purchaseInvoiceController.clear();
+
+                                if (originalPurchaseIdNotifier.value != null) {
+                                  return resetPurchaseReturn();
+                                }
+
                                 originalInvoiceNumberNotifier.value = null;
                                 originalPurchaseIdNotifier.value = null;
                               },
@@ -189,13 +199,14 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                           ),
                           contentPadding: const EdgeInsets.all(10),
                           hintText: 'Invoice No',
-                          hintStyle: const TextStyle(fontSize: 12),
+                          hintStyle: kText_10_12,
                           border: const OutlineInputBorder(),
                         )),
-                    noItemsFoundBuilder: (context) => const SizedBox(
+                    noItemsFoundBuilder: (context) => SizedBox(
                         height: 50,
                         child: Center(
-                            child: Text('No Invoice Found!', style: kText12))),
+                            child:
+                                Text('No Invoice Found!', style: kText_10_12))),
                     suggestionsCallback: (pattern) async {
                       return await purchaseDatabase
                           .getPurchaseByInvoiceSuggestions(pattern);
@@ -203,13 +214,11 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                     itemBuilder: (context, PurchaseModel suggestion) {
                       return Padding(
                         padding: const EdgeInsets.all(10),
-                        child: AutoSizeText(
+                        child: Text(
                           suggestion.invoiceNumber!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: _isTablet ? 12 : 10),
-                          minFontSize: 10,
-                          maxFontSize: 12,
+                          style: kText_10_12,
                         ),
                       );
                     },
@@ -227,7 +236,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                 ),
                 kWidth5,
 
-                //========== View customer Button ==========
+                //========== View Supplier Button ==========
                 Flexible(
                   flex: 1,
                   child: FittedBox(
@@ -260,7 +269,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                             kSnackBar(
                                 context: context,
                                 content:
-                                    'Please select any Customer to show details!');
+                                    'Please select any Supplier to show details!');
                           }
                         },
                         icon: const Icon(
@@ -271,7 +280,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                   ),
                 ),
 
-                //========== Add customer Button ==========
+                //========== Add supplier Button ==========
                 Flexible(
                   flex: 1,
                   child: FittedBox(
@@ -286,18 +295,18 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                           // DeviceUtil.isLandscape = false;
                           // await DeviceUtil.toPortrait();
                           final id = await Navigator.pushNamed(
-                              context, routeCustomer,
+                              context, routeManageSupplier,
                               arguments: true);
 
                           if (id != null) {
-                            final addedCustomer = await CustomerDatabase
+                            final addedSupplier = await SupplierDatabase
                                 .instance
-                                .getCustomerById(id as int);
+                                .getSupplierById(id as int);
 
-                            supplierController.text = addedCustomer.customer;
-                            supplierNameNotifier.value = addedCustomer.customer;
-                            supplierIdNotifier.value = addedCustomer.id;
-                            log(addedCustomer.company);
+                            supplierController.text = addedSupplier.supplier;
+                            supplierNameNotifier.value = addedSupplier.supplier;
+                            supplierIdNotifier.value = addedSupplier.id;
+                            log(addedSupplier.company);
                           }
 
                           // await DeviceUtil.toLandscape();

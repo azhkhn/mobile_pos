@@ -95,62 +95,67 @@ class SalesReturnSideWidget extends StatelessWidget {
                 //==================== Get All Customer Search Field ====================
                 Flexible(
                   flex: 5,
-                  child: TypeAheadField(
-                    debounceDuration: const Duration(milliseconds: 500),
-                    hideSuggestionsOnKeyboardHide: true,
-                    textFieldConfiguration: TextFieldConfiguration(
-                        controller: customerController,
-                        style: const TextStyle(fontSize: 12),
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          isDense: true,
-                          suffixIconConstraints: const BoxConstraints(
-                            minWidth: 10,
-                            minHeight: 10,
-                          ),
-                          suffixIcon: Padding(
-                            padding: kClearTextIconPadding,
-                            child: InkWell(
-                              child: const Icon(Icons.clear, size: 15),
-                              onTap: () {
-                                customerIdNotifier.value = null;
-                                customerController.clear();
-                              },
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Customer',
-                          hintStyle: const TextStyle(fontSize: 12),
-                          border: const OutlineInputBorder(),
-                        )),
-                    noItemsFoundBuilder: (context) => const SizedBox(
-                        height: 50,
-                        child: Center(child: Text('No customer Found!'))),
-                    suggestionsCallback: (pattern) async {
-                      return CustomerDatabase.instance
-                          .getCustomerSuggestions(pattern);
-                    },
-                    itemBuilder: (context, CustomerModel suggestion) {
-                      return Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: AutoSizeText(
-                          suggestion.customer,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: _isTablet ? 12 : 10),
-                          minFontSize: 10,
-                          maxFontSize: 12,
-                        ),
-                      );
-                    },
-                    onSuggestionSelected: (CustomerModel suggestion) {
-                      customerController.text = suggestion.customer;
-                      customerNameNotifier.value = suggestion.customer;
-                      customerIdNotifier.value = suggestion.id;
-                      log(suggestion.company);
-                    },
-                  ),
+                  child: ValueListenableBuilder(
+                      valueListenable: originalSaleIdNotifier,
+                      builder: (context, _, __) {
+                        return TypeAheadField(
+                          debounceDuration: const Duration(milliseconds: 500),
+                          hideSuggestionsOnKeyboardHide: true,
+                          textFieldConfiguration: TextFieldConfiguration(
+                              enabled: originalSaleIdNotifier.value == null,
+                              controller: customerController,
+                              style: kText_10_12,
+                              decoration: InputDecoration(
+                                fillColor: Colors.white,
+                                filled: true,
+                                isDense: true,
+                                suffixIconConstraints: const BoxConstraints(
+                                  minWidth: 10,
+                                  minHeight: 10,
+                                ),
+                                suffixIcon: Padding(
+                                  padding: kClearTextIconPadding,
+                                  child: InkWell(
+                                    child: const Icon(Icons.clear, size: 15),
+                                    onTap: () {
+                                      customerIdNotifier.value = null;
+                                      customerController.clear();
+                                    },
+                                  ),
+                                ),
+                                contentPadding: const EdgeInsets.all(10),
+                                hintText: 'Customer',
+                                hintStyle: kText_10_12,
+                                border: const OutlineInputBorder(),
+                              )),
+                          noItemsFoundBuilder: (context) => const SizedBox(
+                              height: 50,
+                              child: Center(child: Text('No customer Found!'))),
+                          suggestionsCallback: (pattern) async {
+                            return CustomerDatabase.instance
+                                .getCustomerSuggestions(pattern);
+                          },
+                          itemBuilder: (context, CustomerModel suggestion) {
+                            return Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: AutoSizeText(
+                                suggestion.customer,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontSize: _isTablet ? 12 : 10),
+                                minFontSize: 10,
+                                maxFontSize: 12,
+                              ),
+                            );
+                          },
+                          onSuggestionSelected: (CustomerModel suggestion) {
+                            customerController.text = suggestion.customer;
+                            customerNameNotifier.value = suggestion.customer;
+                            customerIdNotifier.value = suggestion.id;
+                            log(suggestion.company);
+                          },
+                        );
+                      }),
                 ),
                 kWidth5,
 
@@ -162,7 +167,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                     hideSuggestionsOnKeyboardHide: true,
                     textFieldConfiguration: TextFieldConfiguration(
                         controller: saleInvoiceController,
-                        style: const TextStyle(fontSize: 12),
+                        style: kText_10_12,
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
@@ -180,6 +185,9 @@ class SalesReturnSideWidget extends StatelessWidget {
                               ),
                               onTap: () async {
                                 saleInvoiceController.clear();
+                                if (originalSaleIdNotifier.value != null) {
+                                  return resetSalesReturn();
+                                }
                                 originalInvoiceNumberNotifier.value = null;
                                 originalSaleIdNotifier.value = null;
                               },
@@ -187,13 +195,14 @@ class SalesReturnSideWidget extends StatelessWidget {
                           ),
                           contentPadding: const EdgeInsets.all(10),
                           hintText: 'Invoice No',
-                          hintStyle: const TextStyle(fontSize: 12),
+                          hintStyle: kText_10_12,
                           border: const OutlineInputBorder(),
                         )),
-                    noItemsFoundBuilder: (context) => const SizedBox(
+                    noItemsFoundBuilder: (context) => SizedBox(
                         height: 50,
                         child: Center(
-                            child: Text('No Invoice Found!', style: kText12))),
+                            child:
+                                Text('No Invoice Found!', style: kText_10_12))),
                     suggestionsCallback: (pattern) async {
                       return await salesDB
                           .getSalesByInvoiceSuggestions(pattern);
@@ -201,13 +210,11 @@ class SalesReturnSideWidget extends StatelessWidget {
                     itemBuilder: (context, SalesModel suggestion) {
                       return Padding(
                         padding: const EdgeInsets.all(10),
-                        child: AutoSizeText(
+                        child: Text(
                           suggestion.invoiceNumber!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: _isTablet ? 12 : 10),
-                          minFontSize: 10,
-                          maxFontSize: 12,
+                          style: kText_10_12,
                         ),
                       );
                     },
