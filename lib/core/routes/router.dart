@@ -26,3 +26,4 @@ const routeStock = '/stock';
 const routeBarcode = '/barcode';
 const routeSalesReturn = '/sales_return';
 const routePurchaseReturn = '/purchase_return';
+const routeInvoice = '/invoice';

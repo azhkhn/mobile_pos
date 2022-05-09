@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/screens/sales/widgets/sales_list_filter.dart';
 
 import '../../../../core/constant/sizes.dart';
@@ -59,8 +60,19 @@ class SalesList extends StatelessWidget {
                                                 kHeight5,
                                         itemBuilder:
                                             (BuildContext context, int index) {
-                                          return SalesCardWidget(
-                                              index: index, sales: sales);
+                                          return InkWell(
+                                            child: SalesCardWidget(
+                                              index: index,
+                                              sales: sales,
+                                            ),
+                                            onTap: () async {
+                                              await Navigator.pushNamed(
+                                                context,
+                                                routeInvoice,
+                                                arguments: sales[index],
+                                              );
+                                            },
+                                          );
                                         },
                                       )
                                     : const Center(

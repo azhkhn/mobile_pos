@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/barcode/screen_barcode.dart';
+import 'package:shop_ez/screens/invoices/screen_sales_invoice.dart';
 import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
 import 'package:shop_ez/screens/purchase_return/screen_purchase_return.dart';
+import 'package:shop_ez/screens/sales/pages/screen_sales_list.dart';
 import 'package:shop_ez/screens/sales_return/screen_sales_return.dart';
 import 'package:shop_ez/screens/stock/screen_stock.dart';
 
@@ -21,7 +24,6 @@ import '../../screens/pos/screen_pos.dart';
 import '../../screens/purchase/pages/screen_add_purchase.dart';
 import '../../screens/purchase/pages/screen_purchase.dart';
 import '../../screens/sales/pages/screen_sales.dart';
-import '../../screens/sales/pages/screen_sales_list.dart';
 import '../../screens/splash/splash_screen.dart';
 import '../../screens/sub-category/screen_sub_category.dart';
 import '../../screens/supplier/manage_supplier_screen.dart';
@@ -74,9 +76,8 @@ class RouteGenerator {
         if (args is Map) {
           return MaterialPageRoute(
               builder: (_) => PartialPayment(
-                    paymentDetails: args,
-                    purchase: args.containsKey('purchase'),
-                  ));
+                  paymentDetails: args,
+                  purchase: args.containsKey('purchase')));
         }
         return _errorRoute();
       case routeSales:
@@ -97,6 +98,13 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SalesReturn());
       case routePurchaseReturn:
         return MaterialPageRoute(builder: (_) => const PurchaseReturn());
+      case routeInvoice:
+        if (args is SalesModel) {
+          return MaterialPageRoute(
+              builder: (_) => ScreenSalesInvoice(sale: args));
+        } else {
+          return _errorRoute();
+        }
 
       default:
         return _errorRoute();
