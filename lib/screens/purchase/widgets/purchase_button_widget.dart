@@ -212,7 +212,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
     log('Logged User ==== $_user');
 
     final _businessProfile = await UserUtils.instance.businessProfile;
-    final String _biller = _businessProfile!.billerName;
+    final String _biller = _businessProfile.billerName;
     log('Biller Name ==== $_biller');
 
     referenceNumber = PurchaseSideWidget.referenceNumberController.text;

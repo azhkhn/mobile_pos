@@ -212,7 +212,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
     log('Logged User ==== $_user');
 
     final _businessProfile = await UserUtils.instance.businessProfile;
-    final String _biller = _businessProfile!.billerName;
+    final String _biller = _businessProfile.billerName;
     log('Biller Name ==== $_biller');
 
 //Checking if it's Partial Payment then Including Balance Amount

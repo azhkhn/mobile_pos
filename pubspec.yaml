@@ -37,6 +37,7 @@ dependencies:
   flutter_bloc: ^8.0.1
   flutter_speed_dial: ^5.0.0+1
   flutter_typeahead: ^3.2.4
+  google_fonts: ^2.3.2
   hexcolor: ^2.0.6
   image_cropper: ^1.5.0
   image_picker: ^0.8.4+11
@@ -46,6 +47,7 @@ dependencies:
   path: ^1.8.1
   path_provider: ^2.0.9
   pdf: ^3.7.4
+  printing: ^5.8.0
   sqflite: ^2.0.2
 
 dev_dependencies:

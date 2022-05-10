@@ -21,8 +21,10 @@ _$_SalesItemsModel _$$_SalesItemsModelFromJson(Map<String, dynamic> json) =>
       quantity: json['quantity'] as String,
       unitCode: json['unitCode'] as String,
       subTotal: json['subTotal'] as String,
+      vatMethod: json['vatMethod'] as String,
       vatId: json['vatId'] as String,
       vatPercentage: json['vatPercentage'] as String,
+      vatRate: json['vatRate'] as int,
       vatTotal: json['vatTotal'] as String,
     );
 
@@ -41,7 +43,9 @@ Map<String, dynamic> _$$_SalesItemsModelToJson(_$_SalesItemsModel instance) =>
       'quantity': instance.quantity,
       'unitCode': instance.unitCode,
       'subTotal': instance.subTotal,
+      'vatMethod': instance.vatMethod,
       'vatId': instance.vatId,
       'vatPercentage': instance.vatPercentage,
+      'vatRate': instance.vatRate,
       'vatTotal': instance.vatTotal,
     };

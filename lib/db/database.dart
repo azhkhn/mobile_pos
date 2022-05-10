@@ -41,17 +41,62 @@ class EzDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path,
-        version: 2, onCreate: _createDB, onUpgrade: _upgradeDB);
+        version: 3, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
 
-    // const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    // const textType = 'TEXT NOT NULL';
+    const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const textType = 'TEXT NOT NULL';
     // const textNull = 'TEXT';
     // const intNull = 'INTEGER';
-    // const intType = 'INTEGER NOT NULL';
+    const intType = 'INTEGER NOT NULL';
+
+    await db.execute("DROP TABLE IF EXISTS $tableSales");
+    await db.execute("DROP TABLE IF EXISTS $tableSalesItems");
+
+    //========== Table Sales ==========
+    await db.execute('''CREATE TABLE $tableSales (
+      ${SalesFields.id} $idAuto,
+      ${SalesFields.invoiceNumber} $textType,
+      ${SalesFields.salesNote} $textType,
+      ${SalesFields.dateTime} $textType,
+      ${SalesFields.customerId} $intType,
+      ${SalesFields.customerName} $textType,
+      ${SalesFields.billerName} $textType,
+      ${SalesFields.totalItems} $textType,
+      ${SalesFields.vatAmount} $textType,
+      ${SalesFields.subTotal} $textType,
+      ${SalesFields.discount} $textType,
+      ${SalesFields.grantTotal} $textType,
+      ${SalesFields.paid} $textType,
+      ${SalesFields.balance} $textType,
+      ${SalesFields.paymentType} $textType,
+      ${SalesFields.salesStatus} $textType,
+      ${SalesFields.paymentStatus} $textType,
+      ${SalesFields.createdBy} $textType)''');
+
+    //========== Table Sales Items ==========
+    await db.execute('''CREATE TABLE $tableSalesItems (
+      ${SalesItemsFields.id} $idAuto,
+      ${SalesItemsFields.salesId} $intType,
+      ${SalesItemsFields.productId} $textType,
+      ${SalesItemsFields.productType} $textType,
+      ${SalesItemsFields.productName} $textType,
+      ${SalesItemsFields.category} $textType,
+      ${SalesItemsFields.productCode} $textType,
+      ${SalesItemsFields.unitPrice} $textType,
+      ${SalesItemsFields.productCost} $textType,
+      ${SalesItemsFields.quantity} $textType,
+      ${SalesItemsFields.subTotal} $textType,
+      ${SalesItemsFields.vatMethod} $textType,
+      ${SalesItemsFields.vatId} $textType,
+      ${SalesItemsFields.vatTotal} $textType,
+      ${SalesItemsFields.unitCode} $textType,
+      ${SalesItemsFields.netUnitPrice} $textType,
+      ${SalesItemsFields.vatPercentage} $textType,
+      ${SalesItemsFields.vatRate} $intType)''');
 
     // await db.execute("DROP TABLE IF EXISTS $tableSales");
     // await db.execute("DROP TABLE IF EXISTS $tableSalesItems");
@@ -261,18 +306,20 @@ class EzDatabase {
       ${SalesItemsFields.salesId} $intType,
       ${SalesItemsFields.productId} $textType,
       ${SalesItemsFields.productType} $textType,
-      ${SalesItemsFields.productName} $textType, 
+      ${SalesItemsFields.productName} $textType,
       ${SalesItemsFields.category} $textType,
       ${SalesItemsFields.productCode} $textType,
       ${SalesItemsFields.unitPrice} $textType,
       ${SalesItemsFields.productCost} $textType,
       ${SalesItemsFields.quantity} $textType,
       ${SalesItemsFields.subTotal} $textType,
+      ${SalesItemsFields.vatMethod} $textType,
       ${SalesItemsFields.vatId} $textType,
       ${SalesItemsFields.vatTotal} $textType,
       ${SalesItemsFields.unitCode} $textType,
       ${SalesItemsFields.netUnitPrice} $textType,
-      ${SalesItemsFields.vatPercentage} $textType)''');
+      ${SalesItemsFields.vatPercentage} $textType,
+      ${SalesItemsFields.vatRate} $intType)''');
 
 //========== Table Transactions ==========
     await db.execute('''CREATE TABLE $tableTransactions (

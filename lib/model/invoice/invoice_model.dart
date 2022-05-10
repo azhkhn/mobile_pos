@@ -1,4 +1,3 @@
-import 'package:shop_ez/model/invoice/customer_invoice_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 

@@ -51,6 +51,16 @@ class VatDatabase {
     return _vats.first;
   }
 
+  //========== Get VAT by Id ==========
+  Future<VatModel> getVatById(int id) async {
+    final db = await dbInstance.database;
+    final _result =
+        await db.query(tableVat, where: '${VatFields.id} = ?', whereArgs: [id]);
+    log('VAT of $id == $_result');
+    final _vats = _result.map((json) => VatModel.fromJson(json)).toList();
+    return _vats.first;
+  }
+
 //========== Delete VAT ==========
   Future<void> deleteVAT(int id) async {
     final db = await dbInstance.database;

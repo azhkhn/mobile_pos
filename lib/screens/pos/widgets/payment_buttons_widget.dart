@@ -11,6 +11,7 @@ import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_items_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
+import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
 import 'package:shop_ez/model/sales/sales_items_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
@@ -345,7 +346,7 @@ class PaymentButtonsWidget extends StatelessWidget {
     log('Logged User ==== $_user');
 
     final _businessProfile = await UserUtils.instance.businessProfile;
-    final String _biller = _businessProfile!.billerName;
+    final String _biller = _businessProfile.billerName;
     log('Biller Name ==== $_biller');
 
 //Checking if it's Partial Payment then Including Balance Amount
@@ -440,6 +441,9 @@ class PaymentButtonsWidget extends StatelessWidget {
             vatTotal = SaleSideWidget.itemTotalVatNotifier.value[i],
             unitCode = SaleSideWidget.selectedProductsNotifier.value[i].unit;
 
+        final vat = await VatDatabase.instance.getVatById(int.parse(vatId));
+        final vatRate = vat.rate;
+
         log(' Sales Id == $salesId');
         log(' Product id == $productId');
         log(' Product Type == $productType');
@@ -458,21 +462,24 @@ class PaymentButtonsWidget extends StatelessWidget {
         log('\n==============================================\n');
 
         final SalesItemsModel _salesItemsModel = SalesItemsModel(
-            salesId: salesId,
-            productId: productId,
-            productType: productType,
-            productCode: productCode,
-            productName: productName,
-            category: category,
-            productCost: productCost,
-            netUnitPrice: netUnitPrice,
-            unitPrice: unitPrice,
-            quantity: quantity,
-            unitCode: unitCode,
-            subTotal: subTotal,
-            vatId: vatId,
-            vatPercentage: vatPercentage,
-            vatTotal: vatTotal);
+          salesId: salesId,
+          productId: productId,
+          productType: productType,
+          productCode: productCode,
+          productName: productName,
+          category: category,
+          productCost: productCost,
+          netUnitPrice: netUnitPrice,
+          unitPrice: unitPrice,
+          quantity: quantity,
+          unitCode: unitCode,
+          subTotal: subTotal,
+          vatMethod: vatMethod,
+          vatId: vatId,
+          vatPercentage: vatPercentage,
+          vatRate: vatRate,
+          vatTotal: vatTotal,
+        );
 
         //==================== Create Sales Items ====================
         await salesItemDB.createSalesItems(_salesItemsModel);

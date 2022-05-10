@@ -3,9 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/api/invoice/pdf_action.dart';
 import 'package:shop_ez/api/invoice/pdf_invoice.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
-import 'package:shop_ez/model/invoice/customer_invoice_model.dart';
-import 'package:shop_ez/model/invoice/invoice_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import '../../../widgets/app_bar/app_bar_widget.dart';
 import '../../../widgets/container/background_container_widget.dart';
@@ -51,8 +48,9 @@ class ScreenSalesInvoice extends StatelessWidget {
                               height: 50,
                               width: 100,
                               child: ElevatedButton(
-                                  onPressed: () => PdfAction.openFile(pdfFile),
-                                  child: const Text('Print')),
+                                onPressed: () => PdfAction.openFile(pdfFile),
+                                child: const Text('Print'),
+                              ),
                             ),
                           ),
                         );

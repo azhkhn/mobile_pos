@@ -34,8 +34,10 @@ mixin _$SalesItemsModel {
   String get quantity => throw _privateConstructorUsedError;
   String get unitCode => throw _privateConstructorUsedError;
   String get subTotal => throw _privateConstructorUsedError;
+  String get vatMethod => throw _privateConstructorUsedError;
   String get vatId => throw _privateConstructorUsedError;
   String get vatPercentage => throw _privateConstructorUsedError;
+  int get vatRate => throw _privateConstructorUsedError;
   String get vatTotal => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -63,8 +65,10 @@ abstract class $SalesItemsModelCopyWith<$Res> {
       String quantity,
       String unitCode,
       String subTotal,
+      String vatMethod,
       String vatId,
       String vatPercentage,
+      int vatRate,
       String vatTotal});
 }
 
@@ -92,8 +96,10 @@ class _$SalesItemsModelCopyWithImpl<$Res>
     Object? quantity = freezed,
     Object? unitCode = freezed,
     Object? subTotal = freezed,
+    Object? vatMethod = freezed,
     Object? vatId = freezed,
     Object? vatPercentage = freezed,
+    Object? vatRate = freezed,
     Object? vatTotal = freezed,
   }) {
     return _then(_value.copyWith(
@@ -149,6 +155,10 @@ class _$SalesItemsModelCopyWithImpl<$Res>
           ? _value.subTotal
           : subTotal // ignore: cast_nullable_to_non_nullable
               as String,
+      vatMethod: vatMethod == freezed
+          ? _value.vatMethod
+          : vatMethod // ignore: cast_nullable_to_non_nullable
+              as String,
       vatId: vatId == freezed
           ? _value.vatId
           : vatId // ignore: cast_nullable_to_non_nullable
@@ -157,6 +167,10 @@ class _$SalesItemsModelCopyWithImpl<$Res>
           ? _value.vatPercentage
           : vatPercentage // ignore: cast_nullable_to_non_nullable
               as String,
+      vatRate: vatRate == freezed
+          ? _value.vatRate
+          : vatRate // ignore: cast_nullable_to_non_nullable
+              as int,
       vatTotal: vatTotal == freezed
           ? _value.vatTotal
           : vatTotal // ignore: cast_nullable_to_non_nullable
@@ -186,8 +200,10 @@ abstract class _$SalesItemsModelCopyWith<$Res>
       String quantity,
       String unitCode,
       String subTotal,
+      String vatMethod,
       String vatId,
       String vatPercentage,
+      int vatRate,
       String vatTotal});
 }
 
@@ -217,8 +233,10 @@ class __$SalesItemsModelCopyWithImpl<$Res>
     Object? quantity = freezed,
     Object? unitCode = freezed,
     Object? subTotal = freezed,
+    Object? vatMethod = freezed,
     Object? vatId = freezed,
     Object? vatPercentage = freezed,
+    Object? vatRate = freezed,
     Object? vatTotal = freezed,
   }) {
     return _then(_SalesItemsModel(
@@ -274,6 +292,10 @@ class __$SalesItemsModelCopyWithImpl<$Res>
           ? _value.subTotal
           : subTotal // ignore: cast_nullable_to_non_nullable
               as String,
+      vatMethod: vatMethod == freezed
+          ? _value.vatMethod
+          : vatMethod // ignore: cast_nullable_to_non_nullable
+              as String,
       vatId: vatId == freezed
           ? _value.vatId
           : vatId // ignore: cast_nullable_to_non_nullable
@@ -282,6 +304,10 @@ class __$SalesItemsModelCopyWithImpl<$Res>
           ? _value.vatPercentage
           : vatPercentage // ignore: cast_nullable_to_non_nullable
               as String,
+      vatRate: vatRate == freezed
+          ? _value.vatRate
+          : vatRate // ignore: cast_nullable_to_non_nullable
+              as int,
       vatTotal: vatTotal == freezed
           ? _value.vatTotal
           : vatTotal // ignore: cast_nullable_to_non_nullable
@@ -307,8 +333,10 @@ class _$_SalesItemsModel implements _SalesItemsModel {
       required this.quantity,
       required this.unitCode,
       required this.subTotal,
+      required this.vatMethod,
       required this.vatId,
       required this.vatPercentage,
+      required this.vatRate,
       required this.vatTotal});
 
   factory _$_SalesItemsModel.fromJson(Map<String, dynamic> json) =>
@@ -342,15 +370,19 @@ class _$_SalesItemsModel implements _SalesItemsModel {
   @override
   final String subTotal;
   @override
+  final String vatMethod;
+  @override
   final String vatId;
   @override
   final String vatPercentage;
+  @override
+  final int vatRate;
   @override
   final String vatTotal;
 
   @override
   String toString() {
-    return 'SalesItemsModel(id: $id, salesId: $salesId, productId: $productId, productType: $productType, productCode: $productCode, productName: $productName, category: $category, productCost: $productCost, netUnitPrice: $netUnitPrice, unitPrice: $unitPrice, quantity: $quantity, unitCode: $unitCode, subTotal: $subTotal, vatId: $vatId, vatPercentage: $vatPercentage, vatTotal: $vatTotal)';
+    return 'SalesItemsModel(id: $id, salesId: $salesId, productId: $productId, productType: $productType, productCode: $productCode, productName: $productName, category: $category, productCost: $productCost, netUnitPrice: $netUnitPrice, unitPrice: $unitPrice, quantity: $quantity, unitCode: $unitCode, subTotal: $subTotal, vatMethod: $vatMethod, vatId: $vatId, vatPercentage: $vatPercentage, vatRate: $vatRate, vatTotal: $vatTotal)';
   }
 
   @override
@@ -376,9 +408,11 @@ class _$_SalesItemsModel implements _SalesItemsModel {
             const DeepCollectionEquality().equals(other.quantity, quantity) &&
             const DeepCollectionEquality().equals(other.unitCode, unitCode) &&
             const DeepCollectionEquality().equals(other.subTotal, subTotal) &&
+            const DeepCollectionEquality().equals(other.vatMethod, vatMethod) &&
             const DeepCollectionEquality().equals(other.vatId, vatId) &&
             const DeepCollectionEquality()
                 .equals(other.vatPercentage, vatPercentage) &&
+            const DeepCollectionEquality().equals(other.vatRate, vatRate) &&
             const DeepCollectionEquality().equals(other.vatTotal, vatTotal));
   }
 
@@ -399,8 +433,10 @@ class _$_SalesItemsModel implements _SalesItemsModel {
       const DeepCollectionEquality().hash(quantity),
       const DeepCollectionEquality().hash(unitCode),
       const DeepCollectionEquality().hash(subTotal),
+      const DeepCollectionEquality().hash(vatMethod),
       const DeepCollectionEquality().hash(vatId),
       const DeepCollectionEquality().hash(vatPercentage),
+      const DeepCollectionEquality().hash(vatRate),
       const DeepCollectionEquality().hash(vatTotal));
 
   @JsonKey(ignore: true)
@@ -429,8 +465,10 @@ abstract class _SalesItemsModel implements SalesItemsModel {
       required final String quantity,
       required final String unitCode,
       required final String subTotal,
+      required final String vatMethod,
       required final String vatId,
       required final String vatPercentage,
+      required final int vatRate,
       required final String vatTotal}) = _$_SalesItemsModel;
 
   factory _SalesItemsModel.fromJson(Map<String, dynamic> json) =
@@ -464,9 +502,13 @@ abstract class _SalesItemsModel implements SalesItemsModel {
   @override
   String get subTotal => throw _privateConstructorUsedError;
   @override
+  String get vatMethod => throw _privateConstructorUsedError;
+  @override
   String get vatId => throw _privateConstructorUsedError;
   @override
   String get vatPercentage => throw _privateConstructorUsedError;
+  @override
+  int get vatRate => throw _privateConstructorUsedError;
   @override
   String get vatTotal => throw _privateConstructorUsedError;
   @override

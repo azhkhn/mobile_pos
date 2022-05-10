@@ -24,10 +24,10 @@ class UserUtils {
   }
 
 //========== Get Business Profile Details ==========
-  Future<BusinessProfileModel?> get businessProfile async {
-    if (businessProfileModel != null) return businessProfileModel;
+  Future<BusinessProfileModel> get businessProfile async {
+    if (businessProfileModel != null) return businessProfileModel!;
     await getBusinessProfile();
-    return businessProfileModel;
+    return businessProfileModel!;
   }
 
 //Checking Business Profile details already Assigned (Access User details all over the Application)
