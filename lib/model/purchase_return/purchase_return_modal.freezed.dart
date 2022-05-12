@@ -201,11 +201,11 @@ class _$PurchaseReturnModelCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$PurchaseReturnModelCopyWith<$Res>
+abstract class _$$_PurchaseReturnModelCopyWith<$Res>
     implements $PurchaseReturnModelCopyWith<$Res> {
-  factory _$PurchaseReturnModelCopyWith(_PurchaseReturnModel value,
-          $Res Function(_PurchaseReturnModel) then) =
-      __$PurchaseReturnModelCopyWithImpl<$Res>;
+  factory _$$_PurchaseReturnModelCopyWith(_$_PurchaseReturnModel value,
+          $Res Function(_$_PurchaseReturnModel) then) =
+      __$$_PurchaseReturnModelCopyWithImpl<$Res>;
   @override
   $Res call(
       {@JsonKey(name: '_id') int? id,
@@ -232,15 +232,15 @@ abstract class _$PurchaseReturnModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$PurchaseReturnModelCopyWithImpl<$Res>
+class __$$_PurchaseReturnModelCopyWithImpl<$Res>
     extends _$PurchaseReturnModelCopyWithImpl<$Res>
-    implements _$PurchaseReturnModelCopyWith<$Res> {
-  __$PurchaseReturnModelCopyWithImpl(
-      _PurchaseReturnModel _value, $Res Function(_PurchaseReturnModel) _then)
-      : super(_value, (v) => _then(v as _PurchaseReturnModel));
+    implements _$$_PurchaseReturnModelCopyWith<$Res> {
+  __$$_PurchaseReturnModelCopyWithImpl(_$_PurchaseReturnModel _value,
+      $Res Function(_$_PurchaseReturnModel) _then)
+      : super(_value, (v) => _then(v as _$_PurchaseReturnModel));
 
   @override
-  _PurchaseReturnModel get _value => super._value as _PurchaseReturnModel;
+  _$_PurchaseReturnModel get _value => super._value as _$_PurchaseReturnModel;
 
   @override
   $Res call({
@@ -266,7 +266,7 @@ class __$PurchaseReturnModelCopyWithImpl<$Res>
     Object? paymentStatus = freezed,
     Object? createdBy = freezed,
   }) {
-    return _then(_PurchaseReturnModel(
+    return _then(_$_PurchaseReturnModel(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -437,7 +437,7 @@ class _$_PurchaseReturnModel implements _PurchaseReturnModel {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _PurchaseReturnModel &&
+            other is _$_PurchaseReturnModel &&
             const DeepCollectionEquality().equals(other.id, id) &&
             const DeepCollectionEquality()
                 .equals(other.invoiceNumber, invoiceNumber) &&
@@ -503,8 +503,8 @@ class _$_PurchaseReturnModel implements _PurchaseReturnModel {
 
   @JsonKey(ignore: true)
   @override
-  _$PurchaseReturnModelCopyWith<_PurchaseReturnModel> get copyWith =>
-      __$PurchaseReturnModelCopyWithImpl<_PurchaseReturnModel>(
+  _$$_PurchaseReturnModelCopyWith<_$_PurchaseReturnModel> get copyWith =>
+      __$$_PurchaseReturnModelCopyWithImpl<_$_PurchaseReturnModel>(
           this, _$identity);
 
   @override
@@ -585,6 +585,6 @@ abstract class _PurchaseReturnModel implements PurchaseReturnModel {
   String get createdBy => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$PurchaseReturnModelCopyWith<_PurchaseReturnModel> get copyWith =>
+  _$$_PurchaseReturnModelCopyWith<_$_PurchaseReturnModel> get copyWith =>
       throw _privateConstructorUsedError;
 }

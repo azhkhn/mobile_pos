@@ -187,11 +187,11 @@ class _$PurchaseModelCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$PurchaseModelCopyWith<$Res>
+abstract class _$$_PurchaseModelCopyWith<$Res>
     implements $PurchaseModelCopyWith<$Res> {
-  factory _$PurchaseModelCopyWith(
-          _PurchaseModel value, $Res Function(_PurchaseModel) then) =
-      __$PurchaseModelCopyWithImpl<$Res>;
+  factory _$$_PurchaseModelCopyWith(
+          _$_PurchaseModel value, $Res Function(_$_PurchaseModel) then) =
+      __$$_PurchaseModelCopyWithImpl<$Res>;
   @override
   $Res call(
       {@JsonKey(name: '_id') int? id,
@@ -216,15 +216,15 @@ abstract class _$PurchaseModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$PurchaseModelCopyWithImpl<$Res>
+class __$$_PurchaseModelCopyWithImpl<$Res>
     extends _$PurchaseModelCopyWithImpl<$Res>
-    implements _$PurchaseModelCopyWith<$Res> {
-  __$PurchaseModelCopyWithImpl(
-      _PurchaseModel _value, $Res Function(_PurchaseModel) _then)
-      : super(_value, (v) => _then(v as _PurchaseModel));
+    implements _$$_PurchaseModelCopyWith<$Res> {
+  __$$_PurchaseModelCopyWithImpl(
+      _$_PurchaseModel _value, $Res Function(_$_PurchaseModel) _then)
+      : super(_value, (v) => _then(v as _$_PurchaseModel));
 
   @override
-  _PurchaseModel get _value => super._value as _PurchaseModel;
+  _$_PurchaseModel get _value => super._value as _$_PurchaseModel;
 
   @override
   $Res call({
@@ -248,7 +248,7 @@ class __$PurchaseModelCopyWithImpl<$Res>
     Object? paymentStatus = freezed,
     Object? createdBy = freezed,
   }) {
-    return _then(_PurchaseModel(
+    return _then(_$_PurchaseModel(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -405,7 +405,7 @@ class _$_PurchaseModel implements _PurchaseModel {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _PurchaseModel &&
+            other is _$_PurchaseModel &&
             const DeepCollectionEquality().equals(other.id, id) &&
             const DeepCollectionEquality()
                 .equals(other.invoiceNumber, invoiceNumber) &&
@@ -465,8 +465,8 @@ class _$_PurchaseModel implements _PurchaseModel {
 
   @JsonKey(ignore: true)
   @override
-  _$PurchaseModelCopyWith<_PurchaseModel> get copyWith =>
-      __$PurchaseModelCopyWithImpl<_PurchaseModel>(this, _$identity);
+  _$$_PurchaseModelCopyWith<_$_PurchaseModel> get copyWith =>
+      __$$_PurchaseModelCopyWithImpl<_$_PurchaseModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -540,6 +540,6 @@ abstract class _PurchaseModel implements PurchaseModel {
   String get createdBy => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$PurchaseModelCopyWith<_PurchaseModel> get copyWith =>
+  _$$_PurchaseModelCopyWith<_$_PurchaseModel> get copyWith =>
       throw _privateConstructorUsedError;
 }

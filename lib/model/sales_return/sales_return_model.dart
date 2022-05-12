@@ -9,7 +9,7 @@ class SalesReturnModal with _$SalesReturnModal {
     @JsonKey(name: '_id') int? id,
     int? saleId,
     String? invoiceNumber,
-    required String? originalInvoiceNumber,
+    required String originalInvoiceNumber,
     required int customerId,
     required String dateTime,
     required String customerName,

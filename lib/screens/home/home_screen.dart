@@ -27,8 +27,12 @@ class ScreenHome extends StatelessWidget {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       // await SystemChrome.setPreferredOrientations(
       //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-      _userModel ??= await UserUtils.instance.loggedUser;
-      _businessProfileModel ??= await UserUtils.instance.businessProfile;
+      try {
+        _userModel ??= await UserUtils.instance.loggedUser;
+        _businessProfileModel ??= await UserUtils.instance.businessProfile;
+      } catch (e) {
+        log(e.toString());
+      }
     });
     // UserDatabase.instance.getAllUsers();
     if (DeviceUtil.isTablet) {

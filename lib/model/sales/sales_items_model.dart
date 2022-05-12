@@ -7,7 +7,7 @@ part 'sales_items_model.g.dart';
 class SalesItemsModel with _$SalesItemsModel {
   const factory SalesItemsModel({
     @JsonKey(name: '_id') int? id,
-    required int salesId,
+    required int saleId,
     required String productId,
     required String productType,
     required String productCode,
@@ -34,7 +34,7 @@ const String tableSalesItems = 'sales_items';
 
 class SalesItemsFields {
   static const id = '_id';
-  static const salesId = 'salesId';
+  static const saleId = 'saleId';
   static const productId = 'productId';
   static const productType = 'productType';
   static const productCode = 'productCode';

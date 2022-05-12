@@ -166,11 +166,11 @@ class _$PurchaseItemsModelCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$PurchaseItemsModelCopyWith<$Res>
+abstract class _$$_PurchaseItemsModelCopyWith<$Res>
     implements $PurchaseItemsModelCopyWith<$Res> {
-  factory _$PurchaseItemsModelCopyWith(
-          _PurchaseItemsModel value, $Res Function(_PurchaseItemsModel) then) =
-      __$PurchaseItemsModelCopyWithImpl<$Res>;
+  factory _$$_PurchaseItemsModelCopyWith(_$_PurchaseItemsModel value,
+          $Res Function(_$_PurchaseItemsModel) then) =
+      __$$_PurchaseItemsModelCopyWithImpl<$Res>;
   @override
   $Res call(
       {@JsonKey(name: '_id') int? id,
@@ -192,15 +192,15 @@ abstract class _$PurchaseItemsModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$PurchaseItemsModelCopyWithImpl<$Res>
+class __$$_PurchaseItemsModelCopyWithImpl<$Res>
     extends _$PurchaseItemsModelCopyWithImpl<$Res>
-    implements _$PurchaseItemsModelCopyWith<$Res> {
-  __$PurchaseItemsModelCopyWithImpl(
-      _PurchaseItemsModel _value, $Res Function(_PurchaseItemsModel) _then)
-      : super(_value, (v) => _then(v as _PurchaseItemsModel));
+    implements _$$_PurchaseItemsModelCopyWith<$Res> {
+  __$$_PurchaseItemsModelCopyWithImpl(
+      _$_PurchaseItemsModel _value, $Res Function(_$_PurchaseItemsModel) _then)
+      : super(_value, (v) => _then(v as _$_PurchaseItemsModel));
 
   @override
-  _PurchaseItemsModel get _value => super._value as _PurchaseItemsModel;
+  _$_PurchaseItemsModel get _value => super._value as _$_PurchaseItemsModel;
 
   @override
   $Res call({
@@ -221,7 +221,7 @@ class __$PurchaseItemsModelCopyWithImpl<$Res>
     Object? vatPercentage = freezed,
     Object? vatTotal = freezed,
   }) {
-    return _then(_PurchaseItemsModel(
+    return _then(_$_PurchaseItemsModel(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -357,7 +357,7 @@ class _$_PurchaseItemsModel implements _PurchaseItemsModel {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _PurchaseItemsModel &&
+            other is _$_PurchaseItemsModel &&
             const DeepCollectionEquality().equals(other.id, id) &&
             const DeepCollectionEquality()
                 .equals(other.purchaseId, purchaseId) &&
@@ -406,8 +406,9 @@ class _$_PurchaseItemsModel implements _PurchaseItemsModel {
 
   @JsonKey(ignore: true)
   @override
-  _$PurchaseItemsModelCopyWith<_PurchaseItemsModel> get copyWith =>
-      __$PurchaseItemsModelCopyWithImpl<_PurchaseItemsModel>(this, _$identity);
+  _$$_PurchaseItemsModelCopyWith<_$_PurchaseItemsModel> get copyWith =>
+      __$$_PurchaseItemsModelCopyWithImpl<_$_PurchaseItemsModel>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -472,6 +473,6 @@ abstract class _PurchaseItemsModel implements PurchaseItemsModel {
   String get vatTotal => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$PurchaseItemsModelCopyWith<_PurchaseItemsModel> get copyWith =>
+  _$$_PurchaseItemsModelCopyWith<_$_PurchaseItemsModel> get copyWith =>
       throw _privateConstructorUsedError;
 }

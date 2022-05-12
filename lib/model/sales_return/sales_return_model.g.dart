@@ -11,7 +11,7 @@ _$_SalesReturnModal _$$_SalesReturnModalFromJson(Map<String, dynamic> json) =>
       id: json['_id'] as int?,
       saleId: json['saleId'] as int?,
       invoiceNumber: json['invoiceNumber'] as String?,
-      originalInvoiceNumber: json['originalInvoiceNumber'] as String?,
+      originalInvoiceNumber: json['originalInvoiceNumber'] as String,
       customerId: json['customerId'] as int,
       dateTime: json['dateTime'] as String,
       customerName: json['customerName'] as String,

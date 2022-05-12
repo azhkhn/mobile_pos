@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
@@ -10,15 +11,32 @@ import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/core/utils/vat/vat.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_items_database.dart';
+import 'package:shop_ez/db/db_functions/sales_return/sales_return_items_database.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
-import 'package:shop_ez/model/sales/sales_items_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/model/sales_return/sales_return_model.dart';
 
-class PdfInvoice {
-  static Future<List<File>> generate(SalesModel sale) async {
+class PdfSalesInvoice {
+  static Future<List<File>> generate(
+      {SalesModel? salesModel,
+      SalesReturnModal? salesReturnModal,
+      bool isReturn = false}) async {
     final pdf = pw.Document();
     final pdfPreview = pw.Document();
+    final dynamic sale;
+    final dynamic items;
+
+    if (isReturn) {
+      log('Sales Return');
+      sale = salesReturnModal!;
+      items = await SalesReturnItemsDatabase.instance
+          .getSalesReturnItemBySaleReturnId(sale.id!);
+    } else {
+      log('Sale');
+      sale = salesModel!;
+      items = await SalesItemsDatabase.instance.getSalesItemBySaleId(sale.id!);
+    }
 
     ByteData _bytes = await rootBundle.load('assets/images/invoice_logo.png');
     final logoBytes = _bytes.buffer.asUint8List();
@@ -28,12 +46,8 @@ class PdfInvoice {
     final arabicFont = await PdfGoogleFonts.iBMPlexSansArabicBold();
 
     final businessProfile = await UserUtils.instance.businessProfile;
-
     final customer =
         await CustomerDatabase.instance.getCustomerById(sale.customerId);
-
-    final items =
-        await SalesItemsDatabase.instance.getSalesItemBySaleId(sale.id!);
 
     pdfPreview.addPage(pw.MultiPage(
       pageFormat: PdfPageFormat.a4,
@@ -47,9 +61,9 @@ class PdfInvoice {
           ),
           pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
           pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
-          buildTitle(arabicFont, businessProfile),
+          buildTitle(arabicFont, businessProfile, isReturn),
           pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
-          buildCustomerInfo(arabicFont, sale, customer),
+          buildCustomerInfo(arabicFont, sale, customer, isReturn),
           pw.SizedBox(height: .02 * PdfPageFormat.a4.availableHeight),
           buildInvoice(items),
           pw.Divider(),
@@ -62,12 +76,12 @@ class PdfInvoice {
       pageFormat: PdfPageFormat.a4,
       crossAxisAlignment: pw.CrossAxisAlignment.center,
       header: (context) => buildHeader(
-          businessProfileModel: businessProfile,
+          businessProfile: businessProfile,
           arabicFont: arabicFont,
           logoImage: logoImage,
-          businessProfile: businessProfile,
           sale: sale,
-          customer: customer),
+          customer: customer,
+          isReturn: isReturn),
       build: (context) {
         return [
           buildInvoice(items),
@@ -114,12 +128,12 @@ class PdfInvoice {
 
 //==================== Header Section ====================
   static pw.Widget buildHeader(
-      {required BusinessProfileModel businessProfileModel,
+      {required BusinessProfileModel businessProfile,
       required pw.Font arabicFont,
       required pw.MemoryImage logoImage,
-      required BusinessProfileModel businessProfile,
-      required SalesModel sale,
-      required CustomerModel customer}) {
+      required final sale,
+      required CustomerModel customer,
+      required bool isReturn}) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -127,21 +141,21 @@ class PdfInvoice {
           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
           children: [
             pw.Expanded(
-              child: buildEnglishCompanyInfo(businessProfileModel),
+              child: buildEnglishCompanyInfo(businessProfile),
             ),
             pw.Expanded(
                 child: pw.Container(
                     height: 50, width: 50, child: pw.Image(logoImage))),
             pw.Expanded(
-              child: buildArabicCompanyInfo(businessProfileModel, arabicFont),
+              child: buildArabicCompanyInfo(businessProfile, arabicFont),
             )
           ],
         ),
         pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
         pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
-        buildTitle(arabicFont, businessProfile),
+        buildTitle(arabicFont, businessProfile, isReturn),
         pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
-        buildCustomerInfo(arabicFont, sale, customer),
+        buildCustomerInfo(arabicFont, sale, customer, isReturn),
         pw.SizedBox(height: .02 * PdfPageFormat.a4.availableHeight),
       ],
     );
@@ -191,7 +205,8 @@ class PdfInvoice {
       );
 
 //==================== TAX INVOICE ====================
-  static pw.Widget buildTitle(arabicFont, BusinessProfileModel business) {
+  static pw.Widget buildTitle(
+      arabicFont, BusinessProfileModel business, bool isReturn) {
     final kStyle = pw.TextStyle(
       font: arabicFont,
       fontWeight: pw.FontWeight.bold,
@@ -206,16 +221,40 @@ class PdfInvoice {
                 color: PdfColors.green300,
                 child: pw.Padding(
                   padding: const pw.EdgeInsets.all(10),
-                  child: pw.Text(
-                    ' فاتورة ضريبية  TAX INVOICE ',
-                    textDirection: pw.TextDirection.rtl,
-                    style: pw.TextStyle(
-                      fontSize: 16,
-                      color: PdfColors.white,
-                      fontWeight: pw.FontWeight.bold,
-                      font: arabicFont,
-                    ),
+
+                  child: pw.Column(
+                    mainAxisSize: pw.MainAxisSize.min,
+                    children: [
+                      pw.Text(
+                        'فاتورة ضريبية TAX INVOICE',
+                        textDirection: pw.TextDirection.rtl,
+                        style: pw.TextStyle(
+                          fontSize: 16,
+                          color: PdfColors.white,
+                          fontWeight: pw.FontWeight.bold,
+                          font: arabicFont,
+                        ),
+                      ),
+                      isReturn
+                          ? pw.SizedBox(
+                              width: 0.01 * PdfPageFormat.a4.availableWidth)
+                          : pw.SizedBox(),
+                      isReturn
+                          ? pw.Text(
+                              ' مبيعات مسترده / SALES RETURN  ',
+                              textDirection: pw.TextDirection.rtl,
+                              style: pw.TextStyle(
+                                fontSize: 12,
+                                color: PdfColors.white,
+                                fontWeight: pw.FontWeight.bold,
+                                font: arabicFont,
+                              ),
+                            )
+                          : pw.SizedBox(),
+                    ],
                   ),
+
+                  // مبيعات مسترده  / SALES RETURN
                 )),
           ),
           pw.Align(
@@ -256,7 +295,7 @@ class PdfInvoice {
 
   //==================== Customer Info ====================
   static pw.Widget buildCustomerInfo(
-      pw.Font arabicFont, SalesModel sale, CustomerModel customer) {
+      pw.Font arabicFont, final sale, CustomerModel customer, bool isReturn) {
     final kStyle = pw.TextStyle(
       font: arabicFont,
       fontSize: 10,
@@ -427,6 +466,43 @@ class PdfInvoice {
                   ],
                 ),
               ),
+              isReturn
+                  ? pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight)
+                  : pw.SizedBox(),
+              isReturn
+                  ? pw.Expanded(
+                      child: pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Expanded(
+                            child: pw.Row(
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
+                              children: [
+                                pw.Text(
+                                    ' :رقم فاتورة المبيعات المرتجعة Original Invoice No/',
+                                    textDirection: pw.TextDirection.rtl,
+                                    textAlign: pw.TextAlign.right,
+                                    style: kStyle),
+                                pw.SizedBox(
+                                    width:
+                                        .01 * PdfPageFormat.a4.availableWidth),
+                                pw.Expanded(
+                                    child: pw.Text(
+                                  sale.originalInvoiceNumber,
+                                  textAlign: pw.TextAlign.right,
+                                  style: kStyle,
+                                )),
+                              ],
+                            ),
+                          ),
+                          pw.SizedBox(
+                              width: .10 * PdfPageFormat.a4.availableWidth),
+                          pw.Spacer()
+                        ],
+                      ),
+                    )
+                  : pw.SizedBox(),
             ],
           ),
         )
@@ -435,7 +511,7 @@ class PdfInvoice {
   }
 
 //==================== Invoice Table ====================
-  static pw.Widget buildInvoice(List<SalesItemsModel> saleItems) {
+  static pw.Widget buildInvoice(List<dynamic> saleItems) {
     final headers = [
       'S.No',
       'Description',
@@ -505,7 +581,7 @@ class PdfInvoice {
   }
 
 //==================== Total Section ====================
-  static pw.Widget buildTotal(SalesModel sale, pw.Font arabicFont) {
+  static pw.Widget buildTotal(final sale, pw.Font arabicFont) {
     return pw.Container(
         child: pw.Expanded(
       child: pw.Row(

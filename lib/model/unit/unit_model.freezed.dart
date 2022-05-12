@@ -64,29 +64,30 @@ class _$UnitModelCopyWithImpl<$Res> implements $UnitModelCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$UnitModelCopyWith<$Res> implements $UnitModelCopyWith<$Res> {
-  factory _$UnitModelCopyWith(
-          _UnitModel value, $Res Function(_UnitModel) then) =
-      __$UnitModelCopyWithImpl<$Res>;
+abstract class _$$_UnitModelCopyWith<$Res> implements $UnitModelCopyWith<$Res> {
+  factory _$$_UnitModelCopyWith(
+          _$_UnitModel value, $Res Function(_$_UnitModel) then) =
+      __$$_UnitModelCopyWithImpl<$Res>;
   @override
   $Res call({@JsonKey(name: '_id') int? id, String unit});
 }
 
 /// @nodoc
-class __$UnitModelCopyWithImpl<$Res> extends _$UnitModelCopyWithImpl<$Res>
-    implements _$UnitModelCopyWith<$Res> {
-  __$UnitModelCopyWithImpl(_UnitModel _value, $Res Function(_UnitModel) _then)
-      : super(_value, (v) => _then(v as _UnitModel));
+class __$$_UnitModelCopyWithImpl<$Res> extends _$UnitModelCopyWithImpl<$Res>
+    implements _$$_UnitModelCopyWith<$Res> {
+  __$$_UnitModelCopyWithImpl(
+      _$_UnitModel _value, $Res Function(_$_UnitModel) _then)
+      : super(_value, (v) => _then(v as _$_UnitModel));
 
   @override
-  _UnitModel get _value => super._value as _UnitModel;
+  _$_UnitModel get _value => super._value as _$_UnitModel;
 
   @override
   $Res call({
     Object? id = freezed,
     Object? unit = freezed,
   }) {
-    return _then(_UnitModel(
+    return _then(_$_UnitModel(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -123,7 +124,7 @@ class _$_UnitModel extends _UnitModel {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _UnitModel &&
+            other is _$_UnitModel &&
             const DeepCollectionEquality().equals(other.id, id) &&
             const DeepCollectionEquality().equals(other.unit, unit));
   }
@@ -137,8 +138,8 @@ class _$_UnitModel extends _UnitModel {
 
   @JsonKey(ignore: true)
   @override
-  _$UnitModelCopyWith<_UnitModel> get copyWith =>
-      __$UnitModelCopyWithImpl<_UnitModel>(this, _$identity);
+  _$$_UnitModelCopyWith<_$_UnitModel> get copyWith =>
+      __$$_UnitModelCopyWithImpl<_$_UnitModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -162,6 +163,6 @@ abstract class _UnitModel extends UnitModel {
   String get unit => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$UnitModelCopyWith<_UnitModel> get copyWith =>
+  _$$_UnitModelCopyWith<_$_UnitModel> get copyWith =>
       throw _privateConstructorUsedError;
 }

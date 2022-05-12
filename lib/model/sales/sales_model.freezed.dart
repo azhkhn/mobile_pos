@@ -179,10 +179,11 @@ class _$SalesModelCopyWithImpl<$Res> implements $SalesModelCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$SalesModelCopyWith<$Res> implements $SalesModelCopyWith<$Res> {
-  factory _$SalesModelCopyWith(
-          _SalesModel value, $Res Function(_SalesModel) then) =
-      __$SalesModelCopyWithImpl<$Res>;
+abstract class _$$_SalesModelCopyWith<$Res>
+    implements $SalesModelCopyWith<$Res> {
+  factory _$$_SalesModelCopyWith(
+          _$_SalesModel value, $Res Function(_$_SalesModel) then) =
+      __$$_SalesModelCopyWithImpl<$Res>;
   @override
   $Res call(
       {@JsonKey(name: '_id') int? id,
@@ -206,14 +207,14 @@ abstract class _$SalesModelCopyWith<$Res> implements $SalesModelCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$SalesModelCopyWithImpl<$Res> extends _$SalesModelCopyWithImpl<$Res>
-    implements _$SalesModelCopyWith<$Res> {
-  __$SalesModelCopyWithImpl(
-      _SalesModel _value, $Res Function(_SalesModel) _then)
-      : super(_value, (v) => _then(v as _SalesModel));
+class __$$_SalesModelCopyWithImpl<$Res> extends _$SalesModelCopyWithImpl<$Res>
+    implements _$$_SalesModelCopyWith<$Res> {
+  __$$_SalesModelCopyWithImpl(
+      _$_SalesModel _value, $Res Function(_$_SalesModel) _then)
+      : super(_value, (v) => _then(v as _$_SalesModel));
 
   @override
-  _SalesModel get _value => super._value as _SalesModel;
+  _$_SalesModel get _value => super._value as _$_SalesModel;
 
   @override
   $Res call({
@@ -236,7 +237,7 @@ class __$SalesModelCopyWithImpl<$Res> extends _$SalesModelCopyWithImpl<$Res>
     Object? paymentStatus = freezed,
     Object? createdBy = freezed,
   }) {
-    return _then(_SalesModel(
+    return _then(_$_SalesModel(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -386,7 +387,7 @@ class _$_SalesModel implements _SalesModel {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _SalesModel &&
+            other is _$_SalesModel &&
             const DeepCollectionEquality().equals(other.id, id) &&
             const DeepCollectionEquality()
                 .equals(other.invoiceNumber, invoiceNumber) &&
@@ -441,8 +442,8 @@ class _$_SalesModel implements _SalesModel {
 
   @JsonKey(ignore: true)
   @override
-  _$SalesModelCopyWith<_SalesModel> get copyWith =>
-      __$SalesModelCopyWithImpl<_SalesModel>(this, _$identity);
+  _$$_SalesModelCopyWith<_$_SalesModel> get copyWith =>
+      __$$_SalesModelCopyWithImpl<_$_SalesModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -513,6 +514,6 @@ abstract class _SalesModel implements SalesModel {
   String get createdBy => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$SalesModelCopyWith<_SalesModel> get copyWith =>
+  _$$_SalesModelCopyWith<_$_SalesModel> get copyWith =>
       throw _privateConstructorUsedError;
 }

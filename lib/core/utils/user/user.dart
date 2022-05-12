@@ -17,16 +17,19 @@ class UserUtils {
   BusinessProfileModel? businessProfileModel;
 
 //========== Get Logged User Details ==========
-  Future<UserModel?> get loggedUser async {
-    if (userModel != null) return userModel;
+  Future<UserModel> get loggedUser async {
+    if (userModel != null) return userModel!;
     await getUser();
-    return userModel;
+    return userModel!;
   }
 
 //========== Get Business Profile Details ==========
   Future<BusinessProfileModel> get businessProfile async {
     if (businessProfileModel != null) return businessProfileModel!;
     await getBusinessProfile();
+    if (businessProfileModel == null) {
+      throw 'Business Profile is Empty';
+    }
     return businessProfileModel!;
   }
 

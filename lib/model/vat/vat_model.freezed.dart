@@ -87,9 +87,10 @@ class _$VatModelCopyWithImpl<$Res> implements $VatModelCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$VatModelCopyWith<$Res> implements $VatModelCopyWith<$Res> {
-  factory _$VatModelCopyWith(_VatModel value, $Res Function(_VatModel) then) =
-      __$VatModelCopyWithImpl<$Res>;
+abstract class _$$_VatModelCopyWith<$Res> implements $VatModelCopyWith<$Res> {
+  factory _$$_VatModelCopyWith(
+          _$_VatModel value, $Res Function(_$_VatModel) then) =
+      __$$_VatModelCopyWithImpl<$Res>;
   @override
   $Res call(
       {@JsonKey(name: '_id') int? id,
@@ -100,13 +101,14 @@ abstract class _$VatModelCopyWith<$Res> implements $VatModelCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$VatModelCopyWithImpl<$Res> extends _$VatModelCopyWithImpl<$Res>
-    implements _$VatModelCopyWith<$Res> {
-  __$VatModelCopyWithImpl(_VatModel _value, $Res Function(_VatModel) _then)
-      : super(_value, (v) => _then(v as _VatModel));
+class __$$_VatModelCopyWithImpl<$Res> extends _$VatModelCopyWithImpl<$Res>
+    implements _$$_VatModelCopyWith<$Res> {
+  __$$_VatModelCopyWithImpl(
+      _$_VatModel _value, $Res Function(_$_VatModel) _then)
+      : super(_value, (v) => _then(v as _$_VatModel));
 
   @override
-  _VatModel get _value => super._value as _VatModel;
+  _$_VatModel get _value => super._value as _$_VatModel;
 
   @override
   $Res call({
@@ -116,7 +118,7 @@ class __$VatModelCopyWithImpl<$Res> extends _$VatModelCopyWithImpl<$Res>
     Object? rate = freezed,
     Object? type = freezed,
   }) {
-    return _then(_VatModel(
+    return _then(_$_VatModel(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -176,7 +178,7 @@ class _$_VatModel extends _VatModel {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _VatModel &&
+            other is _$_VatModel &&
             const DeepCollectionEquality().equals(other.id, id) &&
             const DeepCollectionEquality().equals(other.name, name) &&
             const DeepCollectionEquality().equals(other.code, code) &&
@@ -196,8 +198,8 @@ class _$_VatModel extends _VatModel {
 
   @JsonKey(ignore: true)
   @override
-  _$VatModelCopyWith<_VatModel> get copyWith =>
-      __$VatModelCopyWithImpl<_VatModel>(this, _$identity);
+  _$$_VatModelCopyWith<_$_VatModel> get copyWith =>
+      __$$_VatModelCopyWithImpl<_$_VatModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -229,6 +231,6 @@ abstract class _VatModel extends VatModel {
   String get type => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$VatModelCopyWith<_VatModel> get copyWith =>
+  _$$_VatModelCopyWith<_$_VatModel> get copyWith =>
       throw _privateConstructorUsedError;
 }

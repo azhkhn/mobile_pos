@@ -4,16 +4,6 @@ import 'package:shop_ez/model/sales/sales_model.dart';
 part 'invoice_model.freezed.dart';
 part 'invoice_model.g.dart';
 
-class InvoiceModel {
-  final SalesModel info;
-  final List<InvoiceItemModel> items;
-
-  const InvoiceModel({
-    required this.info,
-    required this.items,
-  });
-}
-
 @freezed
 class InvoiceItemModel with _$InvoiceItemModel {
   const factory InvoiceItemModel({
@@ -29,4 +19,14 @@ class InvoiceItemModel with _$InvoiceItemModel {
 
   factory InvoiceItemModel.fromJson(Map<String, dynamic> json) =>
       _$InvoiceItemModelFromJson(json);
+}
+
+class InvoiceModel {
+  final SalesModel info;
+  final List<InvoiceItemModel> items;
+
+  const InvoiceModel({
+    required this.info,
+    required this.items,
+  });
 }

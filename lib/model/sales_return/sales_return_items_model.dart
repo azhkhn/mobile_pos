@@ -21,8 +21,10 @@ class SalesReturnItemsModel with _$SalesReturnItemsModel {
     required String quantity,
     required String unitCode,
     required String subTotal,
+    required String vatMethod,
     required String vatId,
     required String vatPercentage,
+    required int vatRate,
     required String vatTotal,
   }) = _SalesReturnItemsModel;
 
@@ -48,7 +50,9 @@ class SalesReturnItemsFields {
   static const quantity = 'quantity';
   static const unitCode = 'unitCode';
   static const subTotal = 'subTotal';
+  static const vatMethod = 'vatMethod';
   static const vatId = 'vatId';
   static const vatPercentage = 'vatPercentage';
+  static const vatRate = 'vatRate';
   static const vatTotal = 'vatTotal';
 }

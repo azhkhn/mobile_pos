@@ -12,6 +12,8 @@ import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_items_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
 import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
+import 'package:shop_ez/model/auth/user_model.dart';
+import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:shop_ez/model/sales/sales_items_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
@@ -340,14 +342,25 @@ class PaymentButtonsWidget extends StatelessWidget {
     final SalesItemsDatabase salesItemDB = SalesItemsDatabase.instance;
     final TransactionDatabase transactionDB = TransactionDatabase.instance;
     final ItemMasterDatabase itemMasterDB = ItemMasterDatabase.instance;
+    final UserModel _loggedUser;
+    late final String _user;
+    final BusinessProfileModel _businessProfile;
+    late final String _biller;
+    try {
+      _loggedUser = await UserUtils.instance.loggedUser;
+      _user = _loggedUser.shopName;
+      log('Logged User ==== $_user');
 
-    final _loggedUser = await UserUtils.instance.loggedUser;
-    final String _user = _loggedUser!.shopName;
-    log('Logged User ==== $_user');
-
-    final _businessProfile = await UserUtils.instance.businessProfile;
-    final String _biller = _businessProfile.billerName;
-    log('Biller Name ==== $_biller');
+      _businessProfile = await UserUtils.instance.businessProfile;
+      _biller = _businessProfile.billerName;
+      log('Biller Name ==== $_biller');
+    } catch (e) {
+      kSnackBar(
+          context: context,
+          content: 'Business Profile is empty! Please fill your profile',
+          error: true);
+      return log(e.toString());
+    }
 
 //Checking if it's Partial Payment then Including Balance Amount
     if (argPaymentStatus != null) {
@@ -462,7 +475,7 @@ class PaymentButtonsWidget extends StatelessWidget {
         log('\n==============================================\n');
 
         final SalesItemsModel _salesItemsModel = SalesItemsModel(
-          salesId: salesId,
+          saleId: salesId,
           productId: productId,
           productType: productType,
           productCode: productCode,

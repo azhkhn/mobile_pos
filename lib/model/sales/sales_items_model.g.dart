@@ -9,7 +9,7 @@ part of 'sales_items_model.dart';
 _$_SalesItemsModel _$$_SalesItemsModelFromJson(Map<String, dynamic> json) =>
     _$_SalesItemsModel(
       id: json['_id'] as int?,
-      salesId: json['salesId'] as int,
+      saleId: json['saleId'] as int,
       productId: json['productId'] as String,
       productType: json['productType'] as String,
       productCode: json['productCode'] as String,
@@ -31,7 +31,7 @@ _$_SalesItemsModel _$$_SalesItemsModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$_SalesItemsModelToJson(_$_SalesItemsModel instance) =>
     <String, dynamic>{
       '_id': instance.id,
-      'salesId': instance.salesId,
+      'saleId': instance.saleId,
       'productId': instance.productId,
       'productType': instance.productType,
       'productCode': instance.productCode,

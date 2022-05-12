@@ -24,7 +24,7 @@ mixin _$SalesReturnModal {
   int? get id => throw _privateConstructorUsedError;
   int? get saleId => throw _privateConstructorUsedError;
   String? get invoiceNumber => throw _privateConstructorUsedError;
-  String? get originalInvoiceNumber => throw _privateConstructorUsedError;
+  String get originalInvoiceNumber => throw _privateConstructorUsedError;
   int get customerId => throw _privateConstructorUsedError;
   String get dateTime => throw _privateConstructorUsedError;
   String get customerName => throw _privateConstructorUsedError;
@@ -57,7 +57,7 @@ abstract class $SalesReturnModalCopyWith<$Res> {
       {@JsonKey(name: '_id') int? id,
       int? saleId,
       String? invoiceNumber,
-      String? originalInvoiceNumber,
+      String originalInvoiceNumber,
       int customerId,
       String dateTime,
       String customerName,
@@ -124,7 +124,7 @@ class _$SalesReturnModalCopyWithImpl<$Res>
       originalInvoiceNumber: originalInvoiceNumber == freezed
           ? _value.originalInvoiceNumber
           : originalInvoiceNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       customerId: customerId == freezed
           ? _value.customerId
           : customerId // ignore: cast_nullable_to_non_nullable
@@ -194,17 +194,17 @@ class _$SalesReturnModalCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$SalesReturnModalCopyWith<$Res>
+abstract class _$$_SalesReturnModalCopyWith<$Res>
     implements $SalesReturnModalCopyWith<$Res> {
-  factory _$SalesReturnModalCopyWith(
-          _SalesReturnModal value, $Res Function(_SalesReturnModal) then) =
-      __$SalesReturnModalCopyWithImpl<$Res>;
+  factory _$$_SalesReturnModalCopyWith(
+          _$_SalesReturnModal value, $Res Function(_$_SalesReturnModal) then) =
+      __$$_SalesReturnModalCopyWithImpl<$Res>;
   @override
   $Res call(
       {@JsonKey(name: '_id') int? id,
       int? saleId,
       String? invoiceNumber,
-      String? originalInvoiceNumber,
+      String originalInvoiceNumber,
       int customerId,
       String dateTime,
       String customerName,
@@ -224,15 +224,15 @@ abstract class _$SalesReturnModalCopyWith<$Res>
 }
 
 /// @nodoc
-class __$SalesReturnModalCopyWithImpl<$Res>
+class __$$_SalesReturnModalCopyWithImpl<$Res>
     extends _$SalesReturnModalCopyWithImpl<$Res>
-    implements _$SalesReturnModalCopyWith<$Res> {
-  __$SalesReturnModalCopyWithImpl(
-      _SalesReturnModal _value, $Res Function(_SalesReturnModal) _then)
-      : super(_value, (v) => _then(v as _SalesReturnModal));
+    implements _$$_SalesReturnModalCopyWith<$Res> {
+  __$$_SalesReturnModalCopyWithImpl(
+      _$_SalesReturnModal _value, $Res Function(_$_SalesReturnModal) _then)
+      : super(_value, (v) => _then(v as _$_SalesReturnModal));
 
   @override
-  _SalesReturnModal get _value => super._value as _SalesReturnModal;
+  _$_SalesReturnModal get _value => super._value as _$_SalesReturnModal;
 
   @override
   $Res call({
@@ -257,7 +257,7 @@ class __$SalesReturnModalCopyWithImpl<$Res>
     Object? paymentStatus = freezed,
     Object? createdBy = freezed,
   }) {
-    return _then(_SalesReturnModal(
+    return _then(_$_SalesReturnModal(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -273,7 +273,7 @@ class __$SalesReturnModalCopyWithImpl<$Res>
       originalInvoiceNumber: originalInvoiceNumber == freezed
           ? _value.originalInvoiceNumber
           : originalInvoiceNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       customerId: customerId == freezed
           ? _value.customerId
           : customerId // ignore: cast_nullable_to_non_nullable
@@ -378,7 +378,7 @@ class _$_SalesReturnModal implements _SalesReturnModal {
   @override
   final String? invoiceNumber;
   @override
-  final String? originalInvoiceNumber;
+  final String originalInvoiceNumber;
   @override
   final int customerId;
   @override
@@ -421,7 +421,7 @@ class _$_SalesReturnModal implements _SalesReturnModal {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _SalesReturnModal &&
+            other is _$_SalesReturnModal &&
             const DeepCollectionEquality().equals(other.id, id) &&
             const DeepCollectionEquality().equals(other.saleId, saleId) &&
             const DeepCollectionEquality()
@@ -482,8 +482,8 @@ class _$_SalesReturnModal implements _SalesReturnModal {
 
   @JsonKey(ignore: true)
   @override
-  _$SalesReturnModalCopyWith<_SalesReturnModal> get copyWith =>
-      __$SalesReturnModalCopyWithImpl<_SalesReturnModal>(this, _$identity);
+  _$$_SalesReturnModalCopyWith<_$_SalesReturnModal> get copyWith =>
+      __$$_SalesReturnModalCopyWithImpl<_$_SalesReturnModal>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -496,7 +496,7 @@ abstract class _SalesReturnModal implements SalesReturnModal {
       {@JsonKey(name: '_id') final int? id,
       final int? saleId,
       final String? invoiceNumber,
-      required final String? originalInvoiceNumber,
+      required final String originalInvoiceNumber,
       required final int customerId,
       required final String dateTime,
       required final String customerName,
@@ -525,7 +525,7 @@ abstract class _SalesReturnModal implements SalesReturnModal {
   @override
   String? get invoiceNumber => throw _privateConstructorUsedError;
   @override
-  String? get originalInvoiceNumber => throw _privateConstructorUsedError;
+  String get originalInvoiceNumber => throw _privateConstructorUsedError;
   @override
   int get customerId => throw _privateConstructorUsedError;
   @override
@@ -560,6 +560,6 @@ abstract class _SalesReturnModal implements SalesReturnModal {
   String get createdBy => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$SalesReturnModalCopyWith<_SalesReturnModal> get copyWith =>
+  _$$_SalesReturnModalCopyWith<_$_SalesReturnModal> get copyWith =>
       throw _privateConstructorUsedError;
 }

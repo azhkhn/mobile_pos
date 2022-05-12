@@ -208,7 +208,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
     final ItemMasterDatabase _itemMasterDB = ItemMasterDatabase.instance;
 
     final _loggedUser = await UserUtils.instance.loggedUser;
-    final String _user = _loggedUser!.shopName;
+    final String _user = _loggedUser.shopName;
     log('Logged User ==== $_user');
 
     final _businessProfile = await UserUtils.instance.businessProfile;

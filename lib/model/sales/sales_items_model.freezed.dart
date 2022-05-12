@@ -22,7 +22,7 @@ SalesItemsModel _$SalesItemsModelFromJson(Map<String, dynamic> json) {
 mixin _$SalesItemsModel {
   @JsonKey(name: '_id')
   int? get id => throw _privateConstructorUsedError;
-  int get salesId => throw _privateConstructorUsedError;
+  int get saleId => throw _privateConstructorUsedError;
   String get productId => throw _privateConstructorUsedError;
   String get productType => throw _privateConstructorUsedError;
   String get productCode => throw _privateConstructorUsedError;
@@ -53,7 +53,7 @@ abstract class $SalesItemsModelCopyWith<$Res> {
       _$SalesItemsModelCopyWithImpl<$Res>;
   $Res call(
       {@JsonKey(name: '_id') int? id,
-      int salesId,
+      int saleId,
       String productId,
       String productType,
       String productCode,
@@ -84,7 +84,7 @@ class _$SalesItemsModelCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
-    Object? salesId = freezed,
+    Object? saleId = freezed,
     Object? productId = freezed,
     Object? productType = freezed,
     Object? productCode = freezed,
@@ -107,9 +107,9 @@ class _$SalesItemsModelCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      salesId: salesId == freezed
-          ? _value.salesId
-          : salesId // ignore: cast_nullable_to_non_nullable
+      saleId: saleId == freezed
+          ? _value.saleId
+          : saleId // ignore: cast_nullable_to_non_nullable
               as int,
       productId: productId == freezed
           ? _value.productId
@@ -180,15 +180,15 @@ class _$SalesItemsModelCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$SalesItemsModelCopyWith<$Res>
+abstract class _$$_SalesItemsModelCopyWith<$Res>
     implements $SalesItemsModelCopyWith<$Res> {
-  factory _$SalesItemsModelCopyWith(
-          _SalesItemsModel value, $Res Function(_SalesItemsModel) then) =
-      __$SalesItemsModelCopyWithImpl<$Res>;
+  factory _$$_SalesItemsModelCopyWith(
+          _$_SalesItemsModel value, $Res Function(_$_SalesItemsModel) then) =
+      __$$_SalesItemsModelCopyWithImpl<$Res>;
   @override
   $Res call(
       {@JsonKey(name: '_id') int? id,
-      int salesId,
+      int saleId,
       String productId,
       String productType,
       String productCode,
@@ -208,20 +208,20 @@ abstract class _$SalesItemsModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$SalesItemsModelCopyWithImpl<$Res>
+class __$$_SalesItemsModelCopyWithImpl<$Res>
     extends _$SalesItemsModelCopyWithImpl<$Res>
-    implements _$SalesItemsModelCopyWith<$Res> {
-  __$SalesItemsModelCopyWithImpl(
-      _SalesItemsModel _value, $Res Function(_SalesItemsModel) _then)
-      : super(_value, (v) => _then(v as _SalesItemsModel));
+    implements _$$_SalesItemsModelCopyWith<$Res> {
+  __$$_SalesItemsModelCopyWithImpl(
+      _$_SalesItemsModel _value, $Res Function(_$_SalesItemsModel) _then)
+      : super(_value, (v) => _then(v as _$_SalesItemsModel));
 
   @override
-  _SalesItemsModel get _value => super._value as _SalesItemsModel;
+  _$_SalesItemsModel get _value => super._value as _$_SalesItemsModel;
 
   @override
   $Res call({
     Object? id = freezed,
-    Object? salesId = freezed,
+    Object? saleId = freezed,
     Object? productId = freezed,
     Object? productType = freezed,
     Object? productCode = freezed,
@@ -239,14 +239,14 @@ class __$SalesItemsModelCopyWithImpl<$Res>
     Object? vatRate = freezed,
     Object? vatTotal = freezed,
   }) {
-    return _then(_SalesItemsModel(
+    return _then(_$_SalesItemsModel(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      salesId: salesId == freezed
-          ? _value.salesId
-          : salesId // ignore: cast_nullable_to_non_nullable
+      saleId: saleId == freezed
+          ? _value.saleId
+          : saleId // ignore: cast_nullable_to_non_nullable
               as int,
       productId: productId == freezed
           ? _value.productId
@@ -321,7 +321,7 @@ class __$SalesItemsModelCopyWithImpl<$Res>
 class _$_SalesItemsModel implements _SalesItemsModel {
   const _$_SalesItemsModel(
       {@JsonKey(name: '_id') this.id,
-      required this.salesId,
+      required this.saleId,
       required this.productId,
       required this.productType,
       required this.productCode,
@@ -346,7 +346,7 @@ class _$_SalesItemsModel implements _SalesItemsModel {
   @JsonKey(name: '_id')
   final int? id;
   @override
-  final int salesId;
+  final int saleId;
   @override
   final String productId;
   @override
@@ -382,16 +382,16 @@ class _$_SalesItemsModel implements _SalesItemsModel {
 
   @override
   String toString() {
-    return 'SalesItemsModel(id: $id, salesId: $salesId, productId: $productId, productType: $productType, productCode: $productCode, productName: $productName, category: $category, productCost: $productCost, netUnitPrice: $netUnitPrice, unitPrice: $unitPrice, quantity: $quantity, unitCode: $unitCode, subTotal: $subTotal, vatMethod: $vatMethod, vatId: $vatId, vatPercentage: $vatPercentage, vatRate: $vatRate, vatTotal: $vatTotal)';
+    return 'SalesItemsModel(id: $id, saleId: $saleId, productId: $productId, productType: $productType, productCode: $productCode, productName: $productName, category: $category, productCost: $productCost, netUnitPrice: $netUnitPrice, unitPrice: $unitPrice, quantity: $quantity, unitCode: $unitCode, subTotal: $subTotal, vatMethod: $vatMethod, vatId: $vatId, vatPercentage: $vatPercentage, vatRate: $vatRate, vatTotal: $vatTotal)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _SalesItemsModel &&
+            other is _$_SalesItemsModel &&
             const DeepCollectionEquality().equals(other.id, id) &&
-            const DeepCollectionEquality().equals(other.salesId, salesId) &&
+            const DeepCollectionEquality().equals(other.saleId, saleId) &&
             const DeepCollectionEquality().equals(other.productId, productId) &&
             const DeepCollectionEquality()
                 .equals(other.productType, productType) &&
@@ -421,7 +421,7 @@ class _$_SalesItemsModel implements _SalesItemsModel {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(id),
-      const DeepCollectionEquality().hash(salesId),
+      const DeepCollectionEquality().hash(saleId),
       const DeepCollectionEquality().hash(productId),
       const DeepCollectionEquality().hash(productType),
       const DeepCollectionEquality().hash(productCode),
@@ -441,8 +441,8 @@ class _$_SalesItemsModel implements _SalesItemsModel {
 
   @JsonKey(ignore: true)
   @override
-  _$SalesItemsModelCopyWith<_SalesItemsModel> get copyWith =>
-      __$SalesItemsModelCopyWithImpl<_SalesItemsModel>(this, _$identity);
+  _$$_SalesItemsModelCopyWith<_$_SalesItemsModel> get copyWith =>
+      __$$_SalesItemsModelCopyWithImpl<_$_SalesItemsModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -453,7 +453,7 @@ class _$_SalesItemsModel implements _SalesItemsModel {
 abstract class _SalesItemsModel implements SalesItemsModel {
   const factory _SalesItemsModel(
       {@JsonKey(name: '_id') final int? id,
-      required final int salesId,
+      required final int saleId,
       required final String productId,
       required final String productType,
       required final String productCode,
@@ -478,7 +478,7 @@ abstract class _SalesItemsModel implements SalesItemsModel {
   @JsonKey(name: '_id')
   int? get id => throw _privateConstructorUsedError;
   @override
-  int get salesId => throw _privateConstructorUsedError;
+  int get saleId => throw _privateConstructorUsedError;
   @override
   String get productId => throw _privateConstructorUsedError;
   @override
@@ -513,6 +513,6 @@ abstract class _SalesItemsModel implements SalesItemsModel {
   String get vatTotal => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$SalesItemsModelCopyWith<_SalesItemsModel> get copyWith =>
+  _$$_SalesItemsModelCopyWith<_$_SalesItemsModel> get copyWith =>
       throw _privateConstructorUsedError;
 }

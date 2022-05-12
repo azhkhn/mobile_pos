@@ -1,42 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
-import 'package:shop_ez/screens/sales/widgets/sales_card_widget.dart';
-import 'package:shop_ez/screens/sales/widgets/sales_list_filter.dart';
+import 'package:shop_ez/db/db_functions/sales_return/sales_return_database.dart';
+import 'package:shop_ez/model/sales_return/sales_return_model.dart';
+import 'package:shop_ez/screens/sales_return/widgets/sales_return_card_widget.dart';
+import 'package:shop_ez/screens/sales_return/widgets/sales_return_list_widget.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
-class SalesList extends StatelessWidget {
-  const SalesList({
+class SalesReturnList extends StatelessWidget {
+  const SalesReturnList({
     Key? key,
   }) : super(key: key);
 
   //========== Value Notifier ==========
-  static final ValueNotifier<List<SalesModel>> salesNotifier =
+  static final ValueNotifier<List<SalesReturnModal>> salesReturnNotifier =
       ValueNotifier([]);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBarWidget(
-          title: 'Sales',
+          title: 'Sales Returns',
         ),
         body: BackgroundContainerWidget(
             child: ItemScreenPaddingWidget(
           child: Column(
             children: [
-              //========== Sales Filter Options ==========
-              SalesListFilter(),
+              //========== Sales Return Filter Options ==========
+              SalesReturnListFilter(),
 
-              //========== List Sales ==========
+              //========== List Sales Returns ==========
               Expanded(
                 child: FutureBuilder(
-                    future: SalesDatabase.instance.getAllSales(),
-                    builder:
-                        (context, AsyncSnapshot<List<SalesModel>> snapshot) {
+                    future: SalesReturnDatabase.instance.getAllSalesReturns(),
+                    builder: (context,
+                        AsyncSnapshot<List<SalesReturnModal>> snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
                           return const Center(
@@ -45,32 +45,34 @@ class SalesList extends StatelessWidget {
 
                         default:
                           if (!snapshot.hasData) {
-                            return const Center(child: Text('Sales is Empty!'));
+                            return const Center(
+                                child: Text('Sales Return is Empty!'));
                           }
-                          salesNotifier.value = snapshot.data!;
+                          salesReturnNotifier.value = snapshot.data!;
                           return ValueListenableBuilder(
-                              valueListenable: salesNotifier,
-                              builder: (context, List<SalesModel> sales, _) {
-                                return sales.isNotEmpty
+                              valueListenable: salesReturnNotifier,
+                              builder: (context,
+                                  List<SalesReturnModal> salesReturns, _) {
+                                return salesReturns.isNotEmpty
                                     ? ListView.separated(
-                                        itemCount: sales.length,
+                                        itemCount: salesReturns.length,
                                         separatorBuilder:
                                             (BuildContext context, int index) =>
                                                 kHeight5,
                                         itemBuilder:
                                             (BuildContext context, int index) {
                                           return InkWell(
-                                            child: SalesCardWidget(
+                                            child: SalesReturnCardWidget(
                                               index: index,
-                                              sales: sales,
+                                              salesReturn: salesReturns,
                                             ),
                                             onTap: () async {
                                               await Navigator.pushNamed(
                                                 context,
                                                 routeSalesInvoice,
                                                 arguments: [
-                                                  sales[index],
-                                                  false
+                                                  salesReturns[index],
+                                                  true
                                                 ],
                                               );
                                             },
@@ -78,7 +80,7 @@ class SalesList extends StatelessWidget {
                                         },
                                       )
                                     : const Center(
-                                        child: Text('Sales is Empty!'));
+                                        child: Text('Sales Return is Empty!'));
                               });
                       }
                     }),

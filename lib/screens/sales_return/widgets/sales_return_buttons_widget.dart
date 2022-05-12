@@ -10,6 +10,7 @@ import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/sales_return/sales_return_database.dart';
 import 'package:shop_ez/db/db_functions/sales_return/sales_return_items_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
+import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
 import 'package:shop_ez/model/sales_return/sales_return_items_model.dart';
 import 'package:shop_ez/model/sales_return/sales_return_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
@@ -131,19 +132,27 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                     final num items =
                         SalesReturnSideWidget.totalItemsNotifier.value;
 
-                    if (customerId == null) {
-                      kSnackBar(
-                          context: context,
-                          content:
-                              'Please select any Customer to return sale!');
-                    } else if (items == 0) {
+                    final String? originalInvoiceNumber = SalesReturnSideWidget
+                        .originalInvoiceNumberNotifier.value;
+
+                    if (originalInvoiceNumber == null) {
                       return kSnackBar(
                           context: context,
                           content:
-                              'Please select any Products to return sale!');
-                    } else {
-                      await addSalesReturn(context);
+                              'Please select Invoice number to return sale');
                     }
+                    if (customerId == null) {
+                      return kSnackBar(
+                          context: context,
+                          content: 'Please select any Customer to return sale');
+                    }
+                    if (items == 0) {
+                      return kSnackBar(
+                          context: context,
+                          content: 'Please select any Products to return sale');
+                    }
+                    //========== Add Sales Return =========
+                    await addSalesReturn(context);
                   },
                   padding: const EdgeInsets.all(5),
                   color: Colors.green[700],
@@ -206,7 +215,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
     final ItemMasterDatabase itemMasterDB = ItemMasterDatabase.instance;
 
     final _loggedUser = await UserUtils.instance.loggedUser;
-    final String _user = _loggedUser!.shopName;
+    final String _user = _loggedUser.shopName;
     log('Logged User ==== $_user');
 
     final _businessProfile = await UserUtils.instance.businessProfile;
@@ -242,7 +251,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
     // dateTime = DateTime(2022, 4, 22, 17, 45).toIso8601String();
     dateTime = DateTime.now().toIso8601String();
     originalInvoiceNumber =
-        SalesReturnSideWidget.originalInvoiceNumberNotifier.value;
+        SalesReturnSideWidget.originalInvoiceNumberNotifier.value!;
     originalSaleId = SalesReturnSideWidget.originalSaleIdNotifier.value;
     customerId = SalesReturnSideWidget.customerIdNotifier.value!;
     customerName = SalesReturnSideWidget.customerNameNotifier.value!;
@@ -258,7 +267,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
 
     final SalesReturnModal _salesReturnModel = SalesReturnModal(
       dateTime: dateTime,
-      originalInvoiceNumber: originalInvoiceNumber ?? '',
+      originalInvoiceNumber: originalInvoiceNumber,
       saleId: originalSaleId,
       customerId: customerId,
       customerName: customerName,
@@ -325,6 +334,9 @@ class SalesReturnButtonsWidget extends StatelessWidget {
             unitCode =
                 SalesReturnSideWidget.selectedProductsNotifier.value[i].unit;
 
+        final vat = await VatDatabase.instance.getVatById(int.parse(vatId));
+        final vatRate = vat.rate;
+
         log(' Sales Return Id == $salesReturnId');
         log(' Sales Id == $originalSaleId');
         log(' Original Invoice Number == $originalInvoiceNumber');
@@ -346,7 +358,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
 
         final SalesReturnItemsModel _salesReturnItemsModel =
             SalesReturnItemsModel(
-          originalInvoiceNumber: originalInvoiceNumber ?? '',
+          originalInvoiceNumber: originalInvoiceNumber,
           saleId: originalSaleId,
           saleReturnId: salesReturnId,
           productId: productId,
@@ -360,7 +372,9 @@ class SalesReturnButtonsWidget extends StatelessWidget {
           quantity: quantity,
           unitCode: unitCode,
           subTotal: subTotal,
+          vatMethod: vatMethod,
           vatId: vatId,
+          vatRate: vatRate,
           vatPercentage: vatPercentage,
           vatTotal: vatTotal,
         );

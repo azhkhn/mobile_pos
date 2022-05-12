@@ -19,7 +19,7 @@ class SalesItemsDatabase {
     final db = await dbInstance.database;
     final _result = await db.query(
       tableSalesItems,
-      where: '${SalesItemsFields.salesId} = ? ',
+      where: '${SalesItemsFields.saleId} = ? ',
       whereArgs: [saleId],
     );
     // db.delete(tableSalesItems);

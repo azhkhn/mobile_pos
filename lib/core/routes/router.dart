@@ -25,5 +25,6 @@ const routeListPurchase = '/list_purchase';
 const routeStock = '/stock';
 const routeBarcode = '/barcode';
 const routeSalesReturn = '/sales_return';
+const routeSalesReturnList = '/sales_return_list';
 const routePurchaseReturn = '/purchase_return';
-const routeInvoice = '/invoice';
+const routeSalesInvoice = '/sales_invoice';

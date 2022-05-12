@@ -10,15 +10,20 @@ import 'package:printing/printing.dart';
 import 'package:shop_ez/api/invoice/pdf_invoice.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/model/sales_return/sales_return_model.dart';
 import '../../../widgets/app_bar/app_bar_widget.dart';
 
 class ScreenSalesInvoice extends StatelessWidget {
   const ScreenSalesInvoice({
     Key? key,
-    required this.sale,
+    this.salesModal,
+    this.salesReturnModal,
+    this.isReturn = false,
   }) : super(key: key);
 
-  final SalesModel sale;
+  final SalesModel? salesModal;
+  final SalesReturnModal? salesReturnModal;
+  final bool isReturn;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +93,7 @@ class ScreenSalesInvoice extends StatelessWidget {
                   if (pdfFile.value != null) {
                     await Printing.layoutPdf(
                         format: PdfPageFormat.a4,
-                        name: sale.invoiceNumber!,
+                        name: salesModal!.invoiceNumber!,
                         usePrinterSettings: true,
                         onLayout: (PdfPageFormat format) async =>
                             pdfFile.value!.readAsBytes());
@@ -114,28 +119,25 @@ class ScreenSalesInvoice extends StatelessWidget {
                       pdfFile.value = snapshot.data!.first;
                       pdfPreview.value = snapshot.data!.last;
 
-                      return Stack(
-                        children: [
-                          ValueListenableBuilder(
-                              valueListenable: page,
-                              builder: (context, _, __) {
-                                return PDFView(
-                                  filePath: pdfPreview.value!.path,
-                                  swipeHorizontal: true,
-                                  onRender: (totalPage) {
-                                    page.value = totalPage!;
-                                    page.notifyListeners();
-                                  },
-                                  onViewCreated: (controller) =>
-                                      pdfViewController = controller,
-                                  onPageChanged: (index, _) {
-                                    indexPage.value = index!;
-                                    page.notifyListeners();
-                                  },
-                                );
-                              }),
-                        ],
-                      );
+                      return ValueListenableBuilder(
+                          valueListenable: page,
+                          builder: (context, _, __) {
+                            return PDFView(
+                              filePath: pdfPreview.value!.path,
+                              swipeHorizontal: true,
+                              // autoSpacing: false,
+                              onRender: (totalPage) {
+                                page.value = totalPage!;
+                                page.notifyListeners();
+                              },
+                              onViewCreated: (controller) =>
+                                  pdfViewController = controller,
+                              onPageChanged: (index, _) {
+                                indexPage.value = index!;
+                                page.notifyListeners();
+                              },
+                            );
+                          });
                   }
                 }),
           ],
@@ -144,8 +146,13 @@ class ScreenSalesInvoice extends StatelessWidget {
 
   //========== Create Invoice ==========
   Future<List<File>> createInvoice() async {
-    final pdfFiles = await PdfInvoice.generate(sale);
-
-    return pdfFiles;
+    if (isReturn) {
+      final pdfFiles = await PdfSalesInvoice.generate(
+          salesReturnModal: salesReturnModal, isReturn: true);
+      return pdfFiles;
+    } else {
+      final pdfFiles = await PdfSalesInvoice.generate(salesModel: salesModal);
+      return pdfFiles;
+    }
   }
 }

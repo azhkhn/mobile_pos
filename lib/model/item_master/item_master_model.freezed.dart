@@ -194,11 +194,11 @@ class _$ItemMasterModelCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$ItemMasterModelCopyWith<$Res>
+abstract class _$$_ItemMasterModelCopyWith<$Res>
     implements $ItemMasterModelCopyWith<$Res> {
-  factory _$ItemMasterModelCopyWith(
-          _ItemMasterModel value, $Res Function(_ItemMasterModel) then) =
-      __$ItemMasterModelCopyWithImpl<$Res>;
+  factory _$$_ItemMasterModelCopyWith(
+          _$_ItemMasterModel value, $Res Function(_$_ItemMasterModel) then) =
+      __$$_ItemMasterModelCopyWithImpl<$Res>;
   @override
   $Res call(
       {@JsonKey(name: '_id') int? id,
@@ -224,15 +224,15 @@ abstract class _$ItemMasterModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$ItemMasterModelCopyWithImpl<$Res>
+class __$$_ItemMasterModelCopyWithImpl<$Res>
     extends _$ItemMasterModelCopyWithImpl<$Res>
-    implements _$ItemMasterModelCopyWith<$Res> {
-  __$ItemMasterModelCopyWithImpl(
-      _ItemMasterModel _value, $Res Function(_ItemMasterModel) _then)
-      : super(_value, (v) => _then(v as _ItemMasterModel));
+    implements _$$_ItemMasterModelCopyWith<$Res> {
+  __$$_ItemMasterModelCopyWithImpl(
+      _$_ItemMasterModel _value, $Res Function(_$_ItemMasterModel) _then)
+      : super(_value, (v) => _then(v as _$_ItemMasterModel));
 
   @override
-  _ItemMasterModel get _value => super._value as _ItemMasterModel;
+  _$_ItemMasterModel get _value => super._value as _$_ItemMasterModel;
 
   @override
   $Res call({
@@ -257,7 +257,7 @@ class __$ItemMasterModelCopyWithImpl<$Res>
     Object? alertQuantity = freezed,
     Object? itemImage = freezed,
   }) {
-    return _then(_ItemMasterModel(
+    return _then(_$_ItemMasterModel(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -421,7 +421,7 @@ class _$_ItemMasterModel implements _ItemMasterModel {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _ItemMasterModel &&
+            other is _$_ItemMasterModel &&
             const DeepCollectionEquality().equals(other.id, id) &&
             const DeepCollectionEquality()
                 .equals(other.productType, productType) &&
@@ -482,8 +482,8 @@ class _$_ItemMasterModel implements _ItemMasterModel {
 
   @JsonKey(ignore: true)
   @override
-  _$ItemMasterModelCopyWith<_ItemMasterModel> get copyWith =>
-      __$ItemMasterModelCopyWithImpl<_ItemMasterModel>(this, _$identity);
+  _$$_ItemMasterModelCopyWith<_$_ItemMasterModel> get copyWith =>
+      __$$_ItemMasterModelCopyWithImpl<_$_ItemMasterModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -560,6 +560,6 @@ abstract class _ItemMasterModel implements ItemMasterModel {
   String get itemImage => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$ItemMasterModelCopyWith<_ItemMasterModel> get copyWith =>
+  _$$_ItemMasterModelCopyWith<_$_ItemMasterModel> get copyWith =>
       throw _privateConstructorUsedError;
 }

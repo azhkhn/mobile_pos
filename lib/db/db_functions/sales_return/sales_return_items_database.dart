@@ -17,6 +17,26 @@ class SalesReturnItemsDatabase {
     log('Sales Return Items Created! ($id)');
   }
 
+  //========== Get All Sales Return Items By Sale Return Id ==========
+  Future<List<SalesReturnItemsModel>> getSalesReturnItemBySaleReturnId(
+      int salesReturnId) async {
+    final db = await dbInstance.database;
+    final _result = await db.query(
+      tableSalesReturnItems,
+      where: '${SalesReturnItemsFields.saleReturnId} = ? ',
+      whereArgs: [salesReturnId],
+    );
+    // db.delete(tableSalesItems);
+    log('Sales Return Items By SaleReturnId $salesReturnId == $_result');
+    if (_result.isNotEmpty) {
+      final _salesReturnItems =
+          _result.map((json) => SalesReturnItemsModel.fromJson(json)).toList();
+      return _salesReturnItems;
+    } else {
+      throw 'Sales Return Items is Empty!';
+    }
+  }
+
 //========== Get All Sales Items ==========
   Future<List<SalesReturnItemsModel?>?> getAllSalesReuturnItems() async {
     final db = await dbInstance.database;

@@ -89,6 +89,36 @@ class SalesReturnDatabase {
   //   return list;
   // }
 
+  //========== Get All Sales Return By Query ==========
+  Future<List<SalesReturnModal>> getSalesReturnByInvoiceSuggestions(
+      String pattern) async {
+    final db = await dbInstance.database;
+    final res = await db.rawQuery(
+        "select * from $tableSalesReturn where ${SalesReturnFields.invoiceNumber} LIKE '%$pattern%'");
+
+    List<SalesReturnModal> list = res.isNotEmpty
+        ? res.map((c) => SalesReturnModal.fromJson(c)).toList()
+        : [];
+
+    return list;
+  }
+
+  //========== Get Sales Return By Customer Id ==========
+  Future<List<SalesReturnModal>> getSalesByCustomerId(String id) async {
+    final db = await dbInstance.database;
+    final res = await db.query(
+      tableSalesReturn,
+      where: '${SalesReturnFields.customerId} = ?',
+      whereArgs: [id],
+    );
+
+    List<SalesReturnModal> list = res.isNotEmpty
+        ? res.map((c) => SalesReturnModal.fromJson(c)).toList()
+        : [];
+
+    return list;
+  }
+
 //========== Get All Sales ==========
   Future<List<SalesReturnModal>> getAllSalesReturns() async {
     final db = await dbInstance.database;

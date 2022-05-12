@@ -65,30 +65,31 @@ class _$BrandModelCopyWithImpl<$Res> implements $BrandModelCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$BrandModelCopyWith<$Res> implements $BrandModelCopyWith<$Res> {
-  factory _$BrandModelCopyWith(
-          _BrandModel value, $Res Function(_BrandModel) then) =
-      __$BrandModelCopyWithImpl<$Res>;
+abstract class _$$_BrandModelCopyWith<$Res>
+    implements $BrandModelCopyWith<$Res> {
+  factory _$$_BrandModelCopyWith(
+          _$_BrandModel value, $Res Function(_$_BrandModel) then) =
+      __$$_BrandModelCopyWithImpl<$Res>;
   @override
   $Res call({@JsonKey(name: '_id') int? id, String brand});
 }
 
 /// @nodoc
-class __$BrandModelCopyWithImpl<$Res> extends _$BrandModelCopyWithImpl<$Res>
-    implements _$BrandModelCopyWith<$Res> {
-  __$BrandModelCopyWithImpl(
-      _BrandModel _value, $Res Function(_BrandModel) _then)
-      : super(_value, (v) => _then(v as _BrandModel));
+class __$$_BrandModelCopyWithImpl<$Res> extends _$BrandModelCopyWithImpl<$Res>
+    implements _$$_BrandModelCopyWith<$Res> {
+  __$$_BrandModelCopyWithImpl(
+      _$_BrandModel _value, $Res Function(_$_BrandModel) _then)
+      : super(_value, (v) => _then(v as _$_BrandModel));
 
   @override
-  _BrandModel get _value => super._value as _BrandModel;
+  _$_BrandModel get _value => super._value as _$_BrandModel;
 
   @override
   $Res call({
     Object? id = freezed,
     Object? brand = freezed,
   }) {
-    return _then(_BrandModel(
+    return _then(_$_BrandModel(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -125,7 +126,7 @@ class _$_BrandModel extends _BrandModel {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _BrandModel &&
+            other is _$_BrandModel &&
             const DeepCollectionEquality().equals(other.id, id) &&
             const DeepCollectionEquality().equals(other.brand, brand));
   }
@@ -139,8 +140,8 @@ class _$_BrandModel extends _BrandModel {
 
   @JsonKey(ignore: true)
   @override
-  _$BrandModelCopyWith<_BrandModel> get copyWith =>
-      __$BrandModelCopyWithImpl<_BrandModel>(this, _$identity);
+  _$$_BrandModelCopyWith<_$_BrandModel> get copyWith =>
+      __$$_BrandModelCopyWithImpl<_$_BrandModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -164,6 +165,6 @@ abstract class _BrandModel extends BrandModel {
   String get brand => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$BrandModelCopyWith<_BrandModel> get copyWith =>
+  _$$_BrandModelCopyWith<_$_BrandModel> get copyWith =>
       throw _privateConstructorUsedError;
 }

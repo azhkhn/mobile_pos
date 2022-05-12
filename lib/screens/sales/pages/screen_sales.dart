@@ -192,7 +192,10 @@ class ScreenSales extends StatelessWidget {
                         Expanded(
                           child: MaterialButton(
                             height: 50,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, routeSalesReturnList);
+                            },
                             color: Colors.blueGrey,
                             textColor: kWhite,
                             child: const Text(

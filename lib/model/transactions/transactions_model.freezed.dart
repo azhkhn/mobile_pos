@@ -131,11 +131,11 @@ class _$TransactionsModelCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$TransactionsModelCopyWith<$Res>
+abstract class _$$_TransactionsModelCopyWith<$Res>
     implements $TransactionsModelCopyWith<$Res> {
-  factory _$TransactionsModelCopyWith(
-          _TransactionsModel value, $Res Function(_TransactionsModel) then) =
-      __$TransactionsModelCopyWithImpl<$Res>;
+  factory _$$_TransactionsModelCopyWith(_$_TransactionsModel value,
+          $Res Function(_$_TransactionsModel) then) =
+      __$$_TransactionsModelCopyWithImpl<$Res>;
   @override
   $Res call(
       {@JsonKey(name: '_id') int? id,
@@ -152,15 +152,15 @@ abstract class _$TransactionsModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$TransactionsModelCopyWithImpl<$Res>
+class __$$_TransactionsModelCopyWithImpl<$Res>
     extends _$TransactionsModelCopyWithImpl<$Res>
-    implements _$TransactionsModelCopyWith<$Res> {
-  __$TransactionsModelCopyWithImpl(
-      _TransactionsModel _value, $Res Function(_TransactionsModel) _then)
-      : super(_value, (v) => _then(v as _TransactionsModel));
+    implements _$$_TransactionsModelCopyWith<$Res> {
+  __$$_TransactionsModelCopyWithImpl(
+      _$_TransactionsModel _value, $Res Function(_$_TransactionsModel) _then)
+      : super(_value, (v) => _then(v as _$_TransactionsModel));
 
   @override
-  _TransactionsModel get _value => super._value as _TransactionsModel;
+  _$_TransactionsModel get _value => super._value as _$_TransactionsModel;
 
   @override
   $Res call({
@@ -176,7 +176,7 @@ class __$TransactionsModelCopyWithImpl<$Res>
     Object? salesReturnId = freezed,
     Object? purchaseReturnId = freezed,
   }) {
-    return _then(_TransactionsModel(
+    return _then(_$_TransactionsModel(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -277,7 +277,7 @@ class _$_TransactionsModel implements _TransactionsModel {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _TransactionsModel &&
+            other is _$_TransactionsModel &&
             const DeepCollectionEquality().equals(other.id, id) &&
             const DeepCollectionEquality().equals(other.category, category) &&
             const DeepCollectionEquality()
@@ -314,8 +314,9 @@ class _$_TransactionsModel implements _TransactionsModel {
 
   @JsonKey(ignore: true)
   @override
-  _$TransactionsModelCopyWith<_TransactionsModel> get copyWith =>
-      __$TransactionsModelCopyWithImpl<_TransactionsModel>(this, _$identity);
+  _$$_TransactionsModelCopyWith<_$_TransactionsModel> get copyWith =>
+      __$$_TransactionsModelCopyWithImpl<_$_TransactionsModel>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -365,6 +366,6 @@ abstract class _TransactionsModel implements TransactionsModel {
   int? get purchaseReturnId => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$TransactionsModelCopyWith<_TransactionsModel> get copyWith =>
+  _$$_TransactionsModelCopyWith<_$_TransactionsModel> get copyWith =>
       throw _privateConstructorUsedError;
 }

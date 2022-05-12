@@ -109,11 +109,11 @@ class _$InvoiceItemModelCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$InvoiceItemCopyWith<$Res>
+abstract class _$$_InvoiceItemCopyWith<$Res>
     implements $InvoiceItemModelCopyWith<$Res> {
-  factory _$InvoiceItemCopyWith(
-          _InvoiceItem value, $Res Function(_InvoiceItem) then) =
-      __$InvoiceItemCopyWithImpl<$Res>;
+  factory _$$_InvoiceItemCopyWith(
+          _$_InvoiceItem value, $Res Function(_$_InvoiceItem) then) =
+      __$$_InvoiceItemCopyWithImpl<$Res>;
   @override
   $Res call(
       {String no,
@@ -127,15 +127,15 @@ abstract class _$InvoiceItemCopyWith<$Res>
 }
 
 /// @nodoc
-class __$InvoiceItemCopyWithImpl<$Res>
+class __$$_InvoiceItemCopyWithImpl<$Res>
     extends _$InvoiceItemModelCopyWithImpl<$Res>
-    implements _$InvoiceItemCopyWith<$Res> {
-  __$InvoiceItemCopyWithImpl(
-      _InvoiceItem _value, $Res Function(_InvoiceItem) _then)
-      : super(_value, (v) => _then(v as _InvoiceItem));
+    implements _$$_InvoiceItemCopyWith<$Res> {
+  __$$_InvoiceItemCopyWithImpl(
+      _$_InvoiceItem _value, $Res Function(_$_InvoiceItem) _then)
+      : super(_value, (v) => _then(v as _$_InvoiceItem));
 
   @override
-  _InvoiceItem get _value => super._value as _InvoiceItem;
+  _$_InvoiceItem get _value => super._value as _$_InvoiceItem;
 
   @override
   $Res call({
@@ -148,7 +148,7 @@ class __$InvoiceItemCopyWithImpl<$Res>
     Object? vatAmount = freezed,
     Object? totalAmount = freezed,
   }) {
-    return _then(_InvoiceItem(
+    return _then(_$_InvoiceItem(
       no: no == freezed
           ? _value.no
           : no // ignore: cast_nullable_to_non_nullable
@@ -227,7 +227,7 @@ class _$_InvoiceItem implements _InvoiceItem {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _InvoiceItem &&
+            other is _$_InvoiceItem &&
             const DeepCollectionEquality().equals(other.no, no) &&
             const DeepCollectionEquality()
                 .equals(other.description, description) &&
@@ -256,8 +256,8 @@ class _$_InvoiceItem implements _InvoiceItem {
 
   @JsonKey(ignore: true)
   @override
-  _$InvoiceItemCopyWith<_InvoiceItem> get copyWith =>
-      __$InvoiceItemCopyWithImpl<_InvoiceItem>(this, _$identity);
+  _$$_InvoiceItemCopyWith<_$_InvoiceItem> get copyWith =>
+      __$$_InvoiceItemCopyWithImpl<_$_InvoiceItem>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -297,6 +297,6 @@ abstract class _InvoiceItem implements InvoiceItemModel {
   String get totalAmount => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$InvoiceItemCopyWith<_InvoiceItem> get copyWith =>
+  _$$_InvoiceItemCopyWith<_$_InvoiceItem> get copyWith =>
       throw _privateConstructorUsedError;
 }
