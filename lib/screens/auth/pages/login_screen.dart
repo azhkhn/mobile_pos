@@ -10,7 +10,7 @@ class ScreenLogin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Size _screenSise = MediaQuery.of(context).size;
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       // await UserDatabase.instance.getAllUsers();
     });
     return Scaffold(

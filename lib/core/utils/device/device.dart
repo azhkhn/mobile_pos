@@ -12,7 +12,7 @@ class DeviceUtil {
   }
 
   static Enum get _getDeviceType {
-    final data = MediaQueryData.fromWindow(WidgetsBinding.instance!.window);
+    final data = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
     return data.size.shortestSide < 550 ? DeviceType.phone : DeviceType.tablet;
   }
 

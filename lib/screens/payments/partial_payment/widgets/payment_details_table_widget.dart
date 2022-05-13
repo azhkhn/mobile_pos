@@ -23,7 +23,7 @@ class PaymentDetailsTableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (totalPayingNotifier.value == 0) {
         balanceNotifier.value = totalPayable;
       }

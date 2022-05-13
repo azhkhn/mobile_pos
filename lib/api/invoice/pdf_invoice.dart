@@ -49,22 +49,21 @@ class PdfSalesInvoice {
     final customer =
         await CustomerDatabase.instance.getCustomerById(sale.customerId);
 
+    //========== Pdf Preview ==========
     pdfPreview.addPage(pw.MultiPage(
       pageFormat: PdfPageFormat.a4,
       crossAxisAlignment: pw.CrossAxisAlignment.center,
       build: (context) {
         return [
           buildHeader2(
-            businessProfileModel: businessProfile,
-            arabicFont: arabicFont,
-            logoImage: logoImage,
-          ),
+              businessProfileModel: businessProfile,
+              arabicFont: arabicFont,
+              logoImage: logoImage),
           pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
-          pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
-          buildTitle(arabicFont, businessProfile, isReturn),
-          pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
+          buildTitle(arabicFont, businessProfile, isReturn, sale),
+          pw.SizedBox(height: .005 * PdfPageFormat.a4.availableHeight),
           buildCustomerInfo(arabicFont, sale, customer, isReturn),
-          pw.SizedBox(height: .02 * PdfPageFormat.a4.availableHeight),
+          pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
           buildInvoice(items),
           pw.Divider(),
           buildTotal(sale, arabicFont),
@@ -72,6 +71,7 @@ class PdfSalesInvoice {
       },
     ));
 
+    //========== Pdf Save ==========
     pdf.addPage(pw.MultiPage(
       pageFormat: PdfPageFormat.a4,
       crossAxisAlignment: pw.CrossAxisAlignment.center,
@@ -144,73 +144,80 @@ class PdfSalesInvoice {
               child: buildEnglishCompanyInfo(businessProfile),
             ),
             pw.Expanded(
-                child: pw.Container(
-                    height: 50, width: 50, child: pw.Image(logoImage))),
+                child: pw.SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: pw.Image(
+                      logoImage,
+                    ))),
             pw.Expanded(
               child: buildArabicCompanyInfo(businessProfile, arabicFont),
             )
           ],
         ),
-        pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
-        pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
-        buildTitle(arabicFont, businessProfile, isReturn),
-        pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
+        pw.SizedBox(height: .005 * PdfPageFormat.a4.availableHeight),
+        buildTitle(arabicFont, businessProfile, isReturn, sale),
+        pw.SizedBox(height: .005 * PdfPageFormat.a4.availableHeight),
         buildCustomerInfo(arabicFont, sale, customer, isReturn),
-        pw.SizedBox(height: .02 * PdfPageFormat.a4.availableHeight),
+        pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
       ],
     );
   }
 
 //==================== English Company Info ====================
-  static pw.Widget buildEnglishCompanyInfo(BusinessProfileModel business) =>
-      pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(business.business,
-              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-          pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
-          pw.Text(business.address),
-          pw.Text('Tel: ${business.phoneNumber}'),
-          pw.Text('Email: ${business.email}'),
-        ],
-      );
+  static pw.Widget buildEnglishCompanyInfo(BusinessProfileModel business) {
+    const kStyle = pw.TextStyle(fontSize: 8);
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(business.business,
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+        pw.SizedBox(height: .001 * PdfPageFormat.a4.availableHeight),
+        pw.Text(business.address, style: kStyle),
+        pw.Text('Tel: ${business.phoneNumber}', style: kStyle),
+        pw.Text('Email: ${business.email}', style: kStyle),
+      ],
+    );
+  }
 
 //==================== Arabic Company Info ====================
   static pw.Widget buildArabicCompanyInfo(
-          BusinessProfileModel business, pw.Font arabicFont) =>
-      pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.end,
-        children: [
-          pw.Text(business.businessArabic,
-              textDirection: pw.TextDirection.rtl,
-              style: pw.TextStyle(
-                  fontWeight: pw.FontWeight.bold, font: arabicFont)),
-          pw.SizedBox(height: 1 * PdfPageFormat.mm),
-          pw.Text(
-            business.addressArabic,
+      BusinessProfileModel business, pw.Font arabicFont) {
+    final kStyle = pw.TextStyle(fontSize: 8, font: arabicFont);
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.end,
+      children: [
+        pw.Text(business.businessArabic,
             textDirection: pw.TextDirection.rtl,
-            style: pw.TextStyle(font: arabicFont),
-          ),
-          pw.Text(
-            'هاتف: ${business.phoneNumber}',
-            textDirection: pw.TextDirection.rtl,
-            style: pw.TextStyle(font: arabicFont),
-          ),
-          pw.Text(
-            'البريد: ${business.email}',
-            textDirection: pw.TextDirection.rtl,
-            style: pw.TextStyle(font: arabicFont),
-          ),
-        ],
-      );
+            style: pw.TextStyle(
+                fontWeight: pw.FontWeight.bold,
+                font: arabicFont,
+                fontSize: 10)),
+        pw.SizedBox(height: .001 * PdfPageFormat.a4.availableHeight),
+        pw.Text(
+          business.addressArabic,
+          textDirection: pw.TextDirection.rtl,
+          style: kStyle,
+        ),
+        pw.Text(
+          'هاتف: ${business.phoneNumber}',
+          textDirection: pw.TextDirection.rtl,
+          style: kStyle,
+        ),
+        pw.Text(
+          'البريد: ${business.email}',
+          textDirection: pw.TextDirection.rtl,
+          style: kStyle,
+        ),
+      ],
+    );
+  }
 
 //==================== TAX INVOICE ====================
   static pw.Widget buildTitle(
-      arabicFont, BusinessProfileModel business, bool isReturn) {
+      arabicFont, BusinessProfileModel business, bool isReturn, final sale) {
     final kStyle = pw.TextStyle(
-      font: arabicFont,
-      fontWeight: pw.FontWeight.bold,
-    );
+        font: arabicFont, fontWeight: pw.FontWeight.bold, fontSize: 10);
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.center,
       children: [
@@ -220,7 +227,7 @@ class PdfSalesInvoice {
             child: pw.Container(
                 color: PdfColors.green300,
                 child: pw.Padding(
-                  padding: const pw.EdgeInsets.all(10),
+                  padding: const pw.EdgeInsets.all(5),
 
                   child: pw.Column(
                     mainAxisSize: pw.MainAxisSize.min,
@@ -229,22 +236,22 @@ class PdfSalesInvoice {
                         'فاتورة ضريبية TAX INVOICE',
                         textDirection: pw.TextDirection.rtl,
                         style: pw.TextStyle(
-                          fontSize: 16,
+                          fontSize: 12,
                           color: PdfColors.white,
                           fontWeight: pw.FontWeight.bold,
                           font: arabicFont,
                         ),
                       ),
-                      isReturn
-                          ? pw.SizedBox(
-                              width: 0.01 * PdfPageFormat.a4.availableWidth)
-                          : pw.SizedBox(),
+                      // isReturn
+                      //     ? pw.SizedBox(
+                      //         height: 0.01 * PdfPageFormat.a4.availableWidth)
+                      //     : pw.SizedBox(),
                       isReturn
                           ? pw.Text(
                               ' مبيعات مسترده / SALES RETURN  ',
                               textDirection: pw.TextDirection.rtl,
                               style: pw.TextStyle(
-                                fontSize: 12,
+                                fontSize: 10,
                                 color: PdfColors.white,
                                 fontWeight: pw.FontWeight.bold,
                                 font: arabicFont,
@@ -260,23 +267,23 @@ class PdfSalesInvoice {
           pw.Align(
             alignment: pw.Alignment.centerRight,
             child: pw.Container(
-              height: 50,
-              width: 50,
+              height: 40,
+              width: 40,
               child: pw.BarcodeWidget(
                 barcode: pw.Barcode.qrCode(),
-                data: 'lksdfl',
+                data: sale.invoiceNumber!,
                 drawText: false,
               ),
             ),
           ),
         ]),
-        pw.SizedBox(height: 0.4 * PdfPageFormat.cm),
+        pw.SizedBox(height: 0.005 * PdfPageFormat.a4.availableHeight),
         pw.Row(
           mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
           children: [
             pw.Expanded(
                 child: pw.Text('VAT Registration Number',
-                    textAlign: pw.TextAlign.center, style: kStyle)),
+                    textAlign: pw.TextAlign.left, style: kStyle)),
             pw.Expanded(
                 child: pw.Text(business.vatNumber,
                     textAlign: pw.TextAlign.center, style: kStyle)),
@@ -284,7 +291,7 @@ class PdfSalesInvoice {
                 child: pw.Text(
               'الضريبي التسجيل رقم',
               textDirection: pw.TextDirection.rtl,
-              textAlign: pw.TextAlign.center,
+              textAlign: pw.TextAlign.left,
               style: kStyle,
             )),
           ],
@@ -298,7 +305,7 @@ class PdfSalesInvoice {
       pw.Font arabicFont, final sale, CustomerModel customer, bool isReturn) {
     final kStyle = pw.TextStyle(
       font: arabicFont,
-      fontSize: 10,
+      fontSize: 8,
     );
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.center,
@@ -308,7 +315,7 @@ class PdfSalesInvoice {
           decoration:
               pw.BoxDecoration(border: pw.Border.all(color: PdfColors.green)),
           width: double.infinity,
-          height: .16 * PdfPageFormat.a4.availableHeight,
+          height: .12 * PdfPageFormat.a4.availableHeight,
           child: pw.Column(
             children: [
               pw.Row(
@@ -318,9 +325,10 @@ class PdfSalesInvoice {
                     child: pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
-                        pw.Expanded(
-                            child: pw.Text('Customer Name:',
-                                textAlign: pw.TextAlign.left, style: kStyle)),
+                        pw.Text('Customer Name :',
+                            textAlign: pw.TextAlign.left, style: kStyle),
+                        pw.SizedBox(
+                            width: .01 * PdfPageFormat.a4.availableWidth),
                         pw.Expanded(
                             child: pw.Text(customer.customer,
                                 textAlign: pw.TextAlign.left, style: kStyle)),
@@ -339,13 +347,14 @@ class PdfSalesInvoice {
                           textAlign: pw.TextAlign.left,
                           style: kStyle,
                         )),
-                        pw.Expanded(
-                            child: pw.Text(
-                          'العميل:',
+                        pw.SizedBox(
+                            width: .01 * PdfPageFormat.a4.availableWidth),
+                        pw.Text(
+                          'العميل :',
                           textDirection: pw.TextDirection.rtl,
                           textAlign: pw.TextAlign.left,
                           style: kStyle,
-                        )),
+                        ),
                       ],
                     ),
                   ),
@@ -354,49 +363,54 @@ class PdfSalesInvoice {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
+                mainAxisSize: pw.MainAxisSize.min,
                 children: [
                   pw.Expanded(
-                    child: pw.Row(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text('Customer Address:',
-                            textAlign: pw.TextAlign.left, style: kStyle),
-                        pw.SizedBox(
-                            width: .01 * PdfPageFormat.a4.availableWidth),
-                        pw.Expanded(
-                            child: pw.Text(
-                          customer.address ?? '',
-                          textAlign: pw.TextAlign.left,
-                          style: kStyle,
-                          maxLines: 3,
-                        )),
-                      ],
-                    ),
-                  ),
-                  pw.SizedBox(width: .01 * PdfPageFormat.a4.availableWidth),
-                  pw.Expanded(
-                    child: pw.Row(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Expanded(
-                            child: pw.Text(
-                          customer.addressArabic ?? '',
-                          textDirection: pw.TextDirection.rtl,
-                          textAlign: pw.TextAlign.left,
-                          style: kStyle,
-                          maxLines: 3,
-                        )),
-                        pw.SizedBox(
-                            width: .01 * PdfPageFormat.a4.availableWidth),
-                        pw.Text(
-                          'عنوان العميل:',
-                          textDirection: pw.TextDirection.rtl,
-                          textAlign: pw.TextAlign.right,
-                          style: kStyle,
-                        ),
-                      ],
-                    ),
-                  ),
+                      child: pw.Row(
+                    mainAxisSize: pw.MainAxisSize.min,
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text('Customer Address :',
+                          textAlign: pw.TextAlign.left, style: kStyle),
+                      pw.SizedBox(width: .01 * PdfPageFormat.a4.availableWidth),
+                      pw.Expanded(
+                          child: pw.Text(
+                        customer.address ?? '',
+                        textAlign: pw.TextAlign.left,
+                        style: kStyle,
+                        maxLines: 3,
+                      )),
+                    ],
+                  )),
+                  customer.addressArabic != null
+                      ? pw.SizedBox(
+                          width: .01 * PdfPageFormat.a4.availableWidth)
+                      : pw.SizedBox(),
+                  customer.addressArabic != null
+                      ? pw.Expanded(
+                          child: pw.Row(
+                          mainAxisSize: pw.MainAxisSize.min,
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Expanded(
+                                child: pw.Text(
+                              customer.addressArabic ?? '',
+                              textDirection: pw.TextDirection.rtl,
+                              textAlign: pw.TextAlign.left,
+                              style: kStyle,
+                              maxLines: 3,
+                            )),
+                            pw.SizedBox(
+                                width: .01 * PdfPageFormat.a4.availableWidth),
+                            pw.Text(
+                              'عنوان العميل :',
+                              textDirection: pw.TextDirection.rtl,
+                              textAlign: pw.TextAlign.right,
+                              style: kStyle,
+                            ),
+                          ],
+                        ))
+                      : pw.SizedBox(),
                 ],
               ),
               pw.Expanded(
@@ -411,7 +425,7 @@ class PdfSalesInvoice {
                             textAlign: pw.TextAlign.center, style: kStyle)),
                     pw.Expanded(
                         child: pw.Text(
-                      'الرقم الضريبي:',
+                      'الرقم الضريبي :',
                       textDirection: pw.TextDirection.rtl,
                       textAlign: pw.TextAlign.left,
                       style: kStyle,
@@ -422,13 +436,12 @@ class PdfSalesInvoice {
               pw.Divider(color: PdfColors.grey),
               pw.Expanded(
                 child: pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  // mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
                   children: [
                     pw.Expanded(
                       child: pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
-                          pw.Text(' :رقم الفاتورة Invoice/',
+                          pw.Text(' : رقم الفاتورة Invoice/',
                               textDirection: pw.TextDirection.rtl,
                               textAlign: pw.TextAlign.right,
                               style: kStyle),
@@ -437,27 +450,29 @@ class PdfSalesInvoice {
                           pw.Expanded(
                               child: pw.Text(
                             sale.invoiceNumber!,
-                            textAlign: pw.TextAlign.right,
+                            textAlign: pw.TextAlign.left,
                             style: kStyle,
                           )),
                         ],
                       ),
                     ),
-                    pw.SizedBox(width: .10 * PdfPageFormat.a4.availableWidth),
+                    // pw.SizedBox(width: .10 * PdfPageFormat.a4.availableWidth),
                     pw.Expanded(
                       child: pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
-                          pw.Text(' :التاريخ Date/',
+                          pw.Text(' : التاريخ Date/',
                               textDirection: pw.TextDirection.rtl,
                               textAlign: pw.TextAlign.right,
                               style: kStyle),
+                          pw.SizedBox(
+                              width: .01 * PdfPageFormat.a4.availableWidth),
                           pw.Expanded(
                               flex: 2,
                               child: pw.Text(
-                                Converter.dateTimeFormat
+                                Converter.dateTimeFormatAmPm
                                     .format(DateTime.parse(sale.dateTime)),
-                                textAlign: pw.TextAlign.right,
+                                textAlign: pw.TextAlign.left,
                                 style: kStyle,
                               )),
                         ],
@@ -480,7 +495,7 @@ class PdfSalesInvoice {
                                   pw.MainAxisAlignment.spaceBetween,
                               children: [
                                 pw.Text(
-                                    ' :رقم فاتورة المبيعات المرتجعة Original Invoice No/',
+                                    ' : رقم فاتورة المبيعات المرتجعة Original Invoice No/',
                                     textDirection: pw.TextDirection.rtl,
                                     textAlign: pw.TextAlign.right,
                                     style: kStyle),
@@ -517,8 +532,6 @@ class PdfSalesInvoice {
       'Description',
       'Quantity',
       'Unit Price',
-      'Sub Total',
-      'VAT %',
       'VAT Amount',
       'Total Amount'
     ];
@@ -533,17 +546,15 @@ class PdfSalesInvoice {
         exclusiveAmount = num.parse(item.unitPrice);
       }
 
-      final totalAmount = num.parse(item.subTotal) + num.parse(item.vatTotal);
+      // final totalAmount = num.parse(item.subTotal) + num.parse(item.vatTotal);
 
       return [
         '$i',
         item.productName,
         item.quantity,
         Converter.currency.format(exclusiveAmount).replaceAll('₹', ''),
-        Converter.currency.format(num.parse(item.subTotal)).replaceAll('₹', ''),
-        item.vatPercentage,
         Converter.currency.format(num.parse(item.vatTotal)).replaceAll('₹', ''),
-        Converter.currency.format(totalAmount).replaceAll('₹', ''),
+        Converter.currency.format(num.parse(item.subTotal)).replaceAll('₹', ''),
       ];
     }).toList();
 
@@ -552,20 +563,18 @@ class PdfSalesInvoice {
       data: data,
       border: null,
       cellStyle: pw.TextStyle(
-        fontSize: 9,
+        fontSize: 8,
         fontWeight: pw.FontWeight.normal,
       ),
       headerStyle: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
       headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
-      cellHeight: 30,
+      cellHeight: 25,
       columnWidths: const {
-        1: pw.FractionColumnWidth(0.20),
+        1: pw.FractionColumnWidth(0.30),
         2: pw.FractionColumnWidth(0.10),
         3: pw.FractionColumnWidth(0.15),
         4: pw.FractionColumnWidth(0.15),
-        5: pw.FractionColumnWidth(0.10),
-        6: pw.FractionColumnWidth(0.10),
-        7: pw.FractionColumnWidth(0.15),
+        5: pw.FractionColumnWidth(0.15),
       },
       cellAlignments: {
         0: pw.Alignment.centerLeft,
@@ -574,8 +583,6 @@ class PdfSalesInvoice {
         3: pw.Alignment.centerRight,
         4: pw.Alignment.centerRight,
         5: pw.Alignment.centerRight,
-        6: pw.Alignment.centerRight,
-        7: pw.Alignment.centerRight,
       },
     );
   }

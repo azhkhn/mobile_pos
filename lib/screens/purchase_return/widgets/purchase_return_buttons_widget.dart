@@ -29,7 +29,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
     final bool isTablet = DeviceUtil.isTablet;
     Size _screenSize = MediaQuery.of(context).size;
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         log('==============================');
         await PurchaseReturnDatabase.instance.getAllPurchasesReturns();
