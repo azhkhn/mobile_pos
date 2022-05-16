@@ -7,6 +7,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/busiess_profile/business_profile_database.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -488,6 +489,8 @@ class _BusinessProfileState extends State<BusinessProfile> {
 
       try {
         await businessProfileDB.createBusinessProfile(_businessProfileModel);
+        UserUtils.businessProfileModel == null;
+        Navigator.pop(context);
         log('Profile Updated!');
 
         kSnackBar(

@@ -54,6 +54,10 @@ class CustomerDatabase {
     log('Customer === $_result');
     final _customers =
         _result.map((json) => CustomerModel.fromJson(json)).toList();
+
+    // await db.update(tableCustomer,
+    //     _customers.first.copyWith(vatNumber: '437596584523654').toJson(),
+    //     where: '${CustomerFields.id} = ? ', whereArgs: [customerId]);
     return _customers.first;
   }
 

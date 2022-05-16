@@ -14,7 +14,7 @@ class UserUtils {
 
 //========== Model Classes ==========
   UserModel? userModel;
-  BusinessProfileModel? businessProfileModel;
+  static BusinessProfileModel? businessProfileModel;
 
 //========== Get Logged User Details ==========
   Future<UserModel> get loggedUser async {

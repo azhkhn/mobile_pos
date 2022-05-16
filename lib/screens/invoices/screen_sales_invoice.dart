@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
-import 'package:shop_ez/api/invoice/pdf_invoice.dart';
+import 'package:shop_ez/api/invoice/a4/pdf_a4_invoice.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/sales_return/sales_return_model.dart';

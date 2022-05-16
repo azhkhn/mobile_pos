@@ -6,6 +6,12 @@ class Converter {
   static final NumberFormat currency =
       NumberFormat.currency(symbol: '₹', locale: "en_IN");
 
+  static String amountRounder(num amount) {
+    final roundedAmount = num.parse(amount.toStringAsFixed(2));
+
+    return roundedAmount.toString();
+  }
+
   //Force keyboard to input digits only
   static final List<FilteringTextInputFormatter> digitsOnly = [
     FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))

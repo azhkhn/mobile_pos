@@ -5,7 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:shop_ez/api/invoice/pdf_action.dart';
+import 'package:shop_ez/api/invoice/utils/e-invoice_generate.dart';
+import 'package:shop_ez/api/invoice/utils/pdf_action.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/core/utils/vat/vat.dart';
@@ -60,7 +61,12 @@ class PdfSalesInvoice {
               arabicFont: arabicFont,
               logoImage: logoImage),
           pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
-          buildTitle(arabicFont, businessProfile, isReturn, sale),
+          buildTitle(
+            arabicFont,
+            businessProfile,
+            isReturn,
+            sale,
+          ),
           pw.SizedBox(height: .005 * PdfPageFormat.a4.availableHeight),
           buildCustomerInfo(arabicFont, sale, customer, isReturn),
           pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
@@ -76,12 +82,13 @@ class PdfSalesInvoice {
       pageFormat: PdfPageFormat.a4,
       crossAxisAlignment: pw.CrossAxisAlignment.center,
       header: (context) => buildHeader(
-          businessProfile: businessProfile,
-          arabicFont: arabicFont,
-          logoImage: logoImage,
-          sale: sale,
-          customer: customer,
-          isReturn: isReturn),
+        businessProfile: businessProfile,
+        arabicFont: arabicFont,
+        logoImage: logoImage,
+        sale: sale,
+        customer: customer,
+        isReturn: isReturn,
+      ),
       build: (context) {
         return [
           buildInvoice(items),
@@ -127,13 +134,14 @@ class PdfSalesInvoice {
   }
 
 //==================== Header Section ====================
-  static pw.Widget buildHeader(
-      {required BusinessProfileModel businessProfile,
-      required pw.Font arabicFont,
-      required pw.MemoryImage logoImage,
-      required final sale,
-      required CustomerModel customer,
-      required bool isReturn}) {
+  static pw.Widget buildHeader({
+    required BusinessProfileModel businessProfile,
+    required pw.Font arabicFont,
+    required pw.MemoryImage logoImage,
+    required final sale,
+    required CustomerModel customer,
+    required bool isReturn,
+  }) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -156,7 +164,12 @@ class PdfSalesInvoice {
           ],
         ),
         pw.SizedBox(height: .005 * PdfPageFormat.a4.availableHeight),
-        buildTitle(arabicFont, businessProfile, isReturn, sale),
+        buildTitle(
+          arabicFont,
+          businessProfile,
+          isReturn,
+          sale,
+        ),
         pw.SizedBox(height: .005 * PdfPageFormat.a4.availableHeight),
         buildCustomerInfo(arabicFont, sale, customer, isReturn),
         pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
@@ -215,7 +228,11 @@ class PdfSalesInvoice {
 
 //==================== TAX INVOICE ====================
   static pw.Widget buildTitle(
-      arabicFont, BusinessProfileModel business, bool isReturn, final sale) {
+    arabicFont,
+    BusinessProfileModel business,
+    bool isReturn,
+    final sale,
+  ) {
     final kStyle = pw.TextStyle(
         font: arabicFont, fontWeight: pw.FontWeight.bold, fontSize: 10);
     return pw.Column(
@@ -271,7 +288,14 @@ class PdfSalesInvoice {
               width: 40,
               child: pw.BarcodeWidget(
                 barcode: pw.Barcode.qrCode(),
-                data: sale.invoiceNumber!,
+                data: EInvoiceGenerator.getEInvoiceCode(
+                    name: business.business,
+                    vatNumber: business.vatNumber,
+                    invoiceDate: DateTime.parse(sale.dateTime),
+                    invoiceTotal:
+                        Converter.amountRounder(num.parse(sale.grantTotal)),
+                    vatTotal:
+                        Converter.amountRounder(num.parse(sale.vatAmount))),
                 drawText: false,
               ),
             ),
@@ -568,7 +592,7 @@ class PdfSalesInvoice {
       ),
       headerStyle: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
       headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
-      cellHeight: 25,
+      cellHeight: 10,
       columnWidths: const {
         1: pw.FractionColumnWidth(0.30),
         2: pw.FractionColumnWidth(0.10),
