@@ -220,15 +220,15 @@ class PdfSalesInvoice {
         font: arabicFont, fontWeight: pw.FontWeight.bold, fontSize: 10);
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.center,
+      mainAxisAlignment: pw.MainAxisAlignment.center,
       children: [
-        pw.Stack(children: [
+        pw.Stack(alignment: pw.Alignment.center, children: [
           pw.Align(
             alignment: pw.Alignment.center,
             child: pw.Container(
                 color: PdfColors.green300,
                 child: pw.Padding(
                   padding: const pw.EdgeInsets.all(5),
-
                   child: pw.Column(
                     mainAxisSize: pw.MainAxisSize.min,
                     children: [
@@ -251,7 +251,7 @@ class PdfSalesInvoice {
                               ' مبيعات مسترده / SALES RETURN  ',
                               textDirection: pw.TextDirection.rtl,
                               style: pw.TextStyle(
-                                fontSize: 10,
+                                fontSize: 8,
                                 color: PdfColors.white,
                                 fontWeight: pw.FontWeight.bold,
                                 font: arabicFont,
@@ -456,7 +456,7 @@ class PdfSalesInvoice {
                         ],
                       ),
                     ),
-                    // pw.SizedBox(width: .10 * PdfPageFormat.a4.availableWidth),
+                    pw.SizedBox(width: .01 * PdfPageFormat.a4.availableWidth),
                     pw.Expanded(
                       child: pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -602,7 +602,7 @@ class PdfSalesInvoice {
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
-                pw.SizedBox(height: 0.10 * PdfPageFormat.a4.availableWidth),
+                // pw.SizedBox(height: 0.10 * PdfPageFormat.a4.availableWidth),
                 buildFooter(arabicFont),
               ],
             ),
@@ -720,6 +720,7 @@ class PdfSalesInvoice {
         pw.TextStyle(
           fontWeight: pw.FontWeight.bold,
           font: arabicFont,
+          fontSize: 10,
         );
 
     return pw.Container(

@@ -93,7 +93,9 @@ class ScreenSalesInvoice extends StatelessWidget {
                   if (pdfFile.value != null) {
                     await Printing.layoutPdf(
                         format: PdfPageFormat.a4,
-                        name: salesModal!.invoiceNumber!,
+                        name: salesModal != null
+                            ? salesModal!.invoiceNumber!
+                            : salesReturnModal!.invoiceNumber!,
                         usePrinterSettings: true,
                         onLayout: (PdfPageFormat format) async =>
                             pdfFile.value!.readAsBytes());
