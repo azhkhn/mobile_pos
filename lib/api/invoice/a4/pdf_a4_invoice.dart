@@ -1,10 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/services.dart';
-import 'package:pdf/pdf.dart';
+import 'package:flutter/services.dart' show ByteData, rootBundle;
+import 'package:pdf/pdf.dart' show PdfColors, PdfPageFormat;
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
+import 'package:printing/printing.dart' show PdfGoogleFonts;
 import 'package:shop_ez/api/invoice/utils/e-invoice_generate.dart';
 import 'package:shop_ez/api/invoice/utils/pdf_action.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
@@ -52,6 +52,7 @@ class PdfSalesInvoice {
 
     //========== Pdf Preview ==========
     pdfPreview.addPage(pw.MultiPage(
+      margin: const pw.EdgeInsets.all(30),
       pageFormat: PdfPageFormat.a4,
       crossAxisAlignment: pw.CrossAxisAlignment.center,
       build: (context) {
