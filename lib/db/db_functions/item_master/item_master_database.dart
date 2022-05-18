@@ -13,9 +13,9 @@ class ItemMasterDatabase {
     final db = await dbInstance.database;
 
     final _item = await db.rawQuery(
-        "select * from $tableItemMaster where ${ItemMasterFields.itemName} = '${_itemMasterModel.itemName}'");
+        '''select * from $tableItemMaster where ${ItemMasterFields.itemName} = "${_itemMasterModel.itemName}"''');
     final _itemCode = await db.rawQuery(
-        "select * from $tableItemMaster where ${ItemMasterFields.itemCode} = '${_itemMasterModel.itemCode}'");
+        '''select * from $tableItemMaster where ${ItemMasterFields.itemCode} = "${_itemMasterModel.itemCode}"''');
 
     if (_item.isNotEmpty) {
       throw 'Item Already Exist!';
@@ -103,7 +103,7 @@ class ItemMasterDatabase {
   Future<List<ItemMasterModel>> getProductSuggestions(String pattern) async {
     final db = await dbInstance.database;
     final res = await db.rawQuery(
-        "select * from $tableItemMaster where ${ItemMasterFields.itemName} LIKE '%$pattern%' OR ${ItemMasterFields.itemCode} LIKE '%$pattern%'");
+        '''select * from $tableItemMaster where ${ItemMasterFields.itemName} LIKE "%$pattern%" OR ${ItemMasterFields.itemCode} LIKE "%$pattern%"''');
 
     List<ItemMasterModel> list = res.isNotEmpty
         ? res.map((c) => ItemMasterModel.fromJson(c)).toList()

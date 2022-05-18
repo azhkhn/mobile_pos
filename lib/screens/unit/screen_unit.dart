@@ -55,8 +55,7 @@ class UnitScreen extends StatelessWidget {
               CustomMaterialBtton(
                 buttonText: 'Submit',
                 onPressed: () async {
-                  final unit =
-                      _unitEditingController.text.trim().replaceAll("'", "''");
+                  final unit = _unitEditingController.text.trim();
                   final isFormValid = _formKey.currentState!;
                   if (isFormValid.validate()) {
                     log('Unit == ' + unit);

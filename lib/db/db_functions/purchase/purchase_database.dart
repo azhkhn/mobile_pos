@@ -12,7 +12,7 @@ class PurchaseDatabase {
     final db = await dbInstance.database;
 
     final _purchase = await db.rawQuery(
-        "select * from $tablePurchase where ${PurchaseFields.invoiceNumber} = '${_purchaseModel.invoiceNumber}'");
+        '''select * from $tablePurchase where ${PurchaseFields.invoiceNumber} = "${_purchaseModel.invoiceNumber}"''');
 
     if (_purchase.isNotEmpty) {
       throw 'Invoice Number Already Exist!';
@@ -49,7 +49,7 @@ class PurchaseDatabase {
       String pattern) async {
     final db = await dbInstance.database;
     final res = await db.rawQuery(
-        "select * from $tablePurchase where ${PurchaseFields.invoiceNumber} LIKE '%$pattern%' OR ${PurchaseFields.referenceNumber} LIKE '%$pattern%'");
+        '''select * from $tablePurchase where ${PurchaseFields.invoiceNumber} LIKE "%$pattern%" OR ${PurchaseFields.referenceNumber} LIKE "%$pattern%"''');
 
     List<PurchaseModel> list = res.isNotEmpty
         ? res.map((c) => PurchaseModel.fromJson(c)).toList()

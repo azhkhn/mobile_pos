@@ -84,9 +84,7 @@ class SubCategoryScreen extends StatelessWidget {
                   buttonText: 'Submit',
                   onPressed: () async {
                     final category = _categoryController;
-                    final subCategory = _subCategoryController.text
-                        .trim()
-                        .replaceAll("'", "''");
+                    final subCategory = _subCategoryController.text.trim();
 
                     final isFormValid = _formKey.currentState!;
                     if (isFormValid.validate()) {

@@ -166,7 +166,7 @@ class _SignUpFieldsState extends State<SignUpFields> {
                 decoration: const InputDecoration(
                   label: Text(
                     'Shop Category *',
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: klabelColorGrey),
                   ),
                   prefixIcon: Icon(
                     Icons.store,

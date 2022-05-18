@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/utils/text/validators.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
@@ -81,7 +82,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     decoration: const InputDecoration(
                         label: Text(
                           'Customer Type *',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(color: klabelColorGrey),
                         ),
                         contentPadding: EdgeInsets.all(10)),
                     isExpanded: true,

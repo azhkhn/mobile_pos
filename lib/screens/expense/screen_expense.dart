@@ -11,7 +11,9 @@ import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/db/db_functions/expense/expense_category_database.dart';
 import 'package:shop_ez/db/db_functions/expense/expense_database.dart';
+import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
+import 'package:shop_ez/screens/expense/widgets/floating_add_options.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
@@ -20,8 +22,6 @@ import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';
-
-const expenseList = ['Travel', 'Fuel', 'Food'];
 
 class ManageExpenseScreen extends StatefulWidget {
   const ManageExpenseScreen({Key? key}) : super(key: key);
@@ -38,6 +38,10 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
   //========== Databse Instances ==========
   final expenseDB = ExpenseDatabase.instance;
   final expenseCategoryDB = ExpenseCategoryDatabase.instance;
+  final transactionDatabase = TransactionDatabase.instance;
+
+  //========== Value Notifiers ==========
+  final ValueNotifier<bool> isDialOpen = ValueNotifier(false);
 
   Color? textColor = Colors.black;
   dynamic selectedDocument;
@@ -46,7 +50,8 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
   String? documentExtension;
 
   final _expenseTitleController = TextEditingController();
-  final _paidByController = TextEditingController();
+  final _amountController = TextEditingController();
+  final _payByController = TextEditingController();
   final _noteController = TextEditingController();
   final _voucherNumberController = TextEditingController();
   final _dateController = TextEditingController();
@@ -58,169 +63,188 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;
     expenseDB.getAllExpense();
-    return Scaffold(
-      appBar: AppBarWidget(title: 'Expense'),
-      body: BackgroundContainerWidget(
-        child: ItemScreenPaddingWidget(
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  //========== Expense Category ==========
-                  FutureBuilder(
-                    future: expenseCategoryDB.getAllExpenseCategories(),
-                    builder: (context, dynamic snapshot) {
-                      return CustomDropDownField(
-                        labelText: 'Choose Expense *',
-                        snapshot: snapshot,
-                        onChanged: (value) {
-                          _expenseCategoryController = value.toString();
+    return WillPopScope(
+      onWillPop: () async {
+        if (isDialOpen.value) {
+          isDialOpen.value = false;
+          return false;
+        } else {
+          return true;
+        }
+      },
+      child: Scaffold(
+          appBar: AppBarWidget(title: 'Expense'),
+          body: BackgroundContainerWidget(
+            child: ItemScreenPaddingWidget(
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      //========== Expense Category ==========
+                      FutureBuilder(
+                        future: expenseCategoryDB.getAllExpenseCategories(),
+                        builder: (context, dynamic snapshot) {
+                          return CustomDropDownField(
+                            labelText: 'Choose Expense *',
+                            snapshot: snapshot,
+                            onChanged: (value) {
+                              _expenseCategoryController = value.toString();
+                            },
+                            validator: (value) {
+                              if (value == null ||
+                                  _expenseCategoryController == 'null') {
+                                return 'This field is required*';
+                              }
+                              return null;
+                            },
+                          );
                         },
+                      ),
+                      kHeight10,
+                      kHeight10,
+
+                      //========== Expense Title ==========
+                      TextFeildWidget(
+                        labelText: 'Expense Title *',
+                        controller: _expenseTitleController,
                         validator: (value) {
-                          if (value == null ||
-                              _expenseCategoryController == 'null') {
+                          if (value == null || value.isEmpty) {
                             return 'This field is required*';
                           }
                           return null;
                         },
-                      );
-                    },
-                  ),
-                  kHeight10,
-                  kHeight10,
-
-                  //========== Expense Title ==========
-                  TextFeildWidget(
-                    labelText: 'Expense Title *',
-                    controller: _expenseTitleController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
-                  ),
-                  kHeight10,
-
-                  //========== Paid By ==========
-                  TextFeildWidget(
-                    labelText: 'Paid By *',
-                    controller: _paidByController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
-                  ),
-                  kHeight10,
-
-                  //========== Date ==========
-                  TextFeildWidget(
-                    labelText: 'Date *',
-                    controller: _dateController,
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.calendar_month_outlined),
-                      color: kSuffixIconColorBlack,
-                      onPressed: () {},
-                    ),
-                    readOnly: true,
-                    onTap: () async {
-                      final _date = await datePicker(context);
-
-                      if (_date != null) {
-                        //Date to String for Database
-                        _selectedDate = _date.toIso8601String();
-
-                        log('selected date == $_selectedDate');
-                        log('back to time == ${DateTime.parse(_selectedDate)}');
-
-                        final parseDate = Converter.dateFormat.format(_date);
-                        _dateController.text = parseDate.toString();
-
-                        setState(() {});
-                      }
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
-                  ),
-                  kHeight10,
-
-                  //========== Note ==========
-                  TextFeildWidget(
-                    labelText: 'Note',
-                    controller: _noteController,
-                    maxLines: 3,
-                    suffixIcon: IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.edit_note,
-                        color: kSuffixIconColorBlack,
-                      ),
-                    ),
-                    inputBorder: const OutlineInputBorder(),
-                  ),
-                  kHeight10,
-
-                  //========== Voucher Number ==========
-                  TextFeildWidget(
-                    labelText: 'Voucher Number',
-                    controller: _voucherNumberController,
-                  ),
-                  kHeight20,
-
-                  //========== Item Image ==========
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      kHeight10,
-                      InkWell(
-                        onTap: () => imagePopUp(context),
-                        child: selectedDocument != null && jpgOrNot
-                            ? Image.file(
-                                File(selectedDocument!),
-                                width: _screenSize.width / 2.5,
-                                height: _screenSize.width / 2.5,
-                                fit: BoxFit.fill,
-                              )
-                            : Icon(
-                                Icons.add_photo_alternate_outlined,
-                                size: _screenSize.width / 10,
-                              ),
                       ),
                       kHeight10,
-                      Text(
-                        documentName,
-                        maxLines: 1,
-                        softWrap: false,
-                        overflow: TextOverflow.fade,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: textColor,
+
+                      //========== Amount ==========
+                      TextFeildWidget(
+                        labelText: 'Amount *',
+                        controller: _payByController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'This field is required*';
+                          }
+                          return null;
+                        },
+                      ),
+                      kHeight10,
+
+                      //========== Date ==========
+                      TextFeildWidget(
+                        labelText: 'Date *',
+                        controller: _dateController,
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.calendar_month_outlined),
+                          color: kSuffixIconColorBlack,
+                          onPressed: () {},
                         ),
+                        readOnly: true,
+                        onTap: () async {
+                          final _date = await datePicker(context);
+
+                          if (_date != null) {
+                            //Date to String for Database
+                            _selectedDate = _date.toIso8601String();
+
+                            log('selected date == $_selectedDate');
+                            log('back to time == ${DateTime.parse(_selectedDate)}');
+
+                            final parseDate =
+                                Converter.dateFormat.format(_date);
+                            _dateController.text = parseDate.toString();
+
+                            setState(() {});
+                          }
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'This field is required*';
+                          }
+                          return null;
+                        },
                       ),
+                      kHeight10,
+
+                      //========== Note ==========
+                      TextFeildWidget(
+                        labelText: 'Note',
+                        controller: _noteController,
+                        maxLines: 3,
+                        suffixIcon: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.edit_note,
+                            color: kSuffixIconColorBlack,
+                          ),
+                        ),
+                        inputBorder: const OutlineInputBorder(),
+                      ),
+                      kHeight10,
+
+                      //========== Voucher Number ==========
+                      TextFeildWidget(
+                        labelText: 'Voucher Number',
+                        controller: _voucherNumberController,
+                      ),
+                      kHeight10,
+                      //========== Pay By ==========
+                      TextFeildWidget(
+                        labelText: 'Pay By',
+                        controller: _payByController,
+                      ),
+
+                      kHeight20,
+
+                      //========== Item Image ==========
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          kHeight10,
+                          InkWell(
+                            onTap: () => imagePopUp(context),
+                            child: selectedDocument != null && jpgOrNot
+                                ? Image.file(
+                                    File(selectedDocument!),
+                                    width: _screenSize.width / 2.5,
+                                    height: _screenSize.width / 2.5,
+                                    fit: BoxFit.fill,
+                                  )
+                                : Icon(
+                                    Icons.add_photo_alternate_outlined,
+                                    size: _screenSize.width / 10,
+                                  ),
+                          ),
+                          kHeight10,
+                          Text(
+                            documentName,
+                            maxLines: 1,
+                            softWrap: false,
+                            overflow: TextOverflow.fade,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: textColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                      kHeight20,
+
+                      //========== Submit Button ==========
+                      CustomMaterialBtton(
+                        buttonText: 'Submit',
+                        onPressed: () => addExpense(),
+                      ),
+                      kHeight10,
                     ],
                   ),
-                  kHeight20,
-
-                  //========== Submit Button ==========
-                  CustomMaterialBtton(
-                    buttonText: 'Submit',
-                    onPressed: () => addExpense(),
-                  ),
-                  kHeight10,
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+          floatingActionButton:
+              ExpenseFloatingAddOptions(isDialOpen: isDialOpen)),
     );
   }
 
@@ -236,7 +260,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
     //retieving values from TextFields to String
     expenseCategory = _expenseCategoryController;
     expenseTitle = _expenseTitleController.text;
-    paidBy = _paidByController.text;
+    paidBy = _payByController.text;
     date = _selectedDate;
     note = _noteController.text;
     voucherNumber = _voucherNumberController.text;

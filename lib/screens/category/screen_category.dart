@@ -57,9 +57,7 @@ class CategoryScreen extends StatelessWidget {
               CustomMaterialBtton(
                 buttonText: 'Submit',
                 onPressed: () async {
-                  final category = _categoryEditingController.text
-                      .trim()
-                      .replaceAll("'", "''");
+                  final category = _categoryEditingController.text.trim();
                   final isFormValid = _formKey.currentState!;
                   if (isFormValid.validate()) {
                     log('Category == ' + category);

@@ -38,7 +38,7 @@ class CustomDropDownField extends StatelessWidget {
       decoration: InputDecoration(
         label: Text(
           labelText,
-          style: const TextStyle(color: klabelColorBlack),
+          style: const TextStyle(color: klabelColorGrey),
         ),
         prefixIcon: prefixIcon,
         border: border ? const OutlineInputBorder() : null,

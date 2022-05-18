@@ -20,7 +20,7 @@ class ExpenseCategoryDatabase {
       ExpenseCategoryModel _expenseCategoryModel) async {
     final db = await dbInstance.database;
     final _expenseCategory = await db.rawQuery(
-        "select * from $tableExpenseCategory where ${ExpenseCategoryFields.expense} = '${_expenseCategoryModel.expense}' COLLATE NOCASE");
+        '''select * from $tableExpenseCategory where ${ExpenseCategoryFields.expense} = "${_expenseCategoryModel.expense}" COLLATE NOCASE''');
     if (_expenseCategory.isNotEmpty) {
       log('Expense Category already exist!');
       throw Exception('Expense Category Already Exist!');

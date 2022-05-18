@@ -74,7 +74,7 @@ class TextFeildWidget extends StatelessWidget {
         counterText: couterText,
         labelText: isHint ? null : labelText,
         border: inputBorder ?? const UnderlineInputBorder(),
-        labelStyle: const TextStyle(color: klabelColorBlack),
+        labelStyle: const TextStyle(color: klabelColorGrey),
         fillColor: kWhite,
         filled: true,
         prefixIcon: prefixIcon,

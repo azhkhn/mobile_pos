@@ -18,7 +18,7 @@ class BrandDatabase {
   Future<void> createBrand(BrandModel _brandModel) async {
     final db = await dbInstance.database;
     final brand = await db.rawQuery(
-        "select * from $tableBrand where ${BrandFields.brand} = '${_brandModel.brand}' COLLATE NOCASE");
+        '''select * from $tableBrand where ${BrandFields.brand} = "${_brandModel.brand}" COLLATE NOCASE''');
     if (brand.isNotEmpty) {
       log('Brand already exist!');
       throw Exception('Brand Already Exist!');

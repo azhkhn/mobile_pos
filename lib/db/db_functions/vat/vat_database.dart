@@ -18,7 +18,7 @@ class VatDatabase {
   Future<void> createVAT(VatModel _vatModel) async {
     final db = await dbInstance.database;
     final _vat = await db.rawQuery(
-        "SELECT * FROM $tableVat WHERE ${VatFields.rate} = '${_vatModel.rate}' AND ${VatFields.type} = '${_vatModel.type}' OR ${VatFields.name} = '${_vatModel.name}'");
+        '''SELECT * FROM $tableVat WHERE ${VatFields.rate} = "${_vatModel.rate}" AND ${VatFields.type} = "${_vatModel.type}" OR ${VatFields.name} = "${_vatModel.name}"''');
     if (_vat.isNotEmpty) {
       log('VAT Already Exist!');
       throw 'VAT Already Exist!';

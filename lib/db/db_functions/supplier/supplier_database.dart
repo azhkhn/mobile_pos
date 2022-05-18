@@ -12,7 +12,7 @@ class SupplierDatabase {
   Future<int> createSupplier(SupplierModel _supplierModel) async {
     final db = await dbInstance.database;
     final supplier = await db.rawQuery(
-        "SELECT * FROM $tableSupplier WHERE ${SupplierFields.company} = '${_supplierModel.company}'");
+        '''SELECT * FROM $tableSupplier WHERE ${SupplierFields.company} = "${_supplierModel.company}"''');
     if (supplier.isNotEmpty) {
       log('Company Already Exist!');
       throw Exception('Company Already Exist!');
@@ -52,7 +52,7 @@ class SupplierDatabase {
   Future<List<SupplierModel>> getSupplierSuggestions(String pattern) async {
     final db = await dbInstance.database;
     final res = await db.rawQuery(
-        "select * from $tableSupplier where ${SupplierFields.supplier} LIKE '%$pattern%'");
+        '''select * from $tableSupplier where ${SupplierFields.supplier} LIKE "%$pattern%"''');
 
     List<SupplierModel> list = res.isNotEmpty
         ? res.map((c) => SupplierModel.fromJson(c)).toList()

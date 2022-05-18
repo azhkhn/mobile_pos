@@ -17,6 +17,7 @@ const kTransparentColor = Colors.transparent;
 const kBackgroundGrey = Color.fromRGBO(238, 238, 238, 1);
 const kTextColorBlack = Colors.black;
 const klabelColorBlack = Colors.black;
+const klabelColorGrey = Color(0xFF616161);
 const kBorderColor = Colors.grey;
 const kSuffixIconColorBlack = Colors.black;
 const kSnackBarIconColor = Colors.white;

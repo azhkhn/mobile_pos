@@ -528,7 +528,7 @@ class PaymentButtonsWidget extends StatelessWidget {
       kSnackBar(
         context: context,
         success: true,
-        content: "Sale Added Successfully!",
+        content: "Sale has been added successfully!",
       );
     } catch (e) {
       log('$e');

@@ -12,7 +12,7 @@ class SalesDatabase {
     final db = await dbInstance.database;
 
     final _sale = await db.rawQuery(
-        "select * from $tableSales where ${SalesFields.invoiceNumber} = '${_salesModel.invoiceNumber}'");
+        '''select * from $tableSales where ${SalesFields.invoiceNumber} = "${_salesModel.invoiceNumber}"''');
 
     if (_sale.isNotEmpty) {
       throw 'Invoice Number Already Exist!';
@@ -47,7 +47,7 @@ class SalesDatabase {
   Future<List<SalesModel>> getTodaySales(String today) async {
     final db = await dbInstance.database;
     final _result = await db.rawQuery(
-        "SELECT * FROM $tableSales WHERE ${SalesFields.dateTime} LIKE '%$today%'");
+        '''SELECT * FROM $tableSales WHERE ${SalesFields.dateTime} LIKE "%$today%"''');
     log('Sales of Today === $_result');
     if (_result.isNotEmpty) {
       final _todaySales =
@@ -62,7 +62,7 @@ class SalesDatabase {
   Future<List<SalesModel>> getSalesByInvoiceSuggestions(String pattern) async {
     final db = await dbInstance.database;
     final res = await db.rawQuery(
-        "select * from $tableSales where ${SalesFields.invoiceNumber} LIKE '%$pattern%'");
+        '''select * from $tableSales where ${SalesFields.invoiceNumber} LIKE "%$pattern%"''');
 
     List<SalesModel> list =
         res.isNotEmpty ? res.map((c) => SalesModel.fromJson(c)).toList() : [];

@@ -382,7 +382,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         //==================== Create Sales Return Items ====================
         await salesReturnItemsDB.createSalesReturnItems(_salesReturnItemsModel);
 
-        //==================== Decreasing Item Quantity ====================
+        //==================== Increasing Item Quantity ====================
         itemMasterDB.additionItemQty(
             SalesReturnSideWidget.selectedProductsNotifier.value[i],
             num.parse(quantity));

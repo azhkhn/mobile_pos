@@ -52,8 +52,7 @@ class BrandScreen extends StatelessWidget {
               CustomMaterialBtton(
                 buttonText: 'Submit',
                 onPressed: () async {
-                  final brand =
-                      _brandEditingController.text.trim().replaceAll("'", "''");
+                  final brand = _brandEditingController.text.trim();
                   final isFormValid = _formKey.currentState!;
                   if (isFormValid.validate()) {
                     log('Brand == ' + brand);

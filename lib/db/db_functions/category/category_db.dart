@@ -18,7 +18,7 @@ class CategoryDatabase {
   Future<void> createCategory(CategoryModel _categoryModel) async {
     final db = await dbInstance.database;
     final category = await db.rawQuery(
-        "select * from $tableCategory where ${CategoryFields.category} = '${_categoryModel.category}' COLLATE NOCASE");
+        '''select * from $tableCategory where ${CategoryFields.category} = "${_categoryModel.category}" COLLATE NOCASE''');
     if (category.isNotEmpty) {
       log('Category already exist!');
       throw Exception('Category Already Exist!');

@@ -47,7 +47,7 @@ class _ExpenseCategoryState extends State<ExpenseCategory> {
               Form(
                 key: _formKey,
                 child: TextFeildWidget(
-                  labelText: 'Expense *',
+                  labelText: 'Expense Category *',
                   controller: _expenseEditingController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -63,9 +63,8 @@ class _ExpenseCategoryState extends State<ExpenseCategory> {
               CustomMaterialBtton(
                 buttonText: 'Submit',
                 onPressed: () async {
-                  final _expenseCategory = _expenseEditingController.text
-                      .trim()
-                      .replaceAll("'", "''");
+                  final _expenseCategory =
+                      _expenseEditingController.text.trim();
                   final isFormValid = _formKey.currentState!;
                   if (isFormValid.validate()) {
                     log('Expense Category == ' + _expenseCategory);
@@ -104,6 +103,10 @@ class _ExpenseCategoryState extends State<ExpenseCategory> {
                         return const Center(child: CircularProgressIndicator());
                       case ConnectionState.done:
                       default:
+                        if (!snapshot.hasData) {
+                          return const Center(
+                              child: Text('Expense Category is Empty!'));
+                        }
                         if (snapshot.hasData) {
                           expenseCategoryNotifiers.value = snapshot.data;
                         }
@@ -112,58 +115,65 @@ class _ExpenseCategoryState extends State<ExpenseCategory> {
                             builder: (context,
                                 List<ExpenseCategoryModel> expenseCategories,
                                 _) {
-                              return ListView.separated(
-                                itemBuilder: (context, index) {
-                                  final expenseCategory =
-                                      expenseCategories[index];
-                                  log('item == $expenseCategory');
-                                  return ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundColor: kTransparentColor,
-                                      child: Text(
-                                        '${index + 1}'.toString(),
-                                        style: const TextStyle(
-                                            color: kTextColorBlack),
-                                      ),
-                                    ),
-                                    title: Text(expenseCategory.expense),
-                                    trailing: IconButton(
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (ctx) => AlertDialog(
-                                            content: const Text(
-                                                'Are you sure you want to delete this item?'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text('Cancel'),
-                                              ),
-                                              TextButton(
-                                                onPressed: () async {
-                                                  await expenseCategoryDB
-                                                      .deleteExpenseCategory(
-                                                          expenseCategory.id!);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text('Delete'),
-                                              ),
-                                            ],
+                              return expenseCategories.isNotEmpty
+                                  ? ListView.separated(
+                                      itemBuilder: (context, index) {
+                                        final expenseCategory =
+                                            expenseCategories[index];
+                                        log('item == $expenseCategory');
+                                        return ListTile(
+                                          leading: CircleAvatar(
+                                            backgroundColor: kTransparentColor,
+                                            child: Text(
+                                              '${index + 1}'.toString(),
+                                              style: const TextStyle(
+                                                  color: kTextColorBlack),
+                                            ),
+                                          ),
+                                          title: Text(expenseCategory.expense),
+                                          trailing: IconButton(
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (ctx) => AlertDialog(
+                                                  content: const Text(
+                                                      'Are you sure you want to delete this item?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child:
+                                                          const Text('Cancel'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        await expenseCategoryDB
+                                                            .deleteExpenseCategory(
+                                                                expenseCategory
+                                                                    .id!);
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child:
+                                                          const Text('Delete'),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                            icon: const Icon(Icons.delete),
                                           ),
                                         );
                                       },
-                                      icon: const Icon(Icons.delete),
-                                    ),
-                                  );
-                                },
-                                separatorBuilder: (context, index) =>
-                                    const Divider(
-                                  thickness: 1,
-                                ),
-                                itemCount: snapshot.data.length,
-                              );
+                                      separatorBuilder: (context, index) =>
+                                          const Divider(
+                                        thickness: 1,
+                                      ),
+                                      itemCount: snapshot.data.length,
+                                    )
+                                  : const Center(
+                                      child:
+                                          Text('Expense Category is Empty!'));
                             });
                     }
                   },

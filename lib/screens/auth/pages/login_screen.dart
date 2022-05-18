@@ -142,7 +142,7 @@ class SignInFields extends StatelessWidget {
                       onPressed: () {},
                       child: const Text(
                         'Forgot Password?',
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: kBlack),
                       ),
                     )
                   ],

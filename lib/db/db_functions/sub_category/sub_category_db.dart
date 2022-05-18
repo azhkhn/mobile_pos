@@ -19,7 +19,7 @@ class SubCategoryDatabase {
   Future<void> createSubCategory(SubCategoryModel _subCategoryModel) async {
     final db = await dbInstance.database;
     final _subCategory = await db.rawQuery(
-        "SELECT * FROM $tableSubCategory WHERE ${SubCategoryFields.category} = '${_subCategoryModel.category}' AND ${SubCategoryFields.subCategory} = '${_subCategoryModel.subCategory}' COLLATE NOCASE");
+        '''SELECT * FROM $tableSubCategory WHERE ${SubCategoryFields.category} = '${_subCategoryModel.category}' AND ${SubCategoryFields.subCategory} = "${_subCategoryModel.subCategory}" COLLATE NOCASE''');
     if (_subCategory.isNotEmpty) {
       log('Sub-Category Already Exist!');
       throw Exception('Sub-Category Already Exist!');

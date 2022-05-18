@@ -41,157 +41,17 @@ class EzDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path,
-        version: 3, onCreate: _createDB, onUpgrade: _upgradeDB);
+        version: 1, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
 
-    const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    const textType = 'TEXT NOT NULL';
-    // const textNull = 'TEXT';
-    const intNull = 'INTEGER';
-    const intType = 'INTEGER NOT NULL';
-
-    if (oldVersion == 2) {
-      await db.execute("ALTER TABLE $tableItemMaster RENAME TO items_old");
-
-      //========== Table Item-Master ==========
-      await db.execute('''CREATE TABLE $tableItemMaster (
-      ${ItemMasterFields.id} $idAuto,
-      ${ItemMasterFields.productType} $textType,
-      ${ItemMasterFields.itemName} $textType,
-      ${ItemMasterFields.itemNameArabic} $textType, 
-      ${ItemMasterFields.itemCode} $textType,
-      ${ItemMasterFields.itemCategory} $textType,
-      ${ItemMasterFields.itemSubCategory} $textType,
-      ${ItemMasterFields.itemBrand} $textType,
-      ${ItemMasterFields.itemCost} $textType,
-      ${ItemMasterFields.sellingPrice} $textType,
-      ${ItemMasterFields.secondarySellingPrice} $textType,
-      ${ItemMasterFields.vatId} $textType,
-      ${ItemMasterFields.vatRate} $intType,
-      ${ItemMasterFields.productVAT} $textType,
-      ${ItemMasterFields.unit} $textType,
-      ${ItemMasterFields.expiryDate} $textType,
-      ${ItemMasterFields.openingStock} $textType,
-      ${ItemMasterFields.vatMethod} $textType,
-      ${ItemMasterFields.alertQuantity} $textType,
-      ${ItemMasterFields.itemImage} $textType)''');
-
-      await db.execute(
-          "INSERT INTO $tableItemMaster (${ItemMasterFields.id},${ItemMasterFields.productType},${ItemMasterFields.itemName},${ItemMasterFields.itemNameArabic},${ItemMasterFields.itemCode},${ItemMasterFields.itemCategory},${ItemMasterFields.itemSubCategory},${ItemMasterFields.itemBrand},${ItemMasterFields.itemCost},${ItemMasterFields.sellingPrice},${ItemMasterFields.secondarySellingPrice},${ItemMasterFields.vatId},${ItemMasterFields.vatRate},${ItemMasterFields.productVAT},${ItemMasterFields.unit},${ItemMasterFields.expiryDate},${ItemMasterFields.openingStock},${ItemMasterFields.vatMethod},${ItemMasterFields.alertQuantity},${ItemMasterFields.itemImage}) SELECT ${ItemMasterFields.id},${ItemMasterFields.productType},${ItemMasterFields.itemName},${ItemMasterFields.itemNameArabic},${ItemMasterFields.itemCode},${ItemMasterFields.itemCategory},${ItemMasterFields.itemSubCategory},${ItemMasterFields.itemBrand},${ItemMasterFields.itemCost},${ItemMasterFields.sellingPrice},${ItemMasterFields.secondarySellingPrice},${ItemMasterFields.vatId},${ItemMasterFields.vatRate},${ItemMasterFields.productVAT},${ItemMasterFields.unit},${ItemMasterFields.expiryDate},${ItemMasterFields.openingStock},${ItemMasterFields.vatMethod},${ItemMasterFields.alertQuantity},${ItemMasterFields.itemImage} FROM items_old");
-
-      await db.execute("DROP TABLE items_old;");
-
-      await db.execute("DROP TABLE IF EXISTS $tableSales");
-      await db.execute("DROP TABLE IF EXISTS $tableSalesItems");
-      await db.execute("DROP TABLE IF EXISTS $tableTransactions");
-      await db.execute("DROP TABLE IF EXISTS $tableSalesReturn");
-      await db.execute("DROP TABLE IF EXISTS $tableSalesReturnItems");
-
-      //========== Table Sales ==========
-      await db.execute('''CREATE TABLE $tableSales (
-    ${SalesFields.id} $idAuto,
-    ${SalesFields.invoiceNumber} $textType,
-    ${SalesFields.salesNote} $textType,
-    ${SalesFields.dateTime} $textType,
-    ${SalesFields.customerId} $intType,
-    ${SalesFields.customerName} $textType,
-    ${SalesFields.billerName} $textType,
-    ${SalesFields.totalItems} $textType,
-    ${SalesFields.vatAmount} $textType,
-    ${SalesFields.subTotal} $textType,
-    ${SalesFields.discount} $textType,
-    ${SalesFields.grantTotal} $textType,
-    ${SalesFields.paid} $textType,
-    ${SalesFields.balance} $textType,
-    ${SalesFields.paymentType} $textType,
-    ${SalesFields.salesStatus} $textType,
-    ${SalesFields.paymentStatus} $textType,
-    ${SalesFields.createdBy} $textType)''');
-
-      //========== Table Sales Items ==========
-      await db.execute('''CREATE TABLE $tableSalesItems (
-    ${SalesItemsFields.id} $idAuto,
-    ${SalesItemsFields.saleId} $intType,
-    ${SalesItemsFields.productId} $textType,
-    ${SalesItemsFields.productType} $textType,
-    ${SalesItemsFields.productName} $textType,
-    ${SalesItemsFields.category} $textType,
-    ${SalesItemsFields.productCode} $textType,
-    ${SalesItemsFields.unitPrice} $textType,
-    ${SalesItemsFields.productCost} $textType,
-    ${SalesItemsFields.quantity} $textType,
-    ${SalesItemsFields.subTotal} $textType,
-    ${SalesItemsFields.vatMethod} $textType,
-    ${SalesItemsFields.vatId} $textType,
-    ${SalesItemsFields.vatTotal} $textType,
-    ${SalesItemsFields.unitCode} $textType,
-    ${SalesItemsFields.netUnitPrice} $textType,
-    ${SalesItemsFields.vatPercentage} $textType,
-    ${SalesItemsFields.vatRate} $intType)''');
-
-//========== Table Transactions ==========
-      await db.execute('''CREATE TABLE $tableTransactions (
-      ${TransactionsField.id} $idAuto,
-      ${TransactionsField.category} $textType,
-      ${TransactionsField.transactionType} $textType,
-      ${TransactionsField.dateTime} $textType,
-      ${TransactionsField.amount} $textType,
-      ${TransactionsField.status} $textType,
-      ${TransactionsField.description} $textType,
-      ${TransactionsField.salesId} $intNull,
-      ${TransactionsField.purchaseId} $intNull,
-      ${TransactionsField.salesReturnId} $intNull,
-      ${TransactionsField.purchaseReturnId} $intNull)''');
-
-      // ========== Table Sales Return ==========
-      await db.execute('''CREATE TABLE $tableSalesReturn (
-      ${SalesReturnFields.id} $idAuto,
-      ${SalesReturnFields.saleId} $intNull,
-      ${SalesReturnFields.invoiceNumber} $textType,
-      ${SalesReturnFields.originalInvoiceNumber} $textType,
-      ${SalesReturnFields.salesNote} $textType,
-      ${SalesReturnFields.dateTime} $textType,
-      ${SalesReturnFields.customerId} $intType,
-      ${SalesReturnFields.customerName} $textType,
-      ${SalesReturnFields.billerName} $textType,
-      ${SalesReturnFields.totalItems} $textType,
-      ${SalesReturnFields.vatAmount} $textType,
-      ${SalesReturnFields.subTotal} $textType,
-      ${SalesReturnFields.discount} $textType,
-      ${SalesReturnFields.grantTotal} $textType,
-      ${SalesReturnFields.paid} $textType,
-      ${SalesReturnFields.balance} $textType,
-      ${SalesReturnFields.paymentType} $textType,
-      ${SalesReturnFields.salesStatus} $textType,
-      ${SalesReturnFields.paymentStatus} $textType,
-      ${SalesReturnFields.createdBy} $textType)''');
-
-//========== Table Sales Return Items ==========
-      await db.execute('''CREATE TABLE $tableSalesReturnItems (
-      ${SalesReturnItemsFields.id} $idAuto,
-      ${SalesReturnItemsFields.saleId} $intNull,
-      ${SalesReturnItemsFields.saleReturnId} $intType,
-      ${SalesReturnItemsFields.originalInvoiceNumber} $textType,
-      ${SalesReturnItemsFields.productId} $textType,
-      ${SalesReturnItemsFields.productType} $textType,
-      ${SalesReturnItemsFields.productName} $textType,
-      ${SalesReturnItemsFields.category} $textType,
-      ${SalesReturnItemsFields.productCode} $textType,
-      ${SalesReturnItemsFields.unitPrice} $textType,
-      ${SalesReturnItemsFields.productCost} $textType,
-      ${SalesReturnItemsFields.quantity} $textType,
-      ${SalesReturnItemsFields.subTotal} $textType,
-      ${SalesReturnItemsFields.vatMethod} $textType,
-      ${SalesReturnItemsFields.vatId} $textType,
-      ${SalesReturnItemsFields.vatRate} $intType,
-      ${SalesReturnItemsFields.vatTotal} $textType,
-      ${SalesReturnItemsFields.unitCode} $textType,
-      ${SalesReturnItemsFields.netUnitPrice} $textType,
-      ${SalesReturnItemsFields.vatPercentage} $textType)''');
-    }
+    // const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    // const textType = 'TEXT NOT NULL';
+    // // const textNull = 'TEXT';
+    // const intNull = 'INTEGER';
+    // const intType = 'INTEGER NOT NULL';
 
     // await db.execute("DROP TABLE IF EXISTS $tableSales");
     // await db.execute("DROP TABLE IF EXISTS $tableSalesItems");
@@ -206,6 +66,35 @@ class EzDatabase {
     //    "ALTER TABLE TABLE_NAME ADD COLUMN COLUMN_NAME $textType DEFAULT ''");
     //
     //    await db.rawQuery('DROP TABLE IF EXISTS TABLE_NAME');
+    // await db.execute("ALTER TABLE $tableItemMaster RENAME TO items_old");
+
+    // //========== Table Item-Master ==========
+    // await db.execute('''CREATE TABLE $tableItemMaster (
+    // ${ItemMasterFields.id} $idAuto,
+    // ${ItemMasterFields.productType} $textType,
+    // ${ItemMasterFields.itemName} $textType,
+    // ${ItemMasterFields.itemNameArabic} $textType,
+    // ${ItemMasterFields.itemCode} $textType,
+    // ${ItemMasterFields.itemCategory} $textType,
+    // ${ItemMasterFields.itemSubCategory} $textType,
+    // ${ItemMasterFields.itemBrand} $textType,
+    // ${ItemMasterFields.itemCost} $textType,
+    // ${ItemMasterFields.sellingPrice} $textType,
+    // ${ItemMasterFields.secondarySellingPrice} $textType,
+    // ${ItemMasterFields.vatId} $textType,
+    // ${ItemMasterFields.vatRate} $intType,
+    // ${ItemMasterFields.productVAT} $textType,
+    // ${ItemMasterFields.unit} $textType,
+    // ${ItemMasterFields.expiryDate} $textType,
+    // ${ItemMasterFields.openingStock} $textType,
+    // ${ItemMasterFields.vatMethod} $textType,
+    // ${ItemMasterFields.alertQuantity} $textType,
+    // ${ItemMasterFields.itemImage} $textType)''');
+
+    // await db.execute(
+    //     "INSERT INTO $tableItemMaster (${ItemMasterFields.id},${ItemMasterFields.productType},${ItemMasterFields.itemName},${ItemMasterFields.itemNameArabic},${ItemMasterFields.itemCode},${ItemMasterFields.itemCategory},${ItemMasterFields.itemSubCategory},${ItemMasterFields.itemBrand},${ItemMasterFields.itemCost},${ItemMasterFields.sellingPrice},${ItemMasterFields.secondarySellingPrice},${ItemMasterFields.vatId},${ItemMasterFields.vatRate},${ItemMasterFields.productVAT},${ItemMasterFields.unit},${ItemMasterFields.expiryDate},${ItemMasterFields.openingStock},${ItemMasterFields.vatMethod},${ItemMasterFields.alertQuantity},${ItemMasterFields.itemImage}) SELECT ${ItemMasterFields.id},${ItemMasterFields.productType},${ItemMasterFields.itemName},${ItemMasterFields.itemNameArabic},${ItemMasterFields.itemCode},${ItemMasterFields.itemCategory},${ItemMasterFields.itemSubCategory},${ItemMasterFields.itemBrand},${ItemMasterFields.itemCost},${ItemMasterFields.sellingPrice},${ItemMasterFields.secondarySellingPrice},${ItemMasterFields.vatId},${ItemMasterFields.vatRate},${ItemMasterFields.productVAT},${ItemMasterFields.unit},${ItemMasterFields.expiryDate},${ItemMasterFields.openingStock},${ItemMasterFields.vatMethod},${ItemMasterFields.alertQuantity},${ItemMasterFields.itemImage} FROM items_old");
+
+    // await db.execute("DROP TABLE items_old;");
     //
     // */
     // if (oldVersion == 6) {

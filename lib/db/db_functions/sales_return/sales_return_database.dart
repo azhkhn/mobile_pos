@@ -12,7 +12,7 @@ class SalesReturnDatabase {
     final db = await dbInstance.database;
 
     final _saleReturn = await db.rawQuery(
-        "select * from $tableSalesReturn where ${SalesReturnFields.invoiceNumber} = '${_salesReturnModel.invoiceNumber}'");
+        '''select * from $tableSalesReturn where ${SalesReturnFields.invoiceNumber} = "${_salesReturnModel.invoiceNumber}"''');
 
     if (_saleReturn.isNotEmpty) {
       throw 'Invoice Number Already Exist!';
@@ -48,7 +48,7 @@ class SalesReturnDatabase {
   // Future<List<SalesReturnModal>> getTodaySales(String today) async {
   //   final db = await dbInstance.database;
   //   final _result = await db.rawQuery(
-  //       "SELECT * FROM $tableSalesReturn WHERE ${SalesReturnFields.dateTime} LIKE '%$today%'");
+  //       '''SELECT * FROM $tableSalesReturn WHERE ${SalesReturnFields.dateTime} LIKE "%$today%"''');
   //   log('Sales of Today === $_result');
   //   if (_result.isNotEmpty) {
   //     final _todaySales =
@@ -64,7 +64,7 @@ class SalesReturnDatabase {
   //     String pattern) async {
   //   final db = await dbInstance.database;
   //   final res = await db.rawQuery(
-  //       "select * from $tableSalesReturn where ${SalesReturnFields.invoiceNumber} LIKE '%$pattern%'");
+  //       '''select * from $tableSalesReturn where ${SalesReturnFields.invoiceNumber} LIKE "%$pattern%"''');
 
   //   List<SalesReturnModal> list = res.isNotEmpty
   //       ? res.map((c) => SalesReturnModal.fromJson(c)).toList()
@@ -94,7 +94,7 @@ class SalesReturnDatabase {
       String pattern) async {
     final db = await dbInstance.database;
     final res = await db.rawQuery(
-        "select * from $tableSalesReturn where ${SalesReturnFields.invoiceNumber} LIKE '%$pattern%'");
+        '''select * from $tableSalesReturn where ${SalesReturnFields.invoiceNumber} LIKE "%$pattern%"''');
 
     List<SalesReturnModal> list = res.isNotEmpty
         ? res.map((c) => SalesReturnModal.fromJson(c)).toList()

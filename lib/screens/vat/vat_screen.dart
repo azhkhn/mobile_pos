@@ -104,7 +104,7 @@ class VatScreen extends StatelessWidget {
                         decoration: const InputDecoration(
                             label: Text(
                           'VAT Type *',
-                          style: TextStyle(color: klabelColorBlack),
+                          style: TextStyle(color: klabelColorGrey),
                         )),
                         items: types
                             .map((values) => DropdownMenuItem<String>(

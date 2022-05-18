@@ -12,11 +12,11 @@ class CustomerDatabase {
     final db = await dbInstance.database;
 
     // final _company = await db.rawQuery(
-    //     "select * from $tableCustomer where ${CustomerFields.company} = '${_customerModel.company}'");
+    //     '''select * from $tableCustomer where ${CustomerFields.company} = "${_customerModel.company}"''');
 
     if (_customerModel.vatNumber!.toString().isNotEmpty) {
       final _vatNumber = await db.rawQuery(
-          "select * from $tableCustomer where ${CustomerFields.vatNumber} = '${_customerModel.vatNumber}'");
+          '''select * from $tableCustomer where ${CustomerFields.vatNumber} = "${_customerModel.vatNumber}"''');
 
       if (_vatNumber.isNotEmpty) {
         throw 'VAT Number already exist!';
@@ -65,7 +65,7 @@ class CustomerDatabase {
   Future<List<CustomerModel>> getCustomerSuggestions(String pattern) async {
     final db = await dbInstance.database;
     final res = await db.rawQuery(
-        "select * from $tableCustomer where ${CustomerFields.customer} LIKE '%$pattern%'");
+        '''select * from $tableCustomer where ${CustomerFields.customer} LIKE "%$pattern%"''');
 
     List<CustomerModel> list = res.isNotEmpty
         ? res.map((c) => CustomerModel.fromJson(c)).toList()

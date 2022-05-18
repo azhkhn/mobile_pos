@@ -13,7 +13,7 @@ class PurchaseReturnDatabase {
     final db = await dbInstance.database;
 
     final _purchaseReturn = await db.rawQuery(
-        "select * from $tablePurchaseReturn where ${PurchaseReturnFields.invoiceNumber} = '${_purchaseReturnModel.invoiceNumber}'");
+        '''select * from $tablePurchaseReturn where ${PurchaseReturnFields.invoiceNumber} = "${_purchaseReturnModel.invoiceNumber}"''');
 
     if (_purchaseReturn.isNotEmpty) {
       throw 'Invoice Number Already Exist!';
@@ -50,7 +50,7 @@ class PurchaseReturnDatabase {
   // Future<List<PurchaseReturnModel>> getTodayPurchases(String today) async {
   //   final db = await dbInstance.database;
   //   final _result = await db.rawQuery(
-  //       "SELECT * FROM $tablePurchaseReturn WHERE ${PurchaseReturnFields.dateTime} LIKE '%$today%'");
+  //       '''SELECT * FROM $tablePurchaseReturn WHERE ${PurchaseReturnFields.dateTime} LIKE "%$today%"''');
   //   log('Purchases of Today === $_result');
   //   if (_result.isNotEmpty) {
   //     final _todayPurchases =
@@ -66,7 +66,7 @@ class PurchaseReturnDatabase {
   //     String pattern) async {
   //   final db = await dbInstance.database;
   //   final res = await db.rawQuery(
-  //       "select * from $tablePurchaseReturn where ${PurchaseReturnFields.invoiceNumber} LIKE '%$pattern%'");
+  //       '''select * from $tablePurchaseReturn where ${PurchaseReturnFields.invoiceNumber} LIKE "%$pattern%"''');
 
   //   List<PurchaseReturnModel> list = res.isNotEmpty
   //       ? res.map((c) => PurchaseReturnModel.fromJson(c)).toList()

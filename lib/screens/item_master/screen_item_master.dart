@@ -106,7 +106,7 @@ class ScreenItemMaster extends StatelessWidget {
                     decoration: const InputDecoration(
                       label: Text(
                         'Product Type *',
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: klabelColorGrey),
                       ),
                       contentPadding: EdgeInsets.all(10),
                     ),
@@ -311,7 +311,7 @@ class ScreenItemMaster extends StatelessWidget {
                     decoration: const InputDecoration(
                       label: Text(
                         'VAT Method *',
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: klabelColorGrey),
                       ),
                       contentPadding: EdgeInsets.all(10),
                     ),
@@ -361,7 +361,10 @@ class ScreenItemMaster extends StatelessWidget {
                     labelText: 'Expiry Date',
                     controller: _dateController,
                     suffixIcon: IconButton(
-                      icon: const Icon(Icons.calendar_month_outlined),
+                      icon: const Icon(
+                        Icons.calendar_month_outlined,
+                        color: klabelColorGrey,
+                      ),
                       color: kSuffixIconColorBlack,
                       onPressed: () {},
                     ),

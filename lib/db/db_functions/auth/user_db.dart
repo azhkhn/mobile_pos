@@ -12,7 +12,7 @@ class UserDatabase {
   Future<UserModel> createUser(UserModel userModel, String username) async {
     final db = await dbInstance.database;
     final user = await db.rawQuery(
-        "select * from $tableUser where ${UserFields.mobileNumber} = '$username'");
+        '''select * from $tableUser where ${UserFields.mobileNumber} = "$username"''');
     if (user.isNotEmpty) {
       log('User already exist!');
       throw Exception('User Already Exist!');
@@ -20,7 +20,7 @@ class UserDatabase {
       log('User registered!');
       final id = await db.insert(tableUser, userModel.toJson());
       final newUser = await db.rawQuery(
-          "select * from $tableUser where ${UserFields.mobileNumber} = '$username'");
+          '''select * from $tableUser where ${UserFields.mobileNumber} = "$username"''');
       final userCred = UserModel.fromJson(newUser.first);
       db.insert(tableLogin, userCred.toJson());
       return userModel.copy(id: id);
@@ -31,7 +31,7 @@ class UserDatabase {
   Future<UserModel?> loginUser(String username, String password) async {
     final db = await dbInstance.database;
     final response = await db.rawQuery(
-        "select * from $tableUser where ${UserFields.mobileNumber} = '$username' and ${UserFields.password} = '$password' or  ${UserFields.email} = '$username' and ${UserFields.password} = '$password'");
+        '''select * from $tableUser where ${UserFields.mobileNumber} = "$username" and ${UserFields.password} = "$password" or  ${UserFields.email} = "$username" and ${UserFields.password} = "$password"''');
     if (response.isNotEmpty) {
       final user = UserModel.fromJson(response.first);
       log('user == $user');
