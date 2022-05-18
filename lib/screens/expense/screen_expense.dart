@@ -13,6 +13,7 @@ import 'package:shop_ez/db/db_functions/expense/expense_category_database.dart';
 import 'package:shop_ez/db/db_functions/expense/expense_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
+import 'package:shop_ez/model/transactions/transactions_model.dart';
 import 'package:shop_ez/screens/expense/widgets/floating_add_options.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
@@ -63,6 +64,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;
     expenseDB.getAllExpense();
+    transactionDatabase.getAllTransactions();
     return WillPopScope(
       onWillPop: () async {
         if (isDialOpen.value) {
@@ -120,7 +122,9 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                       //========== Amount ==========
                       TextFeildWidget(
                         labelText: 'Amount *',
-                        controller: _payByController,
+                        controller: _amountController,
+                        inputFormatters: Converter.digitsOnly,
+                        textInputType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'This field is required*';
@@ -175,7 +179,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                           onPressed: () {},
                           icon: const Icon(
                             Icons.edit_note,
-                            color: kSuffixIconColorBlack,
+                            color: klabelColorGrey,
                           ),
                         ),
                         inputBorder: const OutlineInputBorder(),
@@ -201,19 +205,91 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           kHeight10,
-                          InkWell(
-                            onTap: () => imagePopUp(context),
-                            child: selectedDocument != null && jpgOrNot
-                                ? Image.file(
-                                    File(selectedDocument!),
-                                    width: _screenSize.width / 2.5,
-                                    height: _screenSize.width / 2.5,
-                                    fit: BoxFit.fill,
-                                  )
-                                : Icon(
-                                    Icons.add_photo_alternate_outlined,
-                                    size: _screenSize.width / 10,
-                                  ),
+                          SizedBox(
+                            width: _screenSize.width / 2.2,
+                            height: _screenSize.width / 2.4,
+                            child: InkWell(
+                              onTap: () {
+                                if (selectedDocument != null) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      contentPadding: kPadding0,
+                                      content: SizedBox(
+                                        height: 100,
+                                        width: 100,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            Expanded(
+                                              child: MaterialButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                    imagePopUp(context);
+                                                  },
+                                                  color: kWhite,
+                                                  child: const Text(
+                                                    'Edit',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  )),
+                                            ),
+                                            Expanded(
+                                              child: MaterialButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                    selectedDocument = null;
+                                                    documentName = 'Document';
+                                                    setState(() {});
+                                                  },
+                                                  color: Colors.red[300],
+                                                  child: const Text(
+                                                    'Delete',
+                                                    style: TextStyle(
+                                                        color: kWhite,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  imagePopUp(context);
+                                }
+                              },
+                              child: selectedDocument != null && jpgOrNot
+                                  ? Stack(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Image.file(
+                                            File(selectedDocument!),
+                                            width: _screenSize.width / 2.5,
+                                            height: _screenSize.width / 2.5,
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                        const Align(
+                                          alignment: Alignment.topRight,
+                                          child: Icon(
+                                            Icons.edit,
+                                            color: klabelColorGrey,
+                                          ),
+                                        )
+                                      ],
+                                    )
+                                  : Icon(
+                                      Icons.add_photo_alternate_outlined,
+                                      color: klabelColorGrey,
+                                      size: _screenSize.width / 10,
+                                    ),
+                            ),
                           ),
                           kHeight10,
                           Text(
@@ -224,7 +300,9 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontWeight: FontWeight.normal,
-                              color: textColor,
+                              color: selectedDocument != null
+                                  ? textColor
+                                  : klabelColorGrey,
                             ),
                           ),
                         ],
@@ -251,19 +329,21 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
   addExpense() async {
     final String expenseCategory,
         expenseTitle,
-        paidBy,
+        amount,
         date,
         note,
         voucherNumber,
+        payBy,
         documents;
 
     //retieving values from TextFields to String
-    expenseCategory = _expenseCategoryController;
-    expenseTitle = _expenseTitleController.text;
-    paidBy = _payByController.text;
-    date = _selectedDate;
-    note = _noteController.text;
-    voucherNumber = _voucherNumberController.text;
+    expenseCategory = _expenseCategoryController.trim();
+    expenseTitle = _expenseTitleController.text.trim();
+    amount = _amountController.text.trim();
+    date = _selectedDate.trim();
+    note = _noteController.text.trim();
+    voucherNumber = _voucherNumberController.text.trim();
+    payBy = _payByController.text.trim();
 
     if (selectedDocument != null) {
       //========== Getting Directory Path ==========
@@ -287,15 +367,25 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
       final _expenseModel = ExpenseModel(
         expenseCategory: expenseCategory,
         expenseTitle: expenseTitle,
-        paidBy: paidBy,
+        amount: amount,
         date: date,
         note: note,
         voucherNumber: voucherNumber,
+        payBy: payBy,
         documents: documents,
       );
 
+      final _transactionModel = TransactionsModel(
+          category: 'Expense',
+          transactionType: 'Expense',
+          dateTime: date,
+          amount: amount,
+          status: 'Paid',
+          description: '');
+
       try {
         await expenseDB.createExpense(_expenseModel);
+        await transactionDatabase.createTransaction(_transactionModel);
         kSnackBar(
             context: context,
             success: true,

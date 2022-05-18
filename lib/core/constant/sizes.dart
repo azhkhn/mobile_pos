@@ -20,3 +20,4 @@ kHeightDynamic({required double kheight}) => SizedBox(height: kheight);
 //========== Edge Insets Sizes ==========
 const kClearTextIconPadding =
     EdgeInsets.only(top: 5, bottom: 5, right: 5, left: 8);
+const kPadding0 = EdgeInsets.all(0);

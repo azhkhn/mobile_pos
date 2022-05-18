@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'brand_model.freezed.dart';
 part 'brand_model.g.dart';
+part 'brand_model.freezed.dart';
 
 const String tableBrand = 'brand';
 

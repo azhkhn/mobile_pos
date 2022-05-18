@@ -41,17 +41,31 @@ class EzDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path,
-        version: 1, onCreate: _createDB, onUpgrade: _upgradeDB);
+        version: 5, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
 
-    // const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    // const textType = 'TEXT NOT NULL';
-    // // const textNull = 'TEXT';
+    const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const textType = 'TEXT NOT NULL';
+    // const textNull = 'TEXT';
     // const intNull = 'INTEGER';
     // const intType = 'INTEGER NOT NULL';
+
+    await db.execute("DROP TABLE IF EXISTS $tableExpense");
+
+    //========== Table Expense ==========
+    await db.execute('''CREATE TABLE $tableExpense (
+      ${ExpenseFields.id} $idAuto,
+      ${ExpenseFields.expenseCategory} $textType,
+      ${ExpenseFields.expenseTitle} $textType,
+      ${ExpenseFields.amount} $textType,
+      ${ExpenseFields.date} $textType,
+      ${ExpenseFields.note} $textType,
+      ${ExpenseFields.voucherNumber} $textType,
+      ${ExpenseFields.payBy} $textType,
+      ${ExpenseFields.documents} $textType)''');
 
     // await db.execute("DROP TABLE IF EXISTS $tableSales");
     // await db.execute("DROP TABLE IF EXISTS $tableSalesItems");
@@ -225,10 +239,11 @@ class EzDatabase {
       ${ExpenseFields.id} $idAuto,
       ${ExpenseFields.expenseCategory} $textType,
       ${ExpenseFields.expenseTitle} $textType,
-      ${ExpenseFields.paidBy} $textType,
+      ${ExpenseFields.amount} $textType,
       ${ExpenseFields.date} $textType,
       ${ExpenseFields.note} $textType,
       ${ExpenseFields.voucherNumber} $textType,
+      ${ExpenseFields.payBy} $textType,
       ${ExpenseFields.documents} $textType)''');
 
 //========== Table Business Profile ==========

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
 
 class ExpenseFloatingAddOptions extends StatelessWidget {
@@ -14,14 +13,14 @@ class ExpenseFloatingAddOptions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SpeedDial(
-      backgroundColor: mainColor,
-      buttonSize: const Size(40, 40),
+      backgroundColor: Colors.blueGrey,
+      buttonSize: const Size(50, 50),
       overlayColor: Colors.black,
       overlayOpacity: 0.5,
       animatedIcon: AnimatedIcons.add_event,
       tooltip: 'Add Expense Categories',
-      childrenButtonSize: const Size(40, 40),
-      label: const Text('Expense Category'),
+      childrenButtonSize: const Size(50, 50),
+      // label: const Text('Expense Category'),
       onPress: () async {
         await Navigator.pushNamed(context, routeExpenseCategory);
       },
