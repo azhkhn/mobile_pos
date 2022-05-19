@@ -24,7 +24,7 @@ class SalesOptionsCard extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
-          gradient: LinearGradient(colors: [mainColor, Colors.teal]),
+          gradient: const LinearGradient(colors: [mainColor, Colors.teal]),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

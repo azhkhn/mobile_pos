@@ -27,7 +27,7 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
             child: Container(
               width: ScreenSignUp._screenSise.width,
               height: ScreenSignUp._screenSise.height / 2,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,

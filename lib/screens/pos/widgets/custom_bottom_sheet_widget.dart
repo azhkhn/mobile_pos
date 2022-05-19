@@ -22,20 +22,13 @@ class CustomBottomSheetWidget extends StatelessWidget {
       minChildSize: 0.5,
       maxChildSize: 0.8,
       builder: (context, scrollController) => Container(
-        decoration: const BoxDecoration(
-            color: kWhite,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-        padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.height * .35,
-            vertical: MediaQuery.of(context).size.height * .05),
+        decoration: const BoxDecoration(color: kWhite, borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.height * .35, vertical: MediaQuery.of(context).size.height * .05),
         child: SingleChildScrollView(
             controller: scrollController,
             child: FutureBuilder(
-              future: supplier
-                  ? SupplierDatabase.instance.getSupplierById(id!)
-                  : CustomerDatabase.instance.getCustomerById(id!),
-              builder: (context, AsyncSnapshot<dynamic> snapshot) => snapshot
-                      .hasData
+              future: supplier ? SupplierDatabase.instance.getSupplierById(id!) : CustomerDatabase.instance.getCustomerById(id!),
+              builder: (context, AsyncSnapshot<dynamic> snapshot) => snapshot.hasData
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -43,8 +36,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                             ? const SizedBox()
                             : Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Expanded(
                                     flex: 5,
@@ -91,9 +83,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                             Expanded(
                               flex: 7,
                               child: AutoSizeText(
-                                supplier
-                                    ? snapshot.data!.supplier
-                                    : snapshot.data!.customer,
+                                supplier ? snapshot.data!.contactName : snapshot.data!.customer,
                                 textAlign: TextAlign.end,
                                 maxFontSize: 20,
                                 style: const TextStyle(fontSize: 12),
@@ -109,9 +99,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                             Expanded(
                               flex: 5,
                               child: AutoSizeText(
-                                supplier
-                                    ? 'Supplier Name Arabic'
-                                    : 'Customer Name Arabic',
+                                supplier ? 'Supplier Name Arabic' : 'Customer Name Arabic',
                                 maxFontSize: 20,
                                 style: const TextStyle(fontSize: 12),
                               ),
@@ -124,9 +112,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                             Expanded(
                               flex: 7,
                               child: AutoSizeText(
-                                supplier
-                                    ? snapshot.data!.supplierArabic
-                                    : snapshot.data!.customerArabic,
+                                supplier ? snapshot.data!.contactNumber : snapshot.data!.customerArabic,
                                 textAlign: TextAlign.end,
                                 maxFontSize: 20,
                                 style: const TextStyle(fontSize: 12),
@@ -157,7 +143,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                             Expanded(
                               flex: 7,
                               child: AutoSizeText(
-                                snapshot.data!.company,
+                                snapshot.data!.supplierName,
                                 textAlign: TextAlign.end,
                                 maxFontSize: 20,
                                 style: const TextStyle(fontSize: 12),
@@ -186,7 +172,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                             Expanded(
                               flex: 7,
                               child: AutoSizeText(
-                                snapshot.data!.companyArabic,
+                                snapshot.data!.supplierNameArabic,
                                 textAlign: TextAlign.end,
                                 maxFontSize: 20,
                                 style: const TextStyle(fontSize: 12),

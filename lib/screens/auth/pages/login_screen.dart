@@ -22,7 +22,7 @@ class ScreenLogin extends StatelessWidget {
               child: Container(
                 width: _screenSise.width,
                 height: _screenSise.height,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,

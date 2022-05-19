@@ -13,7 +13,7 @@ class ExpenseCategoryDatabase {
 
   //========== Value Notifiers ==========
   static final ValueNotifier<List<ExpenseCategoryModel>>
-      expenseCategoryNotifiers = ValueNotifier([]);
+      expenseCategoryNotifier = ValueNotifier([]);
 
 //========== Create Expense Category ==========
   Future<void> createExpenseCategory(
@@ -38,9 +38,28 @@ class ExpenseCategoryDatabase {
     await db.delete(tableExpenseCategory,
         where: '${ExpenseCategoryFields.id} = ? ', whereArgs: [id]);
     log('Expense Category $id Deleted Successfully!');
-    expenseCategoryNotifiers.value
+    expenseCategoryNotifier.value
         .removeWhere((categories) => categories.id == id);
-    expenseCategoryNotifiers.notifyListeners();
+    expenseCategoryNotifier.notifyListeners();
+  }
+
+  //========== Update Expense Category ==========
+  Future<void> updateExpenseCategory(
+      {required ExpenseCategoryModel expenseCategory,
+      required String expenseCategoryName}) async {
+    final db = await dbInstance.database;
+    final updatedExpenseCategory =
+        expenseCategory.copyWith(expense: expenseCategoryName);
+    await db.update(
+      tableExpenseCategory,
+      updatedExpenseCategory.toJson(),
+      where: '${ExpenseCategoryFields.id} = ?',
+      whereArgs: [expenseCategory.id],
+    );
+    log('Expense Category ${expenseCategory.id} Updated Successfully');
+    final index = expenseCategoryNotifier.value.indexOf(expenseCategory);
+    expenseCategoryNotifier.value[index] = updatedExpenseCategory;
+    expenseCategoryNotifier.notifyListeners();
   }
 
 //========== Get All Expense Category ==========

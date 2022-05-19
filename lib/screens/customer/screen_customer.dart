@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/utils/text/validators.dart';
+import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -45,7 +45,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
   final _countryArabicController = TextEditingController();
   final _poBoxController = TextEditingController();
 
-  String _customerTypeController = 'null';
+  // String 'General Customer' = 'null';
 
   FocusNode customerTypeFocusNode = FocusNode();
   FocusNode companyFocusNode = FocusNode();
@@ -77,35 +77,35 @@ class _CustomerScreenState extends State<CustomerScreen> {
               key: _formKey,
               child: Column(
                 children: [
-                  //========== Company Field ==========
-                  DropdownButtonFormField(
-                    decoration: const InputDecoration(
-                        label: Text(
-                          'Customer Type *',
-                          style: TextStyle(color: klabelColorGrey),
-                        ),
-                        contentPadding: EdgeInsets.all(10)),
-                    isExpanded: true,
-                    focusNode: customerTypeFocusNode,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    items: CustomerScreen.items
-                        .map(
-                          (values) => DropdownMenuItem(
-                              value: values, child: Text(values)),
-                        )
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _customerTypeController = value.toString();
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || _customerTypeController == 'null') {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
-                  ),
+                  // //========== Company Field ==========
+                  // DropdownButtonFormField(
+                  //   decoration: const InputDecoration(
+                  //       label: Text(
+                  //         'Customer Type *',
+                  //         style: TextStyle(color: klabelColorGrey),
+                  //       ),
+                  //       contentPadding: EdgeInsets.all(10)),
+                  //   isExpanded: true,
+                  //   focusNode: customerTypeFocusNode,
+                  //   autovalidateMode: AutovalidateMode.onUserInteraction,
+                  //   items: CustomerScreen.items
+                  //       .map(
+                  //         (values) => DropdownMenuItem(
+                  //             value: values, child: Text(values)),
+                  //       )
+                  //       .toList(),
+                  //   onChanged: (value) {
+                  //     setState(() {
+                  //       'General Customer' = value.toString();
+                  //     });
+                  //   },
+                  //   validator: (value) {
+                  //     if (value == null || 'General Customer' == 'null') {
+                  //       return 'This field is required*';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
 
                   //========== Customer Field ==========
                   TextFeildWidget(
@@ -128,6 +128,37 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     labelText: 'Customer Name Arabic *',
                     textDirection: TextDirection.rtl,
                     focusNode: customerArabicFocusNode,
+                    textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field is required*';
+                      }
+                      return null;
+                    },
+                  ),
+                  kHeight10,
+
+                  //========== Address Field ==========
+                  TextFeildWidget(
+                    controller: _addressController,
+                    labelText: 'Address *',
+                    focusNode: addressFocusNode,
+                    textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field is required*';
+                      }
+                      return null;
+                    },
+                  ),
+                  kHeight10,
+
+                  //========== Address Arabic Field ==========
+                  TextFeildWidget(
+                    controller: _addressArabicController,
+                    labelText: 'Address Arabic *',
+                    textDirection: TextDirection.rtl,
+                    focusNode: addressArabicFocusNode,
                     textInputType: TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -162,34 +193,10 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     controller: _vatNumberController,
                     labelText: 'VAT Number',
                     focusNode: vatNumberFocusNode,
-                    textInputType: TextInputType.text,
+                    inputFormatters: Converter.digitsOnly,
+                    textInputType: TextInputType.number,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (_customerTypeController == 'Credit Customer') {
-                        if (value == null || value.isEmpty) {
-                          return 'This field is required*';
-                        } else {
-                          if (value.isNotEmpty) {
-                            if (value.length != 15) {
-                              return 'Please enter a valid VAT number';
-                            } else {
-                              return null;
-                            }
-                          }
-                        }
-                      } else {
-                        if (value!.isNotEmpty) {
-                          if (value.isNotEmpty) {
-                            if (value.length != 15) {
-                              return 'Please enter a valid VAT number';
-                            } else {
-                              return null;
-                            }
-                          }
-                        }
-                      }
-                      return null;
-                    },
+                    validator: (value) => Validators.vatValidator(value),
                   ),
                   kHeight10,
 
@@ -211,55 +218,12 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   ),
                   kHeight10,
 
-                  //========== Address Field ==========
-                  TextFeildWidget(
-                    controller: _addressController,
-                    labelText: 'Address',
-                    focusNode: addressFocusNode,
-                    textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (_customerTypeController == 'Credit Customer') {
-                        if (value == null || value.isEmpty) {
-                          return 'This field is required*';
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                  kHeight10,
-
-                  //========== Address Arabic Field ==========
-                  TextFeildWidget(
-                    controller: _addressArabicController,
-                    labelText: 'Address Arabic',
-                    textDirection: TextDirection.rtl,
-                    focusNode: addressArabicFocusNode,
-                    textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (_customerTypeController == 'Credit Customer') {
-                        if (value == null || value.isEmpty) {
-                          return 'This field is required*';
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                  kHeight10,
-
                   //========== City Field ==========
                   TextFeildWidget(
                     controller: _cityController,
                     labelText: 'City',
                     focusNode: cityFocusNode,
                     textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (_customerTypeController == 'Credit Customer') {
-                        if (value == null || value.isEmpty) {
-                          return 'This field is required*';
-                        }
-                      }
-                      return null;
-                    },
                   ),
                   kHeight10,
 
@@ -270,14 +234,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     textDirection: TextDirection.rtl,
                     focusNode: cityArabicFocusNode,
                     textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (_customerTypeController == 'Credit Customer') {
-                        if (value == null || value.isEmpty) {
-                          return 'This field is required*';
-                        }
-                      }
-                      return null;
-                    },
                   ),
                   kHeight10,
 
@@ -287,14 +243,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     labelText: 'State',
                     focusNode: stateFocusNode,
                     textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (_customerTypeController == 'Credit Customer') {
-                        if (value == null || value.isEmpty) {
-                          return 'This field is required*';
-                        }
-                      }
-                      return null;
-                    },
                   ),
                   kHeight10,
 
@@ -305,14 +253,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     textDirection: TextDirection.rtl,
                     focusNode: stateArabicFocusNode,
                     textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (_customerTypeController == 'Credit Customer') {
-                        if (value == null || value.isEmpty) {
-                          return 'This field is required*';
-                        }
-                      }
-                      return null;
-                    },
                   ),
                   kHeight10,
 
@@ -322,14 +262,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     labelText: 'Country',
                     focusNode: countryFocusNode,
                     textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (_customerTypeController == 'Credit Customer') {
-                        if (value == null || value.isEmpty) {
-                          return 'This field is required*';
-                        }
-                      }
-                      return null;
-                    },
                   ),
                   kHeight10,
 
@@ -340,14 +272,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     textDirection: TextDirection.rtl,
                     focusNode: countryArabicFocusNode,
                     textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (_customerTypeController == 'Credit Customer') {
-                        if (value == null || value.isEmpty) {
-                          return 'This field is required*';
-                        }
-                      }
-                      return null;
-                    },
                   ),
                   kHeight10,
 
@@ -361,8 +285,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
 
                   //========== Submit Button ==========
                   Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: _screenSize.width / 10),
+                    padding: EdgeInsets.symmetric(horizontal: _screenSize.width / 10),
                     child: CustomMaterialBtton(
                         buttonText: 'Submit',
                         onPressed: () {
@@ -399,7 +322,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
         poBox;
 
     //retieving values from TextFields to String
-    customerType = _customerTypeController;
+    customerType = 'General Customer';
     company = _companyController.text;
     companyArabic = _companyArabicController.text;
     customer = _customerController.text;
@@ -440,11 +363,9 @@ class _CustomerScreenState extends State<CustomerScreen> {
       );
       try {
         final id = await customerDB.createCustomer(_customerModel);
+        _formKey.currentState!.reset();
         log('Customer $customer Added!');
-        kSnackBar(
-            context: context,
-            success: true,
-            content: 'Customer "$customer" added successfully!');
+        kSnackBar(context: context, success: true, content: 'Customer "$customer" added successfully!');
 
         if (widget.pos) {
           return Navigator.pop(context, id);

@@ -11,6 +11,8 @@ void kSnackBar({
   Widget? icon,
   bool? error = false,
   bool? success = false,
+  bool? delete = false,
+  bool? update = false,
 }) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -22,13 +24,22 @@ void kSnackBar({
                   Icons.error_outline,
                   color: kSnackBarIconColor,
                 )
-              : const SizedBox(),
-          success == true
-              ? const Icon(
-                  Icons.done,
-                  color: kSnackBarIconColor,
-                )
-              : const SizedBox(),
+              : success == true
+                  ? const Icon(
+                      Icons.done,
+                      color: kSnackBarIconColor,
+                    )
+                  : delete == true
+                      ? const Icon(
+                          Icons.delete,
+                          color: kSnackBarIconColor,
+                        )
+                      : update == true
+                          ? const Icon(
+                              Icons.update,
+                              color: kSnackBarIconColor,
+                            )
+                          : const SizedBox(),
           kWidth5,
           Flexible(
             child: Text(
@@ -40,10 +51,14 @@ void kSnackBar({
         ],
       ),
       backgroundColor: error == true
-          ? kSnackBarErrorColor
+          ? kSnackBarDeleteColor
           : success == true
               ? kSnackBarSuccessColor
-              : color,
+              : delete == true
+                  ? kSnackBarDeleteColor
+                  : update == true
+                      ? kSnackBarUpdateColor
+                      : color,
       duration: const Duration(seconds: 2),
       behavior: SnackBarBehavior.floating,
     ),

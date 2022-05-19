@@ -11,7 +11,7 @@ class CategoryDatabase {
   CategoryDatabase._init();
 
   //========== Value Notifiers ==========
-  static final ValueNotifier<List<CategoryModel>> categoryNotifiers =
+  static final ValueNotifier<List<CategoryModel>> categoryNotifier =
       ValueNotifier([]);
 
 //========== Create Category ==========
@@ -25,11 +25,28 @@ class CategoryDatabase {
     } else {
       log('Category Created!');
       final id = await db.insert(tableCategory, _categoryModel.toJson());
-      categoryNotifiers.value.add(_categoryModel.copyWith(id: id));
-      categoryNotifiers.notifyListeners();
+      categoryNotifier.value.add(_categoryModel.copyWith(id: id));
+      categoryNotifier.notifyListeners();
 
       log('Category Id == $id');
     }
+  }
+
+  //========== Update Category ==========
+  Future<void> updateCategory(
+      {required CategoryModel category, required String categoryName}) async {
+    final db = await dbInstance.database;
+    final updatedCategory = category.copyWith(category: categoryName);
+    await db.update(
+      tableCategory,
+      updatedCategory.toJson(),
+      where: '${CategoryFields.id} = ?',
+      whereArgs: [category.id],
+    );
+    log('Category ${category.id} Updated Successfully');
+    final index = categoryNotifier.value.indexOf(category);
+    categoryNotifier.value[index] = updatedCategory;
+    categoryNotifier.notifyListeners();
   }
 
   //========== Delete Category ==========
@@ -38,8 +55,8 @@ class CategoryDatabase {
     await db.delete(tableCategory,
         where: '${CategoryFields.id} = ? ', whereArgs: [id]);
     log('Category $id Deleted Successfully!');
-    categoryNotifiers.value.removeWhere((categories) => categories.id == id);
-    categoryNotifiers.notifyListeners();
+    categoryNotifier.value.removeWhere((categories) => categories.id == id);
+    categoryNotifier.notifyListeners();
   }
 
 //========== Get All Categories ==========

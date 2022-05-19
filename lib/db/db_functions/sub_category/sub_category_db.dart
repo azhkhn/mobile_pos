@@ -12,7 +12,7 @@ class SubCategoryDatabase {
   SubCategoryDatabase._init();
 
   //========== Value Notifiers ==========
-  static final ValueNotifier<List<SubCategoryModel>> subCategoryNotifiers =
+  static final ValueNotifier<List<SubCategoryModel>> subCategoryNotifier =
       ValueNotifier([]);
 
 //========== Create Sub-Category ==========
@@ -26,8 +26,8 @@ class SubCategoryDatabase {
     } else {
       log('Sub-Category Created!');
       final id = await db.insert(tableSubCategory, _subCategoryModel.toJson());
-      subCategoryNotifiers.value.add(_subCategoryModel.copyWith(id: id));
-      subCategoryNotifiers.notifyListeners();
+      subCategoryNotifier.value.add(_subCategoryModel.copyWith(id: id));
+      subCategoryNotifier.notifyListeners();
       log('Sub-Category id == $id');
     }
   }
@@ -58,15 +58,34 @@ class SubCategoryDatabase {
     return _subCategories;
   }
 
+  //========== Update Sub-Category ==========
+  Future<void> updateSubCategory(
+      {required SubCategoryModel subCategory,
+      required String subCategoryName}) async {
+    final db = await dbInstance.database;
+    final updatedsubCategory =
+        subCategory.copyWith(subCategory: subCategoryName);
+    await db.update(
+      tableSubCategory,
+      updatedsubCategory.toJson(),
+      where: '${SubCategoryFields.id} = ?',
+      whereArgs: [subCategory.id],
+    );
+    log('Sub-Category ${subCategory.id} update successfully');
+    final index = subCategoryNotifier.value.indexOf(subCategory);
+    subCategoryNotifier.value[index] = updatedsubCategory;
+    subCategoryNotifier.notifyListeners();
+  }
+
   //========== Delete Sub-Category ==========
   Future<void> deleteSubCategory(int id) async {
     final db = await dbInstance.database;
     final _result = await db.delete(tableSubCategory,
         where: '${SubCategoryFields.id} = ?', whereArgs: [id]);
-    subCategoryNotifiers.value.removeWhere(
+    subCategoryNotifier.value.removeWhere(
       (subCategories) => subCategories.id == id,
     );
-    subCategoryNotifiers.notifyListeners();
+    subCategoryNotifier.notifyListeners();
     log('Sub-Category $id Deleted == $_result');
   }
 }

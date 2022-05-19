@@ -1,7 +1,9 @@
 import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/icons.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/db/db_functions/unit/unit_database.dart';
 import 'package:shop_ez/model/unit/unit_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -109,33 +111,124 @@ class UnitScreen extends StatelessWidget {
                                       ),
                                     ),
                                     title: Text(item.unit),
-                                    trailing: IconButton(
-                                        onPressed: () async {
-                                          showDialog(
-                                            context: context,
-                                            builder: (ctx) => AlertDialog(
-                                              content: const Text(
-                                                  'Are you sure you want to delete this item?'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text('Cancel'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () async {
-                                                    await unitDB
-                                                        .deleteUnit(item.id!);
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text('Delete'),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                        icon: const Icon(Icons.delete)),
+                                    trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            onPressed: () async {
+                                              final _unitController =
+                                                  TextEditingController(
+                                                      text: units[index].unit);
+
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      AlertDialog(
+                                                          content: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          TextFeildWidget(
+                                                            labelText:
+                                                                'Unit Name',
+                                                            controller:
+                                                                _unitController,
+                                                            floatingLabelBehavior:
+                                                                FloatingLabelBehavior
+                                                                    .always,
+                                                            inputBorder:
+                                                                const OutlineInputBorder(),
+                                                            autovalidateMode:
+                                                                AutovalidateMode
+                                                                    .onUserInteraction,
+                                                            isDense: true,
+                                                            validator: (value) {
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .isEmpty) {
+                                                                return 'This field is required*';
+                                                              }
+                                                              return null;
+                                                            },
+                                                          ),
+                                                          kHeight5,
+                                                          CustomMaterialBtton(
+                                                              onPressed:
+                                                                  () async {
+                                                                final String
+                                                                    unitName =
+                                                                    _unitController
+                                                                        .text
+                                                                        .trim();
+                                                                if (unitName ==
+                                                                    units[index]
+                                                                        .unit) {
+                                                                  return Navigator
+                                                                      .pop(
+                                                                          context);
+                                                                }
+                                                                await unitDB.updateUnit(
+                                                                    unit: units[
+                                                                        index],
+                                                                    unitName:
+                                                                        unitName);
+                                                                Navigator.pop(
+                                                                    context);
+
+                                                                kSnackBar(
+                                                                  context:
+                                                                      context,
+                                                                  content:
+                                                                      'Unit updated successfully',
+                                                                  update: true,
+                                                                );
+                                                              },
+                                                              buttonText:
+                                                                  'Update'),
+                                                        ],
+                                                      )));
+                                            },
+                                            icon: kIconEdit,
+                                          ),
+                                          IconButton(
+                                              onPressed: () async {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (ctx) => AlertDialog(
+                                                    content: const Text(
+                                                        'Are you sure you want to delete this item?'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: kTextCancel,
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          await unitDB
+                                                              .deleteUnit(
+                                                                  item.id!);
+                                                          Navigator.pop(
+                                                              context);
+
+                                                          kSnackBar(
+                                                            context: context,
+                                                            content:
+                                                                'Unit deleted successfully',
+                                                            delete: true,
+                                                          );
+                                                        },
+                                                        child: kTextDelete,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              icon: kIconDelete)
+                                        ]),
                                   );
                                 },
                                 separatorBuilder: (context, index) =>

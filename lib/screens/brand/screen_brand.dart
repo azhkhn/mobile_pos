@@ -3,7 +3,9 @@
 import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/icons.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/db/db_functions/brand/brand_database.dart';
 import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -26,7 +28,7 @@ class BrandScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(
-        title: 'Brand',
+        title: 'Brands',
       ),
       body: BackgroundContainerWidget(
         child: ItemScreenPaddingWidget(
@@ -110,33 +112,119 @@ class BrandScreen extends StatelessWidget {
                                       ),
                                     ),
                                     title: Text(item.brand),
-                                    trailing: IconButton(
-                                        onPressed: () async {
-                                          showDialog(
-                                            context: context,
-                                            builder: (ctx) => AlertDialog(
-                                              content: const Text(
-                                                  'Are you sure you want to delete this item?'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text('Cancel'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () async {
-                                                    await brandDB
-                                                        .deleteBrand(item.id!);
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text('Delete'),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                        icon: const Icon(Icons.delete)),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () async {
+                                            final _brandController =
+                                                TextEditingController(
+                                                    text: brands[index].brand);
+
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                        content: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        TextFeildWidget(
+                                                          labelText:
+                                                              'Brand Name',
+                                                          controller:
+                                                              _brandController,
+                                                          floatingLabelBehavior:
+                                                              FloatingLabelBehavior
+                                                                  .always,
+                                                          inputBorder:
+                                                              const OutlineInputBorder(),
+                                                          autovalidateMode:
+                                                              AutovalidateMode
+                                                                  .onUserInteraction,
+                                                          isDense: true,
+                                                          validator: (value) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
+                                                              return 'This field is required*';
+                                                            }
+                                                            return null;
+                                                          },
+                                                        ),
+                                                        kHeight5,
+                                                        CustomMaterialBtton(
+                                                            onPressed:
+                                                                () async {
+                                                              final String
+                                                                  brandName =
+                                                                  _brandController
+                                                                      .text
+                                                                      .trim();
+                                                              if (brandName ==
+                                                                  brands[index]
+                                                                      .brand) {
+                                                                return Navigator
+                                                                    .pop(
+                                                                        context);
+                                                              }
+                                                              await brandDB.updateBrand(
+                                                                  brand: brands[
+                                                                      index],
+                                                                  brandName:
+                                                                      brandName);
+                                                              Navigator.pop(
+                                                                  context);
+
+                                                              kSnackBar(
+                                                                context:
+                                                                    context,
+                                                                content:
+                                                                    'Brand updated successfully',
+                                                                update: true,
+                                                              );
+                                                            },
+                                                            buttonText:
+                                                                'Update'),
+                                                      ],
+                                                    )));
+                                          },
+                                          icon: kIconEdit,
+                                        ),
+                                        IconButton(
+                                          onPressed: () async {
+                                            showDialog(
+                                              context: context,
+                                              builder: (ctx) => AlertDialog(
+                                                content: const Text(
+                                                    'Are you sure you want to delete this item?'),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: kTextCancel),
+                                                  TextButton(
+                                                      onPressed: () async {
+                                                        await brandDB
+                                                            .deleteBrand(
+                                                                item.id!);
+                                                        Navigator.pop(context);
+                                                        kSnackBar(
+                                                          context: context,
+                                                          content:
+                                                              'Brand deleted successfully',
+                                                          delete: true,
+                                                        );
+                                                      },
+                                                      child: kTextDelete),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                          icon: kIconDelete,
+                                        ),
+                                      ],
+                                    ),
                                   );
                                 },
                                 separatorBuilder: (context, index) =>

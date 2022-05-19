@@ -30,22 +30,16 @@ class PurchaseReturnSideWidget extends StatelessWidget {
   }) : super(key: key);
 
   //==================== Value Notifiers ====================
-  static final ValueNotifier<List<ItemMasterModel>> selectedProductsNotifier =
-      ValueNotifier([]);
+  static final ValueNotifier<List<ItemMasterModel>> selectedProductsNotifier = ValueNotifier([]);
   static final ValueNotifier<List<String>> subTotalNotifier = ValueNotifier([]);
-  static final ValueNotifier<List<String>> itemTotalVatNotifier =
-      ValueNotifier([]);
-  static final ValueNotifier<List<TextEditingController>> quantityNotifier =
-      ValueNotifier([]);
+  static final ValueNotifier<List<String>> itemTotalVatNotifier = ValueNotifier([]);
+  static final ValueNotifier<List<TextEditingController>> quantityNotifier = ValueNotifier([]);
 
-  static final ValueNotifier<String?> originalInvoiceNumberNotifier =
-      ValueNotifier(null);
-  static final ValueNotifier<int?> originalPurchaseIdNotifier =
-      ValueNotifier(null);
+  static final ValueNotifier<String?> originalInvoiceNumberNotifier = ValueNotifier(null);
+  static final ValueNotifier<int?> originalPurchaseIdNotifier = ValueNotifier(null);
 
   static final ValueNotifier<int?> supplierIdNotifier = ValueNotifier(null);
-  static final ValueNotifier<String?> supplierNameNotifier =
-      ValueNotifier(null);
+  static final ValueNotifier<String?> supplierNameNotifier = ValueNotifier(null);
   static final ValueNotifier<num> totalItemsNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalQuantityNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalAmountNotifier = ValueNotifier(0);
@@ -58,8 +52,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
 
   //========== Database Instances ==========
   static final PurchaseDatabase purchaseDatabase = PurchaseDatabase.instance;
-  static final PurchaseItemsDatabase purchaseItemsDatabase =
-      PurchaseItemsDatabase.instance;
+  static final PurchaseItemsDatabase purchaseItemsDatabase = PurchaseItemsDatabase.instance;
   static final ItemMasterDatabase itemDB = ItemMasterDatabase.instance;
 
   @override
@@ -136,14 +129,13 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                                 style: kText_10_12,
                               ))),
                           suggestionsCallback: (pattern) async {
-                            return SupplierDatabase.instance
-                                .getSupplierSuggestions(pattern);
+                            return SupplierDatabase.instance.getSupplierSuggestions(pattern);
                           },
                           itemBuilder: (context, SupplierModel suggestion) {
                             return Padding(
                               padding: const EdgeInsets.all(10),
                               child: Text(
-                                suggestion.supplier,
+                                suggestion.contactName,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: kText_10_12,
@@ -151,10 +143,10 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                             );
                           },
                           onSuggestionSelected: (SupplierModel suggestion) {
-                            supplierController.text = suggestion.supplier;
-                            supplierNameNotifier.value = suggestion.supplier;
+                            supplierController.text = suggestion.contactName;
+                            supplierNameNotifier.value = suggestion.contactName;
                             supplierIdNotifier.value = suggestion.id;
-                            log(suggestion.company);
+                            log(suggestion.supplierName);
                           },
                         );
                       }),
@@ -202,14 +194,9 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                           hintStyle: kText_10_12,
                           border: const OutlineInputBorder(),
                         )),
-                    noItemsFoundBuilder: (context) => SizedBox(
-                        height: 50,
-                        child: Center(
-                            child:
-                                Text('No Invoice Found!', style: kText_10_12))),
+                    noItemsFoundBuilder: (context) => SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText_10_12))),
                     suggestionsCallback: (pattern) async {
-                      return await purchaseDatabase
-                          .getPurchaseByInvoiceSuggestions(pattern);
+                      return await purchaseDatabase.getPurchaseByInvoiceSuggestions(pattern);
                     },
                     itemBuilder: (context, PurchaseModel suggestion) {
                       return Padding(
@@ -225,8 +212,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                     onSuggestionSelected: (PurchaseModel purchase) async {
                       resetPurchaseReturn();
                       purchaseInvoiceController.text = purchase.invoiceNumber!;
-                      originalInvoiceNumberNotifier.value =
-                          purchase.invoiceNumber!;
+                      originalInvoiceNumberNotifier.value = purchase.invoiceNumber!;
                       originalPurchaseIdNotifier.value = purchase.id;
                       await getPurchaseDetails(purchase);
 
@@ -255,9 +241,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                                 context: context,
                                 isScrollControlled: true,
                                 backgroundColor: kTransparentColor,
-                                shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20))),
+                                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                                 builder: (context) => DismissibleWidget(
                                       context: context,
                                       child: CustomBottomSheetWidget(
@@ -266,10 +250,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                                       ),
                                     ));
                           } else {
-                            kSnackBar(
-                                context: context,
-                                content:
-                                    'Please select any Supplier to show details!');
+                            kSnackBar(context: context, content: 'Please select any Supplier to show details!');
                           }
                         },
                         icon: const Icon(
@@ -294,19 +275,15 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                         onPressed: () async {
                           // DeviceUtil.isLandscape = false;
                           // await DeviceUtil.toPortrait();
-                          final id = await Navigator.pushNamed(
-                              context, routeManageSupplier,
-                              arguments: true);
+                          final id = await Navigator.pushNamed(context, routeManageSupplier, arguments: true);
 
                           if (id != null) {
-                            final addedSupplier = await SupplierDatabase
-                                .instance
-                                .getSupplierById(id as int);
+                            final addedSupplier = await SupplierDatabase.instance.getSupplierById(id as int);
 
-                            supplierController.text = addedSupplier.supplier;
-                            supplierNameNotifier.value = addedSupplier.supplier;
+                            supplierController.text = addedSupplier.contactName;
+                            supplierNameNotifier.value = addedSupplier.contactName;
                             supplierIdNotifier.value = addedSupplier.id;
-                            log(addedSupplier.company);
+                            log(addedSupplier.supplierName);
                           }
 
                           // await DeviceUtil.toLandscape();
@@ -330,8 +307,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
               child: SingleChildScrollView(
                 child: ValueListenableBuilder(
                   valueListenable: selectedProductsNotifier,
-                  builder:
-                      (context, List<ItemMasterModel> selectedProducts, child) {
+                  builder: (context, List<ItemMasterModel> selectedProducts, child) {
                     return Table(
                       columnWidths: const {
                         0: FractionColumnWidth(0.30),
@@ -344,20 +320,17 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                       children: List<TableRow>.generate(
                         selectedProducts.length,
                         (index) {
-                          final ItemMasterModel _product =
-                              selectedProducts[index];
+                          final ItemMasterModel _product = selectedProducts[index];
                           return TableRow(children: [
                             Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
                               color: Colors.white,
                               height: 30,
                               alignment: Alignment.centerLeft,
                               child: AutoSizeText(
                                 _product.itemName,
                                 softWrap: true,
-                                style: TextStyle(
-                                    fontSize: DeviceUtil.isTablet ? 10 : 7),
+                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
                                 overflow: TextOverflow.ellipsis,
                                 minFontSize: 7,
                                 maxFontSize: 10,
@@ -365,30 +338,23 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
                               color: Colors.white,
                               height: 30,
                               alignment: Alignment.center,
                               child: AutoSizeText(
                                 _product.vatMethod == 'Exclusive'
-                                    ? Converter.currency
-                                        .format(num.parse(_product.itemCost))
-                                    : Converter.currency.format(
-                                        getExclusiveAmount(
-                                            itemCost: _product.itemCost,
-                                            vatRate: _product.vatRate)),
+                                    ? Converter.currency.format(num.parse(_product.itemCost))
+                                    : Converter.currency.format(getExclusiveAmount(itemCost: _product.itemCost, vatRate: _product.vatRate)),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: DeviceUtil.isTablet ? 10 : 7),
+                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
                                 minFontSize: 7,
                                 maxFontSize: 10,
                               ),
                             ),
                             Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
                               color: Colors.white,
                               height: 30,
                               alignment: Alignment.topCenter,
@@ -400,36 +366,27 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                                 decoration: const InputDecoration(
                                   border: InputBorder.none,
                                   isDense: true,
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 10),
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10),
                                 ),
-                                style: TextStyle(
-                                    fontSize: DeviceUtil.isTablet ? 10 : 7,
-                                    color: kBlack),
+                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7, color: kBlack),
                                 onChanged: (value) {
-                                  onItemQuantityChanged(
-                                      value, selectedProducts, index);
+                                  onItemQuantityChanged(value, selectedProducts, index);
                                 },
                               ),
                             ),
                             Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                 color: Colors.white,
                                 height: 30,
                                 alignment: Alignment.center,
                                 child: ValueListenableBuilder(
                                     valueListenable: subTotalNotifier,
-                                    builder: (context, List<String> subTotal,
-                                        child) {
+                                    builder: (context, List<String> subTotal, child) {
                                       return AutoSizeText(
-                                        Converter.currency.format(
-                                            num.tryParse(subTotal[index])),
+                                        Converter.currency.format(num.tryParse(subTotal[index])),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontSize:
-                                                DeviceUtil.isTablet ? 10 : 7),
+                                        style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
                                         minFontSize: 7,
                                         maxFontSize: 10,
                                       );
@@ -479,8 +436,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
   }
 
   //==================== On Item Quantity Changed ====================
-  void onItemQuantityChanged(
-      String value, List<ItemMasterModel> selectedProducts, int index) {
+  void onItemQuantityChanged(String value, List<ItemMasterModel> selectedProducts, int index) {
     final qty = num.tryParse(value);
     if (qty != null) {
       getTotalQuantity();
@@ -496,8 +452,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     final cost = num.tryParse(selectedProducts[index].itemCost);
     final vatRate = selectedProducts[index].vatRate;
     if (selectedProducts[index].vatMethod == 'Inclusive') {
-      final _exclusiveCost = getExclusiveAmount(
-          itemCost: selectedProducts[index].itemCost, vatRate: vatRate);
+      final _exclusiveCost = getExclusiveAmount(itemCost: selectedProducts[index].itemCost, vatRate: vatRate);
       final _subTotal = _exclusiveCost * qty;
       subTotalNotifier.value[index] = '$_subTotal';
     } else {
@@ -513,8 +468,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     num? _totalQuantiy = 0;
 
     for (var i = 0; i < selectedProductsNotifier.value.length; i++) {
-      _totalQuantiy =
-          _totalQuantiy! + num.tryParse(quantityNotifier.value[i].value.text)!;
+      _totalQuantiy = _totalQuantiy! + num.tryParse(quantityNotifier.value[i].value.text)!;
     }
     await Future.delayed(const Duration(milliseconds: 0));
     totalQuantityNotifier.value = _totalQuantiy!;
@@ -600,8 +554,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
 
 //==================== Get Total VAT ====================
   void getTotalPayable() {
-    final num _totalPayable =
-        totalAmountNotifier.value + totalVatNotifier.value;
+    final num _totalPayable = totalAmountNotifier.value + totalVatNotifier.value;
     totalPayableNotifier.value = _totalPayable;
     log('Total Payable == $_totalPayable');
   }
@@ -649,13 +602,11 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     supplierIdNotifier.value = purchase.supplierId;
     supplierNameNotifier.value = purchase.supplierName;
 
-    final purchaseItems =
-        await purchaseItemsDatabase.getPurchaseItemByPurchaseId(purchase.id!);
+    final purchaseItems = await purchaseItemsDatabase.getPurchaseItemByPurchaseId(purchase.id!);
 
     for (var i = 0; i < purchaseItems.length; i++) {
       final purchasedItem = purchaseItems[i];
-      final items =
-          await itemDB.getProductById(int.parse(purchasedItem.productId));
+      final items = await itemDB.getProductById(int.parse(purchasedItem.productId));
       final item = items.first;
 
       log('item Id == ' '${item.id}');
@@ -696,8 +647,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
         itemImage: item.itemImage,
       ));
 
-      quantityNotifier.value
-          .add(TextEditingController(text: purchasedItem.quantity));
+      quantityNotifier.value.add(TextEditingController(text: purchasedItem.quantity));
 
       subTotalNotifier.value.add(purchasedItem.subTotal);
       itemTotalVatNotifier.value.add(purchasedItem.vatTotal);

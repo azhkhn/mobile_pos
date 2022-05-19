@@ -25,9 +25,7 @@ class PurchaseListFilter extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   //========== Lists ==========
-  List<PurchaseModel> purchaseList = [],
-      purchaseBySupllierList = [],
-      purchaseByInvoiceList = [];
+  List<PurchaseModel> purchaseList = [], purchaseBySupllierList = [], purchaseByInvoiceList = [];
 
   //========== TextEditing Controllers ==========
   final TextEditingController _invoiceController = TextEditingController();
@@ -77,8 +75,7 @@ class PurchaseListFilter extends StatelessWidget {
                               if (purchaseList.isNotEmpty) {
                                 purchaseNotifier.value = purchaseList;
                               } else {
-                                purchaseList =
-                                    await purchaseDB.getAllPurchases();
+                                purchaseList = await purchaseDB.getAllPurchases();
                                 purchaseNotifier.value = purchaseList;
                               }
                             }
@@ -90,10 +87,7 @@ class PurchaseListFilter extends StatelessWidget {
                       hintStyle: const TextStyle(fontSize: 12),
                       border: const OutlineInputBorder(),
                     )),
-                noItemsFoundBuilder: (context) => const SizedBox(
-                    height: 50,
-                    child: Center(
-                        child: Text('No Invoice Found!', style: kText12))),
+                noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText12))),
                 suggestionsCallback: (pattern) async {
                   // if (purchaseList.isNotEmpty) {
                   //   log('old again!!');
@@ -103,8 +97,7 @@ class PurchaseListFilter extends StatelessWidget {
                   //       ].contains(pattern));
                   // }
 
-                  return await purchaseDB
-                      .getPurchaseByInvoiceSuggestions(pattern);
+                  return await purchaseDB.getPurchaseByInvoiceSuggestions(pattern);
                 },
                 itemBuilder: (context, PurchaseModel suggestion) {
                   return ListTile(
@@ -159,8 +152,7 @@ class PurchaseListFilter extends StatelessWidget {
                               if (purchaseList.isNotEmpty) {
                                 purchaseNotifier.value = purchaseList;
                               } else {
-                                purchaseList =
-                                    await purchaseDB.getAllPurchases();
+                                purchaseList = await purchaseDB.getAllPurchases();
                                 purchaseNotifier.value = purchaseList;
                               }
                             }
@@ -172,17 +164,14 @@ class PurchaseListFilter extends StatelessWidget {
                       hintStyle: const TextStyle(fontSize: 12),
                       border: const OutlineInputBorder(),
                     )),
-                noItemsFoundBuilder: (context) => const SizedBox(
-                    height: 50,
-                    child: Center(
-                        child: Text('No Supplier Found!', style: kText12))),
+                noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Supplier Found!', style: kText12))),
                 suggestionsCallback: (pattern) async {
                   return await supplierDB.getSupplierSuggestions(pattern);
                 },
                 itemBuilder: (context, SupplierModel suggestion) {
                   return ListTile(
                     title: AutoSizeText(
-                      suggestion.supplier,
+                      suggestion.contactName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(fontSize: _isTablet ? 12 : 10),
@@ -193,10 +182,9 @@ class PurchaseListFilter extends StatelessWidget {
                 },
                 onSuggestionSelected: (SupplierModel suggestion) async {
                   _invoiceController.clear();
-                  _supplierController.text = suggestion.supplier;
+                  _supplierController.text = suggestion.contactName;
                   final supplierId = suggestion.id;
-                  purchaseBySupllierList =
-                      await purchaseDB.getPurchasesBySupplierId('$supplierId');
+                  purchaseBySupllierList = await purchaseDB.getPurchasesBySupplierId('$supplierId');
                   purchaseNotifier.value = purchaseBySupllierList;
                 },
               ),

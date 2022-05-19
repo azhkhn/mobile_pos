@@ -4,7 +4,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/icons.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
 import 'package:shop_ez/model/vat/vat_model.dart';
@@ -162,42 +164,116 @@ class VatScreen extends StatelessWidget {
                                         backgroundColor: kTransparentColor,
                                         child: Text(
                                           '${index + 1}'.toString(),
-                                          style: const TextStyle(
-                                              color: kTextColorBlack),
+                                          style: const TextStyle(color: kTextColorBlack),
                                         ),
                                       ),
                                       title: Text(vat.name),
-                                      trailing: IconButton(
-                                          onPressed: () async {
-                                            showDialog(
-                                              context: context,
-                                              builder: (ctx) => AlertDialog(
-                                                content: const Text(
-                                                    'Are you sure you want to delete this item?'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text('Cancel'),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            onPressed: () async {
+                                              final _vatNameController = TextEditingController(text: vats[index].name);
+                                              final _vatRateController = TextEditingController(text: vats[index].rate.toString());
+
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) => AlertDialog(
+                                                          content: Column(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          TextFeildWidget(
+                                                            labelText: 'VAT Name',
+                                                            controller: _vatNameController,
+                                                            textInputType: TextInputType.text,
+                                                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                            inputBorder: const OutlineInputBorder(),
+                                                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                                                            isDense: true,
+                                                            validator: (value) {
+                                                              if (value == null || value.isEmpty) {
+                                                                return 'This field is required*';
+                                                              }
+                                                              return null;
+                                                            },
+                                                          ),
+                                                          kHeight10,
+                                                          TextFeildWidget(
+                                                            labelText: 'VAT Rate',
+                                                            controller: _vatRateController,
+                                                            textInputType: TextInputType.number,
+                                                            inputFormatters: Converter.digitsOnly,
+                                                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                            inputBorder: const OutlineInputBorder(),
+                                                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                                                            isDense: true,
+                                                            validator: (value) {
+                                                              if (value == null || value.isEmpty) {
+                                                                return 'This field is required*';
+                                                              }
+                                                              return null;
+                                                            },
+                                                          ),
+                                                          kHeight5,
+                                                          CustomMaterialBtton(
+                                                              onPressed: () async {
+                                                                final String vatName = _vatNameController.text.trim();
+                                                                final int vatRate = int.parse(_vatRateController.text.trim());
+
+                                                                if (vatName == vats[index].name && vatRate == vats[index].rate) {
+                                                                  return Navigator.pop(context);
+                                                                }
+                                                                await vatDB.updateVAT(vat: vats[index], vatName: vatName, vatRate: vatRate);
+                                                                Navigator.pop(context);
+
+                                                                kSnackBar(
+                                                                  context: context,
+                                                                  content: 'VAT updated successfully',
+                                                                  update: true,
+                                                                );
+                                                              },
+                                                              buttonText: 'Update'),
+                                                        ],
+                                                      )));
+                                            },
+                                            icon: kIconEdit,
+                                          ),
+                                          IconButton(
+                                              onPressed: () async {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (ctx) => AlertDialog(
+                                                    content: const Text('Are you sure you want to delete this item?'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(context);
+                                                        },
+                                                        child: kTextCancel,
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          await vatDB.deleteVAT(vat.id!);
+                                                          Navigator.pop(context);
+
+                                                          kSnackBar(
+                                                            context: context,
+                                                            content: 'VAT deleted successfully',
+                                                            delete: true,
+                                                          );
+                                                        },
+                                                        child: kTextDelete,
+                                                      ),
+                                                    ],
                                                   ),
-                                                  TextButton(
-                                                    onPressed: () async {
-                                                      await vatDB
-                                                          .deleteVAT(vat.id!);
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text('Delete'),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                          icon: const Icon(Icons.delete)),
+                                                );
+                                              },
+                                              icon: kIconDelete),
+                                        ],
+                                      ),
                                     );
                                   },
-                                  separatorBuilder: (context, index) =>
-                                      const Divider(
+                                  separatorBuilder: (context, index) => const Divider(
                                     thickness: 1,
                                   ),
                                   itemCount: vats.length,
@@ -228,21 +304,18 @@ class VatScreen extends StatelessWidget {
       rate = int.parse(_rateController.text.trim());
       type = _vatType;
 
-      final _vatModel =
-          VatModel(name: name, code: code, rate: rate, type: type);
+      final _vatModel = VatModel(name: name, code: code, rate: rate, type: type);
 
       try {
         await vatDB.createVAT(_vatModel);
         log('VAT Created Successfully');
 
-        kSnackBar(
-            context: context,
-            success: true,
-            content: 'Vat added successfully!');
+        _formState.reset();
+
+        kSnackBar(context: context, success: true, content: 'Vat added successfully!');
       } catch (e) {
         if (e == 'VAT Already Exist!') {
-          kSnackBar(
-              context: context, error: true, content: 'VAT already exist!');
+          kSnackBar(context: context, error: true, content: 'VAT already exist!');
           return;
         }
         log(e.toString());

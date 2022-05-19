@@ -26,17 +26,13 @@ class PurchaseSideWidget extends StatelessWidget {
   }) : super(key: key);
 
   //==================== Value Notifiers ====================
-  static final ValueNotifier<List<ItemMasterModel>> selectedProductsNotifier =
-      ValueNotifier([]);
+  static final ValueNotifier<List<ItemMasterModel>> selectedProductsNotifier = ValueNotifier([]);
   static final ValueNotifier<List<String>> subTotalNotifier = ValueNotifier([]);
-  static final ValueNotifier<List<String>> itemTotalVatNotifier =
-      ValueNotifier([]);
-  static final ValueNotifier<List<TextEditingController>> quantityNotifier =
-      ValueNotifier([]);
+  static final ValueNotifier<List<String>> itemTotalVatNotifier = ValueNotifier([]);
+  static final ValueNotifier<List<TextEditingController>> quantityNotifier = ValueNotifier([]);
 
   static final ValueNotifier<int?> supplierIdNotifier = ValueNotifier(null);
-  static final ValueNotifier<String?> supplierNameNotifier =
-      ValueNotifier(null);
+  static final ValueNotifier<String?> supplierNameNotifier = ValueNotifier(null);
   static final ValueNotifier<num> totalItemsNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalQuantityNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalAmountNotifier = ValueNotifier(0);
@@ -106,31 +102,27 @@ class PurchaseSideWidget extends StatelessWidget {
                           hintStyle: const TextStyle(fontSize: 12),
                           border: const OutlineInputBorder(),
                         )),
-                    noItemsFoundBuilder: (context) => const SizedBox(
-                        height: 50,
-                        child: Center(child: Text('No supplier Found!'))),
+                    noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No supplier Found!'))),
                     suggestionsCallback: (pattern) async {
-                      return SupplierDatabase.instance
-                          .getSupplierSuggestions(pattern);
+                      return SupplierDatabase.instance.getSupplierSuggestions(pattern);
                     },
                     itemBuilder: (context, SupplierModel suggestion) {
                       return ListTile(
                         title: AutoSizeText(
-                          suggestion.supplier,
+                          suggestion.contactName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: DeviceUtil.isTablet ? 12 : 10),
+                          style: TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10),
                           minFontSize: 10,
                           maxFontSize: 12,
                         ),
                       );
                     },
                     onSuggestionSelected: (SupplierModel suggestion) {
-                      supplierController.text = suggestion.supplier;
-                      supplierNameNotifier.value = suggestion.supplier;
+                      supplierController.text = suggestion.contactName;
+                      supplierNameNotifier.value = suggestion.contactName;
                       supplierIdNotifier.value = suggestion.id;
-                      log(suggestion.company);
+                      log(suggestion.supplierName);
                     },
                   ),
                 ),
@@ -187,9 +179,7 @@ class PurchaseSideWidget extends StatelessWidget {
                                 context: context,
                                 isScrollControlled: true,
                                 backgroundColor: kTransparentColor,
-                                shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20))),
+                                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                                 builder: (context) => DismissibleWidget(
                                       context: context,
                                       child: CustomBottomSheetWidget(
@@ -198,10 +188,7 @@ class PurchaseSideWidget extends StatelessWidget {
                                       ),
                                     ));
                           } else {
-                            kSnackBar(
-                                context: context,
-                                content:
-                                    'Please select any Supplier to show details!');
+                            kSnackBar(context: context, content: 'Please select any Supplier to show details!');
                           }
                         },
                         icon: const Icon(
@@ -226,19 +213,15 @@ class PurchaseSideWidget extends StatelessWidget {
                         onPressed: () async {
                           // DeviceUtil.isLandscape = false;
                           // await DeviceUtil.toPortrait();
-                          final id = await Navigator.pushNamed(
-                              context, routeManageSupplier,
-                              arguments: true);
+                          final id = await Navigator.pushNamed(context, routeManageSupplier, arguments: true);
 
                           if (id != null) {
-                            final addedSupplier = await SupplierDatabase
-                                .instance
-                                .getSupplierById(id as int);
+                            final addedSupplier = await SupplierDatabase.instance.getSupplierById(id as int);
 
-                            supplierController.text = addedSupplier.supplier;
-                            supplierNameNotifier.value = addedSupplier.supplier;
+                            supplierController.text = addedSupplier.contactName;
+                            supplierNameNotifier.value = addedSupplier.contactName;
                             supplierIdNotifier.value = addedSupplier.id;
-                            log(addedSupplier.company);
+                            log(addedSupplier.supplierName);
                           }
 
                           // await DeviceUtil.toLandscape();
@@ -262,8 +245,7 @@ class PurchaseSideWidget extends StatelessWidget {
               child: SingleChildScrollView(
                 child: ValueListenableBuilder(
                   valueListenable: selectedProductsNotifier,
-                  builder:
-                      (context, List<ItemMasterModel> selectedProducts, child) {
+                  builder: (context, List<ItemMasterModel> selectedProducts, child) {
                     return Table(
                       columnWidths: const {
                         0: FractionColumnWidth(0.30),
@@ -276,20 +258,17 @@ class PurchaseSideWidget extends StatelessWidget {
                       children: List<TableRow>.generate(
                         selectedProducts.length,
                         (index) {
-                          final ItemMasterModel _product =
-                              selectedProducts[index];
+                          final ItemMasterModel _product = selectedProducts[index];
                           return TableRow(children: [
                             Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
                               color: Colors.white,
                               height: 30,
                               alignment: Alignment.centerLeft,
                               child: AutoSizeText(
                                 _product.itemName,
                                 softWrap: true,
-                                style: TextStyle(
-                                    fontSize: DeviceUtil.isTablet ? 10 : 7),
+                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
                                 overflow: TextOverflow.ellipsis,
                                 minFontSize: 7,
                                 maxFontSize: 10,
@@ -297,30 +276,23 @@ class PurchaseSideWidget extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
                               color: Colors.white,
                               height: 30,
                               alignment: Alignment.center,
                               child: AutoSizeText(
                                 _product.vatMethod == 'Exclusive'
-                                    ? Converter.currency
-                                        .format(num.parse(_product.itemCost))
-                                    : Converter.currency.format(
-                                        getExclusiveAmount(
-                                            itemCost: _product.itemCost,
-                                            vatRate: _product.vatRate)),
+                                    ? Converter.currency.format(num.parse(_product.itemCost))
+                                    : Converter.currency.format(getExclusiveAmount(itemCost: _product.itemCost, vatRate: _product.vatRate)),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: DeviceUtil.isTablet ? 10 : 7),
+                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
                                 minFontSize: 7,
                                 maxFontSize: 10,
                               ),
                             ),
                             Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
                               color: Colors.white,
                               height: 30,
                               alignment: Alignment.topCenter,
@@ -332,36 +304,27 @@ class PurchaseSideWidget extends StatelessWidget {
                                 decoration: const InputDecoration(
                                   border: InputBorder.none,
                                   isDense: true,
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 10),
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10),
                                 ),
-                                style: TextStyle(
-                                    fontSize: DeviceUtil.isTablet ? 10 : 7,
-                                    color: kBlack),
+                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7, color: kBlack),
                                 onChanged: (value) {
-                                  onItemQuantityChanged(
-                                      value, selectedProducts, index);
+                                  onItemQuantityChanged(value, selectedProducts, index);
                                 },
                               ),
                             ),
                             Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                 color: Colors.white,
                                 height: 30,
                                 alignment: Alignment.center,
                                 child: ValueListenableBuilder(
                                     valueListenable: subTotalNotifier,
-                                    builder: (context, List<String> subTotal,
-                                        child) {
+                                    builder: (context, List<String> subTotal, child) {
                                       return AutoSizeText(
-                                        Converter.currency.format(
-                                            num.tryParse(subTotal[index])),
+                                        Converter.currency.format(num.tryParse(subTotal[index])),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontSize:
-                                                DeviceUtil.isTablet ? 10 : 7),
+                                        style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
                                         minFontSize: 7,
                                         maxFontSize: 10,
                                       );
@@ -411,8 +374,7 @@ class PurchaseSideWidget extends StatelessWidget {
   }
 
   //==================== On Item Quantity Changed ====================
-  void onItemQuantityChanged(
-      String value, List<ItemMasterModel> selectedProducts, int index) {
+  void onItemQuantityChanged(String value, List<ItemMasterModel> selectedProducts, int index) {
     final qty = num.tryParse(value);
     if (qty != null) {
       getTotalQuantity();
@@ -428,8 +390,7 @@ class PurchaseSideWidget extends StatelessWidget {
     final cost = num.tryParse(selectedProducts[index].itemCost);
     final vatRate = selectedProducts[index].vatRate;
     if (selectedProducts[index].vatMethod == 'Inclusive') {
-      final _exclusiveCost = getExclusiveAmount(
-          itemCost: selectedProducts[index].itemCost, vatRate: vatRate);
+      final _exclusiveCost = getExclusiveAmount(itemCost: selectedProducts[index].itemCost, vatRate: vatRate);
       final _subTotal = _exclusiveCost * qty;
       subTotalNotifier.value[index] = '$_subTotal';
     } else {
@@ -445,8 +406,7 @@ class PurchaseSideWidget extends StatelessWidget {
     num? _totalQuantiy = 0;
 
     for (var i = 0; i < selectedProductsNotifier.value.length; i++) {
-      _totalQuantiy =
-          _totalQuantiy! + num.tryParse(quantityNotifier.value[i].value.text)!;
+      _totalQuantiy = _totalQuantiy! + num.tryParse(quantityNotifier.value[i].value.text)!;
     }
     await Future.delayed(const Duration(milliseconds: 0));
     totalQuantityNotifier.value = _totalQuantiy!;
@@ -533,8 +493,7 @@ class PurchaseSideWidget extends StatelessWidget {
 
 //==================== Get Total VAT ====================
   void getTotalPayable() {
-    final num _totalPayable =
-        totalAmountNotifier.value + totalVatNotifier.value;
+    final num _totalPayable = totalAmountNotifier.value + totalVatNotifier.value;
     totalPayableNotifier.value = _totalPayable;
     log('Total Payable == $_totalPayable');
   }

@@ -32,6 +32,23 @@ class BrandDatabase {
     }
   }
 
+//========== Update Brand ==========
+  Future<void> updateBrand(
+      {required BrandModel brand, required String brandName}) async {
+    final db = await dbInstance.database;
+    final updatedBrand = brand.copyWith(brand: brandName);
+    await db.update(
+      tableBrand,
+      updatedBrand.toJson(),
+      where: '${BrandFields.id} = ?',
+      whereArgs: [brand.id],
+    );
+    log('Brand ${brand.id} Updated Successfully');
+    final index = brandNotifier.value.indexOf(brand);
+    brandNotifier.value[index] = updatedBrand;
+    brandNotifier.notifyListeners();
+  }
+
 //========== Delete Brand ==========
   Future<void> deleteBrand(int id) async {
     final db = await dbInstance.database;

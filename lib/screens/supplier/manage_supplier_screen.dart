@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/utils/text/validators.dart';
+import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -23,10 +23,10 @@ class ScreenManageSupplier extends StatelessWidget {
 
   static late Size _screenSize;
   final _formKey = GlobalKey<FormState>();
-  final _companyController = TextEditingController();
-  final _companyArabicController = TextEditingController();
-  final _supplierController = TextEditingController();
-  final _supplierArabicController = TextEditingController();
+  final _supplierNameController = TextEditingController();
+  final _supplierNameArabicController = TextEditingController();
+  final _contactNameController = TextEditingController();
+  final _contactNumberController = TextEditingController();
   final _vatNumberController = TextEditingController();
   final _emailController = TextEditingController();
   final _addressController = TextEditingController();
@@ -61,8 +61,8 @@ class ScreenManageSupplier extends StatelessWidget {
                 children: [
                   //========== Company Field ==========
                   TextFeildWidget(
-                    controller: _companyController,
-                    labelText: 'Company *',
+                    controller: _supplierNameController,
+                    labelText: 'Supplier Name *',
                     textInputType: TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -75,9 +75,9 @@ class ScreenManageSupplier extends StatelessWidget {
 
                   //========== Company Arabic Field ==========
                   TextFeildWidget(
-                    controller: _companyArabicController,
+                    controller: _supplierNameArabicController,
                     textDirection: TextDirection.rtl,
-                    labelText: 'Company Arabic *',
+                    labelText: 'Supplier Name Arabic *',
                     textInputType: TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -90,8 +90,8 @@ class ScreenManageSupplier extends StatelessWidget {
 
                   //========== Supplier Field ==========
                   TextFeildWidget(
-                    controller: _supplierController,
-                    labelText: 'Supplier Name *',
+                    controller: _contactNameController,
+                    labelText: 'Contact Name *',
                     textInputType: TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -104,9 +104,9 @@ class ScreenManageSupplier extends StatelessWidget {
 
                   //========== Supplier Arabic Field ==========
                   TextFeildWidget(
-                    controller: _supplierArabicController,
+                    controller: _contactNumberController,
                     textDirection: TextDirection.rtl,
-                    labelText: 'Supplier Name Arabic *',
+                    labelText: 'Contact Number *',
                     textInputType: TextInputType.text,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -233,11 +233,8 @@ class ScreenManageSupplier extends StatelessWidget {
 
                   //========== Submit Button ==========
                   Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: _screenSize.width / 10),
-                    child: CustomMaterialBtton(
-                        buttonText: 'Submit',
-                        onPressed: () => addSuppler(context: context)),
+                    padding: EdgeInsets.symmetric(horizontal: _screenSize.width / 10),
+                    child: CustomMaterialBtton(buttonText: 'Submit', onPressed: () => addSuppler(context: context)),
                   ),
                   kHeight10
                 ],
@@ -251,10 +248,10 @@ class ScreenManageSupplier extends StatelessWidget {
 
   //========== Add Supplier ==========
   Future<void> addSuppler({context}) async {
-    final String company,
-        companyArabic,
-        supplier,
-        supplierArabic,
+    final String supplierName,
+        supplierNameArabic,
+        contactName,
+        contactNumber,
         vatNumber,
         email,
         address,
@@ -270,10 +267,10 @@ class ScreenManageSupplier extends StatelessWidget {
     final _formState = _formKey.currentState!;
     if (_formState.validate()) {
       //retieving values from TextFields to String
-      company = _companyController.text;
-      companyArabic = _companyArabicController.text;
-      supplier = _supplierController.text;
-      supplierArabic = _supplierArabicController.text;
+      supplierName = _supplierNameController.text;
+      supplierNameArabic = _supplierNameArabicController.text;
+      contactName = _contactNameController.text;
+      contactNumber = _contactNumberController.text;
       vatNumber = _vatNumberController.text;
       email = _emailController.text;
       address = _addressController.text;
@@ -287,10 +284,10 @@ class ScreenManageSupplier extends StatelessWidget {
       poBox = _poBoxController.text;
 
       final _supplierModel = SupplierModel(
-        company: company,
-        companyArabic: companyArabic,
-        supplier: supplier,
-        supplierArabic: supplierArabic,
+        supplierName: supplierName,
+        supplierNameArabic: supplierNameArabic,
+        contactName: contactName,
+        contactNumber: contactNumber,
         vatNumber: vatNumber,
         email: email,
         address: address,
@@ -305,20 +302,14 @@ class ScreenManageSupplier extends StatelessWidget {
       );
       try {
         final id = await supplierDB.createSupplier(_supplierModel);
-        log('Supplier $supplier Added!');
-        kSnackBar(
-            context: context,
-            success: true,
-            content: 'Supplier "$supplier" added successfully!');
+        log('Supplier $supplierName Added!');
+        kSnackBar(context: context, success: true, content: 'Supplier "$supplierName" added successfully!');
         if (purchase) {
           Navigator.pop(context, id);
         }
       } catch (e) {
-        log('Commpany $company Already Exist!');
-        kSnackBar(
-            context: context,
-            error: true,
-            content: 'Company "$company" already exist!');
+        log('Supplier $supplierName Already Exist!');
+        kSnackBar(context: context, error: true, content: 'Supplier "$supplierName" already exist!');
       }
     }
   }

@@ -40,32 +40,17 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path,
-        version: 5, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 1, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
 
-    const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    const textType = 'TEXT NOT NULL';
+    // const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    // const textType = 'TEXT NOT NULL';
     // const textNull = 'TEXT';
     // const intNull = 'INTEGER';
     // const intType = 'INTEGER NOT NULL';
-
-    await db.execute("DROP TABLE IF EXISTS $tableExpense");
-
-    //========== Table Expense ==========
-    await db.execute('''CREATE TABLE $tableExpense (
-      ${ExpenseFields.id} $idAuto,
-      ${ExpenseFields.expenseCategory} $textType,
-      ${ExpenseFields.expenseTitle} $textType,
-      ${ExpenseFields.amount} $textType,
-      ${ExpenseFields.date} $textType,
-      ${ExpenseFields.note} $textType,
-      ${ExpenseFields.voucherNumber} $textType,
-      ${ExpenseFields.payBy} $textType,
-      ${ExpenseFields.documents} $textType)''');
 
     // await db.execute("DROP TABLE IF EXISTS $tableSales");
     // await db.execute("DROP TABLE IF EXISTS $tableSalesItems");
@@ -80,33 +65,16 @@ class EzDatabase {
     //    "ALTER TABLE TABLE_NAME ADD COLUMN COLUMN_NAME $textType DEFAULT ''");
     //
     //    await db.rawQuery('DROP TABLE IF EXISTS TABLE_NAME');
-    // await db.execute("ALTER TABLE $tableItemMaster RENAME TO items_old");
+    // await db.execute("ALTER TABLE $TABLE_NAME RENAME TO TABLE_NAME_COPY");
 
     // //========== Table Item-Master ==========
-    // await db.execute('''CREATE TABLE $tableItemMaster (
+    // await db.execute('''CREATE TABLE $TABLE_NAME (
     // ${ItemMasterFields.id} $idAuto,
     // ${ItemMasterFields.productType} $textType,
-    // ${ItemMasterFields.itemName} $textType,
-    // ${ItemMasterFields.itemNameArabic} $textType,
-    // ${ItemMasterFields.itemCode} $textType,
-    // ${ItemMasterFields.itemCategory} $textType,
-    // ${ItemMasterFields.itemSubCategory} $textType,
-    // ${ItemMasterFields.itemBrand} $textType,
-    // ${ItemMasterFields.itemCost} $textType,
-    // ${ItemMasterFields.sellingPrice} $textType,
-    // ${ItemMasterFields.secondarySellingPrice} $textType,
-    // ${ItemMasterFields.vatId} $textType,
-    // ${ItemMasterFields.vatRate} $intType,
-    // ${ItemMasterFields.productVAT} $textType,
-    // ${ItemMasterFields.unit} $textType,
-    // ${ItemMasterFields.expiryDate} $textType,
-    // ${ItemMasterFields.openingStock} $textType,
-    // ${ItemMasterFields.vatMethod} $textType,
-    // ${ItemMasterFields.alertQuantity} $textType,
-    // ${ItemMasterFields.itemImage} $textType)''');
+    // ${ItemMasterFields.itemName} $textType)''');
 
     // await db.execute(
-    //     "INSERT INTO $tableItemMaster (${ItemMasterFields.id},${ItemMasterFields.productType},${ItemMasterFields.itemName},${ItemMasterFields.itemNameArabic},${ItemMasterFields.itemCode},${ItemMasterFields.itemCategory},${ItemMasterFields.itemSubCategory},${ItemMasterFields.itemBrand},${ItemMasterFields.itemCost},${ItemMasterFields.sellingPrice},${ItemMasterFields.secondarySellingPrice},${ItemMasterFields.vatId},${ItemMasterFields.vatRate},${ItemMasterFields.productVAT},${ItemMasterFields.unit},${ItemMasterFields.expiryDate},${ItemMasterFields.openingStock},${ItemMasterFields.vatMethod},${ItemMasterFields.alertQuantity},${ItemMasterFields.itemImage}) SELECT ${ItemMasterFields.id},${ItemMasterFields.productType},${ItemMasterFields.itemName},${ItemMasterFields.itemNameArabic},${ItemMasterFields.itemCode},${ItemMasterFields.itemCategory},${ItemMasterFields.itemSubCategory},${ItemMasterFields.itemBrand},${ItemMasterFields.itemCost},${ItemMasterFields.sellingPrice},${ItemMasterFields.secondarySellingPrice},${ItemMasterFields.vatId},${ItemMasterFields.vatRate},${ItemMasterFields.productVAT},${ItemMasterFields.unit},${ItemMasterFields.expiryDate},${ItemMasterFields.openingStock},${ItemMasterFields.vatMethod},${ItemMasterFields.alertQuantity},${ItemMasterFields.itemImage} FROM items_old");
+    //     "INSERT INTO $TABLE_NAME (${ItemMasterFields.id},${ItemMasterFields.productType},${ItemMasterFields.itemName}) SELECT ${ItemMasterFields.id},${ItemMasterFields.productType},${ItemMasterFields.itemName} FROM items_old");
 
     // await db.execute("DROP TABLE items_old;");
     //
@@ -175,10 +143,10 @@ class EzDatabase {
 //========== Table Supplier ==========
     await db.execute('''CREATE TABLE $tableSupplier (
       ${SupplierFields.id} $idAuto, 
-      ${SupplierFields.company} $textType,
-      ${SupplierFields.companyArabic} $textType, 
-      ${SupplierFields.supplier} $textType,
-      ${SupplierFields.supplierArabic} $textType,
+      ${SupplierFields.supplierName} $textType,
+      ${SupplierFields.supplierNameArabic} $textType, 
+      ${SupplierFields.contactName} $textType,
+      ${SupplierFields.contactNumber} $textType,
       ${SupplierFields.vatNumber} $textType,
       ${SupplierFields.email} $textType,
       ${SupplierFields.address} $textType,

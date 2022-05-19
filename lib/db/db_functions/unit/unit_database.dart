@@ -30,6 +30,23 @@ class UnitDatabase {
     }
   }
 
+  //========== Update Unit ==========
+  Future<void> updateUnit(
+      {required UnitModel unit, required String unitName}) async {
+    final db = await dbInstance.database;
+    final updatedUnit = unit.copyWith(unit: unitName);
+    await db.update(
+      tableUnit,
+      updatedUnit.toJson(),
+      where: '${UnitFields.id} = ?',
+      whereArgs: [unit.id],
+    );
+    log('Unit ${unit.id} Updated Successfully');
+    final index = unitNotifiers.value.indexOf(unit);
+    unitNotifiers.value[index] = updatedUnit;
+    unitNotifiers.notifyListeners();
+  }
+
   //========== Delete Unit ==========
   Future<void> deleteUnit(int id) async {
     final db = await dbInstance.database;

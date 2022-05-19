@@ -4,7 +4,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/icons.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/db/db_functions/category/category_db.dart';
 import 'package:shop_ez/db/db_functions/sub_category/sub_category_db.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
@@ -27,7 +29,7 @@ class SubCategoryScreen extends StatelessWidget {
   final subCategoryDB = SubCategoryDatabase.instance;
 
   //========== Value Notifiers ==========
-  final subCategoryNotifiers = SubCategoryDatabase.subCategoryNotifiers;
+  final subCategoryNotifiers = SubCategoryDatabase.subCategoryNotifier;
 
   final _subCategoryController = TextEditingController();
   String _categoryController = 'null';
@@ -105,7 +107,7 @@ class SubCategoryScreen extends StatelessWidget {
                       } catch (e) {
                         kSnackBar(
                             context: context,
-                            color: kSnackBarErrorColor,
+                            color: kSnackBarDeleteColor,
                             error: true,
                             content:
                                 'Sub-Category "$subCategory" already exist!');
@@ -148,34 +150,128 @@ class SubCategoryScreen extends StatelessWidget {
                                       ),
                                       title: Text(item.subCategory),
                                       subtitle: Text(item.category),
-                                      trailing: IconButton(
-                                          onPressed: () async {
-                                            showDialog(
-                                              context: context,
-                                              builder: (ctx) => AlertDialog(
-                                                content: const Text(
-                                                    'Are you sure you want to delete this item?'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text('Cancel'),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            onPressed: () async {
+                                              final _subCategoryController =
+                                                  TextEditingController(
+                                                      text: subCategories[index]
+                                                          .subCategory);
+
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      AlertDialog(
+                                                          content: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          TextFeildWidget(
+                                                            labelText:
+                                                                'Sub-Category Name',
+                                                            controller:
+                                                                _subCategoryController,
+                                                            floatingLabelBehavior:
+                                                                FloatingLabelBehavior
+                                                                    .always,
+                                                            inputBorder:
+                                                                const OutlineInputBorder(),
+                                                            autovalidateMode:
+                                                                AutovalidateMode
+                                                                    .onUserInteraction,
+                                                            isDense: true,
+                                                            validator: (value) {
+                                                              if (value ==
+                                                                      null ||
+                                                                  value
+                                                                      .isEmpty) {
+                                                                return 'This field is required*';
+                                                              }
+                                                              return null;
+                                                            },
+                                                          ),
+                                                          kHeight5,
+                                                          CustomMaterialBtton(
+                                                              onPressed:
+                                                                  () async {
+                                                                final String
+                                                                    subCategoryName =
+                                                                    _subCategoryController
+                                                                        .text
+                                                                        .trim();
+                                                                if (subCategoryName ==
+                                                                    subCategories[
+                                                                            index]
+                                                                        .subCategory) {
+                                                                  return Navigator
+                                                                      .pop(
+                                                                          context);
+                                                                }
+                                                                await subCategoryDB.updateSubCategory(
+                                                                    subCategory:
+                                                                        subCategories[
+                                                                            index],
+                                                                    subCategoryName:
+                                                                        subCategoryName);
+                                                                Navigator.pop(
+                                                                    context);
+
+                                                                kSnackBar(
+                                                                  context:
+                                                                      context,
+                                                                  content:
+                                                                      'Sub-Category updated successfully',
+                                                                  update: true,
+                                                                );
+                                                              },
+                                                              buttonText:
+                                                                  'Update'),
+                                                        ],
+                                                      )));
+                                            },
+                                            icon: kIconEdit,
+                                          ),
+                                          IconButton(
+                                              onPressed: () async {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (ctx) => AlertDialog(
+                                                    content: const Text(
+                                                        'Are you sure you want to delete this item?'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: kTextCancel,
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          await subCategoryDB
+                                                              .deleteSubCategory(
+                                                                  item.id!);
+                                                          Navigator.pop(
+                                                              context);
+
+                                                          kSnackBar(
+                                                            context: context,
+                                                            content:
+                                                                'Sub-Category deleted successfully',
+                                                            delete: true,
+                                                          );
+                                                        },
+                                                        child: kTextDelete,
+                                                      ),
+                                                    ],
                                                   ),
-                                                  TextButton(
-                                                    onPressed: () async {
-                                                      await subCategoryDB
-                                                          .deleteSubCategory(
-                                                              item.id!);
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text('Delete'),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                          icon: const Icon(Icons.delete)),
+                                                );
+                                              },
+                                              icon: kIconDelete),
+                                        ],
+                                      ),
                                     );
                                   },
                                   separatorBuilder: (context, index) =>

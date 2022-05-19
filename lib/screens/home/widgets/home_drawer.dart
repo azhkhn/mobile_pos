@@ -91,7 +91,7 @@ class HomeDrawer extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                    decoration: BoxDecoration(color: mainColor),
+                    decoration: const BoxDecoration(color: mainColor),
                     accountName: Text(snapshot.hasData
                         ? snapshot.data!.business
                         : 'Business Name'),
