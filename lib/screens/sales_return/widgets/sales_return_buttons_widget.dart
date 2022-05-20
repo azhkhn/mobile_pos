@@ -54,10 +54,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
             children: [
               AutoSizeText(
                 'Total Payable',
-                style: TextStyle(
-                    color: kWhite,
-                    fontWeight: FontWeight.bold,
-                    fontSize: isTablet ? 12 : 11),
+                style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                 minFontSize: 8,
               ),
               kWidth5,
@@ -66,9 +63,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                   valueListenable: SalesReturnSideWidget.totalPayableNotifier,
                   builder: (context, totalPayable, child) {
                     return AutoSizeText(
-                      totalPayable == 0
-                          ? '0'
-                          : Converter.currency.format(totalPayable),
+                      totalPayable == 0 ? '0' : Converter.currency.format(totalPayable),
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: kWhite,
@@ -92,8 +87,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    SalesReturnSideWidget.selectedProductsNotifier.value
-                        .clear();
+                    SalesReturnSideWidget.selectedProductsNotifier.value.clear();
                     SalesReturnSideWidget.subTotalNotifier.value.clear();
                     SalesReturnSideWidget.itemTotalVatNotifier.value.clear();
                     SalesReturnSideWidget.customerController.clear();
@@ -112,10 +106,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                   child: Center(
                     child: AutoSizeText(
                       'Cancel',
-                      style: TextStyle(
-                          color: kWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isTablet ? 12 : 11),
+                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                       minFontSize: 8,
                     ),
                   ),
@@ -127,29 +118,19 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () async {
-                    final int? customerId =
-                        SalesReturnSideWidget.customerIdNotifier.value;
-                    final num items =
-                        SalesReturnSideWidget.totalItemsNotifier.value;
+                    final int? customerId = SalesReturnSideWidget.customerIdNotifier.value;
+                    final num items = SalesReturnSideWidget.totalItemsNotifier.value;
 
-                    final String? originalInvoiceNumber = SalesReturnSideWidget
-                        .originalInvoiceNumberNotifier.value;
+                    final String? originalInvoiceNumber = SalesReturnSideWidget.originalInvoiceNumberNotifier.value;
 
                     if (originalInvoiceNumber == null) {
-                      return kSnackBar(
-                          context: context,
-                          content:
-                              'Please select Invoice number to return sale');
+                      return kSnackBar(context: context, content: 'Please select Invoice number to return sale');
                     }
                     if (customerId == null) {
-                      return kSnackBar(
-                          context: context,
-                          content: 'Please select any Customer to return sale');
+                      return kSnackBar(context: context, content: 'Please select any Customer to return sale');
                     }
                     if (items == 0) {
-                      return kSnackBar(
-                          context: context,
-                          content: 'Please select any Products to return sale');
+                      return kSnackBar(context: context, content: 'Please select any Products to return sale');
                     }
                     //========== Add Sales Return =========
                     await addSalesReturn(context);
@@ -159,10 +140,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                   child: Center(
                     child: AutoSizeText(
                       'Submit',
-                      style: TextStyle(
-                          color: kWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isTablet ? 12 : 11),
+                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                       minFontSize: 8,
                     ),
                   ),
@@ -208,8 +186,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
     //==================== Database Instances ====================
     // final SalesDatabase salesDatabase = SalesDatabase.instance;
     final SalesReturnDatabase salesReturnDB = SalesReturnDatabase.instance;
-    final SalesReturnItemsDatabase salesReturnItemsDB =
-        SalesReturnItemsDatabase.instance;
+    final SalesReturnItemsDatabase salesReturnItemsDB = SalesReturnItemsDatabase.instance;
     final TransactionDatabase transactionDB = TransactionDatabase.instance;
 
     final ItemMasterDatabase itemMasterDB = ItemMasterDatabase.instance;
@@ -250,8 +227,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
     // Save sale in a old date in Database
     // dateTime = DateTime(2022, 4, 22, 17, 45).toIso8601String();
     dateTime = DateTime.now().toIso8601String();
-    originalInvoiceNumber =
-        SalesReturnSideWidget.originalInvoiceNumberNotifier.value!;
+    originalInvoiceNumber = SalesReturnSideWidget.originalInvoiceNumberNotifier.value!;
     originalSaleId = SalesReturnSideWidget.originalSaleIdNotifier.value;
     customerId = SalesReturnSideWidget.customerIdNotifier.value!;
     customerName = SalesReturnSideWidget.customerNameNotifier.value!;
@@ -304,37 +280,26 @@ class SalesReturnButtonsWidget extends StatelessWidget {
 
       final num items = SalesReturnSideWidget.totalItemsNotifier.value;
       for (var i = 0; i < items; i++) {
-        final vatMethod =
-            SalesReturnSideWidget.selectedProductsNotifier.value[i].vatMethod;
+        final vatMethod = SalesReturnSideWidget.selectedProductsNotifier.value[i].vatMethod;
+        final int categoryId = SalesReturnSideWidget.selectedProductsNotifier.value[i].itemCategoryId,
+            vatId = SalesReturnSideWidget.selectedProductsNotifier.value[i].vatId,
+            productId = SalesReturnSideWidget.selectedProductsNotifier.value[i].id!;
 
-        final String productId =
-                '${SalesReturnSideWidget.selectedProductsNotifier.value[i].id}',
-            productType = SalesReturnSideWidget
-                .selectedProductsNotifier.value[i].productType,
-            productCode = SalesReturnSideWidget
-                .selectedProductsNotifier.value[i].itemCode,
-            productName = SalesReturnSideWidget
-                .selectedProductsNotifier.value[i].itemName,
-            category = SalesReturnSideWidget
-                .selectedProductsNotifier.value[i].itemCategory,
-            productCost = SalesReturnSideWidget
-                .selectedProductsNotifier.value[i].itemCost,
-            unitPrice = SalesReturnSideWidget
-                .selectedProductsNotifier.value[i].sellingPrice,
+        final String productType = SalesReturnSideWidget.selectedProductsNotifier.value[i].productType,
+            productCode = SalesReturnSideWidget.selectedProductsNotifier.value[i].itemCode,
+            productName = SalesReturnSideWidget.selectedProductsNotifier.value[i].itemName,
+            productCost = SalesReturnSideWidget.selectedProductsNotifier.value[i].itemCost,
+            unitPrice = SalesReturnSideWidget.selectedProductsNotifier.value[i].sellingPrice,
             netUnitPrice = vatMethod == 'Inclusive'
                 ? '${const SalesReturnSideWidget().getExclusiveAmount(sellingPrice: unitPrice, vatRate: SalesReturnSideWidget.selectedProductsNotifier.value[i].vatRate)}'
                 : unitPrice,
             quantity = SalesReturnSideWidget.quantityNotifier.value[i].text,
             subTotal = SalesReturnSideWidget.subTotalNotifier.value[i],
-            vatId =
-                SalesReturnSideWidget.selectedProductsNotifier.value[i].vatId,
-            vatPercentage = SalesReturnSideWidget
-                .selectedProductsNotifier.value[i].productVAT,
+            vatPercentage = SalesReturnSideWidget.selectedProductsNotifier.value[i].productVAT,
             vatTotal = SalesReturnSideWidget.itemTotalVatNotifier.value[i],
-            unitCode =
-                SalesReturnSideWidget.selectedProductsNotifier.value[i].unit;
+            unitCode = SalesReturnSideWidget.selectedProductsNotifier.value[i].unit;
 
-        final vat = await VatDatabase.instance.getVatById(int.parse(vatId));
+        final vat = await VatDatabase.instance.getVatById(vatId);
         final vatRate = vat.rate;
 
         log(' Sales Return Id == $salesReturnId');
@@ -344,7 +309,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         log(' Product Type == $productType');
         log(' Product Code == $productCode');
         log(' Product Name == $productName');
-        log(' Product Category == $category');
+        log(' Product Category == $categoryId');
         log(' Product Cost == $productCost');
         log(' Net Unit Price == $netUnitPrice');
         log(' Unit Price == $unitPrice');
@@ -356,8 +321,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         log(' VAT Total == $vatTotal');
         log('\n==============================================\n');
 
-        final SalesReturnItemsModel _salesReturnItemsModel =
-            SalesReturnItemsModel(
+        final SalesReturnItemsModel _salesReturnItemsModel = SalesReturnItemsModel(
           originalInvoiceNumber: originalInvoiceNumber,
           saleId: originalSaleId,
           saleReturnId: salesReturnId,
@@ -365,7 +329,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
           productType: productType,
           productCode: productCode,
           productName: productName,
-          category: category,
+          categoryId: categoryId,
           productCost: productCost,
           netUnitPrice: netUnitPrice,
           unitPrice: unitPrice,
@@ -383,9 +347,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         await salesReturnItemsDB.createSalesReturnItems(_salesReturnItemsModel);
 
         //==================== Increasing Item Quantity ====================
-        itemMasterDB.additionItemQty(
-            SalesReturnSideWidget.selectedProductsNotifier.value[i],
-            num.parse(quantity));
+        itemMasterDB.additionItemQty(SalesReturnSideWidget.selectedProductsNotifier.value[i], num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(
@@ -404,8 +366,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
 
       // HomeCardWidget.detailsCardLoaded = false;
 
-      SalesReturnProductSideWidget.itemsNotifier.value =
-          await ItemMasterDatabase.instance.getAllItems();
+      SalesReturnProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
 
       const SalesReturnSideWidget().resetSalesReturn();
 

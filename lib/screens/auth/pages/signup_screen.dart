@@ -73,16 +73,7 @@ class _ScreenSignUpState extends State<ScreenSignUp> {
 }
 
 class SignUpFields extends StatefulWidget {
-  static const items = [
-    'Hyper Market',
-    'IT Company',
-    'Stationary',
-    'Mobile Shop',
-    'Bakery',
-    'Restaurent',
-    'Pharmacy',
-    'Other'
-  ];
+  static const items = ['Hyper Market', 'IT Company', 'Stationary', 'Mobile Shop', 'Bakery', 'Restaurent', 'Pharmacy', 'Other'];
   const SignUpFields({
     Key? key,
     required this.callback,
@@ -90,15 +81,11 @@ class SignUpFields extends StatefulWidget {
 
   final Function callback;
   static final _formStateKey = GlobalKey<FormState>();
-  static final TextEditingController shopNameController =
-      TextEditingController();
+  static final TextEditingController shopNameController = TextEditingController();
   static final TextEditingController emailController = TextEditingController();
-  static final TextEditingController passwordController =
-      TextEditingController();
-  static final TextEditingController mobileNumberController =
-      TextEditingController();
-  static final TextEditingController countryNameController =
-      TextEditingController();
+  static final TextEditingController passwordController = TextEditingController();
+  static final TextEditingController mobileNumberController = TextEditingController();
+  static final TextEditingController countryNameController = TextEditingController();
   static String shopCategoryController = 'null';
   static bool obscureState = false;
   @override
@@ -187,8 +174,7 @@ class _SignUpFieldsState extends State<SignUpFields> {
                   });
                 },
                 validator: (value) {
-                  if (value == null ||
-                      SignUpFields.shopCategoryController == 'null') {
+                  if (value == null || SignUpFields.shopCategoryController == 'null') {
                     return 'This field is required*';
                   }
                   return null;
@@ -208,8 +194,7 @@ class _SignUpFieldsState extends State<SignUpFields> {
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'This field is required*';
-                  } else if (!RegExp(r'^(?:[+0][1-9])?[0-9]{10,12}$')
-                      .hasMatch(value)) {
+                  } else if (!RegExp(r'^(?:[+0][1-9])?[0-9]{10,12}$').hasMatch(value)) {
                     if (value.length != 10) {
                       return 'Mobile number must 10 digits';
                     } else {
@@ -268,9 +253,7 @@ class _SignUpFieldsState extends State<SignUpFields> {
                       });
                     }
                   },
-                  icon: SignUpFields.obscureState == false
-                      ? const Icon(Icons.visibility_off)
-                      : const Icon(Icons.visibility),
+                  icon: SignUpFields.obscureState == false ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
@@ -291,7 +274,7 @@ class _SignUpFieldsState extends State<SignUpFields> {
                 type: 0,
                 shopName: SignUpFields.shopNameController.text.trim(),
                 countryName: SignUpFields.countryNameController.text.trim(),
-                shopCategory: SignUpFields.shopCategoryController,
+                shopCategory: SignUpFields.shopCategoryController.trim(),
                 mobileNumber: SignUpFields.mobileNumberController.text.trim(),
                 email: SignUpFields.emailController.text.trim(),
                 password: SignUpFields.passwordController.text.trim(),

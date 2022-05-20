@@ -606,19 +606,19 @@ class PurchaseReturnSideWidget extends StatelessWidget {
 
     for (var i = 0; i < purchaseItems.length; i++) {
       final purchasedItem = purchaseItems[i];
-      final items = await itemDB.getProductById(int.parse(purchasedItem.productId));
+      final items = await itemDB.getProductById(purchasedItem.productId);
       final item = items.first;
 
       log('item Id == ' '${item.id}');
       log('item Name == ' + item.itemName);
-      log('Category == ' + purchasedItem.category);
+      log('Category == ${purchasedItem.categoryId}');
       log('Product Code == ' + purchasedItem.productCode);
       log('Cost == ' + purchasedItem.productCost);
       log('Unit Price == ' + purchasedItem.unitPrice);
       log('Net Unit Price == ' + purchasedItem.netUnitPrice);
       log('Quantity == ' + purchasedItem.quantity);
       log('Unit Code == ' + purchasedItem.unitCode);
-      log('Vat Id == ' + purchasedItem.vatId);
+      log('Vat Id == ${purchasedItem.vatId}');
       log('Products Vat Method == ' + item.vatMethod);
       log('Vat Method == ' + item.vatMethod);
       log('Vat Percentage == ' + purchasedItem.vatPercentage);
@@ -630,9 +630,9 @@ class PurchaseReturnSideWidget extends StatelessWidget {
         itemName: purchasedItem.productName,
         itemNameArabic: item.itemNameArabic,
         itemCode: purchasedItem.productCode,
-        itemCategory: purchasedItem.category,
-        itemSubCategory: item.itemSubCategory,
-        itemBrand: item.itemBrand,
+        itemCategoryId: purchasedItem.categoryId,
+        itemSubCategoryId: item.itemSubCategoryId,
+        itemBrandId: item.itemBrandId,
         itemCost: purchasedItem.productCost,
         sellingPrice: purchasedItem.unitPrice,
         secondarySellingPrice: item.secondarySellingPrice,

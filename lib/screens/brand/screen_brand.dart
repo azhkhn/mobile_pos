@@ -40,6 +40,7 @@ class BrandScreen extends StatelessWidget {
                 child: TextFeildWidget(
                   labelText: 'Brand *',
                   controller: _brandEditingController,
+                  textCapitalization: TextCapitalization.words,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'This field is required*';
@@ -62,17 +63,11 @@ class BrandScreen extends StatelessWidget {
 
                     try {
                       await brandDB.createBrand(_brand);
-                      kSnackBar(
-                          context: context,
-                          success: true,
-                          content: 'Brand "$brand" added successfully!');
+                      kSnackBar(context: context, success: true, content: 'Brand "$brand" added successfully!');
                       _brandEditingController.clear();
                     } catch (e) {
                       log(e.toString());
-                      kSnackBar(
-                          context: context,
-                          error: true,
-                          content: 'Brand "$brand" already exist!');
+                      kSnackBar(context: context, error: true, content: 'Brand "$brand" already exist!');
                     }
                   }
                 },
@@ -107,8 +102,7 @@ class BrandScreen extends StatelessWidget {
                                       backgroundColor: kTransparentColor,
                                       child: Text(
                                         '${index + 1}'.toString(),
-                                        style: const TextStyle(
-                                            color: kTextColorBlack),
+                                        style: const TextStyle(color: kTextColorBlack),
                                       ),
                                     ),
                                     title: Text(item.brand),
@@ -117,35 +111,23 @@ class BrandScreen extends StatelessWidget {
                                       children: [
                                         IconButton(
                                           onPressed: () async {
-                                            final _brandController =
-                                                TextEditingController(
-                                                    text: brands[index].brand);
+                                            final _brandController = TextEditingController(text: brands[index].brand);
 
                                             showDialog(
                                                 context: context,
-                                                builder: (context) =>
-                                                    AlertDialog(
+                                                builder: (context) => AlertDialog(
                                                         content: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
+                                                      mainAxisSize: MainAxisSize.min,
                                                       children: [
                                                         TextFeildWidget(
-                                                          labelText:
-                                                              'Brand Name',
-                                                          controller:
-                                                              _brandController,
-                                                          floatingLabelBehavior:
-                                                              FloatingLabelBehavior
-                                                                  .always,
-                                                          inputBorder:
-                                                              const OutlineInputBorder(),
-                                                          autovalidateMode:
-                                                              AutovalidateMode
-                                                                  .onUserInteraction,
+                                                          labelText: 'Brand Name',
+                                                          controller: _brandController,
+                                                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                          inputBorder: const OutlineInputBorder(),
+                                                          autovalidateMode: AutovalidateMode.onUserInteraction,
                                                           isDense: true,
                                                           validator: (value) {
-                                                            if (value == null ||
-                                                                value.isEmpty) {
+                                                            if (value == null || value.isEmpty) {
                                                               return 'This field is required*';
                                                             }
                                                             return null;
@@ -153,38 +135,21 @@ class BrandScreen extends StatelessWidget {
                                                         ),
                                                         kHeight5,
                                                         CustomMaterialBtton(
-                                                            onPressed:
-                                                                () async {
-                                                              final String
-                                                                  brandName =
-                                                                  _brandController
-                                                                      .text
-                                                                      .trim();
-                                                              if (brandName ==
-                                                                  brands[index]
-                                                                      .brand) {
-                                                                return Navigator
-                                                                    .pop(
-                                                                        context);
+                                                            onPressed: () async {
+                                                              final String brandName = _brandController.text.trim();
+                                                              if (brandName == brands[index].brand) {
+                                                                return Navigator.pop(context);
                                                               }
-                                                              await brandDB.updateBrand(
-                                                                  brand: brands[
-                                                                      index],
-                                                                  brandName:
-                                                                      brandName);
-                                                              Navigator.pop(
-                                                                  context);
+                                                              await brandDB.updateBrand(brand: brands[index], brandName: brandName);
+                                                              Navigator.pop(context);
 
                                                               kSnackBar(
-                                                                context:
-                                                                    context,
-                                                                content:
-                                                                    'Brand updated successfully',
+                                                                context: context,
+                                                                content: 'Brand updated successfully',
                                                                 update: true,
                                                               );
                                                             },
-                                                            buttonText:
-                                                                'Update'),
+                                                            buttonText: 'Update'),
                                                       ],
                                                     )));
                                           },
@@ -195,8 +160,7 @@ class BrandScreen extends StatelessWidget {
                                             showDialog(
                                               context: context,
                                               builder: (ctx) => AlertDialog(
-                                                content: const Text(
-                                                    'Are you sure you want to delete this item?'),
+                                                content: const Text('Are you sure you want to delete this item?'),
                                                 actions: [
                                                   TextButton(
                                                       onPressed: () {
@@ -205,14 +169,11 @@ class BrandScreen extends StatelessWidget {
                                                       child: kTextCancel),
                                                   TextButton(
                                                       onPressed: () async {
-                                                        await brandDB
-                                                            .deleteBrand(
-                                                                item.id!);
+                                                        await brandDB.deleteBrand(item.id!);
                                                         Navigator.pop(context);
                                                         kSnackBar(
                                                           context: context,
-                                                          content:
-                                                              'Brand deleted successfully',
+                                                          content: 'Brand deleted successfully',
                                                           delete: true,
                                                         );
                                                       },
@@ -227,8 +188,7 @@ class BrandScreen extends StatelessWidget {
                                     ),
                                   );
                                 },
-                                separatorBuilder: (context, index) =>
-                                    const Divider(
+                                separatorBuilder: (context, index) => const Divider(
                                   thickness: 1,
                                 ),
                                 itemCount: snapshot.data.length,

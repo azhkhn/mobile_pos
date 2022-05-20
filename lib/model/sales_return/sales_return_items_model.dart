@@ -10,11 +10,11 @@ class SalesReturnItemsModel with _$SalesReturnItemsModel {
     int? saleId,
     String? originalInvoiceNumber,
     required int saleReturnId,
-    required String productId,
+    required int productId,
     required String productType,
     required String productCode,
     required String productName,
-    required String category,
+    required int categoryId,
     required String productCost,
     required String netUnitPrice,
     required String unitPrice,
@@ -22,14 +22,13 @@ class SalesReturnItemsModel with _$SalesReturnItemsModel {
     required String unitCode,
     required String subTotal,
     required String vatMethod,
-    required String vatId,
+    required int vatId,
     required String vatPercentage,
     required int vatRate,
     required String vatTotal,
   }) = _SalesReturnItemsModel;
 
-  factory SalesReturnItemsModel.fromJson(Map<String, dynamic> json) =>
-      _$SalesReturnItemsModelFromJson(json);
+  factory SalesReturnItemsModel.fromJson(Map<String, dynamic> json) => _$SalesReturnItemsModelFromJson(json);
 }
 
 const String tableSalesReturnItems = 'sales_return_items';
@@ -43,7 +42,7 @@ class SalesReturnItemsFields {
   static const productType = 'productType';
   static const productCode = 'productCode';
   static const productName = 'productName';
-  static const category = 'category';
+  static const categoryId = 'categoryId';
   static const productCost = 'productCost';
   static const netUnitPrice = 'netUnitPrice';
   static const unitPrice = 'unitPrice';

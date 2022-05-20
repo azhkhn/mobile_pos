@@ -15,8 +15,7 @@ class CustomerDatabase {
     //     '''select * from $tableCustomer where ${CustomerFields.company} = "${_customerModel.company}"''');
 
     if (_customerModel.vatNumber!.toString().isNotEmpty) {
-      final _vatNumber = await db.rawQuery(
-          '''select * from $tableCustomer where ${CustomerFields.vatNumber} = "${_customerModel.vatNumber}"''');
+      final _vatNumber = await db.rawQuery('''select * from $tableCustomer where ${CustomerFields.vatNumber} = "${_customerModel.vatNumber}"''');
 
       if (_vatNumber.isNotEmpty) {
         throw 'VAT Number already exist!';
@@ -35,10 +34,10 @@ class CustomerDatabase {
   //========== Get All Customers ==========
   Future<List<CustomerModel>> getAllCustomers() async {
     final db = await dbInstance.database;
+    // await db.delete(tableCustomer, where: '${CustomerFields.id} != ? ', whereArgs: [1]);
     final _result = await db.query(tableCustomer);
     log('Customers === $_result');
-    final _customers =
-        _result.map((json) => CustomerModel.fromJson(json)).toList();
+    final _customers = _result.map((json) => CustomerModel.fromJson(json)).toList();
     // db.delete(tableCustomer);
     return _customers;
   }
@@ -52,8 +51,7 @@ class CustomerDatabase {
       whereArgs: [customerId],
     );
     log('Customer === $_result');
-    final _customers =
-        _result.map((json) => CustomerModel.fromJson(json)).toList();
+    final _customers = _result.map((json) => CustomerModel.fromJson(json)).toList();
 
     // await db.update(tableCustomer,
     //     _customers.first.copyWith(vatNumber: '437596584523654').toJson(),
@@ -64,12 +62,9 @@ class CustomerDatabase {
   //========== Get All Customers By Query ==========
   Future<List<CustomerModel>> getCustomerSuggestions(String pattern) async {
     final db = await dbInstance.database;
-    final res = await db.rawQuery(
-        '''select * from $tableCustomer where ${CustomerFields.customer} LIKE "%$pattern%"''');
+    final res = await db.rawQuery('''select * from $tableCustomer where ${CustomerFields.customer} LIKE "%$pattern%"''');
 
-    List<CustomerModel> list = res.isNotEmpty
-        ? res.map((c) => CustomerModel.fromJson(c)).toList()
-        : [];
+    List<CustomerModel> list = res.isNotEmpty ? res.map((c) => CustomerModel.fromJson(c)).toList() : [];
 
     return list;
   }

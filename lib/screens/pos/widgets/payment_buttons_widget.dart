@@ -56,10 +56,7 @@ class PaymentButtonsWidget extends StatelessWidget {
             children: [
               AutoSizeText(
                 'Total Payable',
-                style: TextStyle(
-                    color: kWhite,
-                    fontWeight: FontWeight.bold,
-                    fontSize: isTablet ? 12 : 11),
+                style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                 minFontSize: 8,
               ),
               kWidth5,
@@ -68,9 +65,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                   valueListenable: SaleSideWidget.totalPayableNotifier,
                   builder: (context, totalPayable, child) {
                     return AutoSizeText(
-                      totalPayable == 0
-                          ? '0'
-                          : Converter.currency.format(totalPayable),
+                      totalPayable == 0 ? '0' : Converter.currency.format(totalPayable),
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: kWhite,
@@ -94,18 +89,13 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    final int? customerId =
-                        SaleSideWidget.customerIdNotifier.value;
+                    final int? customerId = SaleSideWidget.customerIdNotifier.value;
                     final num items = SaleSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {
-                      kSnackBar(
-                          context: context,
-                          content: 'Please select any Customer to add sale!');
+                      kSnackBar(context: context, content: 'Please select any Customer to add sale!');
                     } else if (items == 0) {
-                      return kSnackBar(
-                          context: context,
-                          content: 'Please select any Products to add sale!');
+                      return kSnackBar(context: context, content: 'Please select any Products to add sale!');
                     } else {
                       showDialog(
                         context: context,
@@ -113,11 +103,9 @@ class PaymentButtonsWidget extends StatelessWidget {
                           return AlertDialog(
                             title: const Text(
                               'Credit Payment!',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                             ),
-                            content:
-                                const Text('Do you want to add this sale?'),
+                            content: const Text('Do you want to add this sale?'),
                             actions: [
                               TextButton(
                                   onPressed: () {
@@ -127,9 +115,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                               TextButton(
                                   onPressed: () {
                                     Navigator.pop(ctx);
-                                    final String _balance = SaleSideWidget
-                                        .totalPayableNotifier.value
-                                        .toString();
+                                    final String _balance = SaleSideWidget.totalPayableNotifier.value.toString();
                                     addSale(
                                       context,
                                       argPaid: '0',
@@ -150,10 +136,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                   child: Center(
                     child: AutoSizeText(
                       'Credit Payment',
-                      style: TextStyle(
-                          color: kWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isTablet ? 12 : 11),
+                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                       minFontSize: 8,
                     ),
                   ),
@@ -165,18 +148,13 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    final int? customerId =
-                        SaleSideWidget.customerIdNotifier.value;
+                    final int? customerId = SaleSideWidget.customerIdNotifier.value;
                     final num items = SaleSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {
-                      kSnackBar(
-                          context: context,
-                          content: 'Please select any Customer to add sale!');
+                      kSnackBar(context: context, content: 'Please select any Customer to add sale!');
                     } else if (items == 0) {
-                      return kSnackBar(
-                          context: context,
-                          content: 'Please select any Products to add sale!');
+                      return kSnackBar(context: context, content: 'Please select any Products to add sale!');
                     } else {
                       showDialog(
                         context: context,
@@ -184,15 +162,11 @@ class PaymentButtonsWidget extends StatelessWidget {
                           return AlertDialog(
                             title: const Text(
                               'Full Payment!',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                             ),
-                            content:
-                                const Text('Do you want to add this sale?'),
+                            content: const Text('Do you want to add this sale?'),
                             actions: [
-                              TextButton(
-                                  onPressed: () => Navigator.pop(ctx),
-                                  child: const Text('Cancel')),
+                              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                               TextButton(
                                   onPressed: () {
                                     Navigator.pop(ctx);
@@ -210,10 +184,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                   child: Center(
                     child: AutoSizeText(
                       'Full Payment',
-                      style: TextStyle(
-                          color: kWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isTablet ? 12 : 11),
+                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                       minFontSize: 8,
                     ),
                   ),
@@ -250,10 +221,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                   child: Center(
                     child: AutoSizeText(
                       'Cancel',
-                      style: TextStyle(
-                          color: kWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isTablet ? 12 : 11),
+                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                       minFontSize: 8,
                     ),
                   ),
@@ -265,26 +233,18 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    final int? customerId =
-                        SaleSideWidget.customerIdNotifier.value;
+                    final int? customerId = SaleSideWidget.customerIdNotifier.value;
                     final num items = SaleSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {
-                      kSnackBar(
-                          context: context,
-                          content: 'Please select any Customer to add Sale!');
+                      kSnackBar(context: context, content: 'Please select any Customer to add Sale!');
                     } else if (items == 0) {
-                      return kSnackBar(
-                          context: context,
-                          content: 'Please select any Products to add Sale!');
+                      return kSnackBar(context: context, content: 'Please select any Products to add Sale!');
                     } else {
-                      Navigator.pushNamed(context, routePartialPayment,
-                          arguments: {
-                            'totalPayable':
-                                SaleSideWidget.totalPayableNotifier.value,
-                            'totalItems':
-                                SaleSideWidget.totalItemsNotifier.value,
-                          });
+                      Navigator.pushNamed(context, routePartialPayment, arguments: {
+                        'totalPayable': SaleSideWidget.totalPayableNotifier.value,
+                        'totalItems': SaleSideWidget.totalItemsNotifier.value,
+                      });
                     }
                   },
                   padding: const EdgeInsets.all(5),
@@ -292,10 +252,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                   child: Center(
                     child: AutoSizeText(
                       'Partial Payment',
-                      style: TextStyle(
-                          color: kWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isTablet ? 12 : 11),
+                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                       minFontSize: 8,
                     ),
                   ),
@@ -355,10 +312,7 @@ class PaymentButtonsWidget extends StatelessWidget {
       _biller = _businessProfile.billerName;
       log('Biller Name ==== $_biller');
     } catch (e) {
-      kSnackBar(
-          context: context,
-          content: 'Business Profile is empty! Please fill your profile',
-          error: true);
+      kSnackBar(context: context, content: 'Business Profile is empty! Please fill your profile', error: true);
       return log(e.toString());
     }
 
@@ -426,35 +380,27 @@ class PaymentButtonsWidget extends StatelessWidget {
 
       final num items = SaleSideWidget.totalItemsNotifier.value;
       for (var i = 0; i < items; i++) {
-        final vatMethod =
-            SaleSideWidget.selectedProductsNotifier.value[i].vatMethod;
+        final vatMethod = SaleSideWidget.selectedProductsNotifier.value[i].vatMethod;
 
-        final String productId =
-                '${SaleSideWidget.selectedProductsNotifier.value[i].id}',
-            productType =
-                SaleSideWidget.selectedProductsNotifier.value[i].productType,
-            productCode =
-                SaleSideWidget.selectedProductsNotifier.value[i].itemCode,
-            productName =
-                SaleSideWidget.selectedProductsNotifier.value[i].itemName,
-            category =
-                SaleSideWidget.selectedProductsNotifier.value[i].itemCategory,
-            productCost =
-                SaleSideWidget.selectedProductsNotifier.value[i].itemCost,
-            unitPrice =
-                SaleSideWidget.selectedProductsNotifier.value[i].sellingPrice,
+        final int categoryId = SaleSideWidget.selectedProductsNotifier.value[i].itemCategoryId,
+            productId = SaleSideWidget.selectedProductsNotifier.value[i].id!,
+            vatId = SaleSideWidget.selectedProductsNotifier.value[i].vatId;
+
+        final String productType = SaleSideWidget.selectedProductsNotifier.value[i].productType,
+            productCode = SaleSideWidget.selectedProductsNotifier.value[i].itemCode,
+            productName = SaleSideWidget.selectedProductsNotifier.value[i].itemName,
+            productCost = SaleSideWidget.selectedProductsNotifier.value[i].itemCost,
+            unitPrice = SaleSideWidget.selectedProductsNotifier.value[i].sellingPrice,
             netUnitPrice = vatMethod == 'Inclusive'
                 ? '${const SaleSideWidget().getExclusiveAmount(sellingPrice: unitPrice, vatRate: SaleSideWidget.selectedProductsNotifier.value[i].vatRate)}'
                 : unitPrice,
             quantity = SaleSideWidget.quantityNotifier.value[i].text,
             subTotal = SaleSideWidget.subTotalNotifier.value[i],
-            vatId = SaleSideWidget.selectedProductsNotifier.value[i].vatId,
-            vatPercentage =
-                SaleSideWidget.selectedProductsNotifier.value[i].productVAT,
+            vatPercentage = SaleSideWidget.selectedProductsNotifier.value[i].productVAT,
             vatTotal = SaleSideWidget.itemTotalVatNotifier.value[i],
             unitCode = SaleSideWidget.selectedProductsNotifier.value[i].unit;
 
-        final vat = await VatDatabase.instance.getVatById(int.parse(vatId));
+        final vat = await VatDatabase.instance.getVatById(vatId);
         final vatRate = vat.rate;
 
         log(' Sales Id == $salesId');
@@ -462,7 +408,7 @@ class PaymentButtonsWidget extends StatelessWidget {
         log(' Product Type == $productType');
         log(' Product Code == $productCode');
         log(' Product Name == $productName');
-        log(' Product Category == $category');
+        log(' Product Category id == $categoryId');
         log(' Product Cost == $productCost');
         log(' Net Unit Price == $netUnitPrice');
         log(' Unit Price == $unitPrice');
@@ -480,7 +426,7 @@ class PaymentButtonsWidget extends StatelessWidget {
           productType: productType,
           productCode: productCode,
           productName: productName,
-          category: category,
+          categoryId: categoryId,
           productCost: productCost,
           netUnitPrice: netUnitPrice,
           unitPrice: unitPrice,
@@ -498,9 +444,7 @@ class PaymentButtonsWidget extends StatelessWidget {
         await salesItemDB.createSalesItems(_salesItemsModel);
 
         //==================== Decreasing Item Quantity ====================
-        itemMasterDB.subtractItemQty(
-            SaleSideWidget.selectedProductsNotifier.value[i],
-            num.parse(quantity));
+        itemMasterDB.subtractItemQty(SaleSideWidget.selectedProductsNotifier.value[i], num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(
@@ -520,8 +464,7 @@ class PaymentButtonsWidget extends StatelessWidget {
 
       HomeCardWidget.detailsCardLoaded = false;
 
-      ProductSideWidget.itemsNotifier.value =
-          await ItemMasterDatabase.instance.getAllItems();
+      ProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
 
       const SaleSideWidget().resetPos();
 

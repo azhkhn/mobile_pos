@@ -14,7 +14,7 @@ class PurchaseItemsReturnFields {
   static const productType = 'productType';
   static const productCode = 'productCode';
   static const productName = 'productName';
-  static const category = 'category';
+  static const categoryId = 'categoryId';
   static const productCost = 'productCost';
   static const netUnitPrice = 'netUnitPrice';
   static const unitPrice = 'unitPrice';
@@ -33,22 +33,21 @@ class PurchaseItemsReturnModel with _$PurchaseItemsReturnModel {
     required int? purchaseId,
     required int purchaseReturnId,
     required String? originalInvoiceNumber,
-    required String productId,
+    required int productId,
     required String productType,
     required String productCode,
     required String productName,
-    required String category,
+    required int categoryId,
     required String productCost,
     required String netUnitPrice,
     required String unitPrice,
     required String quantity,
     required String unitCode,
     required String subTotal,
-    required String vatId,
+    required int vatId,
     required String vatPercentage,
     required String vatTotal,
   }) = _PurchaseItemsReturnModel;
 
-  factory PurchaseItemsReturnModel.fromJson(Map<String, dynamic> json) =>
-      _$PurchaseItemsReturnModelFromJson(json);
+  factory PurchaseItemsReturnModel.fromJson(Map<String, dynamic> json) => _$PurchaseItemsReturnModelFromJson(json);
 }

@@ -105,7 +105,6 @@ class ScreenManageSupplier extends StatelessWidget {
                   //========== Supplier Arabic Field ==========
                   TextFeildWidget(
                     controller: _contactNumberController,
-                    textDirection: TextDirection.rtl,
                     labelText: 'Contact Number *',
                     textInputType: TextInputType.text,
                     validator: (value) {

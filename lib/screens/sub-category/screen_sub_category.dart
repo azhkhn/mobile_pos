@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/db/db_functions/category/category_db.dart';
 import 'package:shop_ez/db/db_functions/sub_category/sub_category_db.dart';
+import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
@@ -32,7 +34,8 @@ class SubCategoryScreen extends StatelessWidget {
   final subCategoryNotifiers = SubCategoryDatabase.subCategoryNotifier;
 
   final _subCategoryController = TextEditingController();
-  String _categoryController = 'null';
+  String? _categoryController;
+  int? _categoryIdController;
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +57,15 @@ class SubCategoryScreen extends StatelessWidget {
                       labelText: 'Choose Category *',
                       snapshot: snapshot,
                       onChanged: (value) {
-                        _categoryController = value.toString();
+                        final CategoryModel category = CategoryModel.fromJson(jsonDecode(value!));
+                        log(category.category);
+                        log(category.id.toString());
+
+                        _categoryController = category.category;
+                        _categoryIdController = category.id;
                       },
                       validator: (value) {
-                        if (value == null || _categoryController == 'null') {
+                        if (value == null || _categoryController == null) {
                           return 'This field is required*';
                         }
                         return null;
@@ -71,6 +79,7 @@ class SubCategoryScreen extends StatelessWidget {
                 TextFeildWidget(
                   labelText: 'Sub Category *',
                   controller: _subCategoryController,
+                  textCapitalization: TextCapitalization.words,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'This field is required*';
@@ -86,31 +95,23 @@ class SubCategoryScreen extends StatelessWidget {
                   buttonText: 'Submit',
                   onPressed: () async {
                     final category = _categoryController;
+                    final categoryId = _categoryIdController;
                     final subCategory = _subCategoryController.text.trim();
 
                     final isFormValid = _formKey.currentState!;
                     if (isFormValid.validate()) {
-                      log('Category == ' + category);
+                      log('Category == ' + category!);
+                      log('CategoryId == $categoryId');
                       log('Sub-Category == ' + subCategory);
 
-                      final _subCategory = SubCategoryModel(
-                          category: category, subCategory: subCategory);
+                      final _subCategory = SubCategoryModel(category: category, categoryId: categoryId!, subCategory: subCategory);
 
                       try {
                         await subCategoryDB.createSubCategory(_subCategory);
-                        kSnackBar(
-                            context: context,
-                            success: true,
-                            content:
-                                'Sub-Category "$subCategory" added successfully!');
+                        kSnackBar(context: context, success: true, content: 'Sub-Category "$subCategory" added successfully!');
                         _subCategoryController.clear();
                       } catch (e) {
-                        kSnackBar(
-                            context: context,
-                            color: kSnackBarDeleteColor,
-                            error: true,
-                            content:
-                                'Sub-Category "$subCategory" already exist!');
+                        kSnackBar(context: context, color: kSnackBarDeleteColor, error: true, content: 'Sub-Category "$subCategory" already exist!');
                       }
                     }
                   },
@@ -124,8 +125,7 @@ class SubCategoryScreen extends StatelessWidget {
                     builder: (context, snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
-                          return const Center(
-                              child: CircularProgressIndicator());
+                          return const Center(child: CircularProgressIndicator());
                         case ConnectionState.done:
                         default:
                           if (snapshot.hasData) {
@@ -133,8 +133,7 @@ class SubCategoryScreen extends StatelessWidget {
                           }
                           return ValueListenableBuilder(
                               valueListenable: subCategoryNotifiers,
-                              builder: (context,
-                                  List<SubCategoryModel> subCategories, _) {
+                              builder: (context, List<SubCategoryModel> subCategories, _) {
                                 return ListView.separated(
                                   itemBuilder: (context, index) {
                                     final item = subCategories[index];
@@ -144,8 +143,7 @@ class SubCategoryScreen extends StatelessWidget {
                                         backgroundColor: kTransparentColor,
                                         child: Text(
                                           '${index + 1}'.toString(),
-                                          style: const TextStyle(
-                                              color: kTextColorBlack),
+                                          style: const TextStyle(color: kTextColorBlack),
                                         ),
                                       ),
                                       title: Text(item.subCategory),
@@ -155,38 +153,23 @@ class SubCategoryScreen extends StatelessWidget {
                                         children: [
                                           IconButton(
                                             onPressed: () async {
-                                              final _subCategoryController =
-                                                  TextEditingController(
-                                                      text: subCategories[index]
-                                                          .subCategory);
+                                              final _subCategoryController = TextEditingController(text: subCategories[index].subCategory);
 
                                               showDialog(
                                                   context: context,
-                                                  builder: (context) =>
-                                                      AlertDialog(
+                                                  builder: (context) => AlertDialog(
                                                           content: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
+                                                        mainAxisSize: MainAxisSize.min,
                                                         children: [
                                                           TextFeildWidget(
-                                                            labelText:
-                                                                'Sub-Category Name',
-                                                            controller:
-                                                                _subCategoryController,
-                                                            floatingLabelBehavior:
-                                                                FloatingLabelBehavior
-                                                                    .always,
-                                                            inputBorder:
-                                                                const OutlineInputBorder(),
-                                                            autovalidateMode:
-                                                                AutovalidateMode
-                                                                    .onUserInteraction,
+                                                            labelText: 'Sub-Category Name',
+                                                            controller: _subCategoryController,
+                                                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                            inputBorder: const OutlineInputBorder(),
+                                                            autovalidateMode: AutovalidateMode.onUserInteraction,
                                                             isDense: true,
                                                             validator: (value) {
-                                                              if (value ==
-                                                                      null ||
-                                                                  value
-                                                                      .isEmpty) {
+                                                              if (value == null || value.isEmpty) {
                                                                 return 'This field is required*';
                                                               }
                                                               return null;
@@ -194,40 +177,22 @@ class SubCategoryScreen extends StatelessWidget {
                                                           ),
                                                           kHeight5,
                                                           CustomMaterialBtton(
-                                                              onPressed:
-                                                                  () async {
-                                                                final String
-                                                                    subCategoryName =
-                                                                    _subCategoryController
-                                                                        .text
-                                                                        .trim();
-                                                                if (subCategoryName ==
-                                                                    subCategories[
-                                                                            index]
-                                                                        .subCategory) {
-                                                                  return Navigator
-                                                                      .pop(
-                                                                          context);
+                                                              onPressed: () async {
+                                                                final String subCategoryName = _subCategoryController.text.trim();
+                                                                if (subCategoryName == subCategories[index].subCategory) {
+                                                                  return Navigator.pop(context);
                                                                 }
                                                                 await subCategoryDB.updateSubCategory(
-                                                                    subCategory:
-                                                                        subCategories[
-                                                                            index],
-                                                                    subCategoryName:
-                                                                        subCategoryName);
-                                                                Navigator.pop(
-                                                                    context);
+                                                                    subCategory: subCategories[index], subCategoryName: subCategoryName);
+                                                                Navigator.pop(context);
 
                                                                 kSnackBar(
-                                                                  context:
-                                                                      context,
-                                                                  content:
-                                                                      'Sub-Category updated successfully',
+                                                                  context: context,
+                                                                  content: 'Sub-Category updated successfully',
                                                                   update: true,
                                                                 );
                                                               },
-                                                              buttonText:
-                                                                  'Update'),
+                                                              buttonText: 'Update'),
                                                         ],
                                                       )));
                                             },
@@ -238,28 +203,22 @@ class SubCategoryScreen extends StatelessWidget {
                                                 showDialog(
                                                   context: context,
                                                   builder: (ctx) => AlertDialog(
-                                                    content: const Text(
-                                                        'Are you sure you want to delete this item?'),
+                                                    content: const Text('Are you sure you want to delete this item?'),
                                                     actions: [
                                                       TextButton(
                                                         onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
+                                                          Navigator.pop(context);
                                                         },
                                                         child: kTextCancel,
                                                       ),
                                                       TextButton(
                                                         onPressed: () async {
-                                                          await subCategoryDB
-                                                              .deleteSubCategory(
-                                                                  item.id!);
-                                                          Navigator.pop(
-                                                              context);
+                                                          await subCategoryDB.deleteSubCategory(item.id!);
+                                                          Navigator.pop(context);
 
                                                           kSnackBar(
                                                             context: context,
-                                                            content:
-                                                                'Sub-Category deleted successfully',
+                                                            content: 'Sub-Category deleted successfully',
                                                             delete: true,
                                                           );
                                                         },
@@ -274,8 +233,7 @@ class SubCategoryScreen extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  separatorBuilder: (context, index) =>
-                                      const Divider(),
+                                  separatorBuilder: (context, index) => const Divider(),
                                   itemCount: snapshot.data.length,
                                 );
                               });

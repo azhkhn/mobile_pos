@@ -8,11 +8,11 @@ class SalesItemsModel with _$SalesItemsModel {
   const factory SalesItemsModel({
     @JsonKey(name: '_id') int? id,
     required int saleId,
-    required String productId,
+    required int productId,
     required String productType,
     required String productCode,
     required String productName,
-    required String category,
+    required int categoryId,
     required String productCost,
     required String netUnitPrice,
     required String unitPrice,
@@ -20,14 +20,13 @@ class SalesItemsModel with _$SalesItemsModel {
     required String unitCode,
     required String subTotal,
     required String vatMethod,
-    required String vatId,
+    required int vatId,
     required String vatPercentage,
     required int vatRate,
     required String vatTotal,
   }) = _SalesItemsModel;
 
-  factory SalesItemsModel.fromJson(Map<String, dynamic> json) =>
-      _$SalesItemsModelFromJson(json);
+  factory SalesItemsModel.fromJson(Map<String, dynamic> json) => _$SalesItemsModelFromJson(json);
 }
 
 const String tableSalesItems = 'sales_items';
@@ -39,7 +38,7 @@ class SalesItemsFields {
   static const productType = 'productType';
   static const productCode = 'productCode';
   static const productName = 'productName';
-  static const category = 'category';
+  static const categoryId = 'categoryId';
   static const productCost = 'productCost';
   static const netUnitPrice = 'netUnitPrice';
   static const unitPrice = 'unitPrice';

@@ -94,15 +94,12 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                             onTap: () async {
                               _productController.clear();
                               _builderModel = null;
-                              futureGrid =
-                                  ItemMasterDatabase.instance.getAllItems();
+                              futureGrid = ItemMasterDatabase.instance.getAllItems();
                               if (itemsList.isNotEmpty) {
-                                ProductSideWidget.itemsNotifier.value =
-                                    itemsList;
+                                ProductSideWidget.itemsNotifier.value = itemsList;
                               } else {
                                 itemsList = await itemMasterDB.getAllItems();
-                                ProductSideWidget.itemsNotifier.value =
-                                    itemsList;
+                                ProductSideWidget.itemsNotifier.value = itemsList;
                               }
                             },
                           ),
@@ -112,9 +109,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                         hintStyle: const TextStyle(fontSize: 12),
                         border: const OutlineInputBorder(),
                       )),
-                  noItemsFoundBuilder: (context) => const SizedBox(
-                      height: 50,
-                      child: Center(child: Text('No Product Found!'))),
+                  noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
                   suggestionsCallback: (pattern) async {
                     return itemMasterDB.getProductSuggestions(pattern);
                   },
@@ -189,8 +184,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                       if (subCategories.isNotEmpty) {
                         ProductSideWidget.itemsNotifier.value = subCategories;
                       } else {
-                        subCategories =
-                            await subCategoryDB.getAllSubCategories();
+                        subCategories = await subCategoryDB.getAllSubCategories();
                         ProductSideWidget.itemsNotifier.value = subCategories;
                       }
                     },
@@ -266,25 +260,20 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                           );
                         }
                         if (snapshot.hasData) {
-                          ProductSideWidget.itemsNotifier.value =
-                              snapshot.data!;
+                          ProductSideWidget.itemsNotifier.value = snapshot.data!;
                         } else {
                           ProductSideWidget.itemsNotifier.value = [];
                         }
 
-                        return snapshot.hasData &&
-                                ProductSideWidget.itemsNotifier.value.isNotEmpty
+                        return snapshot.hasData && ProductSideWidget.itemsNotifier.value.isNotEmpty
                             ? ValueListenableBuilder(
-                                valueListenable:
-                                    ProductSideWidget.itemsNotifier,
+                                valueListenable: ProductSideWidget.itemsNotifier,
                                 builder: (context, List<dynamic> itemList, _) {
                                   log('Total Products == ${ProductSideWidget.itemsNotifier.value.length}');
 
-                                  return ProductSideWidget
-                                          .itemsNotifier.value.isNotEmpty
+                                  return ProductSideWidget.itemsNotifier.value.isNotEmpty
                                       ? GridView.builder(
-                                          gridDelegate:
-                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                             crossAxisCount: 5,
                                             childAspectRatio: (1 / .75),
                                           ),
@@ -293,184 +282,96 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                             return InkWell(
                                               onTap: () async {
                                                 if (_builderModel == 0) {
-                                                  log(itemList[index].category);
-                                                  final category =
-                                                      itemList[index].category;
+                                                  log(itemList[index].isCategory);
+                                                  final category = itemList[index].isCategory;
                                                   _builderModel = null;
-                                                  ProductSideWidget
-                                                          .itemsNotifier.value =
-                                                      await itemMasterDB
-                                                          .getProductByCategory(
-                                                              category);
+                                                  ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByCategoryId(category);
                                                 } else if (_builderModel == 1) {
-                                                  log(itemList[index]
-                                                      .subCategory);
-                                                  final subCategory =
-                                                      itemList[index]
-                                                          .subCategory;
+                                                  log(itemList[index].isSubCategory);
+                                                  final subCategory = itemList[index].isSubCategory;
                                                   _builderModel = null;
-                                                  ProductSideWidget
-                                                          .itemsNotifier.value =
-                                                      await itemMasterDB
-                                                          .getProductBySubCategory(
-                                                              subCategory);
+                                                  ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductBySubCategoryId(subCategory);
                                                 } else if (_builderModel == 2) {
-                                                  log(itemList[index].brand);
-                                                  final brand =
-                                                      itemList[index].brand;
+                                                  log(itemList[index].isBbrand);
+                                                  final brand = itemList[index].isBbrand;
                                                   _builderModel = null;
-                                                  ProductSideWidget
-                                                          .itemsNotifier.value =
-                                                      await itemMasterDB
-                                                          .getProductByBrand(
-                                                              brand);
+                                                  ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByBrandId(brand);
                                                 } else {
 //===================================== if the Product Already Added ====================================
-                                                  isProductAlreadyAdded(
-                                                      itemList, index);
+                                                  isProductAlreadyAdded(itemList, index);
 //=======================================================================================================
 
-                                                  SaleSideWidget
-                                                      .selectedProductsNotifier
-                                                      .notifyListeners();
+                                                  SaleSideWidget.selectedProductsNotifier.notifyListeners();
 
-                                                  SaleSideWidget
-                                                      .totalQuantityNotifier
-                                                      .value++;
+                                                  SaleSideWidget.totalQuantityNotifier.value++;
                                                 }
                                               },
                                               child: Card(
                                                 elevation: 10,
                                                 child: Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        vertical: 5.0,
-                                                        horizontal: 5.0),
+                                                    padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
                                                     child: _builderModel == null
                                                         ? Column(
                                                             children: [
                                                               Expanded(
                                                                 flex: 4,
-                                                                child:
-                                                                    AutoSizeText(
-                                                                  itemList[index]
-                                                                          .itemName ??
-                                                                      '',
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  softWrap:
-                                                                      true,
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          _isTablet
-                                                                              ? 10
-                                                                              : 7),
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
+                                                                child: AutoSizeText(
+                                                                  itemList[index].itemName ?? '',
+                                                                  textAlign: TextAlign.center,
+                                                                  softWrap: true,
+                                                                  style: TextStyle(fontSize: _isTablet ? 10 : 7),
+                                                                  overflow: TextOverflow.ellipsis,
                                                                   maxLines: 2,
-                                                                  minFontSize:
-                                                                      7,
-                                                                  maxFontSize:
-                                                                      10,
+                                                                  minFontSize: 7,
+                                                                  maxFontSize: 10,
                                                                 ),
                                                               ),
                                                               const Spacer(),
                                                               Expanded(
                                                                 flex: 2,
-                                                                child:
-                                                                    AutoSizeText(
-                                                                  'Qty : ' +
-                                                                      itemList[
-                                                                              index]
-                                                                          .openingStock,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          _isTablet
-                                                                              ? 10
-                                                                              : 7),
+                                                                child: AutoSizeText(
+                                                                  'Qty : ' + itemList[index].openingStock,
+                                                                  textAlign: TextAlign.center,
+                                                                  style: TextStyle(fontSize: _isTablet ? 10 : 7),
                                                                   maxLines: 1,
-                                                                  minFontSize:
-                                                                      7,
-                                                                  maxFontSize:
-                                                                      10,
+                                                                  minFontSize: 7,
+                                                                  maxFontSize: 10,
                                                                 ),
                                                               ),
                                                               Expanded(
                                                                 flex: 2,
-                                                                child:
-                                                                    AutoSizeText(
-                                                                  Converter
-                                                                      .currency
-                                                                      .format(num.tryParse(
-                                                                          itemList[index]
-                                                                              .sellingPrice)),
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          _isTablet
-                                                                              ? 10
-                                                                              : 7),
+                                                                child: AutoSizeText(
+                                                                  Converter.currency.format(num.tryParse(itemList[index].sellingPrice)),
+                                                                  style: TextStyle(fontSize: _isTablet ? 10 : 7),
                                                                   maxLines: 1,
-                                                                  minFontSize:
-                                                                      7,
-                                                                  maxFontSize:
-                                                                      10,
+                                                                  minFontSize: 7,
+                                                                  maxFontSize: 10,
                                                                 ),
                                                               )
                                                             ],
                                                           )
                                                         : Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
+                                                            mainAxisAlignment: MainAxisAlignment.center,
                                                             children: [
                                                               AutoSizeText(
-                                                                _builderModel ==
-                                                                        0
-                                                                    ? itemList[
-                                                                            index]
-                                                                        .category
-                                                                    : _builderModel ==
-                                                                            1
-                                                                        ? itemList[index]
-                                                                            .subCategory
-                                                                        : _builderModel ==
-                                                                                2
-                                                                            ? itemList[index].brand
+                                                                _builderModel == 0
+                                                                    ? itemList[index].isCategory
+                                                                    : _builderModel == 1
+                                                                        ? itemList[index].isSubCategory
+                                                                        : _builderModel == 2
+                                                                            ? itemList[index].isBbrand
                                                                             : '',
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
+                                                                textAlign: TextAlign.center,
                                                                 softWrap: true,
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        _isTablet
-                                                                            ? 10
-                                                                            : 8),
+                                                                style: TextStyle(fontSize: _isTablet ? 10 : 8),
                                                                 minFontSize: 8,
                                                                 maxFontSize: 10,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: _builderModel ==
-                                                                            0 &&
-                                                                        itemList[index]
-                                                                            .category
-                                                                            .toString()
-                                                                            .contains(
-                                                                                ' ')
+                                                                overflow: TextOverflow.ellipsis,
+                                                                maxLines: _builderModel == 0 && itemList[index].isCategory.toString().contains(' ')
                                                                     ? 2
-                                                                    : _builderModel ==
-                                                                                1 &&
-                                                                            itemList[index].subCategory.toString().contains(
-                                                                                ' ')
+                                                                    : _builderModel == 1 && itemList[index].isSubCategory.toString().contains(' ')
                                                                         ? 2
-                                                                        : _builderModel == 2 &&
-                                                                                itemList[index].brand.toString().contains(' ')
+                                                                        : _builderModel == 2 && itemList[index].isBbrand.toString().contains(' ')
                                                                             ? 2
                                                                             : 1,
                                                               ),
@@ -503,14 +404,10 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
     final vatMethod = itemList[index].vatMethod;
     log('VAT Method = ' + vatMethod);
 
-    for (var i = 0;
-        i < SaleSideWidget.selectedProductsNotifier.value.length;
-        i++) {
+    for (var i = 0; i < SaleSideWidget.selectedProductsNotifier.value.length; i++) {
       //========== If Product already added ==========
-      if (SaleSideWidget.selectedProductsNotifier.value[i].id ==
-          itemList[index].id) {
-        final _currentQty =
-            num.tryParse(SaleSideWidget.quantityNotifier.value[i].value.text);
+      if (SaleSideWidget.selectedProductsNotifier.value[i].id == itemList[index].id) {
+        final _currentQty = num.tryParse(SaleSideWidget.quantityNotifier.value[i].value.text);
 
         SaleSideWidget.quantityNotifier.value[i].text = '${_currentQty! + 1}';
 
@@ -533,10 +430,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
     SaleSideWidget.totalItemsNotifier.value++;
 
-    const SaleSideWidget().getItemVat(
-        vatMethod: vatMethod,
-        amount: itemList[index].sellingPrice,
-        vatRate: itemList[index].vatRate);
+    const SaleSideWidget().getItemVat(vatMethod: vatMethod, amount: itemList[index].sellingPrice, vatRate: itemList[index].vatRate);
     const SaleSideWidget().getTotalAmount();
     const SaleSideWidget().getTotalVAT();
     const SaleSideWidget().getTotalPayable();
@@ -556,8 +450,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
       if (_scanResult == '-1') return;
       final String _itemCode = _scanResult;
       _builderModel = null;
-      ProductSideWidget.itemsNotifier.value =
-          await itemMasterDB.getProductByItemCode(_itemCode);
+      ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByItemCode(_itemCode);
     } on PlatformException catch (_) {
       log('Failed to get Platform version!');
     } catch (e) {

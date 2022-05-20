@@ -19,10 +19,13 @@ class BrandModel with _$BrandModel {
     required String brand,
   }) = _BrandModel;
 
-  factory BrandModel.fromJson(Map<String, dynamic> json) =>
-      _$BrandModelFromJson(json);
+  factory BrandModel.fromJson(Map<String, dynamic> json) => _$BrandModelFromJson(json);
 
   String get() {
     return brand;
+  }
+
+  String getId() {
+    return '$id';
   }
 }

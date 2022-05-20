@@ -56,8 +56,7 @@ class ScreenStock extends StatelessWidget {
     // Size _screenSize = MediaQuery.of(context).size;
 
     if (DeviceUtil.isLandscape) {
-      SystemChrome.setPreferredOrientations(
-          [DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
+      SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
     }
     return Scaffold(
       // appBar: AppBarWidget(
@@ -103,8 +102,7 @@ class ScreenStock extends StatelessWidget {
                                       if (itemsList.isNotEmpty) {
                                         itemsNotifier.value = itemsList;
                                       } else {
-                                        itemsList =
-                                            await itemMasterDB.getAllItems();
+                                        itemsList = await itemMasterDB.getAllItems();
                                         itemsNotifier.value = itemsList;
                                       }
                                     },
@@ -115,9 +113,7 @@ class ScreenStock extends StatelessWidget {
                                 hintStyle: const TextStyle(fontSize: 12),
                                 border: const OutlineInputBorder(),
                               )),
-                          noItemsFoundBuilder: (context) => const SizedBox(
-                              height: 50,
-                              child: Center(child: Text('No Product Found!'))),
+                          noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
                           suggestionsCallback: (pattern) async {
                             return itemMasterDB.getProductSuggestions(pattern);
                           },
@@ -133,13 +129,11 @@ class ScreenStock extends StatelessWidget {
                               ),
                             );
                           },
-                          onSuggestionSelected:
-                              (ItemMasterModel suggestion) async {
+                          onSuggestionSelected: (ItemMasterModel suggestion) async {
                             final itemId = suggestion.id;
                             _productController.text = suggestion.itemName;
                             _builderModel = null;
-                            itemsNotifier.value =
-                                await itemMasterDB.getProductById(itemId!);
+                            itemsNotifier.value = await itemMasterDB.getProductById(itemId!);
 
                             log(suggestion.itemName);
                           },
@@ -179,8 +173,7 @@ class ScreenStock extends StatelessWidget {
                               if (categories.isNotEmpty) {
                                 itemsNotifier.value = categories;
                               } else {
-                                categories =
-                                    await categoryDB.getAllCategories();
+                                categories = await categoryDB.getAllCategories();
                                 itemsNotifier.value = categories;
                               }
                             },
@@ -195,8 +188,7 @@ class ScreenStock extends StatelessWidget {
                               if (subCategories.isNotEmpty) {
                                 itemsNotifier.value = subCategories;
                               } else {
-                                subCategories =
-                                    await subCategoryDB.getAllSubCategories();
+                                subCategories = await subCategoryDB.getAllSubCategories();
                                 itemsNotifier.value = subCategories;
                               }
                             },
@@ -251,12 +243,10 @@ class ScreenStock extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: FutureBuilder(
                           future: futureGrid,
-                          builder:
-                              (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
                             log('Future Builder() => Called!');
 
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );
@@ -279,63 +269,38 @@ class ScreenStock extends StatelessWidget {
                                   itemsNotifier.value = [];
                                 }
 
-                                return snapshot.hasData &&
-                                        itemsNotifier.value.isNotEmpty
+                                return snapshot.hasData && itemsNotifier.value.isNotEmpty
                                     ? ValueListenableBuilder(
                                         valueListenable: itemsNotifier,
-                                        builder: (context,
-                                            List<dynamic> itemList, _) {
+                                        builder: (context, List<dynamic> itemList, _) {
                                           log('hellootherererj');
                                           log('Total Products == ${itemsNotifier.value.length}');
 
                                           return itemsNotifier.value.isNotEmpty
                                               ? GridView.builder(
-                                                  gridDelegate:
-                                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                                     crossAxisCount: 5,
                                                     childAspectRatio: (1 / .75),
                                                   ),
                                                   itemCount: itemList.length,
-                                                  itemBuilder:
-                                                      (context, index) {
+                                                  itemBuilder: (context, index) {
                                                     return InkWell(
                                                       onTap: () async {
-                                                        if (_builderModel ==
-                                                            0) {
-                                                          log(itemList[index]
-                                                              .category);
-                                                          final category =
-                                                              itemList[index]
-                                                                  .category;
+                                                        if (_builderModel == 0) {
+                                                          log(itemList[index].isCategory);
+                                                          final category = itemList[index].isCategory;
                                                           _builderModel = null;
-                                                          itemsNotifier.value =
-                                                              await itemMasterDB
-                                                                  .getProductByCategory(
-                                                                      category);
-                                                        } else if (_builderModel ==
-                                                            1) {
-                                                          log(itemList[index]
-                                                              .subCategory);
-                                                          final subCategory =
-                                                              itemList[index]
-                                                                  .subCategory;
+                                                          itemsNotifier.value = await itemMasterDB.getProductByCategoryId(category);
+                                                        } else if (_builderModel == 1) {
+                                                          log(itemList[index].isSubCategory);
+                                                          final subCategory = itemList[index].isSubCategory;
                                                           _builderModel = null;
-                                                          itemsNotifier.value =
-                                                              await itemMasterDB
-                                                                  .getProductBySubCategory(
-                                                                      subCategory);
-                                                        } else if (_builderModel ==
-                                                            2) {
-                                                          log(itemList[index]
-                                                              .brand);
-                                                          final brand =
-                                                              itemList[index]
-                                                                  .brand;
+                                                          itemsNotifier.value = await itemMasterDB.getProductBySubCategoryId(subCategory);
+                                                        } else if (_builderModel == 2) {
+                                                          log(itemList[index].isBbrand);
+                                                          final brand = itemList[index].isBbrand;
                                                           _builderModel = null;
-                                                          itemsNotifier.value =
-                                                              await itemMasterDB
-                                                                  .getProductByBrand(
-                                                                      brand);
+                                                          itemsNotifier.value = await itemMasterDB.getProductByBrandId(brand);
                                                         } else {
                                                           // //===================================== if the Product Already Added ====================================
                                                           //                                         isProductAlreadyAdded(itemList, index);
@@ -351,123 +316,104 @@ class ScreenStock extends StatelessWidget {
                                                       child: Card(
                                                         elevation: 10,
                                                         child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
-                                                                    vertical:
-                                                                        5.0,
-                                                                    horizontal:
-                                                                        5.0),
-                                                            child:
-                                                                _builderModel ==
-                                                                        null
-                                                                    ? Column(
-                                                                        children: [
-                                                                          Expanded(
-                                                                            flex:
-                                                                                4,
-                                                                            child:
-                                                                                Center(
-                                                                              child: AutoSizeText(
-                                                                                itemList[index].itemName,
-                                                                                // index == 0
-                                                                                //     ? 'Alienware 21x'
-                                                                                //     : index == 1
-                                                                                //         ? 'ALIENWARE Core i9 10th Gen'
-                                                                                //         : index == 2
-                                                                                //             ? 'Fried Chicken 6pc'
-                                                                                //             : 'Samsung Galaxy S9 Plus - 8GB Ram, 64gb Storage',
-                                                                                textAlign: TextAlign.center,
-                                                                                softWrap: true,
-                                                                                style: TextStyle(fontSize: _isTablet ? 11 : 8),
-                                                                                overflow: TextOverflow.ellipsis,
-                                                                                maxLines: 2,
-                                                                                minFontSize: 8,
-                                                                                maxFontSize: 11,
-                                                                              ),
-                                                                            ),
+                                                            padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                                                            child: _builderModel == null
+                                                                ? Column(
+                                                                    children: [
+                                                                      Expanded(
+                                                                        flex: 4,
+                                                                        child: Center(
+                                                                          child: AutoSizeText(
+                                                                            itemList[index].itemName,
+                                                                            // index == 0
+                                                                            //     ? 'Alienware 21x'
+                                                                            //     : index == 1
+                                                                            //         ? 'ALIENWARE Core i9 10th Gen'
+                                                                            //         : index == 2
+                                                                            //             ? 'Fried Chicken 6pc'
+                                                                            //             : 'Samsung Galaxy S9 Plus - 8GB Ram, 64gb Storage',
+                                                                            textAlign: TextAlign.center,
+                                                                            softWrap: true,
+                                                                            style: TextStyle(fontSize: _isTablet ? 11 : 8),
+                                                                            overflow: TextOverflow.ellipsis,
+                                                                            maxLines: 2,
+                                                                            minFontSize: 8,
+                                                                            maxFontSize: 11,
                                                                           ),
-                                                                          const Spacer(),
-                                                                          Expanded(
-                                                                            flex:
-                                                                                2,
-                                                                            child:
-                                                                                AutoSizeText(
-                                                                              'Qty : ' + itemList[index].openingStock,
-                                                                              textAlign: TextAlign.center,
-                                                                              style: TextStyle(fontSize: _isTablet ? 11 : 8),
-                                                                              maxLines: 1,
-                                                                              minFontSize: 8,
-                                                                              maxFontSize: 11,
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            flex:
-                                                                                2,
-                                                                            child:
-                                                                                AutoSizeText(
-                                                                              'Cost : ' + Converter.currency.format(num.tryParse(itemList[index].itemCost)),
-                                                                              style: TextStyle(fontSize: _isTablet ? 11 : 8),
-                                                                              maxLines: 1,
-                                                                              minFontSize: 8,
-                                                                              maxFontSize: 11,
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            flex:
-                                                                                2,
-                                                                            child:
-                                                                                AutoSizeText(
-                                                                              'Price : ' + Converter.currency.format(num.tryParse(itemList[index].sellingPrice)),
-                                                                              style: TextStyle(fontSize: _isTablet ? 11 : 8),
-                                                                              maxLines: 1,
-                                                                              minFontSize: 8,
-                                                                              maxFontSize: 11,
-                                                                            ),
-                                                                          )
-                                                                        ],
+                                                                        ),
+                                                                      ),
+                                                                      const Spacer(),
+                                                                      Expanded(
+                                                                        flex: 2,
+                                                                        child: AutoSizeText(
+                                                                          'Qty : ' + itemList[index].openingStock,
+                                                                          textAlign: TextAlign.center,
+                                                                          style: TextStyle(fontSize: _isTablet ? 11 : 8),
+                                                                          maxLines: 1,
+                                                                          minFontSize: 8,
+                                                                          maxFontSize: 11,
+                                                                        ),
+                                                                      ),
+                                                                      Expanded(
+                                                                        flex: 2,
+                                                                        child: AutoSizeText(
+                                                                          'Cost : ' +
+                                                                              Converter.currency.format(num.tryParse(itemList[index].itemCost)),
+                                                                          style: TextStyle(fontSize: _isTablet ? 11 : 8),
+                                                                          maxLines: 1,
+                                                                          minFontSize: 8,
+                                                                          maxFontSize: 11,
+                                                                        ),
+                                                                      ),
+                                                                      Expanded(
+                                                                        flex: 2,
+                                                                        child: AutoSizeText(
+                                                                          'Price : ' +
+                                                                              Converter.currency.format(num.tryParse(itemList[index].sellingPrice)),
+                                                                          style: TextStyle(fontSize: _isTablet ? 11 : 8),
+                                                                          maxLines: 1,
+                                                                          minFontSize: 8,
+                                                                          maxFontSize: 11,
+                                                                        ),
                                                                       )
-                                                                    : Column(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.center,
-                                                                        children: [
-                                                                          AutoSizeText(
-                                                                            _builderModel == 0
-                                                                                ? itemList[index].category
-                                                                                : _builderModel == 1
-                                                                                    ? itemList[index].subCategory
-                                                                                    : _builderModel == 2
-                                                                                        ? itemList[index].brand
-                                                                                        : '',
-                                                                            textAlign:
-                                                                                TextAlign.center,
-                                                                            softWrap:
-                                                                                true,
-                                                                            style:
-                                                                                TextStyle(fontSize: _isTablet ? 11 : 9),
-                                                                            minFontSize:
-                                                                                9,
-                                                                            maxFontSize:
-                                                                                11,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                            maxLines: _builderModel == 0 && itemList[index].category.toString().contains(' ')
+                                                                    ],
+                                                                  )
+                                                                : Column(
+                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                    children: [
+                                                                      AutoSizeText(
+                                                                        _builderModel == 0
+                                                                            ? itemList[index].isCategory
+                                                                            : _builderModel == 1
+                                                                                ? itemList[index].isSubCategory
+                                                                                : _builderModel == 2
+                                                                                    ? itemList[index].isBbrand
+                                                                                    : '',
+                                                                        textAlign: TextAlign.center,
+                                                                        softWrap: true,
+                                                                        style: TextStyle(fontSize: _isTablet ? 11 : 9),
+                                                                        minFontSize: 9,
+                                                                        maxFontSize: 11,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            _builderModel == 0 && itemList[index].isCategory.toString().contains(' ')
                                                                                 ? 2
-                                                                                : _builderModel == 1 && itemList[index].subCategory.toString().contains(' ')
+                                                                                : _builderModel == 1 &&
+                                                                                        itemList[index].isSubCategory.toString().contains(' ')
                                                                                     ? 2
-                                                                                    : _builderModel == 2 && itemList[index].brand.toString().contains(' ')
+                                                                                    : _builderModel == 2 &&
+                                                                                            itemList[index].isBbrand.toString().contains(' ')
                                                                                         ? 2
                                                                                         : 1,
-                                                                          ),
-                                                                        ],
-                                                                      )),
+                                                                      ),
+                                                                    ],
+                                                                  )),
                                                       ),
                                                     );
                                                   },
                                                 )
                                               : const Center(
-                                                  child: AutoSizeText(
-                                                      'No Item Found!'),
+                                                  child: AutoSizeText('No Item Found!'),
                                                 );
                                         },
                                       )
@@ -498,9 +444,7 @@ class ScreenStock extends StatelessWidget {
                           onPressed: () {
                             showModalBottomSheet(
                                 context: context,
-                                shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20))),
+                                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                                 builder: (ctx) {
                                   return StockFilterBottomSheet();
                                 });
@@ -518,14 +462,13 @@ class ScreenStock extends StatelessWidget {
     );
   }
 
-  void onFilter(BuildContext context, String? category, String? brand,
-      String? stock, GlobalKey<FormState> formKey) async {
+  void onFilter(BuildContext context, int? categoryId, int? brandId, String? stock, GlobalKey<FormState> formKey) async {
     List<ItemMasterModel> _items = [];
     final List<ItemMasterModel> _results = [];
     final _formState = formKey.currentState!;
     _builderModel = null;
-    log(category.toString());
-    log(brand.toString());
+    log(categoryId.toString());
+    log(brandId.toString());
     log(stock.toString());
     if (_formState.validate()) {
       log('valid');
@@ -535,10 +478,10 @@ class ScreenStock extends StatelessWidget {
     if (_formState.validate()) {
       //========== Stock Base Filtering ==========
       if (stock != null) {
-        if (category != null) {
-          _items = await itemMasterDB.getProductByCategory(category);
-        } else if (brand != null) {
-          _items = await itemMasterDB.getProductByBrand(brand);
+        if (categoryId != null) {
+          _items = await itemMasterDB.getProductByCategoryId(categoryId);
+        } else if (brandId != null) {
+          _items = await itemMasterDB.getProductByBrandId(brandId);
         } else if (itemsList.isNotEmpty) {
           _items = itemsList as List<ItemMasterModel>;
         } else {
@@ -574,11 +517,11 @@ class ScreenStock extends StatelessWidget {
           itemsNotifier.value = _results;
         }
         //========== Category Base Filtering ==========
-      } else if (category != null) {
-        itemsNotifier.value = await itemMasterDB.getProductByCategory(category);
+      } else if (categoryId != null) {
+        itemsNotifier.value = await itemMasterDB.getProductByCategoryId(categoryId);
         //========== Brand Base Filtering ==========
-      } else if (brand != null) {
-        itemsNotifier.value = await itemMasterDB.getProductByBrand(brand);
+      } else if (brandId != null) {
+        itemsNotifier.value = await itemMasterDB.getProductByBrandId(brandId);
       }
 
       log('message');

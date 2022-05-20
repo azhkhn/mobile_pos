@@ -11,6 +11,7 @@ class TextFeildWidget extends StatelessWidget {
       this.hintStyle,
       this.isHint = false,
       this.textInputType,
+      this.textCapitalization = TextCapitalization.none,
       this.inputFormatters,
       this.textDirection,
       this.maxLines,
@@ -41,6 +42,7 @@ class TextFeildWidget extends StatelessWidget {
   final TextStyle? hintStyle;
   final bool isHint;
   final TextInputType? textInputType;
+  final TextCapitalization textCapitalization;
   final List<TextInputFormatter>? inputFormatters;
   final TextDirection? textDirection;
   final int? maxLines;
@@ -88,6 +90,7 @@ class TextFeildWidget extends StatelessWidget {
         contentPadding: contentPadding,
       ),
       keyboardType: textInputType ?? TextInputType.text,
+      textCapitalization: textCapitalization,
       inputFormatters: inputFormatters,
       textDirection: textDirection ?? TextDirection.ltr,
       maxLines: maxLines ?? 1,

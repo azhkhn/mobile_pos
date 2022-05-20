@@ -7,6 +7,7 @@ const String tableSubCategory = 'sub_category';
 
 class SubCategoryFields {
   static const String id = '_id';
+  static const String categoryId = 'categoryId';
   static const String category = 'category';
   static const String subCategory = 'subCategory';
 }
@@ -16,12 +17,12 @@ class SubCategoryModel with _$SubCategoryModel {
   const SubCategoryModel._();
   const factory SubCategoryModel({
     @JsonKey(name: '_id') int? id,
+    required int categoryId,
     required String category,
     required String subCategory,
   }) = _CategoryModel;
 
-  factory SubCategoryModel.fromJson(Map<String, dynamic> json) =>
-      _$SubCategoryModelFromJson(json);
+  factory SubCategoryModel.fromJson(Map<String, dynamic> json) => _$SubCategoryModelFromJson(json);
 
   String get() {
     return subCategory;

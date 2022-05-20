@@ -45,6 +45,7 @@ class CategoryScreen extends StatelessWidget {
                 child: TextFeildWidget(
                   labelText: 'Category *',
                   controller: _categoryEditingController,
+                  textCapitalization: TextCapitalization.words,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'This field is required*';
@@ -67,17 +68,11 @@ class CategoryScreen extends StatelessWidget {
 
                     try {
                       await categoryDB.createCategory(_category);
-                      kSnackBar(
-                          context: context,
-                          success: true,
-                          content: 'Category "$category" added successfully!');
+                      kSnackBar(context: context, success: true, content: 'Category "$category" added successfully!');
                       _categoryEditingController.clear();
                     } catch (e) {
                       log(e.toString());
-                      kSnackBar(
-                          context: context,
-                          error: true,
-                          content: 'Category "$category" already exist!');
+                      kSnackBar(context: context, error: true, content: 'Category "$category" already exist!');
                     }
                   }
                 },
@@ -99,8 +94,7 @@ class CategoryScreen extends StatelessWidget {
                         }
                         return ValueListenableBuilder(
                             valueListenable: categoryNotifiers,
-                            builder:
-                                (context, List<CategoryModel> categories, _) {
+                            builder: (context, List<CategoryModel> categories, _) {
                               return ListView.separated(
                                 itemBuilder: (context, index) {
                                   final item = categories[index];
@@ -110,8 +104,7 @@ class CategoryScreen extends StatelessWidget {
                                       backgroundColor: kTransparentColor,
                                       child: Text(
                                         '${index + 1}'.toString(),
-                                        style: const TextStyle(
-                                            color: kTextColorBlack),
+                                        style: const TextStyle(color: kTextColorBlack),
                                       ),
                                     ),
                                     title: Text(item.category),
@@ -120,82 +113,44 @@ class CategoryScreen extends StatelessWidget {
                                       children: [
                                         IconButton(
                                           onPressed: () async {
-                                            final _categoryController =
-                                                TextEditingController(
-                                                    text: categories[index]
-                                                        .category);
+                                            final _categoryController = TextEditingController(text: categories[index].category);
 
                                             showDialog(
                                                 context: context,
-                                                builder:
-                                                    (context) => AlertDialog(
-                                                            content: Column(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                children: [
-                                                              TextFeildWidget(
-                                                                labelText:
-                                                                    'Category Name',
-                                                                controller:
-                                                                    _categoryController,
-                                                                floatingLabelBehavior:
-                                                                    FloatingLabelBehavior
-                                                                        .always,
-                                                                inputBorder:
-                                                                    const OutlineInputBorder(),
-                                                                autovalidateMode:
-                                                                    AutovalidateMode
-                                                                        .onUserInteraction,
-                                                                isDense: true,
-                                                                validator:
-                                                                    (value) {
-                                                                  if (value ==
-                                                                          null ||
-                                                                      value
-                                                                          .isEmpty) {
-                                                                    return 'This field is required*';
-                                                                  }
-                                                                  return null;
-                                                                },
-                                                              ),
-                                                              kHeight5,
-                                                              CustomMaterialBtton(
-                                                                  onPressed:
-                                                                      () async {
-                                                                    final String
-                                                                        categoryName =
-                                                                        _categoryController
-                                                                            .text
-                                                                            .trim();
-                                                                    if (categoryName ==
-                                                                        categories[index]
-                                                                            .category) {
-                                                                      return Navigator
-                                                                          .pop(
-                                                                              context);
-                                                                    }
-                                                                    await categoryDB.updateCategory(
-                                                                        category:
-                                                                            categories[
-                                                                                index],
-                                                                        categoryName:
-                                                                            categoryName);
-                                                                    Navigator.pop(
-                                                                        context);
+                                                builder: (context) => AlertDialog(
+                                                        content: Column(mainAxisSize: MainAxisSize.min, children: [
+                                                      TextFeildWidget(
+                                                        labelText: 'Category Name',
+                                                        controller: _categoryController,
+                                                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                        inputBorder: const OutlineInputBorder(),
+                                                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                                                        isDense: true,
+                                                        validator: (value) {
+                                                          if (value == null || value.isEmpty) {
+                                                            return 'This field is required*';
+                                                          }
+                                                          return null;
+                                                        },
+                                                      ),
+                                                      kHeight5,
+                                                      CustomMaterialBtton(
+                                                          onPressed: () async {
+                                                            final String categoryName = _categoryController.text.trim();
+                                                            if (categoryName == categories[index].category) {
+                                                              return Navigator.pop(context);
+                                                            }
+                                                            await categoryDB.updateCategory(category: categories[index], categoryName: categoryName);
+                                                            Navigator.pop(context);
 
-                                                                    kSnackBar(
-                                                                      context:
-                                                                          context,
-                                                                      content:
-                                                                          'Category updated successfully',
-                                                                      update:
-                                                                          true,
-                                                                    );
-                                                                  },
-                                                                  buttonText:
-                                                                      'Update')
-                                                            ])));
+                                                            kSnackBar(
+                                                              context: context,
+                                                              content: 'Category updated successfully',
+                                                              update: true,
+                                                            );
+                                                          },
+                                                          buttonText: 'Update')
+                                                    ])));
                                           },
                                           icon: kIconEdit,
                                         ),
@@ -204,8 +159,7 @@ class CategoryScreen extends StatelessWidget {
                                             showDialog(
                                               context: context,
                                               builder: (ctx) => AlertDialog(
-                                                content: const Text(
-                                                    'Are you sure you want to delete this item?'),
+                                                content: const Text('Are you sure you want to delete this item?'),
                                                 actions: [
                                                   TextButton(
                                                     onPressed: () {
@@ -215,15 +169,12 @@ class CategoryScreen extends StatelessWidget {
                                                   ),
                                                   TextButton(
                                                     onPressed: () async {
-                                                      await categoryDB
-                                                          .deleteCategory(
-                                                              item.id!);
+                                                      await categoryDB.deleteCategory(item.id!);
                                                       Navigator.pop(context);
 
                                                       kSnackBar(
                                                         context: context,
-                                                        content:
-                                                            'Category deleted successfully',
+                                                        content: 'Category deleted successfully',
                                                         delete: true,
                                                       );
                                                     },
@@ -239,8 +190,7 @@ class CategoryScreen extends StatelessWidget {
                                     ),
                                   );
                                 },
-                                separatorBuilder: (context, index) =>
-                                    const Divider(),
+                                separatorBuilder: (context, index) => const Divider(),
                                 itemCount: snapshot.data.length,
                               );
                             });

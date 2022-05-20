@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -16,7 +17,10 @@ import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/sub_category/sub_category_db.dart';
 import 'package:shop_ez/db/db_functions/unit/unit_database.dart';
 import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
+import 'package:shop_ez/model/brand/brand_model.dart';
+import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
+import 'package:shop_ez/model/sub-category/sub_category_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
@@ -63,11 +67,11 @@ class ScreenItemMaster extends StatelessWidget {
 
   //========== Dropdown Field ==========
   String? _productTypeController;
-  String? _itemCategoryController;
-  String? _itemSubCategoryController;
-  String? _itemBrandController;
+  int? _itemCategoryId;
+  int? _itemSubCategoryId;
+  int? _itemBrandId;
   String? _productVatController;
-  String? _vatId;
+  int? _vatId;
   int? _vatRate;
   String? _unitController;
   String? _vatMethodController;
@@ -77,7 +81,7 @@ class ScreenItemMaster extends StatelessWidget {
 
   //========== Value Notifiers ==========
   ValueNotifier<File?> selectedImageNotifier = ValueNotifier(null);
-  ValueNotifier<String?> itemCategoryNotifier = ValueNotifier(null);
+  ValueNotifier<int?> itemCategoryNotifier = ValueNotifier(null);
 
   //========== Focus Node for TextFields ==========
   FocusNode itemNameFocusNode = FocusNode();
@@ -185,12 +189,14 @@ class ScreenItemMaster extends StatelessWidget {
                         contentPadding: const EdgeInsets.all(10),
                         onChanged: (value) {
                           _dropdownKey.currentState!.reset();
-                          _itemCategoryController = value.toString();
-                          itemCategoryNotifier.value = value.toString();
+                          final CategoryModel category = CategoryModel.fromJson(jsonDecode(value!));
+                          log('Category Id == ' + category.id.toString());
+                          log('Category == ' + category.category);
+                          _itemCategoryId = category.id;
+                          itemCategoryNotifier.value = category.id;
                         },
                         validator: (value) {
-                          if (value == null ||
-                              _itemCategoryController == null) {
+                          if (value == null || _itemCategoryId == null) {
                             return 'This field is required*';
                           }
                           return null;
@@ -203,10 +209,9 @@ class ScreenItemMaster extends StatelessWidget {
                   //========== Item Sub-Category Dropdown ==========
                   ValueListenableBuilder(
                       valueListenable: itemCategoryNotifier,
-                      builder: (context, String? category, _) {
+                      builder: (context, int? categoryId, _) {
                         return FutureBuilder(
-                          future: subCategoryDB.getSubCategoryByCategory(
-                              category: category ?? ''),
+                          future: subCategoryDB.getSubCategoryByCategoryId(categoryId: categoryId!),
                           builder: (context, dynamic snapshot) {
                             return CustomDropDownField(
                               dropdownKey: _dropdownKey,
@@ -214,7 +219,10 @@ class ScreenItemMaster extends StatelessWidget {
                               snapshot: snapshot,
                               contentPadding: const EdgeInsets.all(10),
                               onChanged: (value) {
-                                _itemSubCategoryController = value.toString();
+                                final SubCategoryModel subCategory = SubCategoryModel.fromJson(jsonDecode(value!));
+                                log('Sub Category Id == ' + subCategory.id.toString());
+                                log('Sub Category == ' + subCategory.subCategory);
+                                _itemSubCategoryId = subCategory.id;
                               },
                             );
                           },
@@ -231,7 +239,10 @@ class ScreenItemMaster extends StatelessWidget {
                         snapshot: snapshot,
                         contentPadding: const EdgeInsets.all(10),
                         onChanged: (value) {
-                          _itemBrandController = value.toString();
+                          final BrandModel brand = BrandModel.fromJson(jsonDecode(value!));
+                          log('Brand Is == ' + brand.id.toString());
+                          log('Brand == ' + brand.brand);
+                          _itemBrandId = brand.id;
                         },
                       );
                     },
@@ -290,7 +301,7 @@ class ScreenItemMaster extends StatelessWidget {
                         onChanged: (value) async {
                           _productVatController = value.toString();
                           final _vat = await vatDB.getVatByName(value!);
-                          _vatId = '${_vat.id}';
+                          _vatId = _vat.id;
                           _vatRate = _vat.rate;
 
                           log('VAT id = $_vatId');
@@ -514,18 +525,15 @@ class ScreenItemMaster extends StatelessWidget {
 
   //========== Add Item ==========
   Future<void> addItem({context}) async {
-    final int vatRate;
+    final int vatRate, vatId;
+    final int itemCategoryId, itemSubCategoryId, itemBrandId;
     final String productType,
         itemName,
         itemNameArabic,
         itemCode,
-        itemCategory,
-        itemSubCategory,
-        itemBrand,
         itemCost,
         sellingPrice,
         secondarySellingPrice,
-        vatId,
         productVAT,
         unit,
         expiryDate,
@@ -543,9 +551,9 @@ class ScreenItemMaster extends StatelessWidget {
       itemName = _itemNameController.text.trim();
       itemNameArabic = _itemNameArabicController.text.trim();
       itemCode = _itemCodeController.text.trim();
-      itemCategory = _itemCategoryController!;
-      itemSubCategory = _itemSubCategoryController ?? '';
-      itemBrand = _itemBrandController ?? '';
+      itemCategoryId = _itemCategoryId!;
+      itemSubCategoryId = _itemSubCategoryId!;
+      itemBrandId = _itemBrandId!;
       itemCost = _itemCostController.text.trim();
       sellingPrice = _sellingPriceController.text.trim();
       secondarySellingPrice = _secondarySellingPriceController.text.trim();
@@ -554,9 +562,7 @@ class ScreenItemMaster extends StatelessWidget {
       productVAT = _productVatController!;
       unit = _unitController!;
       expiryDate = _selectedDate ?? '';
-      openingStock = _openingStockController.text.isEmpty
-          ? '0'
-          : _openingStockController.text.trim();
+      openingStock = _openingStockController.text.isEmpty ? '0' : _openingStockController.text.trim();
       vatMethod = _vatMethodController!;
       alertQuantity = _alertQuantityController.text.trim();
 
@@ -580,9 +586,9 @@ class ScreenItemMaster extends StatelessWidget {
         itemName: itemName,
         itemNameArabic: itemNameArabic,
         itemCode: itemCode,
-        itemCategory: itemCategory,
-        itemSubCategory: itemSubCategory,
-        itemBrand: itemBrand,
+        itemCategoryId: itemCategoryId,
+        itemSubCategoryId: itemSubCategoryId,
+        itemBrandId: itemBrandId,
         itemCost: itemCost,
         sellingPrice: sellingPrice,
         secondarySellingPrice: secondarySellingPrice,
@@ -599,10 +605,7 @@ class ScreenItemMaster extends StatelessWidget {
       try {
         await itemMasterDB.createItem(_itemMasterModel);
         log('Item $itemName Added!');
-        kSnackBar(
-            context: context,
-            success: true,
-            content: 'Item "$itemName" added successfully!');
+        kSnackBar(context: context, success: true, content: 'Item "$itemName" added successfully!');
       } catch (e) {
         if (e == 'Item Already Exist!') {
           log('Item Already Exist!');

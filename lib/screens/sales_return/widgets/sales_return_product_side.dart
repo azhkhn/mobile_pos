@@ -27,12 +27,10 @@ class SalesReturnProductSideWidget extends StatefulWidget {
   static final ValueNotifier<List<dynamic>> itemsNotifier = ValueNotifier([]);
 
   @override
-  State<SalesReturnProductSideWidget> createState() =>
-      _SalesReturnProductSideWidgetState();
+  State<SalesReturnProductSideWidget> createState() => _SalesReturnProductSideWidgetState();
 }
 
-class _SalesReturnProductSideWidgetState
-    extends State<SalesReturnProductSideWidget> {
+class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWidget> {
   //========== Database Instances ==========
   final categoryDB = CategoryDatabase.instance;
   final subCategoryDB = SubCategoryDatabase.instance;
@@ -95,15 +93,12 @@ class _SalesReturnProductSideWidgetState
                             onTap: () async {
                               _productController.clear();
                               _builderModel = null;
-                              futureGrid =
-                                  ItemMasterDatabase.instance.getAllItems();
+                              futureGrid = ItemMasterDatabase.instance.getAllItems();
                               if (itemsList.isNotEmpty) {
-                                SalesReturnProductSideWidget
-                                    .itemsNotifier.value = itemsList;
+                                SalesReturnProductSideWidget.itemsNotifier.value = itemsList;
                               } else {
                                 itemsList = await itemMasterDB.getAllItems();
-                                SalesReturnProductSideWidget
-                                    .itemsNotifier.value = itemsList;
+                                SalesReturnProductSideWidget.itemsNotifier.value = itemsList;
                               }
                             },
                           ),
@@ -113,9 +108,7 @@ class _SalesReturnProductSideWidgetState
                         hintStyle: const TextStyle(fontSize: 12),
                         border: const OutlineInputBorder(),
                       )),
-                  noItemsFoundBuilder: (context) => const SizedBox(
-                      height: 50,
-                      child: Center(child: Text('No Product Found!'))),
+                  noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
                   suggestionsCallback: (pattern) async {
                     return itemMasterDB.getProductSuggestions(pattern);
                   },
@@ -136,9 +129,7 @@ class _SalesReturnProductSideWidgetState
                     Future<List<dynamic>> future() async => [selectedItem];
                     futureGrid = future();
                     _builderModel = null;
-                    SalesReturnProductSideWidget.itemsNotifier.value = [
-                      selectedItem
-                    ];
+                    SalesReturnProductSideWidget.itemsNotifier.value = [selectedItem];
 
                     log(selectedItem.itemName);
                   },
@@ -176,12 +167,10 @@ class _SalesReturnProductSideWidgetState
                       _builderModel = 0;
 
                       if (categories.isNotEmpty) {
-                        SalesReturnProductSideWidget.itemsNotifier.value =
-                            categories;
+                        SalesReturnProductSideWidget.itemsNotifier.value = categories;
                       } else {
                         categories = await categoryDB.getAllCategories();
-                        SalesReturnProductSideWidget.itemsNotifier.value =
-                            categories;
+                        SalesReturnProductSideWidget.itemsNotifier.value = categories;
                       }
                     },
                     buttonText: 'Categories'),
@@ -193,13 +182,10 @@ class _SalesReturnProductSideWidgetState
                     onPressed: () async {
                       _builderModel = 1;
                       if (subCategories.isNotEmpty) {
-                        SalesReturnProductSideWidget.itemsNotifier.value =
-                            subCategories;
+                        SalesReturnProductSideWidget.itemsNotifier.value = subCategories;
                       } else {
-                        subCategories =
-                            await subCategoryDB.getAllSubCategories();
-                        SalesReturnProductSideWidget.itemsNotifier.value =
-                            subCategories;
+                        subCategories = await subCategoryDB.getAllSubCategories();
+                        SalesReturnProductSideWidget.itemsNotifier.value = subCategories;
                       }
                     },
                     buttonColor: Colors.orange,
@@ -231,12 +217,10 @@ class _SalesReturnProductSideWidgetState
                     _builderModel = null;
 
                     if (itemsList.isNotEmpty) {
-                      SalesReturnProductSideWidget.itemsNotifier.value =
-                          itemsList;
+                      SalesReturnProductSideWidget.itemsNotifier.value = itemsList;
                     } else {
                       itemsList = await itemMasterDB.getAllItems();
-                      SalesReturnProductSideWidget.itemsNotifier.value =
-                          itemsList;
+                      SalesReturnProductSideWidget.itemsNotifier.value = itemsList;
                     }
                   },
                   color: Colors.blue,
@@ -276,26 +260,20 @@ class _SalesReturnProductSideWidgetState
                           );
                         }
                         if (snapshot.hasData) {
-                          SalesReturnProductSideWidget.itemsNotifier.value =
-                              snapshot.data!;
+                          SalesReturnProductSideWidget.itemsNotifier.value = snapshot.data!;
                         } else {
                           SalesReturnProductSideWidget.itemsNotifier.value = [];
                         }
 
-                        return snapshot.hasData &&
-                                SalesReturnProductSideWidget
-                                    .itemsNotifier.value.isNotEmpty
+                        return snapshot.hasData && SalesReturnProductSideWidget.itemsNotifier.value.isNotEmpty
                             ? ValueListenableBuilder(
-                                valueListenable:
-                                    SalesReturnProductSideWidget.itemsNotifier,
+                                valueListenable: SalesReturnProductSideWidget.itemsNotifier,
                                 builder: (context, List<dynamic> itemList, _) {
                                   log('Total Products == ${SalesReturnProductSideWidget.itemsNotifier.value.length}');
 
-                                  return SalesReturnProductSideWidget
-                                          .itemsNotifier.value.isNotEmpty
+                                  return SalesReturnProductSideWidget.itemsNotifier.value.isNotEmpty
                                       ? GridView.builder(
-                                          gridDelegate:
-                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                             crossAxisCount: 5,
                                             childAspectRatio: (1 / .75),
                                           ),
@@ -304,184 +282,98 @@ class _SalesReturnProductSideWidgetState
                                             return InkWell(
                                               onTap: () async {
                                                 if (_builderModel == 0) {
-                                                  log(itemList[index].category);
-                                                  final category =
-                                                      itemList[index].category;
+                                                  log(itemList[index].isCategory);
+                                                  final category = itemList[index].isCategory;
                                                   _builderModel = null;
-                                                  SalesReturnProductSideWidget
-                                                          .itemsNotifier.value =
-                                                      await itemMasterDB
-                                                          .getProductByCategory(
-                                                              category);
+                                                  SalesReturnProductSideWidget.itemsNotifier.value =
+                                                      await itemMasterDB.getProductByCategoryId(category);
                                                 } else if (_builderModel == 1) {
-                                                  log(itemList[index]
-                                                      .subCategory);
-                                                  final subCategory =
-                                                      itemList[index]
-                                                          .subCategory;
+                                                  log(itemList[index].isSubCategory);
+                                                  final subCategory = itemList[index].isSubCategory;
                                                   _builderModel = null;
-                                                  SalesReturnProductSideWidget
-                                                          .itemsNotifier.value =
-                                                      await itemMasterDB
-                                                          .getProductBySubCategory(
-                                                              subCategory);
+                                                  SalesReturnProductSideWidget.itemsNotifier.value =
+                                                      await itemMasterDB.getProductBySubCategoryId(subCategory);
                                                 } else if (_builderModel == 2) {
-                                                  log(itemList[index].brand);
-                                                  final brand =
-                                                      itemList[index].brand;
+                                                  log(itemList[index].isBbrand);
+                                                  final brand = itemList[index].isBbrand;
                                                   _builderModel = null;
-                                                  SalesReturnProductSideWidget
-                                                          .itemsNotifier.value =
-                                                      await itemMasterDB
-                                                          .getProductByBrand(
-                                                              brand);
+                                                  SalesReturnProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByBrandId(brand);
                                                 } else {
 //===================================== if the Product Already Added ====================================
-                                                  isProductAlreadyAdded(
-                                                      itemList, index);
+                                                  isProductAlreadyAdded(itemList, index);
 //=======================================================================================================
 
-                                                  SalesReturnSideWidget
-                                                      .selectedProductsNotifier
-                                                      .notifyListeners();
+                                                  SalesReturnSideWidget.selectedProductsNotifier.notifyListeners();
 
-                                                  SalesReturnSideWidget
-                                                      .totalQuantityNotifier
-                                                      .value++;
+                                                  SalesReturnSideWidget.totalQuantityNotifier.value++;
                                                 }
                                               },
                                               child: Card(
                                                 elevation: 10,
                                                 child: Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        vertical: 5.0,
-                                                        horizontal: 5.0),
+                                                    padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
                                                     child: _builderModel == null
                                                         ? Column(
                                                             children: [
                                                               Expanded(
                                                                 flex: 4,
-                                                                child:
-                                                                    AutoSizeText(
-                                                                  itemList[index]
-                                                                          .itemName ??
-                                                                      '',
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  softWrap:
-                                                                      true,
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          _isTablet
-                                                                              ? 10
-                                                                              : 7),
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
+                                                                child: AutoSizeText(
+                                                                  itemList[index].itemName ?? '',
+                                                                  textAlign: TextAlign.center,
+                                                                  softWrap: true,
+                                                                  style: TextStyle(fontSize: _isTablet ? 10 : 7),
+                                                                  overflow: TextOverflow.ellipsis,
                                                                   maxLines: 2,
-                                                                  minFontSize:
-                                                                      7,
-                                                                  maxFontSize:
-                                                                      10,
+                                                                  minFontSize: 7,
+                                                                  maxFontSize: 10,
                                                                 ),
                                                               ),
                                                               const Spacer(),
                                                               Expanded(
                                                                 flex: 2,
-                                                                child:
-                                                                    AutoSizeText(
-                                                                  'Qty : ' +
-                                                                      itemList[
-                                                                              index]
-                                                                          .openingStock,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          _isTablet
-                                                                              ? 10
-                                                                              : 7),
+                                                                child: AutoSizeText(
+                                                                  'Qty : ' + itemList[index].openingStock,
+                                                                  textAlign: TextAlign.center,
+                                                                  style: TextStyle(fontSize: _isTablet ? 10 : 7),
                                                                   maxLines: 1,
-                                                                  minFontSize:
-                                                                      7,
-                                                                  maxFontSize:
-                                                                      10,
+                                                                  minFontSize: 7,
+                                                                  maxFontSize: 10,
                                                                 ),
                                                               ),
                                                               Expanded(
                                                                 flex: 2,
-                                                                child:
-                                                                    AutoSizeText(
-                                                                  Converter
-                                                                      .currency
-                                                                      .format(num.tryParse(
-                                                                          itemList[index]
-                                                                              .sellingPrice)),
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          _isTablet
-                                                                              ? 10
-                                                                              : 7),
+                                                                child: AutoSizeText(
+                                                                  Converter.currency.format(num.tryParse(itemList[index].sellingPrice)),
+                                                                  style: TextStyle(fontSize: _isTablet ? 10 : 7),
                                                                   maxLines: 1,
-                                                                  minFontSize:
-                                                                      7,
-                                                                  maxFontSize:
-                                                                      10,
+                                                                  minFontSize: 7,
+                                                                  maxFontSize: 10,
                                                                 ),
                                                               )
                                                             ],
                                                           )
                                                         : Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
+                                                            mainAxisAlignment: MainAxisAlignment.center,
                                                             children: [
                                                               AutoSizeText(
-                                                                _builderModel ==
-                                                                        0
-                                                                    ? itemList[
-                                                                            index]
-                                                                        .category
-                                                                    : _builderModel ==
-                                                                            1
-                                                                        ? itemList[index]
-                                                                            .subCategory
-                                                                        : _builderModel ==
-                                                                                2
-                                                                            ? itemList[index].brand
+                                                                _builderModel == 0
+                                                                    ? itemList[index].isCategory
+                                                                    : _builderModel == 1
+                                                                        ? itemList[index].isSubCategory
+                                                                        : _builderModel == 2
+                                                                            ? itemList[index].isBbrand
                                                                             : '',
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
+                                                                textAlign: TextAlign.center,
                                                                 softWrap: true,
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        _isTablet
-                                                                            ? 10
-                                                                            : 8),
+                                                                style: TextStyle(fontSize: _isTablet ? 10 : 8),
                                                                 minFontSize: 8,
                                                                 maxFontSize: 10,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: _builderModel ==
-                                                                            0 &&
-                                                                        itemList[index]
-                                                                            .category
-                                                                            .toString()
-                                                                            .contains(
-                                                                                ' ')
+                                                                overflow: TextOverflow.ellipsis,
+                                                                maxLines: _builderModel == 0 && itemList[index].isCategory.toString().contains(' ')
                                                                     ? 2
-                                                                    : _builderModel ==
-                                                                                1 &&
-                                                                            itemList[index].subCategory.toString().contains(
-                                                                                ' ')
+                                                                    : _builderModel == 1 && itemList[index].isSubCategory.toString().contains(' ')
                                                                         ? 2
-                                                                        : _builderModel == 2 &&
-                                                                                itemList[index].brand.toString().contains(' ')
+                                                                        : _builderModel == 2 && itemList[index].isBbrand.toString().contains(' ')
                                                                             ? 2
                                                                             : 1,
                                                               ),
@@ -514,16 +406,11 @@ class _SalesReturnProductSideWidgetState
     final vatMethod = itemList[index].vatMethod;
     log('VAT Method = ' + vatMethod);
 
-    for (var i = 0;
-        i < SalesReturnSideWidget.selectedProductsNotifier.value.length;
-        i++) {
-      if (SalesReturnSideWidget.selectedProductsNotifier.value[i].id ==
-          itemList[index].id) {
-        final _currentQty = num.tryParse(
-            SalesReturnSideWidget.quantityNotifier.value[i].value.text);
+    for (var i = 0; i < SalesReturnSideWidget.selectedProductsNotifier.value.length; i++) {
+      if (SalesReturnSideWidget.selectedProductsNotifier.value[i].id == itemList[index].id) {
+        final _currentQty = num.tryParse(SalesReturnSideWidget.quantityNotifier.value[i].value.text);
 
-        SalesReturnSideWidget.quantityNotifier.value[i].text =
-            '${_currentQty! + 1}';
+        SalesReturnSideWidget.quantityNotifier.value[i].text = '${_currentQty! + 1}';
 
 //==================== On Item Quantity Changed ====================
         const SalesReturnSideWidget().onItemQuantityChanged(
@@ -540,15 +427,11 @@ class _SalesReturnProductSideWidgetState
         ? '${const SalesReturnSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: itemList[index].vatRate)}'
         : itemList[index].sellingPrice);
 
-    SalesReturnSideWidget.quantityNotifier.value
-        .add(TextEditingController(text: '1'));
+    SalesReturnSideWidget.quantityNotifier.value.add(TextEditingController(text: '1'));
 
     SalesReturnSideWidget.totalItemsNotifier.value++;
 
-    const SalesReturnSideWidget().getItemVat(
-        vatMethod: vatMethod,
-        amount: itemList[index].sellingPrice,
-        vatRate: itemList[index].vatRate);
+    const SalesReturnSideWidget().getItemVat(vatMethod: vatMethod, amount: itemList[index].sellingPrice, vatRate: itemList[index].vatRate);
     const SalesReturnSideWidget().getTotalAmount();
     const SalesReturnSideWidget().getTotalVAT();
     const SalesReturnSideWidget().getTotalPayable();
@@ -568,8 +451,7 @@ class _SalesReturnProductSideWidgetState
       if (_scanResult == '-1') return;
       final String _itemCode = _scanResult;
       _builderModel = null;
-      SalesReturnProductSideWidget.itemsNotifier.value =
-          await itemMasterDB.getProductByItemCode(_itemCode);
+      SalesReturnProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByItemCode(_itemCode);
     } on PlatformException catch (_) {
       log('Failed to get Platform version!');
     } catch (e) {

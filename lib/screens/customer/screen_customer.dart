@@ -14,21 +14,21 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';
 
-class CustomerScreen extends StatefulWidget {
-  const CustomerScreen({Key? key, this.pos = false}) : super(key: key);
-  static const items = ['Cash Customer', 'Credit Customer'];
-  final bool pos;
+// static const items = ['Cash Customer', 'Credit Customer'];
 
-  @override
-  State<CustomerScreen> createState() => _CustomerScreenState();
-}
+class CustomerScreen extends StatelessWidget {
+  CustomerScreen({Key? key, this.fromPos = false}) : super(key: key);
 
-class _CustomerScreenState extends State<CustomerScreen> {
+  //========== Bool ==========
+  final bool fromPos;
+
+  //========== Global Keys ==========
   final _formKey = GlobalKey<FormState>();
-  late Size _screenSize;
 
+  //========== Database Instances ==========
   final customerDB = CustomerDatabase.instance;
 
+  //========== TextEditing Controllers ==========
   final _companyController = TextEditingController();
   final _companyArabicController = TextEditingController();
   final _customerController = TextEditingController();
@@ -45,27 +45,27 @@ class _CustomerScreenState extends State<CustomerScreen> {
   final _countryArabicController = TextEditingController();
   final _poBoxController = TextEditingController();
 
-  // String 'General Customer' = 'null';
-
-  FocusNode customerTypeFocusNode = FocusNode();
-  FocusNode companyFocusNode = FocusNode();
-  FocusNode companyArabicFocusNode = FocusNode();
-  FocusNode customerFocusNode = FocusNode();
-  FocusNode customerArabicFocusNode = FocusNode();
-  FocusNode vatNumberFocusNode = FocusNode();
-  FocusNode addressFocusNode = FocusNode();
-  FocusNode addressArabicFocusNode = FocusNode();
-  FocusNode cityFocusNode = FocusNode();
-  FocusNode cityArabicFocusNode = FocusNode();
-  FocusNode stateFocusNode = FocusNode();
-  FocusNode stateArabicFocusNode = FocusNode();
-  FocusNode countryFocusNode = FocusNode();
-  FocusNode countryArabicFocusNode = FocusNode();
+  //========== Focus Nodes ==========
+  final FocusNode customerTypeFocusNode = FocusNode();
+  final FocusNode companyFocusNode = FocusNode();
+  final FocusNode companyArabicFocusNode = FocusNode();
+  final FocusNode customerFocusNode = FocusNode();
+  final FocusNode customerArabicFocusNode = FocusNode();
+  final FocusNode vatNumberFocusNode = FocusNode();
+  final FocusNode addressFocusNode = FocusNode();
+  final FocusNode addressArabicFocusNode = FocusNode();
+  final FocusNode cityFocusNode = FocusNode();
+  final FocusNode cityArabicFocusNode = FocusNode();
+  final FocusNode stateFocusNode = FocusNode();
+  final FocusNode stateArabicFocusNode = FocusNode();
+  final FocusNode countryFocusNode = FocusNode();
+  final FocusNode countryArabicFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
-    customerDB.getAllCustomers();
-    _screenSize = MediaQuery.of(context).size;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await customerDB.getAllCustomers();
+    });
     return Scaffold(
       appBar: AppBarWidget(
         title: 'Customer',
@@ -96,7 +96,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   //       .toList(),
                   //   onChanged: (value) {
                   //     setState(() {
-                  //       'General Customer' = value.toString();
+                  //       _customerTypeDropdown = value.toString();
                   //     });
                   //   },
                   //   validator: (value) {
@@ -284,8 +284,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   kHeight20,
 
                   //========== Submit Button ==========
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: _screenSize.width / 10),
+                  FractionallySizedBox(
+                    widthFactor: .8,
                     child: CustomMaterialBtton(
                         buttonText: 'Submit',
                         onPressed: () {
@@ -363,11 +363,11 @@ class _CustomerScreenState extends State<CustomerScreen> {
       );
       try {
         final id = await customerDB.createCustomer(_customerModel);
-        _formKey.currentState!.reset();
+        _formState.reset();
         log('Customer $customer Added!');
         kSnackBar(context: context, success: true, content: 'Customer "$customer" added successfully!');
 
-        if (widget.pos) {
+        if (fromPos) {
           return Navigator.pop(context, id);
         }
       } catch (e) {

@@ -53,22 +53,16 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
             children: [
               AutoSizeText(
                 'Total Payable',
-                style: TextStyle(
-                    color: kWhite,
-                    fontWeight: FontWeight.bold,
-                    fontSize: isTablet ? 12 : 11),
+                style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                 minFontSize: 8,
               ),
               kWidth5,
               Flexible(
                 child: ValueListenableBuilder(
-                  valueListenable:
-                      PurchaseReturnSideWidget.totalPayableNotifier,
+                  valueListenable: PurchaseReturnSideWidget.totalPayableNotifier,
                   builder: (context, totalPayable, child) {
                     return AutoSizeText(
-                      totalPayable == 0
-                          ? '0'
-                          : Converter.currency.format(totalPayable),
+                      totalPayable == 0 ? '0' : Converter.currency.format(totalPayable),
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: kWhite,
@@ -92,8 +86,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    PurchaseReturnSideWidget.selectedProductsNotifier.value
-                        .clear();
+                    PurchaseReturnSideWidget.selectedProductsNotifier.value.clear();
                     PurchaseReturnSideWidget.subTotalNotifier.value.clear();
                     PurchaseReturnSideWidget.itemTotalVatNotifier.value.clear();
                     PurchaseReturnSideWidget.supplierController.clear();
@@ -112,10 +105,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
                   child: Center(
                     child: AutoSizeText(
                       'Cancel',
-                      style: TextStyle(
-                          color: kWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isTablet ? 12 : 11),
+                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                       minFontSize: 8,
                     ),
                   ),
@@ -127,21 +117,13 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () async {
-                    final int? customerId =
-                        PurchaseReturnSideWidget.supplierIdNotifier.value;
-                    final num items =
-                        PurchaseReturnSideWidget.totalItemsNotifier.value;
+                    final int? customerId = PurchaseReturnSideWidget.supplierIdNotifier.value;
+                    final num items = PurchaseReturnSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {
-                      kSnackBar(
-                          context: context,
-                          content:
-                              'Please select any Supplier to return purchase!');
+                      kSnackBar(context: context, content: 'Please select any Supplier to return purchase!');
                     } else if (items == 0) {
-                      return kSnackBar(
-                          context: context,
-                          content:
-                              'Please select any Products to return purchase!');
+                      return kSnackBar(context: context, content: 'Please select any Products to return purchase!');
                     } else {
                       await addPurchaseReturn(context);
                     }
@@ -151,10 +133,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
                   child: Center(
                     child: AutoSizeText(
                       'Submit',
-                      style: TextStyle(
-                          color: kWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isTablet ? 12 : 11),
+                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                       minFontSize: 8,
                     ),
                   ),
@@ -199,10 +178,8 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
 
     //==================== Database Instances ====================
     // final PurchaseDatabase purchaseDatabase = PurchaseDatabase.instance;
-    final PurchaseReturnDatabase purchaseReturnDB =
-        PurchaseReturnDatabase.instance;
-    final PurchaseReturnItemsDatabase purchaseReturnItemsDB =
-        PurchaseReturnItemsDatabase.instance;
+    final PurchaseReturnDatabase purchaseReturnDB = PurchaseReturnDatabase.instance;
+    final PurchaseReturnItemsDatabase purchaseReturnItemsDB = PurchaseReturnItemsDatabase.instance;
     final TransactionDatabase transactionDB = TransactionDatabase.instance;
 
     final ItemMasterDatabase itemMasterDB = ItemMasterDatabase.instance;
@@ -243,10 +220,8 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
     // Save purchase in a old date in Database
     // dateTime = DateTime(2022, 4, 22, 17, 45).toIso8601String();
     dateTime = DateTime.now().toIso8601String();
-    originalInvoiceNumber =
-        PurchaseReturnSideWidget.originalInvoiceNumberNotifier.value;
-    originalPurchaseId =
-        PurchaseReturnSideWidget.originalPurchaseIdNotifier.value;
+    originalInvoiceNumber = PurchaseReturnSideWidget.originalInvoiceNumberNotifier.value;
+    originalPurchaseId = PurchaseReturnSideWidget.originalPurchaseIdNotifier.value;
     supplierId = PurchaseReturnSideWidget.supplierIdNotifier.value!;
     supplierName = PurchaseReturnSideWidget.supplierNameNotifier.value!;
     billerName = _biller;
@@ -283,8 +258,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
 
     try {
       //==================== Create Purchase Return ====================
-      final idList =
-          await purchaseReturnDB.createPurchaseReturn(_purchaseReturnModel);
+      final idList = await purchaseReturnDB.createPurchaseReturn(_purchaseReturnModel);
       purchaseReturnId = idList.first;
 
       // purchaseReturnInvoiceNumber = idList.last;
@@ -300,35 +274,24 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
 
       final num items = PurchaseReturnSideWidget.totalItemsNotifier.value;
       for (var i = 0; i < items; i++) {
-        final vatMethod = PurchaseReturnSideWidget
-            .selectedProductsNotifier.value[i].vatMethod;
+        final vatMethod = PurchaseReturnSideWidget.selectedProductsNotifier.value[i].vatMethod;
+        final int categoryId = PurchaseReturnSideWidget.selectedProductsNotifier.value[i].itemCategoryId,
+            vatId = PurchaseReturnSideWidget.selectedProductsNotifier.value[i].vatId,
+            productId = PurchaseReturnSideWidget.selectedProductsNotifier.value[i].id!;
 
-        final String productId =
-                '${PurchaseReturnSideWidget.selectedProductsNotifier.value[i].id}',
-            productType = PurchaseReturnSideWidget
-                .selectedProductsNotifier.value[i].productType,
-            productCode = PurchaseReturnSideWidget
-                .selectedProductsNotifier.value[i].itemCode,
-            productName = PurchaseReturnSideWidget
-                .selectedProductsNotifier.value[i].itemName,
-            category = PurchaseReturnSideWidget
-                .selectedProductsNotifier.value[i].itemCategory,
-            productCost = PurchaseReturnSideWidget
-                .selectedProductsNotifier.value[i].itemCost,
-            unitPrice = PurchaseReturnSideWidget
-                .selectedProductsNotifier.value[i].sellingPrice,
+        final String productType = PurchaseReturnSideWidget.selectedProductsNotifier.value[i].productType,
+            productCode = PurchaseReturnSideWidget.selectedProductsNotifier.value[i].itemCode,
+            productName = PurchaseReturnSideWidget.selectedProductsNotifier.value[i].itemName,
+            productCost = PurchaseReturnSideWidget.selectedProductsNotifier.value[i].itemCost,
+            unitPrice = PurchaseReturnSideWidget.selectedProductsNotifier.value[i].sellingPrice,
             netUnitPrice = vatMethod == 'Inclusive'
                 ? '${const PurchaseReturnSideWidget().getExclusiveAmount(itemCost: unitPrice, vatRate: PurchaseReturnSideWidget.selectedProductsNotifier.value[i].vatRate)}'
                 : unitPrice,
             quantity = PurchaseReturnSideWidget.quantityNotifier.value[i].text,
             subTotal = PurchaseReturnSideWidget.subTotalNotifier.value[i],
-            vatId = PurchaseReturnSideWidget
-                .selectedProductsNotifier.value[i].vatId,
-            vatPercentage = PurchaseReturnSideWidget
-                .selectedProductsNotifier.value[i].productVAT,
+            vatPercentage = PurchaseReturnSideWidget.selectedProductsNotifier.value[i].productVAT,
             vatTotal = PurchaseReturnSideWidget.itemTotalVatNotifier.value[i],
-            unitCode =
-                PurchaseReturnSideWidget.selectedProductsNotifier.value[i].unit;
+            unitCode = PurchaseReturnSideWidget.selectedProductsNotifier.value[i].unit;
 
         log(' Purchase Return Id == $purchaseReturnId');
         log(' Purchase Id == $originalPurchaseId');
@@ -337,7 +300,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         log(' Product Type == $productType');
         log(' Product Code == $productCode');
         log(' Product Name == $productName');
-        log(' Product Category == $category');
+        log(' Product Category == $categoryId');
         log(' Product Cost == $productCost');
         log(' Net Unit Price == $netUnitPrice');
         log(' Unit Price == $unitPrice');
@@ -349,8 +312,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         log(' VAT Total == $vatTotal');
         log('\n==============================================\n');
 
-        final PurchaseItemsReturnModel _purchaseReturnItemsModel =
-            PurchaseItemsReturnModel(
+        final PurchaseItemsReturnModel _purchaseReturnItemsModel = PurchaseItemsReturnModel(
           originalInvoiceNumber: originalInvoiceNumber,
           purchaseId: originalPurchaseId,
           purchaseReturnId: purchaseReturnId,
@@ -358,7 +320,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
           productType: productType,
           productCode: productCode,
           productName: productName,
-          category: category,
+          categoryId: categoryId,
           productCost: productCost,
           netUnitPrice: netUnitPrice,
           unitPrice: unitPrice,
@@ -371,13 +333,10 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         );
 
         //==================== Create Purchase Return Items ====================
-        await purchaseReturnItemsDB
-            .createPurchaseReturnItems(_purchaseReturnItemsModel);
+        await purchaseReturnItemsDB.createPurchaseReturnItems(_purchaseReturnItemsModel);
 
         //==================== Decreasing Item Quantity ====================
-        itemMasterDB.additionItemQty(
-            PurchaseReturnSideWidget.selectedProductsNotifier.value[i],
-            num.parse(quantity));
+        itemMasterDB.additionItemQty(PurchaseReturnSideWidget.selectedProductsNotifier.value[i], num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(
@@ -396,8 +355,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
 
       // HomeCardWidget.detailsCardLoaded = false;
 
-      PurchaseReturnProductSideWidget.itemsNotifier.value =
-          await ItemMasterDatabase.instance.getAllItems();
+      PurchaseReturnProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
 
       const PurchaseReturnSideWidget().resetPurchaseReturn();
 

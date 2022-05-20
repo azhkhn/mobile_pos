@@ -52,10 +52,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
             children: [
               AutoSizeText(
                 'Total Payable',
-                style: TextStyle(
-                    color: kWhite,
-                    fontWeight: FontWeight.bold,
-                    fontSize: isTablet ? 12 : 11),
+                style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                 minFontSize: 8,
               ),
               kWidth5,
@@ -64,9 +61,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
                   valueListenable: PurchaseSideWidget.totalPayableNotifier,
                   builder: (context, totalPayable, child) {
                     return AutoSizeText(
-                      totalPayable == 0
-                          ? '0'
-                          : Converter.currency.format(totalPayable),
+                      totalPayable == 0 ? '0' : Converter.currency.format(totalPayable),
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: kWhite,
@@ -109,10 +104,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
                   child: Center(
                     child: AutoSizeText(
                       'Cancel',
-                      style: TextStyle(
-                          color: kWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isTablet ? 12 : 11),
+                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                       minFontSize: 8,
                     ),
                   ),
@@ -124,30 +116,19 @@ class PurchaseButtonsWidget extends StatelessWidget {
                 height: _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    final int? customerId =
-                        PurchaseSideWidget.supplierIdNotifier.value;
-                    final num items =
-                        PurchaseSideWidget.totalItemsNotifier.value;
+                    final int? customerId = PurchaseSideWidget.supplierIdNotifier.value;
+                    final num items = PurchaseSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {
-                      kSnackBar(
-                          context: context,
-                          content:
-                              'Please select any Supplier to add Purchase!');
+                      kSnackBar(context: context, content: 'Please select any Supplier to add Purchase!');
                     } else if (items == 0) {
-                      return kSnackBar(
-                          context: context,
-                          content:
-                              'Please select any Products to add Purchase!');
+                      return kSnackBar(context: context, content: 'Please select any Products to add Purchase!');
                     } else {
-                      Navigator.pushNamed(context, routePartialPayment,
-                          arguments: {
-                            'totalPayable':
-                                PurchaseSideWidget.totalPayableNotifier.value,
-                            'totalItems':
-                                PurchaseSideWidget.totalItemsNotifier.value,
-                            'purchase': true,
-                          });
+                      Navigator.pushNamed(context, routePartialPayment, arguments: {
+                        'totalPayable': PurchaseSideWidget.totalPayableNotifier.value,
+                        'totalItems': PurchaseSideWidget.totalItemsNotifier.value,
+                        'purchase': true,
+                      });
                     }
                   },
                   padding: const EdgeInsets.all(5),
@@ -155,10 +136,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
                   child: Center(
                     child: AutoSizeText(
                       'Purchase',
-                      style: TextStyle(
-                          color: kWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isTablet ? 12 : 11),
+                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
                       minFontSize: 8,
                     ),
                   ),
@@ -202,8 +180,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
         createdBy;
 
     final PurchaseDatabase _purchaseDB = PurchaseDatabase.instance;
-    final PurchaseItemsDatabase _purchaseItemsDB =
-        PurchaseItemsDatabase.instance;
+    final PurchaseItemsDatabase _purchaseItemsDB = PurchaseItemsDatabase.instance;
     final TransactionDatabase _transactionDB = TransactionDatabase.instance;
     final ItemMasterDatabase _itemMasterDB = ItemMasterDatabase.instance;
 
@@ -258,41 +235,31 @@ class PurchaseButtonsWidget extends StatelessWidget {
 
       final num items = PurchaseSideWidget.totalItemsNotifier.value;
       for (var i = 0; i < items; i++) {
-        final vatMethod =
-            PurchaseSideWidget.selectedProductsNotifier.value[i].vatMethod;
+        final vatMethod = PurchaseSideWidget.selectedProductsNotifier.value[i].vatMethod;
+        final int categoryId = PurchaseSideWidget.selectedProductsNotifier.value[i].itemCategoryId,
+            vatId = PurchaseSideWidget.selectedProductsNotifier.value[i].vatId,
+            productId = PurchaseSideWidget.selectedProductsNotifier.value[i].id!;
 
-        final String productId =
-                '${PurchaseSideWidget.selectedProductsNotifier.value[i].id}',
-            productType = PurchaseSideWidget
-                .selectedProductsNotifier.value[i].productType,
-            productCode =
-                PurchaseSideWidget.selectedProductsNotifier.value[i].itemCode,
-            productName =
-                PurchaseSideWidget.selectedProductsNotifier.value[i].itemName,
-            category = PurchaseSideWidget
-                .selectedProductsNotifier.value[i].itemCategory,
-            productCost =
-                PurchaseSideWidget.selectedProductsNotifier.value[i].itemCost,
-            unitPrice =
-                PurchaseSideWidget.selectedProductsNotifier.value[i].itemCost,
+        final String productType = PurchaseSideWidget.selectedProductsNotifier.value[i].productType,
+            productCode = PurchaseSideWidget.selectedProductsNotifier.value[i].itemCode,
+            productName = PurchaseSideWidget.selectedProductsNotifier.value[i].itemName,
+            productCost = PurchaseSideWidget.selectedProductsNotifier.value[i].itemCost,
+            unitPrice = PurchaseSideWidget.selectedProductsNotifier.value[i].itemCost,
             netUnitPrice = vatMethod == 'Inclusive'
                 ? '${const PurchaseSideWidget().getExclusiveAmount(itemCost: unitPrice, vatRate: PurchaseSideWidget.selectedProductsNotifier.value[i].vatRate)}'
                 : unitPrice,
             quantity = PurchaseSideWidget.quantityNotifier.value[i].text,
             subTotal = PurchaseSideWidget.subTotalNotifier.value[i],
-            vatId = PurchaseSideWidget.selectedProductsNotifier.value[i].vatId,
-            vatPercentage =
-                PurchaseSideWidget.selectedProductsNotifier.value[i].productVAT,
+            vatPercentage = PurchaseSideWidget.selectedProductsNotifier.value[i].productVAT,
             vatTotal = PurchaseSideWidget.itemTotalVatNotifier.value[i],
-            unitCode =
-                PurchaseSideWidget.selectedProductsNotifier.value[i].unit;
+            unitCode = PurchaseSideWidget.selectedProductsNotifier.value[i].unit;
 
         log(' Purchase Id == $purchaseId');
         log(' Product id == $productId');
         log(' Product Type == $productType');
         log(' Product Code == $productCode');
         log(' Product Name == $productName');
-        log(' Product Category == $category');
+        log(' Product Category Id == $categoryId');
         log(' Product Cost == $productCost');
         log(' Net Unit Price == $netUnitPrice');
         log(' Unit Price == $unitPrice');
@@ -310,7 +277,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
             productType: productType,
             productCode: productCode,
             productName: productName,
-            category: category,
+            categoryId: categoryId,
             productCost: productCost,
             netUnitPrice: netUnitPrice,
             unitPrice: unitPrice,
@@ -325,9 +292,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
         await _purchaseItemsDB.createPurchaseItems(_purchaseItemsModel);
 
         //==================== Decreasing Item Quantity ====================
-        _itemMasterDB.additionItemQty(
-            PurchaseSideWidget.selectedProductsNotifier.value[i],
-            num.parse(quantity));
+        _itemMasterDB.additionItemQty(PurchaseSideWidget.selectedProductsNotifier.value[i], num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(
@@ -351,8 +316,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
 
       PaymentTypeWidget.amountController.clear();
 
-      PurchaseProductSideWidget.itemsNotifier.value =
-          await ItemMasterDatabase.instance.getAllItems();
+      PurchaseProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
 
       const PurchaseSideWidget().resetPurchase();
 

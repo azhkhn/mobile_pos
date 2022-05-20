@@ -12,8 +12,7 @@ class SubCategoryDatabase {
   SubCategoryDatabase._init();
 
   //========== Value Notifiers ==========
-  static final ValueNotifier<List<SubCategoryModel>> subCategoryNotifier =
-      ValueNotifier([]);
+  static final ValueNotifier<List<SubCategoryModel>> subCategoryNotifier = ValueNotifier([]);
 
 //========== Create Sub-Category ==========
   Future<void> createSubCategory(SubCategoryModel _subCategoryModel) async {
@@ -33,18 +32,15 @@ class SubCategoryDatabase {
   }
 
 //========== Get Sub-Categories by Category ==========
-  Future<List<SubCategoryModel>> getSubCategoryByCategory(
-      {required String category}) async {
+  Future<List<SubCategoryModel>> getSubCategoryByCategoryId({required int categoryId}) async {
     final db = await dbInstance.database;
     final _result = await db.query(
       tableSubCategory,
-      columns: ['_id', 'category', 'subCategory'],
-      where: 'category = ?',
-      whereArgs: [category],
+      where: 'categoryId = ?',
+      whereArgs: [categoryId],
     );
-    log('subCategories of $category == $_result');
-    final _subCategories =
-        _result.map((json) => SubCategoryModel.fromJson(json)).toList();
+    log('subCategories of $categoryId == $_result');
+    final _subCategories = _result.map((json) => SubCategoryModel.fromJson(json)).toList();
     return _subCategories;
   }
 
@@ -53,18 +49,14 @@ class SubCategoryDatabase {
     final db = await dbInstance.database;
     final _result = await db.query(tableSubCategory);
     log('subCategories == $_result');
-    final _subCategories =
-        _result.map((json) => SubCategoryModel.fromJson(json)).toList();
+    final _subCategories = _result.map((json) => SubCategoryModel.fromJson(json)).toList();
     return _subCategories;
   }
 
   //========== Update Sub-Category ==========
-  Future<void> updateSubCategory(
-      {required SubCategoryModel subCategory,
-      required String subCategoryName}) async {
+  Future<void> updateSubCategory({required SubCategoryModel subCategory, required String subCategoryName}) async {
     final db = await dbInstance.database;
-    final updatedsubCategory =
-        subCategory.copyWith(subCategory: subCategoryName);
+    final updatedsubCategory = subCategory.copyWith(subCategory: subCategoryName);
     await db.update(
       tableSubCategory,
       updatedsubCategory.toJson(),
@@ -80,8 +72,7 @@ class SubCategoryDatabase {
   //========== Delete Sub-Category ==========
   Future<void> deleteSubCategory(int id) async {
     final db = await dbInstance.database;
-    final _result = await db.delete(tableSubCategory,
-        where: '${SubCategoryFields.id} = ?', whereArgs: [id]);
+    final _result = await db.delete(tableSubCategory, where: '${SubCategoryFields.id} = ?', whereArgs: [id]);
     subCategoryNotifier.value.removeWhere(
       (subCategories) => subCategories.id == id,
     );

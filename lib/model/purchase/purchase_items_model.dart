@@ -12,7 +12,7 @@ class PurchaseItemsFields {
   static const productType = 'productType';
   static const productCode = 'productCode';
   static const productName = 'productName';
-  static const category = 'category';
+  static const categoryId = 'categoryId';
   static const productCost = 'productCost';
   static const netUnitPrice = 'netUnitPrice';
   static const unitPrice = 'unitPrice';
@@ -29,22 +29,21 @@ class PurchaseItemsModel with _$PurchaseItemsModel {
   const factory PurchaseItemsModel({
     @JsonKey(name: '_id') int? id,
     required int purchaseId,
-    required String productId,
+    required int productId,
     required String productType,
     required String productCode,
     required String productName,
-    required String category,
+    required int categoryId,
     required String productCost,
     required String netUnitPrice,
     required String unitPrice,
     required String quantity,
     required String unitCode,
     required String subTotal,
-    required String vatId,
+    required int vatId,
     required String vatPercentage,
     required String vatTotal,
   }) = _PurchaseItemsModel;
 
-  factory PurchaseItemsModel.fromJson(Map<String, dynamic> json) =>
-      _$PurchaseItemsModelFromJson(json);
+  factory PurchaseItemsModel.fromJson(Map<String, dynamic> json) => _$PurchaseItemsModelFromJson(json);
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 
@@ -52,7 +54,7 @@ class CustomDropDownField extends StatelessWidget {
       items: snapshot!.hasData
           ? snapshot!.data!.map((item) {
               return DropdownMenuItem<String>(
-                value: item.get(),
+                value: jsonToString(item),
                 child: Text(item.get()),
               );
             }).toList()
@@ -65,5 +67,9 @@ class CustomDropDownField extends StatelessWidget {
       onChanged: onChanged,
       validator: validator,
     );
+  }
+
+  String jsonToString(dynamic item) {
+    return jsonEncode(item.toJson());
   }
 }

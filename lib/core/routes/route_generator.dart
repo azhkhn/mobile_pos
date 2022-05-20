@@ -58,8 +58,7 @@ class RouteGenerator {
       case routeBrand:
         return MaterialPageRoute(builder: (_) => BrandScreen());
       case routeCustomer:
-        return MaterialPageRoute(
-            builder: (_) => CustomerScreen(pos: args == true));
+        return MaterialPageRoute(builder: (_) => CustomerScreen(fromPos: args == true));
       case routeUnit:
         return MaterialPageRoute(builder: (_) => UnitScreen());
       case routeExpense:
@@ -74,10 +73,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const PosScreen());
       case routePartialPayment:
         if (args is Map) {
-          return MaterialPageRoute(
-              builder: (_) => PartialPayment(
-                  paymentDetails: args,
-                  purchase: args.containsKey('purchase')));
+          return MaterialPageRoute(builder: (_) => PartialPayment(paymentDetails: args, purchase: args.containsKey('purchase')));
         }
         return _errorRoute();
       case routeSales:

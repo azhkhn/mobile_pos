@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:convert';
 import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
@@ -9,6 +10,8 @@ import 'package:shop_ez/db/db_functions/brand/brand_database.dart';
 import 'package:shop_ez/db/db_functions/category/category_db.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/sub_category/sub_category_db.dart';
+import 'package:shop_ez/model/brand/brand_model.dart';
+import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/screens/stock/screen_stock.dart';
 import 'package:shop_ez/widgets/dropdown_field_widget/dropdown_field_widget.dart';
 
@@ -27,7 +30,8 @@ class StockFilterBottomSheet extends StatelessWidget {
   final GlobalKey<FormFieldState> _brandKey = GlobalKey();
 
   //========== DropDown Controllers ==========
-  String? _categoryController, _brandController, _stockController;
+  int? _categoryId, _brandId;
+  String? _stockController;
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +62,9 @@ class StockFilterBottomSheet extends StatelessWidget {
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         snapshot: snapshot,
                         onChanged: (value) {
-                          _categoryController = value.toString();
-                          _brandController = null;
+                          final CategoryModel category = CategoryModel.fromJson(jsonDecode(value!));
+                          _categoryId = category.id;
+                          _brandId = null;
                           _brandKey.currentState!.reset();
                         },
                       );
@@ -85,8 +90,9 @@ class StockFilterBottomSheet extends StatelessWidget {
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         snapshot: snapshot,
                         onChanged: (value) {
-                          _brandController = value.toString();
-                          _categoryController = null;
+                          final BrandModel brand = BrandModel.fromJson(jsonDecode(value!));
+                          _brandId = brand.id;
+                          _categoryId = null;
                           _categorykey.currentState!.reset();
                         },
                       );
@@ -109,8 +115,7 @@ class StockFilterBottomSheet extends StatelessWidget {
                   errorStyle: TextStyle(fontSize: 0.01),
                   contentPadding: EdgeInsets.all(10),
                   floatingLabelBehavior: FloatingLabelBehavior.always,
-                  label:
-                      Text('Stock', style: TextStyle(color: klabelColorBlack)),
+                  label: Text('Stock', style: TextStyle(color: klabelColorBlack)),
                   border: OutlineInputBorder(),
                 ),
                 items: types
@@ -143,12 +148,7 @@ class StockFilterBottomSheet extends StatelessWidget {
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: TextButton.icon(
-                        onPressed: () => ScreenStock().onFilter(
-                            context,
-                            _categoryController,
-                            _brandController,
-                            _stockController,
-                            _formKey),
+                        onPressed: () => ScreenStock().onFilter(context, _categoryId, _brandId, _stockController, _formKey),
                         icon: const Icon(Icons.filter_list),
                         label: const Text('Filter'),
                       ),

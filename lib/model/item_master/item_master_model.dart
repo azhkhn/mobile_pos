@@ -10,15 +10,15 @@ class ItemMasterModel with _$ItemMasterModel {
     required String itemName,
     required String itemNameArabic,
     required String itemCode,
-    required String itemCategory,
-    required String itemSubCategory,
-    required String itemBrand,
+    required int itemCategoryId,
+    required int itemSubCategoryId,
+    required int itemBrandId,
     required String itemCost,
     required String sellingPrice,
     required String secondarySellingPrice,
     required String vatMethod,
     required String productVAT,
-    required String vatId,
+    required int vatId,
     required int vatRate,
     required String unit,
     required String expiryDate,
@@ -27,8 +27,7 @@ class ItemMasterModel with _$ItemMasterModel {
     required String itemImage,
   }) = _ItemMasterModel;
 
-  factory ItemMasterModel.fromJson(Map<String, dynamic> json) =>
-      _$ItemMasterModelFromJson(json);
+  factory ItemMasterModel.fromJson(Map<String, dynamic> json) => _$ItemMasterModelFromJson(json);
 }
 
 const String tableItemMaster = 'item_master';
@@ -39,9 +38,9 @@ class ItemMasterFields {
   static const itemName = 'itemName';
   static const itemNameArabic = 'itemNameArabic';
   static const itemCode = 'itemCode';
-  static const itemCategory = 'itemCategory';
-  static const itemSubCategory = 'itemSubCategory';
-  static const itemBrand = 'itemBrand';
+  static const itemCategoryId = 'itemCategoryId';
+  static const itemSubCategoryId = 'itemSubCategoryId';
+  static const itemBrandId = 'itemBrandId';
   static const itemCost = 'itemCost';
   static const sellingPrice = 'sellingPrice';
   static const secondarySellingPrice = 'secondarySellingPrice';

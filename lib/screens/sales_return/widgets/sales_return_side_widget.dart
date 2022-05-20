@@ -30,21 +30,16 @@ class SalesReturnSideWidget extends StatelessWidget {
   }) : super(key: key);
 
   //==================== Value Notifiers ====================
-  static final ValueNotifier<List<ItemMasterModel>> selectedProductsNotifier =
-      ValueNotifier([]);
+  static final ValueNotifier<List<ItemMasterModel>> selectedProductsNotifier = ValueNotifier([]);
   static final ValueNotifier<List<String>> subTotalNotifier = ValueNotifier([]);
-  static final ValueNotifier<List<String>> itemTotalVatNotifier =
-      ValueNotifier([]);
-  static final ValueNotifier<List<TextEditingController>> quantityNotifier =
-      ValueNotifier([]);
+  static final ValueNotifier<List<String>> itemTotalVatNotifier = ValueNotifier([]);
+  static final ValueNotifier<List<TextEditingController>> quantityNotifier = ValueNotifier([]);
 
-  static final ValueNotifier<String?> originalInvoiceNumberNotifier =
-      ValueNotifier(null);
+  static final ValueNotifier<String?> originalInvoiceNumberNotifier = ValueNotifier(null);
   static final ValueNotifier<int?> originalSaleIdNotifier = ValueNotifier(null);
 
   static final ValueNotifier<int?> customerIdNotifier = ValueNotifier(null);
-  static final ValueNotifier<String?> customerNameNotifier =
-      ValueNotifier(null);
+  static final ValueNotifier<String?> customerNameNotifier = ValueNotifier(null);
   static final ValueNotifier<num> totalItemsNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalQuantityNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalAmountNotifier = ValueNotifier(0);
@@ -128,12 +123,9 @@ class SalesReturnSideWidget extends StatelessWidget {
                                 hintStyle: kText_10_12,
                                 border: const OutlineInputBorder(),
                               )),
-                          noItemsFoundBuilder: (context) => const SizedBox(
-                              height: 50,
-                              child: Center(child: Text('No customer Found!'))),
+                          noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No customer Found!'))),
                           suggestionsCallback: (pattern) async {
-                            return CustomerDatabase.instance
-                                .getCustomerSuggestions(pattern);
+                            return CustomerDatabase.instance.getCustomerSuggestions(pattern);
                           },
                           itemBuilder: (context, CustomerModel suggestion) {
                             return Padding(
@@ -198,14 +190,9 @@ class SalesReturnSideWidget extends StatelessWidget {
                           hintStyle: kText_10_12,
                           border: const OutlineInputBorder(),
                         )),
-                    noItemsFoundBuilder: (context) => SizedBox(
-                        height: 50,
-                        child: Center(
-                            child:
-                                Text('No Invoice Found!', style: kText_10_12))),
+                    noItemsFoundBuilder: (context) => SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText_10_12))),
                     suggestionsCallback: (pattern) async {
-                      return await salesDB
-                          .getSalesByInvoiceSuggestions(pattern);
+                      return await salesDB.getSalesByInvoiceSuggestions(pattern);
                     },
                     itemBuilder: (context, SalesModel suggestion) {
                       return Padding(
@@ -250,9 +237,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                                 context: context,
                                 isScrollControlled: true,
                                 backgroundColor: kTransparentColor,
-                                shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20))),
+                                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                                 builder: (context) => DismissibleWidget(
                                       context: context,
                                       child: CustomBottomSheetWidget(
@@ -261,10 +246,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                                       ),
                                     ));
                           } else {
-                            kSnackBar(
-                                context: context,
-                                content:
-                                    'Please select any Customer to show details!');
+                            kSnackBar(context: context, content: 'Please select any Customer to show details!');
                           }
                         },
                         icon: const Icon(
@@ -289,14 +271,10 @@ class SalesReturnSideWidget extends StatelessWidget {
                         onPressed: () async {
                           // DeviceUtil.isLandscape = false;
                           // await DeviceUtil.toPortrait();
-                          final id = await Navigator.pushNamed(
-                              context, routeCustomer,
-                              arguments: true);
+                          final id = await Navigator.pushNamed(context, routeCustomer, arguments: true);
 
                           if (id != null) {
-                            final addedCustomer = await CustomerDatabase
-                                .instance
-                                .getCustomerById(id as int);
+                            final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
 
                             customerController.text = addedCustomer.customer;
                             customerNameNotifier.value = addedCustomer.customer;
@@ -325,8 +303,7 @@ class SalesReturnSideWidget extends StatelessWidget {
               child: SingleChildScrollView(
                 child: ValueListenableBuilder(
                   valueListenable: selectedProductsNotifier,
-                  builder:
-                      (context, List<ItemMasterModel> selectedProducts, child) {
+                  builder: (context, List<ItemMasterModel> selectedProducts, child) {
                     return Table(
                       columnWidths: const {
                         0: FractionColumnWidth(0.30),
@@ -339,20 +316,17 @@ class SalesReturnSideWidget extends StatelessWidget {
                       children: List<TableRow>.generate(
                         selectedProducts.length,
                         (index) {
-                          final ItemMasterModel _product =
-                              selectedProducts[index];
+                          final ItemMasterModel _product = selectedProducts[index];
                           return TableRow(children: [
                             Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
                               color: Colors.white,
                               height: 30,
                               alignment: Alignment.centerLeft,
                               child: AutoSizeText(
                                 _product.itemName,
                                 softWrap: true,
-                                style: TextStyle(
-                                    fontSize: DeviceUtil.isTablet ? 10 : 7),
+                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
                                 overflow: TextOverflow.ellipsis,
                                 minFontSize: 7,
                                 maxFontSize: 10,
@@ -360,30 +334,23 @@ class SalesReturnSideWidget extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
                               color: Colors.white,
                               height: 30,
                               alignment: Alignment.center,
                               child: AutoSizeText(
                                 _product.vatMethod == 'Exclusive'
-                                    ? Converter.currency.format(
-                                        num.parse(_product.sellingPrice))
-                                    : Converter.currency.format(
-                                        getExclusiveAmount(
-                                            sellingPrice: _product.sellingPrice,
-                                            vatRate: _product.vatRate)),
+                                    ? Converter.currency.format(num.parse(_product.sellingPrice))
+                                    : Converter.currency.format(getExclusiveAmount(sellingPrice: _product.sellingPrice, vatRate: _product.vatRate)),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: DeviceUtil.isTablet ? 10 : 7),
+                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
                                 minFontSize: 7,
                                 maxFontSize: 10,
                               ),
                             ),
                             Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
                               color: Colors.white,
                               height: 30,
                               alignment: Alignment.topCenter,
@@ -395,36 +362,27 @@ class SalesReturnSideWidget extends StatelessWidget {
                                 decoration: const InputDecoration(
                                   border: InputBorder.none,
                                   isDense: true,
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 10),
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10),
                                 ),
-                                style: TextStyle(
-                                    fontSize: DeviceUtil.isTablet ? 10 : 7,
-                                    color: kBlack),
+                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7, color: kBlack),
                                 onChanged: (value) {
-                                  onItemQuantityChanged(
-                                      value, selectedProducts, index);
+                                  onItemQuantityChanged(value, selectedProducts, index);
                                 },
                               ),
                             ),
                             Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                 color: Colors.white,
                                 height: 30,
                                 alignment: Alignment.center,
                                 child: ValueListenableBuilder(
                                     valueListenable: subTotalNotifier,
-                                    builder: (context, List<String> subTotal,
-                                        child) {
+                                    builder: (context, List<String> subTotal, child) {
                                       return AutoSizeText(
-                                        Converter.currency.format(
-                                            num.tryParse(subTotal[index])),
+                                        Converter.currency.format(num.tryParse(subTotal[index])),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontSize:
-                                                DeviceUtil.isTablet ? 10 : 7),
+                                        style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
                                         minFontSize: 7,
                                         maxFontSize: 10,
                                       );
@@ -474,8 +432,7 @@ class SalesReturnSideWidget extends StatelessWidget {
   }
 
   //==================== On Item Quantity Changed ====================
-  void onItemQuantityChanged(
-      String value, List<ItemMasterModel> selectedProducts, int index) {
+  void onItemQuantityChanged(String value, List<ItemMasterModel> selectedProducts, int index) {
     final qty = num.tryParse(value);
     if (qty != null) {
       getTotalQuantity();
@@ -491,8 +448,7 @@ class SalesReturnSideWidget extends StatelessWidget {
     final cost = num.tryParse(selectedProducts[index].sellingPrice);
     final vatRate = selectedProducts[index].vatRate;
     if (selectedProducts[index].vatMethod == 'Inclusive') {
-      final _exclusiveCost = getExclusiveAmount(
-          sellingPrice: selectedProducts[index].sellingPrice, vatRate: vatRate);
+      final _exclusiveCost = getExclusiveAmount(sellingPrice: selectedProducts[index].sellingPrice, vatRate: vatRate);
       final _subTotal = _exclusiveCost * qty;
       subTotalNotifier.value[index] = '$_subTotal';
     } else {
@@ -508,8 +464,7 @@ class SalesReturnSideWidget extends StatelessWidget {
     num? _totalQuantiy = 0;
 
     for (var i = 0; i < selectedProductsNotifier.value.length; i++) {
-      _totalQuantiy =
-          _totalQuantiy! + num.tryParse(quantityNotifier.value[i].value.text)!;
+      _totalQuantiy = _totalQuantiy! + num.tryParse(quantityNotifier.value[i].value.text)!;
     }
     await Future.delayed(const Duration(milliseconds: 0));
     totalQuantityNotifier.value = _totalQuantiy!;
@@ -546,8 +501,7 @@ class SalesReturnSideWidget extends StatelessWidget {
     num sellingPrice = num.parse(amount);
 
     if (vatMethod == 'Inclusive') {
-      sellingPrice =
-          getExclusiveAmount(sellingPrice: '$sellingPrice', vatRate: vatRate);
+      sellingPrice = getExclusiveAmount(sellingPrice: '$sellingPrice', vatRate: vatRate);
     }
 
     itemTotalVat = sellingPrice * vatRate / 100;
@@ -596,8 +550,7 @@ class SalesReturnSideWidget extends StatelessWidget {
 
 //==================== Get Total VAT ====================
   void getTotalPayable() {
-    final num _totalPayable =
-        totalAmountNotifier.value + totalVatNotifier.value;
+    final num _totalPayable = totalAmountNotifier.value + totalVatNotifier.value;
     totalPayableNotifier.value = _totalPayable;
     log('Total Payable == $_totalPayable');
   }
@@ -649,19 +602,19 @@ class SalesReturnSideWidget extends StatelessWidget {
 
     for (var i = 0; i < salesItems.length; i++) {
       final soldItem = salesItems[i];
-      final items = await itemDB.getProductById(int.parse(soldItem.productId));
+      final items = await itemDB.getProductById(soldItem.productId);
       final item = items.first;
 
       log('item Id == ' '${item.id}');
       log('item Name == ' + item.itemName);
-      log('Category == ' + soldItem.category);
+      log('Category Id ==  ${soldItem.categoryId}');
       log('Product Code == ' + soldItem.productCode);
       log('Cost == ' + soldItem.productCost);
       log('Unit Price == ' + soldItem.unitPrice);
       log('Net Unit Price == ' + soldItem.netUnitPrice);
       log('Quantity == ' + soldItem.quantity);
       log('Unit Code == ' + soldItem.unitCode);
-      log('Vat Id == ' + soldItem.vatId);
+      log('Vat Id == ${soldItem.vatId}');
       log('Products Vat Method == ' + item.vatMethod);
       log('Vat Method == ' + item.vatMethod);
       log('Vat Percentage == ' + soldItem.vatPercentage);
@@ -673,9 +626,9 @@ class SalesReturnSideWidget extends StatelessWidget {
         itemName: soldItem.productName,
         itemNameArabic: item.itemNameArabic,
         itemCode: soldItem.productCode,
-        itemCategory: soldItem.category,
-        itemSubCategory: item.itemSubCategory,
-        itemBrand: item.itemBrand,
+        itemCategoryId: soldItem.categoryId,
+        itemSubCategoryId: item.itemSubCategoryId,
+        itemBrandId: item.itemBrandId,
         itemCost: soldItem.productCost,
         sellingPrice: soldItem.unitPrice,
         secondarySellingPrice: item.secondarySellingPrice,
@@ -690,8 +643,7 @@ class SalesReturnSideWidget extends StatelessWidget {
         itemImage: item.itemImage,
       ));
 
-      quantityNotifier.value
-          .add(TextEditingController(text: soldItem.quantity));
+      quantityNotifier.value.add(TextEditingController(text: soldItem.quantity));
 
       subTotalNotifier.value.add(soldItem.subTotal);
       itemTotalVatNotifier.value.add(soldItem.vatTotal);
