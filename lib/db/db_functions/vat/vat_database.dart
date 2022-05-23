@@ -41,14 +41,14 @@ class VatDatabase {
     return _vats;
   }
 
-  //========== Get VAT by name ==========
-  Future<VatModel> getVatByName(String name) async {
-    final db = await dbInstance.database;
-    final _result = await db.query(tableVat, where: '${VatFields.name} = ?', whereArgs: [name]);
-    log('VAT of $name == $_result');
-    final _vats = _result.map((json) => VatModel.fromJson(json)).toList();
-    return _vats.first;
-  }
+  // //========== Get VAT by name ==========
+  // Future<VatModel> getVatByName(String name) async {
+  //   final db = await dbInstance.database;
+  //   final _result = await db.query(tableVat, where: '${VatFields.name} = ?', whereArgs: [name]);
+  //   log('VAT of $name == $_result');
+  //   final _vats = _result.map((json) => VatModel.fromJson(json)).toList();
+  //   return _vats.first;
+  // }
 
   //========== Get VAT by Id ==========
   Future<VatModel> getVatById(int id) async {

@@ -1,6 +1,6 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
 
-import 'dart:io';
+import 'dart:io' show File;
 
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart' show PdfPageFormat;
@@ -26,11 +26,9 @@ class ScreenSalesInvoice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<File?> pdfFile = ValueNotifier(null),
-        pdfPreview = ValueNotifier(null);
+    ValueNotifier<File?> pdfFile = ValueNotifier(null), pdfPreview = ValueNotifier(null);
     // late PDFViewController pdfViewController;
     // ValueNotifier<int> page = ValueNotifier(0);
-
     // ValueNotifier<int> indexPage = ValueNotifier(0);
 
     return Scaffold(
@@ -107,24 +105,18 @@ class ScreenSalesInvoice extends StatelessWidget {
                       if (pdfFile.value != null) {
                         await Printing.layoutPdf(
                             format: PdfPageFormat.a4,
-                            name: salesModal != null
-                                ? salesModal!.invoiceNumber!
-                                : salesReturnModal!.invoiceNumber!,
-                            onLayout: (PdfPageFormat format) async =>
-                                pdfFile.value!.readAsBytes());
+                            name: salesModal != null ? salesModal!.invoiceNumber! : salesReturnModal!.invoiceNumber!,
+                            onLayout: (PdfPageFormat format) async => pdfFile.value!.readAsBytes());
                       }
                     } else if (value == 1) {
                       if (salesModal != null) {
-                        final pw.Document? pdfReceipt =
-                            await PdfSalesReceipt.generate(
-                                salesModel: salesModal);
+                        final pw.Document? pdfReceipt = await PdfSalesReceipt.generate(salesModel: salesModal);
 
                         if (pdfReceipt != null) {
                           await Printing.layoutPdf(
                               format: PdfPageFormat.roll80,
                               name: salesModal!.invoiceNumber!,
-                              onLayout: (PdfPageFormat format) async =>
-                                  pdfReceipt.save());
+                              onLayout: (PdfPageFormat format) async => pdfReceipt.save());
                         }
                       }
                     }
@@ -134,12 +126,9 @@ class ScreenSalesInvoice extends StatelessWidget {
                     if (pdfFile.value != null) {
                       await Printing.layoutPdf(
                           format: PdfPageFormat.a4,
-                          name: salesModal != null
-                              ? salesModal!.invoiceNumber!
-                              : salesReturnModal!.invoiceNumber!,
+                          name: salesModal != null ? salesModal!.invoiceNumber! : salesReturnModal!.invoiceNumber!,
                           usePrinterSettings: true,
-                          onLayout: (PdfPageFormat format) async =>
-                              pdfFile.value!.readAsBytes());
+                          onLayout: (PdfPageFormat format) async => pdfFile.value!.readAsBytes());
                     }
                   },
                   icon: const Icon(Icons.print)),
@@ -165,8 +154,7 @@ class ScreenSalesInvoice extends StatelessWidget {
                       useActions: false,
                       canChangeOrientation: true,
                       loadingWidget: const CircularProgressIndicator(),
-                      build: (PdfPageFormat format) =>
-                          pdfPreview.value!.readAsBytes());
+                      build: (PdfPageFormat format) => pdfPreview.value!.readAsBytes());
 
                 // return ValueListenableBuilder(
                 //     valueListenable: page,
@@ -197,8 +185,7 @@ class ScreenSalesInvoice extends StatelessWidget {
   //========== Create Invoice ==========
   Future<List<File>> createInvoice() async {
     if (isReturn) {
-      final pdfFiles = await PdfSalesInvoice.generate(
-          salesReturnModal: salesReturnModal, isReturn: true);
+      final pdfFiles = await PdfSalesInvoice.generate(salesReturnModal: salesReturnModal, isReturn: true);
       return pdfFiles;
     } else {
       final pdfFiles = await PdfSalesInvoice.generate(salesModel: salesModal);

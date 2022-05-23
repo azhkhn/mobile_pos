@@ -26,7 +26,7 @@ import '../../screens/purchase/pages/screen_purchase.dart';
 import '../../screens/sales/pages/screen_sales.dart';
 import '../../screens/splash/splash_screen.dart';
 import '../../screens/sub-category/screen_sub_category.dart';
-import '../../screens/supplier/manage_supplier_screen.dart';
+import '../../screens/supplier/supplier_screen.dart';
 import '../../screens/unit/screen_unit.dart';
 import '../../screens/vat/vat_screen.dart';
 
@@ -48,7 +48,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ScreenItemMaster());
       case routeManageSupplier:
         return MaterialPageRoute(
-            builder: (_) => ScreenManageSupplier(
+            builder: (_) => ScreenSupplier(
                   purchase: args == true,
                 ));
       case routeCategory:

@@ -21,6 +21,7 @@ import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
+import 'package:shop_ez/model/vat/vat_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
@@ -57,7 +58,7 @@ class ScreenItemMaster extends StatelessWidget {
   final _itemCodeController = TextEditingController();
   final _itemCostController = TextEditingController();
   final _sellingPriceController = TextEditingController();
-  final _secondarySellingPriceController = TextEditingController();
+  // final _secondarySellingPriceController = TextEditingController();
   final _openingStockController = TextEditingController();
   final _alertQuantityController = TextEditingController();
   final _dateController = TextEditingController();
@@ -81,7 +82,7 @@ class ScreenItemMaster extends StatelessWidget {
 
   //========== Value Notifiers ==========
   ValueNotifier<File?> selectedImageNotifier = ValueNotifier(null);
-  ValueNotifier<int?> itemCategoryNotifier = ValueNotifier(null);
+  ValueNotifier<int> itemCategoryNotifier = ValueNotifier(0);
 
   //========== Focus Node for TextFields ==========
   FocusNode itemNameFocusNode = FocusNode();
@@ -193,7 +194,7 @@ class ScreenItemMaster extends StatelessWidget {
                           log('Category Id == ' + category.id.toString());
                           log('Category == ' + category.category);
                           _itemCategoryId = category.id;
-                          itemCategoryNotifier.value = category.id;
+                          itemCategoryNotifier.value = category.id!;
                         },
                         validator: (value) {
                           if (value == null || _itemCategoryId == null) {
@@ -209,9 +210,9 @@ class ScreenItemMaster extends StatelessWidget {
                   //========== Item Sub-Category Dropdown ==========
                   ValueListenableBuilder(
                       valueListenable: itemCategoryNotifier,
-                      builder: (context, int? categoryId, _) {
+                      builder: (context, int categoryId, _) {
                         return FutureBuilder(
-                          future: subCategoryDB.getSubCategoryByCategoryId(categoryId: categoryId!),
+                          future: subCategoryDB.getSubCategoryByCategoryId(categoryId: categoryId),
                           builder: (context, dynamic snapshot) {
                             return CustomDropDownField(
                               dropdownKey: _dropdownKey,
@@ -281,14 +282,14 @@ class ScreenItemMaster extends StatelessWidget {
                   ),
                   kHeight10,
 
-                  //========== Secondary Selling Price ==========
-                  TextFeildWidget(
-                    labelText: 'Secondary Selling Price',
-                    textInputType: TextInputType.number,
-                    inputFormatters: Converter.digitsOnly,
-                    controller: _secondarySellingPriceController,
-                  ),
-                  kHeight10,
+                  // //========== Secondary Selling Price ==========
+                  // TextFeildWidget(
+                  //   labelText: 'Secondary Selling Price',
+                  //   textInputType: TextInputType.number,
+                  //   inputFormatters: Converter.digitsOnly,
+                  //   controller: _secondarySellingPriceController,
+                  // ),
+                  // kHeight10,
 
                   //========== Product VAT Dropdown ==========
                   FutureBuilder(
@@ -300,7 +301,7 @@ class ScreenItemMaster extends StatelessWidget {
                         contentPadding: const EdgeInsets.all(10),
                         onChanged: (value) async {
                           _productVatController = value.toString();
-                          final _vat = await vatDB.getVatByName(value!);
+                          final _vat = VatModel.fromJson(jsonDecode(value!));
                           _vatId = _vat.id;
                           _vatRate = _vat.rate;
 
@@ -525,8 +526,8 @@ class ScreenItemMaster extends StatelessWidget {
 
   //========== Add Item ==========
   Future<void> addItem({context}) async {
-    final int vatRate, vatId;
-    final int itemCategoryId, itemSubCategoryId, itemBrandId;
+    final int itemCategoryId, vatRate, vatId;
+    final int? itemSubCategoryId, itemBrandId;
     final String productType,
         itemName,
         itemNameArabic,
@@ -553,10 +554,10 @@ class ScreenItemMaster extends StatelessWidget {
       itemCode = _itemCodeController.text.trim();
       itemCategoryId = _itemCategoryId!;
       itemSubCategoryId = _itemSubCategoryId!;
-      itemBrandId = _itemBrandId!;
+      itemBrandId = _itemBrandId;
       itemCost = _itemCostController.text.trim();
       sellingPrice = _sellingPriceController.text.trim();
-      secondarySellingPrice = _secondarySellingPriceController.text.trim();
+      secondarySellingPrice = '';
       vatId = _vatId!;
       vatRate = _vatRate!;
       productVAT = _productVatController!;

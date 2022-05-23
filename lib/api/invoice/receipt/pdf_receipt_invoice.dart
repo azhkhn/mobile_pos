@@ -1,4 +1,5 @@
 import 'dart:developer' show log;
+import 'dart:typed_data' show Uint8List;
 
 import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:pdf/pdf.dart' show PdfColors, PdfPageFormat;
@@ -17,37 +18,33 @@ import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/sales_return/sales_return_model.dart';
 
 class PdfSalesReceipt {
-  static Future<pw.Document> generate(
-      {SalesModel? salesModel,
-      SalesReturnModal? salesReturnModal,
-      bool isReturn = false}) async {
-    final pdf = pw.Document();
+  static Future<pw.Document> generate({SalesModel? salesModel, SalesReturnModal? salesReturnModal, bool isReturn = false}) async {
+    final pw.Document pdf = pw.Document();
     final dynamic sale;
     final dynamic saleItems;
 
     if (isReturn) {
       log('Sales Return');
       sale = salesReturnModal!;
-      saleItems = await SalesReturnItemsDatabase.instance
-          .getSalesReturnItemBySaleReturnId(sale.id!);
+      saleItems = await SalesReturnItemsDatabase.instance.getSalesReturnItemBySaleReturnId(sale.id!);
     } else {
       log('Sale');
       sale = salesModel!;
-      saleItems =
-          await SalesItemsDatabase.instance.getSalesItemBySaleId(sale.id!);
+      saleItems = await SalesItemsDatabase.instance.getSalesItemBySaleId(sale.id!);
     }
 
-    ByteData _bytes = await rootBundle.load('assets/images/invoice_logo.png');
-    final logoBytes = _bytes.buffer.asUint8List();
-    pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
+    final ByteData _bytes = await rootBundle.load('assets/images/invoice_logo.png');
+    final Uint8List logoBytes = _bytes.buffer.asUint8List();
+    final pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
 
     // final emojiFont = await PdfGoogleFonts.notoColorEmoji();
-    final arabicFont = await PdfGoogleFonts.iBMPlexSansArabicBold();
+    // final arabicFont = await PdfGoogleFonts.iBMPlexSansArabicBold();
+    final ByteData data = await rootBundle.load("assets/fonts/ibm_plex_sans_arabic.ttf");
+    final pw.Font arabicFont = pw.Font.ttf(data);
     final titleFont = await PdfGoogleFonts.sourceSerifProBold();
 
     final businessProfile = await UserUtils.instance.businessProfile;
-    final customer =
-        await CustomerDatabase.instance.getCustomerById(sale.customerId);
+    final customer = await CustomerDatabase.instance.getCustomerById(sale.customerId);
 
     //========== Pdf Preview ==========
     pdf.addPage(pw.Page(
@@ -86,14 +83,10 @@ class PdfSalesReceipt {
       required final bool isReturn}) {
     return pw.Column(
       children: [
-        header(
-            business: business,
-            titleFont: titleFont,
-            isReturn: isReturn,
-            logoImage: logoImage),
+        header(business: business, titleFont: titleFont, isReturn: isReturn, logoImage: logoImage),
         pw.Divider(height: 2 * PdfPageFormat.mm),
         saleInfo(sale: sale),
-        customerInfo(customer: customer),
+        customerInfo(customer: customer, arabicFont: arabicFont),
         pw.SizedBox(height: 1 * PdfPageFormat.mm),
         buildInvoice(saleItems: saleItems, arabicFont: arabicFont),
         pw.SizedBox(height: 1 * PdfPageFormat.mm),
@@ -105,10 +98,7 @@ class PdfSalesReceipt {
 
   //========== Header ==========
   static pw.Widget header(
-      {required final BusinessProfileModel business,
-      required pw.Font titleFont,
-      required pw.MemoryImage logoImage,
-      required final bool isReturn}) {
+      {required final BusinessProfileModel business, required pw.Font titleFont, required pw.MemoryImage logoImage, required final bool isReturn}) {
     return pw.Column(
       mainAxisAlignment: pw.MainAxisAlignment.start,
       crossAxisAlignment: pw.CrossAxisAlignment.center,
@@ -122,11 +112,7 @@ class PdfSalesReceipt {
         pw.SizedBox(
           width: double.infinity,
           child: pw.Text(business.business,
-              textAlign: pw.TextAlign.center,
-              style: pw.TextStyle(
-                  fontSize: 11,
-                  fontWeight: pw.FontWeight.bold,
-                  font: titleFont)),
+              textAlign: pw.TextAlign.center, style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold, font: titleFont)),
         ),
         pw.SizedBox(
           width: double.infinity,
@@ -185,25 +171,22 @@ class PdfSalesReceipt {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
           pw.Text('Inv No: ' + sale.invoiceNumber!, style: kStyle),
-          pw.Text(
-              'Date: ' +
-                  Converter.dateTimeFormatAmPm
-                      .format(DateTime.parse(sale.dateTime)),
-              style: kStyle)
+          pw.Text('Date: ' + Converter.dateTimeFormatAmPm.format(DateTime.parse(sale.dateTime)), style: kStyle)
         ],
       ),
     ]);
   }
 
   //========== Customer Info ==========
-  static pw.Widget customerInfo({required final CustomerModel customer}) {
-    const kStyle = pw.TextStyle(fontSize: 5);
+  static pw.Widget customerInfo({required final CustomerModel customer, required final pw.Font arabicFont}) {
+    final kStyle = pw.TextStyle(fontSize: 5, font: arabicFont);
     return pw.Column(children: [
       pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.start,
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Text(
                 ': العميل Customer /',
@@ -220,6 +203,7 @@ class PdfSalesReceipt {
           ),
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.start,
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Text(
                 ': الرقم الضريبي VAT No /',
@@ -238,6 +222,7 @@ class PdfSalesReceipt {
       ),
       pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Text(
             ': عنوان العميل Customer Address /',
@@ -245,12 +230,13 @@ class PdfSalesReceipt {
             textDirection: pw.TextDirection.rtl,
           ),
           pw.SizedBox(width: 1 * PdfPageFormat.mm),
-          pw.Text(
-            customer.addressArabic.toString().isNotEmpty
-                ? customer.addressArabic
-                : customer.address,
-            style: kStyle,
-            textDirection: pw.TextDirection.rtl,
+          pw.Flexible(
+            child: pw.Text(
+              customer.addressArabic.toString().isNotEmpty ? customer.addressArabic : customer.address,
+              style: kStyle,
+              maxLines: 2,
+              textDirection: pw.TextDirection.rtl,
+            ),
           ),
         ],
       )
@@ -258,9 +244,7 @@ class PdfSalesReceipt {
   }
 
   //==================== Invoice Table ====================
-  static pw.Widget buildInvoice(
-      {required final List<dynamic> saleItems,
-      required final pw.Font arabicFont}) {
+  static pw.Widget buildInvoice({required final List<dynamic> saleItems, required final pw.Font arabicFont}) {
     final headers = [
       'S.No',
       'Description / فصو',
@@ -274,8 +258,7 @@ class PdfSalesReceipt {
       i++;
       final num exclusiveAmount;
       if (item.vatMethod == 'Inclusive') {
-        exclusiveAmount = VatCalculator.getExclusiveAmount(
-            sellingPrice: item.unitPrice, vatRate: item.vatRate);
+        exclusiveAmount = VatCalculator.getExclusiveAmount(sellingPrice: item.unitPrice, vatRate: item.vatRate);
       } else {
         exclusiveAmount = num.parse(item.unitPrice);
       }
@@ -302,10 +285,7 @@ class PdfSalesReceipt {
         fontSize: 4,
         fontWeight: pw.FontWeight.normal,
       ),
-      headerStyle: pw.TextStyle(
-          fontSize: 5,
-          fontWeight: pw.FontWeight.bold,
-          fontFallback: [arabicFont]),
+      headerStyle: pw.TextStyle(fontSize: 5, fontWeight: pw.FontWeight.bold, fontFallback: [arabicFont]),
       headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
       cellHeight: 10,
       columnWidths: const {
@@ -351,51 +331,38 @@ class PdfSalesReceipt {
               children: [
                 buildText(
                   title: ' / Total Amount  المبلغ اإلجمالي ',
-                  value: Converter.currency
-                      .format(num.parse(sale.subTotal))
-                      .replaceAll("₹", ''),
+                  value: Converter.currency.format(num.parse(sale.subTotal)).replaceAll("₹", ''),
                   unite: true,
                   arabicFont: arabicFont,
                 ),
                 buildText(
                   title: ' / Discount  مقدار الخصم',
-                  value: Converter.currency
-                      .format(num.parse(
-                          sale.discount.isEmpty ? '0' : sale.discount))
-                      .replaceAll("₹", ''),
+                  value: Converter.currency.format(num.parse(sale.discount.isEmpty ? '0' : sale.discount)).replaceAll("₹", ''),
                   unite: true,
                   arabicFont: arabicFont,
                 ),
                 buildText(
                   title: ' / Vat Amount  قيمة الضريبة',
-                  value: Converter.currency
-                      .format(num.parse(sale.vatAmount))
-                      .replaceAll("₹", ''),
+                  value: Converter.currency.format(num.parse(sale.vatAmount)).replaceAll("₹", ''),
                   unite: true,
                   arabicFont: arabicFont,
                 ),
                 pw.Divider(height: 1 * PdfPageFormat.mm, thickness: .5),
                 buildText(
                   title: ' / Grant Total  المجموع الكل',
-                  value: Converter.currency
-                      .format(num.parse(sale.grantTotal))
-                      .replaceAll("₹", ''),
+                  value: Converter.currency.format(num.parse(sale.grantTotal)).replaceAll("₹", ''),
                   unite: true,
                   arabicFont: arabicFont,
                 ),
                 buildText(
                   title: ' / Paid Amount  المبلغ المدفوع',
-                  value: Converter.currency
-                      .format(num.parse(sale.paid))
-                      .replaceAll("₹", ''),
+                  value: Converter.currency.format(num.parse(sale.paid)).replaceAll("₹", ''),
                   unite: true,
                   arabicFont: arabicFont,
                 ),
                 buildText(
                   title: ' / Balance  مقدار وسطي',
-                  value: Converter.currency
-                      .format(num.parse(sale.balance))
-                      .replaceAll("₹", ''),
+                  value: Converter.currency.format(num.parse(sale.balance)).replaceAll("₹", ''),
                   unite: true,
                   arabicFont: arabicFont,
                 ),

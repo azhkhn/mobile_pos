@@ -1,10 +1,9 @@
-import 'dart:developer';
-import 'dart:io';
+import 'dart:developer' show log;
+import 'dart:io' show File;
 
 import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:pdf/pdf.dart' show PdfColors, PdfPageFormat;
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart' show PdfGoogleFonts;
 import 'package:shop_ez/api/invoice/utils/e-invoice_generate.dart';
 import 'package:shop_ez/api/invoice/utils/pdf_action.dart';
 import 'package:shop_ez/core/utils/text/converters.dart';
@@ -19,10 +18,7 @@ import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/sales_return/sales_return_model.dart';
 
 class PdfSalesInvoice {
-  static Future<List<File>> generate(
-      {SalesModel? salesModel,
-      SalesReturnModal? salesReturnModal,
-      bool isReturn = false}) async {
+  static Future<List<File>> generate({SalesModel? salesModel, SalesReturnModal? salesReturnModal, bool isReturn = false}) async {
     final pdf = pw.Document();
     final pdfPreview = pw.Document();
     final dynamic sale;
@@ -31,8 +27,7 @@ class PdfSalesInvoice {
     if (isReturn) {
       log('Sales Return');
       sale = salesReturnModal!;
-      items = await SalesReturnItemsDatabase.instance
-          .getSalesReturnItemBySaleReturnId(sale.id!);
+      items = await SalesReturnItemsDatabase.instance.getSalesReturnItemBySaleReturnId(sale.id!);
     } else {
       log('Sale');
       sale = salesModel!;
@@ -43,12 +38,14 @@ class PdfSalesInvoice {
     final logoBytes = _bytes.buffer.asUint8List();
     pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
 
+    ByteData data = await rootBundle.load("assets/fonts/ibm_plex_sans_arabic.ttf");
+    final arabicFont = pw.Font.ttf(data);
+
     // final emojiFont = await PdfGoogleFonts.notoColorEmoji();
-    final arabicFont = await PdfGoogleFonts.iBMPlexSansArabicBold();
+    // final arabicFont = await PdfGoogleFonts.iBMPlexSansArabicBold();
 
     final businessProfile = await UserUtils.instance.businessProfile;
-    final customer =
-        await CustomerDatabase.instance.getCustomerById(sale.customerId);
+    final customer = await CustomerDatabase.instance.getCustomerById(sale.customerId);
 
     //========== Pdf Preview ==========
     pdfPreview.addPage(pw.MultiPage(
@@ -57,10 +54,7 @@ class PdfSalesInvoice {
       crossAxisAlignment: pw.CrossAxisAlignment.center,
       build: (context) {
         return [
-          buildHeader2(
-              businessProfileModel: businessProfile,
-              arabicFont: arabicFont,
-              logoImage: logoImage),
+          buildHeader2(businessProfileModel: businessProfile, arabicFont: arabicFont, logoImage: logoImage),
           pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
           buildTitle(
             arabicFont,
@@ -80,6 +74,7 @@ class PdfSalesInvoice {
 
     //========== Pdf Save ==========
     pdf.addPage(pw.MultiPage(
+      margin: const pw.EdgeInsets.all(30),
       pageFormat: PdfPageFormat.a4,
       crossAxisAlignment: pw.CrossAxisAlignment.center,
       header: (context) => buildHeader(
@@ -99,10 +94,8 @@ class PdfSalesInvoice {
       },
     ));
 
-    final pdfFile =
-        await PdfAction.saveDocument(name: 'sale_invoice.pdf', pdf: pdf);
-    final pdfPreviewFile = await PdfAction.saveDocument(
-        name: 'sale_invoice_preview.pdf', pdf: pdfPreview);
+    final pdfFile = await PdfAction.saveDocument(name: 'sale_invoice.pdf', pdf: pdf);
+    final pdfPreviewFile = await PdfAction.saveDocument(name: 'sale_invoice_preview.pdf', pdf: pdfPreview);
 
     return [pdfFile, pdfPreviewFile];
   }
@@ -122,9 +115,7 @@ class PdfSalesInvoice {
             pw.Expanded(
               child: buildEnglishCompanyInfo(businessProfileModel),
             ),
-            pw.Expanded(
-                child: pw.Container(
-                    height: 50, width: 50, child: pw.Image(logoImage))),
+            pw.Expanded(child: pw.Container(height: 50, width: 50, child: pw.Image(logoImage))),
             pw.Expanded(
               child: buildArabicCompanyInfo(businessProfileModel, arabicFont),
             )
@@ -184,8 +175,7 @@ class PdfSalesInvoice {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Text(business.business,
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+        pw.Text(business.business, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
         pw.SizedBox(height: .001 * PdfPageFormat.a4.availableHeight),
         pw.Text(business.address, style: kStyle),
         pw.Text('Tel: ${business.phoneNumber}', style: kStyle),
@@ -195,18 +185,13 @@ class PdfSalesInvoice {
   }
 
 //==================== Arabic Company Info ====================
-  static pw.Widget buildArabicCompanyInfo(
-      BusinessProfileModel business, pw.Font arabicFont) {
+  static pw.Widget buildArabicCompanyInfo(BusinessProfileModel business, pw.Font arabicFont) {
     final kStyle = pw.TextStyle(fontSize: 8, font: arabicFont);
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.end,
       children: [
         pw.Text(business.businessArabic,
-            textDirection: pw.TextDirection.rtl,
-            style: pw.TextStyle(
-                fontWeight: pw.FontWeight.bold,
-                font: arabicFont,
-                fontSize: 10)),
+            textDirection: pw.TextDirection.rtl, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, font: arabicFont, fontSize: 10)),
         pw.SizedBox(height: .001 * PdfPageFormat.a4.availableHeight),
         pw.Text(
           business.addressArabic,
@@ -234,8 +219,7 @@ class PdfSalesInvoice {
     bool isReturn,
     final sale,
   ) {
-    final kStyle = pw.TextStyle(
-        font: arabicFont, fontWeight: pw.FontWeight.bold, fontSize: 10);
+    final kStyle = pw.TextStyle(font: arabicFont, fontWeight: pw.FontWeight.bold, fontSize: 10);
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.center,
       mainAxisAlignment: pw.MainAxisAlignment.center,
@@ -293,10 +277,8 @@ class PdfSalesInvoice {
                     name: business.business,
                     vatNumber: business.vatNumber,
                     invoiceDate: DateTime.parse(sale.dateTime),
-                    invoiceTotal:
-                        Converter.amountRounder(num.parse(sale.grantTotal)),
-                    vatTotal:
-                        Converter.amountRounder(num.parse(sale.vatAmount))),
+                    invoiceTotal: Converter.amountRounder(num.parse(sale.grantTotal)),
+                    vatTotal: Converter.amountRounder(num.parse(sale.vatAmount))),
                 drawText: false,
               ),
             ),
@@ -306,12 +288,8 @@ class PdfSalesInvoice {
         pw.Row(
           mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
           children: [
-            pw.Expanded(
-                child: pw.Text('VAT Registration Number',
-                    textAlign: pw.TextAlign.left, style: kStyle)),
-            pw.Expanded(
-                child: pw.Text(business.vatNumber,
-                    textAlign: pw.TextAlign.center, style: kStyle)),
+            pw.Expanded(child: pw.Text('VAT Registration Number', textAlign: pw.TextAlign.left, style: kStyle)),
+            pw.Expanded(child: pw.Text(business.vatNumber, textAlign: pw.TextAlign.center, style: kStyle)),
             pw.Expanded(
                 child: pw.Text(
               'الضريبي التسجيل رقم',
@@ -326,8 +304,7 @@ class PdfSalesInvoice {
   }
 
   //==================== Customer Info ====================
-  static pw.Widget buildCustomerInfo(
-      pw.Font arabicFont, final sale, CustomerModel customer, bool isReturn) {
+  static pw.Widget buildCustomerInfo(pw.Font arabicFont, final sale, CustomerModel customer, bool isReturn) {
     final kStyle = pw.TextStyle(
       font: arabicFont,
       fontSize: 8,
@@ -337,8 +314,7 @@ class PdfSalesInvoice {
       children: [
         pw.Container(
           padding: const pw.EdgeInsets.all(10),
-          decoration:
-              pw.BoxDecoration(border: pw.Border.all(color: PdfColors.green)),
+          decoration: pw.BoxDecoration(border: pw.Border.all(color: PdfColors.green)),
           width: double.infinity,
           height: .12 * PdfPageFormat.a4.availableHeight,
           child: pw.Column(
@@ -350,13 +326,9 @@ class PdfSalesInvoice {
                     child: pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
-                        pw.Text('Customer Name :',
-                            textAlign: pw.TextAlign.left, style: kStyle),
-                        pw.SizedBox(
-                            width: .01 * PdfPageFormat.a4.availableWidth),
-                        pw.Expanded(
-                            child: pw.Text(customer.customer,
-                                textAlign: pw.TextAlign.left, style: kStyle)),
+                        pw.Text('Customer Name :', textAlign: pw.TextAlign.left, style: kStyle),
+                        pw.SizedBox(width: .01 * PdfPageFormat.a4.availableWidth),
+                        pw.Expanded(child: pw.Text(customer.customer, textAlign: pw.TextAlign.left, style: kStyle)),
                       ],
                     ),
                   ),
@@ -372,8 +344,7 @@ class PdfSalesInvoice {
                           textAlign: pw.TextAlign.left,
                           style: kStyle,
                         )),
-                        pw.SizedBox(
-                            width: .01 * PdfPageFormat.a4.availableWidth),
+                        pw.SizedBox(width: .01 * PdfPageFormat.a4.availableWidth),
                         pw.Text(
                           'العميل :',
                           textDirection: pw.TextDirection.rtl,
@@ -395,8 +366,7 @@ class PdfSalesInvoice {
                     mainAxisSize: pw.MainAxisSize.min,
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Text('Customer Address :',
-                          textAlign: pw.TextAlign.left, style: kStyle),
+                      pw.Text('Customer Address :', textAlign: pw.TextAlign.left, style: kStyle),
                       pw.SizedBox(width: .01 * PdfPageFormat.a4.availableWidth),
                       pw.Expanded(
                           child: pw.Text(
@@ -407,10 +377,7 @@ class PdfSalesInvoice {
                       )),
                     ],
                   )),
-                  customer.addressArabic != null
-                      ? pw.SizedBox(
-                          width: .01 * PdfPageFormat.a4.availableWidth)
-                      : pw.SizedBox(),
+                  customer.addressArabic != null ? pw.SizedBox(width: .01 * PdfPageFormat.a4.availableWidth) : pw.SizedBox(),
                   customer.addressArabic != null
                       ? pw.Expanded(
                           child: pw.Row(
@@ -425,8 +392,7 @@ class PdfSalesInvoice {
                               style: kStyle,
                               maxLines: 3,
                             )),
-                            pw.SizedBox(
-                                width: .01 * PdfPageFormat.a4.availableWidth),
+                            pw.SizedBox(width: .01 * PdfPageFormat.a4.availableWidth),
                             pw.Text(
                               'عنوان العميل :',
                               textDirection: pw.TextDirection.rtl,
@@ -438,26 +404,24 @@ class PdfSalesInvoice {
                       : pw.SizedBox(),
                 ],
               ),
-              pw.Expanded(
-                child: pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Expanded(
-                        child: pw.Text('Customer VAT Number',
-                            textAlign: pw.TextAlign.left, style: kStyle)),
-                    pw.Expanded(
-                        child: pw.Text(customer.vatNumber ?? '',
-                            textAlign: pw.TextAlign.center, style: kStyle)),
-                    pw.Expanded(
-                        child: pw.Text(
-                      'الرقم الضريبي :',
-                      textDirection: pw.TextDirection.rtl,
-                      textAlign: pw.TextAlign.left,
-                      style: kStyle,
-                    )),
-                  ],
-                ),
-              ),
+              customer.vatNumber!.isNotEmpty
+                  ? pw.Expanded(
+                      child: pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Expanded(child: pw.Text('Customer VAT Number', textAlign: pw.TextAlign.left, style: kStyle)),
+                          pw.Expanded(child: pw.Text(customer.vatNumber ?? '', textAlign: pw.TextAlign.center, style: kStyle)),
+                          pw.Expanded(
+                              child: pw.Text(
+                            'الرقم الضريبي :',
+                            textDirection: pw.TextDirection.rtl,
+                            textAlign: pw.TextAlign.left,
+                            style: kStyle,
+                          )),
+                        ],
+                      ),
+                    )
+                  : pw.SizedBox(),
               pw.Divider(color: PdfColors.grey),
               pw.Expanded(
                 child: pw.Row(
@@ -466,12 +430,8 @@ class PdfSalesInvoice {
                     pw.Expanded(
                       child: pw.Row(
                         children: [
-                          pw.Text(' : رقم الفاتورة Invoice/',
-                              textDirection: pw.TextDirection.rtl,
-                              textAlign: pw.TextAlign.right,
-                              style: kStyle),
-                          pw.SizedBox(
-                              width: .01 * PdfPageFormat.a4.availableWidth),
+                          pw.Text(' : رقم الفاتورة Invoice/', textDirection: pw.TextDirection.rtl, textAlign: pw.TextAlign.right, style: kStyle),
+                          pw.SizedBox(width: .01 * PdfPageFormat.a4.availableWidth),
                           pw.Expanded(
                               child: pw.Text(
                             sale.invoiceNumber!,
@@ -486,17 +446,12 @@ class PdfSalesInvoice {
                       child: pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
-                          pw.Text(' : التاريخ Date/',
-                              textDirection: pw.TextDirection.rtl,
-                              textAlign: pw.TextAlign.right,
-                              style: kStyle),
-                          pw.SizedBox(
-                              width: .01 * PdfPageFormat.a4.availableWidth),
+                          pw.Text(' : التاريخ Date/', textDirection: pw.TextDirection.rtl, textAlign: pw.TextAlign.right, style: kStyle),
+                          pw.SizedBox(width: .01 * PdfPageFormat.a4.availableWidth),
                           pw.Expanded(
                               flex: 2,
                               child: pw.Text(
-                                Converter.dateTimeFormatAmPm
-                                    .format(DateTime.parse(sale.dateTime)),
+                                Converter.dateTimeFormatAmPm.format(DateTime.parse(sale.dateTime)),
                                 textAlign: pw.TextAlign.left,
                                 style: kStyle,
                               )),
@@ -506,9 +461,7 @@ class PdfSalesInvoice {
                   ],
                 ),
               ),
-              isReturn
-                  ? pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight)
-                  : pw.SizedBox(),
+              isReturn ? pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight) : pw.SizedBox(),
               isReturn
                   ? pw.Expanded(
                       child: pw.Row(
@@ -516,17 +469,11 @@ class PdfSalesInvoice {
                         children: [
                           pw.Expanded(
                             child: pw.Row(
-                              mainAxisAlignment:
-                                  pw.MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                               children: [
-                                pw.Text(
-                                    ' : رقم فاتورة المبيعات المرتجعة Original Invoice No/',
-                                    textDirection: pw.TextDirection.rtl,
-                                    textAlign: pw.TextAlign.right,
-                                    style: kStyle),
-                                pw.SizedBox(
-                                    width:
-                                        .01 * PdfPageFormat.a4.availableWidth),
+                                pw.Text(' : رقم فاتورة المبيعات المرتجعة Original Invoice No/',
+                                    textDirection: pw.TextDirection.rtl, textAlign: pw.TextAlign.right, style: kStyle),
+                                pw.SizedBox(width: .01 * PdfPageFormat.a4.availableWidth),
                                 pw.Expanded(
                                     child: pw.Text(
                                   sale.originalInvoiceNumber,
@@ -536,8 +483,7 @@ class PdfSalesInvoice {
                               ],
                             ),
                           ),
-                          pw.SizedBox(
-                              width: .10 * PdfPageFormat.a4.availableWidth),
+                          pw.SizedBox(width: .10 * PdfPageFormat.a4.availableWidth),
                           pw.Spacer()
                         ],
                       ),
@@ -552,21 +498,13 @@ class PdfSalesInvoice {
 
 //==================== Invoice Table ====================
   static pw.Widget buildInvoice(List<dynamic> saleItems) {
-    final headers = [
-      'S.No',
-      'Description',
-      'Quantity',
-      'Unit Price',
-      'VAT Amount',
-      'Total Amount'
-    ];
+    final headers = ['S.No', 'Description', 'Quantity', 'Unit Price', 'VAT Amount', 'Total Amount'];
     int i = 0;
     final data = saleItems.map((item) {
       i++;
       final num exclusiveAmount;
       if (item.vatMethod == 'Inclusive') {
-        exclusiveAmount = VatCalculator.getExclusiveAmount(
-            sellingPrice: item.unitPrice, vatRate: item.vatRate);
+        exclusiveAmount = VatCalculator.getExclusiveAmount(sellingPrice: item.unitPrice, vatRate: item.vatRate);
       } else {
         exclusiveAmount = num.parse(item.unitPrice);
       }
@@ -640,51 +578,38 @@ class PdfSalesInvoice {
               children: [
                 buildText(
                   title: ' / Total Amount  المبلغ اإلجمالي ',
-                  value: Converter.currency
-                      .format(num.parse(sale.subTotal))
-                      .replaceAll("₹", ''),
+                  value: Converter.currency.format(num.parse(sale.subTotal)).replaceAll("₹", ''),
                   unite: true,
                   arabicFont: arabicFont,
                 ),
                 buildText(
                   title: ' / Discount  مقدار الخصم',
-                  value: Converter.currency
-                      .format(num.parse(
-                          sale.discount.isEmpty ? '0' : sale.discount))
-                      .replaceAll("₹", ''),
+                  value: Converter.currency.format(num.parse(sale.discount.isEmpty ? '0' : sale.discount)).replaceAll("₹", ''),
                   unite: true,
                   arabicFont: arabicFont,
                 ),
                 buildText(
                   title: ' / Vat Amount  قيمة الضريبة',
-                  value: Converter.currency
-                      .format(num.parse(sale.vatAmount))
-                      .replaceAll("₹", ''),
+                  value: Converter.currency.format(num.parse(sale.vatAmount)).replaceAll("₹", ''),
                   unite: true,
                   arabicFont: arabicFont,
                 ),
                 pw.Divider(),
                 buildText(
                   title: ' / Grant Total  المجموع الكل',
-                  value: Converter.currency
-                      .format(num.parse(sale.grantTotal))
-                      .replaceAll("₹", ''),
+                  value: Converter.currency.format(num.parse(sale.grantTotal)).replaceAll("₹", ''),
                   unite: true,
                   arabicFont: arabicFont,
                 ),
                 buildText(
                   title: ' / Paid Amount  المبلغ المدفوع',
-                  value: Converter.currency
-                      .format(num.parse(sale.paid))
-                      .replaceAll("₹", ''),
+                  value: Converter.currency.format(num.parse(sale.paid)).replaceAll("₹", ''),
                   unite: true,
                   arabicFont: arabicFont,
                 ),
                 buildText(
                   title: ' / Balance  مقدار وسطي',
-                  value: Converter.currency
-                      .format(num.parse(sale.balance))
-                      .replaceAll("₹", ''),
+                  value: Converter.currency.format(num.parse(sale.balance)).replaceAll("₹", ''),
                   unite: true,
                   arabicFont: arabicFont,
                 ),
@@ -707,24 +632,15 @@ class PdfSalesInvoice {
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Expanded(
-                child: buildSimpleText(
-                    title: 'استلمت من قبل',
-                    value: 'Received By',
-                    arabicFont: arabicFont),
+                child: buildSimpleText(title: 'استلمت من قبل', value: 'Received By', arabicFont: arabicFont),
               ),
               pw.SizedBox(width: .05 * PdfPageFormat.a4.availableWidth),
               pw.Expanded(
-                child: buildSimpleText(
-                    title: 'تمت الموافقة عليه من قبل',
-                    value: 'Approved By',
-                    arabicFont: arabicFont),
+                child: buildSimpleText(title: 'تمت الموافقة عليه من قبل', value: 'Approved By', arabicFont: arabicFont),
               ),
               pw.SizedBox(width: .05 * PdfPageFormat.a4.availableWidth),
               pw.Expanded(
-                child: buildSimpleText(
-                    title: 'أعدت بواسطة',
-                    value: 'Prepared By',
-                    arabicFont: arabicFont),
+                child: buildSimpleText(title: 'أعدت بواسطة', value: 'Prepared By', arabicFont: arabicFont),
               ),
             ],
           ),
@@ -769,10 +685,8 @@ class PdfSalesInvoice {
     required String value,
     required pw.Font arabicFont,
   }) {
-    final style = pw.TextStyle(
-        fontWeight: pw.FontWeight.bold, font: arabicFont, fontSize: 5);
-    final eStyle = pw.TextStyle(
-        fontWeight: pw.FontWeight.bold, font: arabicFont, fontSize: 8);
+    final style = pw.TextStyle(fontWeight: pw.FontWeight.bold, font: arabicFont, fontSize: 5);
+    final eStyle = pw.TextStyle(fontWeight: pw.FontWeight.bold, font: arabicFont, fontSize: 8);
 
     return pw.Column(
       mainAxisSize: pw.MainAxisSize.min,

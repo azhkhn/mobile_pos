@@ -447,18 +447,20 @@ class PaymentButtonsWidget extends StatelessWidget {
         itemMasterDB.subtractItemQty(SaleSideWidget.selectedProductsNotifier.value[i], num.parse(quantity));
       }
 
-      final TransactionsModel _transaction = TransactionsModel(
-        category: 'Sales',
-        transactionType: 'Income',
-        dateTime: dateTime,
-        amount: grantTotal,
-        status: paymentStatus,
-        description: 'Transaction $salesId',
-        salesId: salesId,
-      );
+      if (paymentStatus != 'Due') {
+        final TransactionsModel _transaction = TransactionsModel(
+          category: 'Sales',
+          transactionType: 'Income',
+          dateTime: dateTime,
+          amount: grantTotal,
+          status: paymentStatus,
+          description: 'Transaction $salesId',
+          salesId: salesId,
+        );
 
-      //==================== Create Transactions ====================
-      await transactionDB.createTransaction(_transaction);
+        //==================== Create Transactions ====================
+        await transactionDB.createTransaction(_transaction);
+      }
 
       PaymentTypeWidget.amountController.clear();
 

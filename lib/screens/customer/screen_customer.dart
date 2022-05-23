@@ -47,13 +47,13 @@ class CustomerScreen extends StatelessWidget {
 
   //========== Focus Nodes ==========
   final FocusNode customerTypeFocusNode = FocusNode();
-  final FocusNode companyFocusNode = FocusNode();
-  final FocusNode companyArabicFocusNode = FocusNode();
   final FocusNode customerFocusNode = FocusNode();
   final FocusNode customerArabicFocusNode = FocusNode();
-  final FocusNode vatNumberFocusNode = FocusNode();
   final FocusNode addressFocusNode = FocusNode();
   final FocusNode addressArabicFocusNode = FocusNode();
+  final FocusNode companyFocusNode = FocusNode();
+  final FocusNode companyArabicFocusNode = FocusNode();
+  final FocusNode vatNumberFocusNode = FocusNode();
   final FocusNode cityFocusNode = FocusNode();
   final FocusNode cityArabicFocusNode = FocusNode();
   final FocusNode stateFocusNode = FocusNode();
@@ -391,14 +391,14 @@ class CustomerScreen extends StatelessWidget {
     } else {
       if (customerType == 'null') {
         customerTypeFocusNode.requestFocus();
-      } else if (company.isEmpty) {
-        companyFocusNode.requestFocus();
-      } else if (companyArabic.isEmpty) {
-        companyArabicFocusNode.requestFocus();
       } else if (customer.isEmpty) {
         customerFocusNode.requestFocus();
       } else if (customerArabic.isEmpty) {
         customerArabicFocusNode.requestFocus();
+      } else if (address.isEmpty) {
+        addressFocusNode.requestFocus();
+      } else if (addressArabic.isEmpty) {
+        addressArabicFocusNode.requestFocus();
       } else {
         if (customerType == 'Credit Customer') {
           if (vatNumber.isEmpty) {

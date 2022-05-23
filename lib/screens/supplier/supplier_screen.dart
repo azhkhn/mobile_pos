@@ -13,8 +13,8 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';
 
-class ScreenManageSupplier extends StatelessWidget {
-  ScreenManageSupplier({
+class ScreenSupplier extends StatelessWidget {
+  ScreenSupplier({
     Key? key,
     this.purchase = false,
   }) : super(key: key);
@@ -59,7 +59,7 @@ class ScreenManageSupplier extends StatelessWidget {
               key: _formKey,
               child: Column(
                 children: [
-                  //========== Company Field ==========
+                  //========== Supplier Field ==========
                   TextFeildWidget(
                     controller: _supplierNameController,
                     labelText: 'Supplier Name *',
@@ -73,7 +73,7 @@ class ScreenManageSupplier extends StatelessWidget {
                   ),
                   kHeight10,
 
-                  //========== Company Arabic Field ==========
+                  //========== Supplier Arabic Field ==========
                   TextFeildWidget(
                     controller: _supplierNameArabicController,
                     textDirection: TextDirection.rtl,
@@ -88,7 +88,7 @@ class ScreenManageSupplier extends StatelessWidget {
                   ),
                   kHeight10,
 
-                  //========== Supplier Field ==========
+                  //========== Contact Name Field ==========
                   TextFeildWidget(
                     controller: _contactNameController,
                     labelText: 'Contact Name *',
@@ -102,17 +102,13 @@ class ScreenManageSupplier extends StatelessWidget {
                   ),
                   kHeight10,
 
-                  //========== Supplier Arabic Field ==========
+                  //========== Contact Number Field ==========
                   TextFeildWidget(
                     controller: _contactNumberController,
                     labelText: 'Contact Number *',
-                    textInputType: TextInputType.text,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
+                    textInputType: TextInputType.phone,
+                    validator: (value) => Validators.phoneValidator(value),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
                   kHeight10,
 
@@ -301,6 +297,7 @@ class ScreenManageSupplier extends StatelessWidget {
       );
       try {
         final id = await supplierDB.createSupplier(_supplierModel);
+        resetSupplier();
         log('Supplier $supplierName Added!');
         kSnackBar(context: context, success: true, content: 'Supplier "$supplierName" added successfully!');
         if (purchase) {
@@ -311,5 +308,24 @@ class ScreenManageSupplier extends StatelessWidget {
         kSnackBar(context: context, error: true, content: 'Supplier "$supplierName" already exist!');
       }
     }
+  }
+
+  //========== Reset Supplier Fields ==========
+  void resetSupplier() {
+    _supplierNameController.clear();
+    _supplierNameArabicController.clear();
+    _contactNameController.clear();
+    _contactNumberController.clear();
+    _vatNumberController.clear();
+    _emailController.clear();
+    _addressController.clear();
+    _addressArabicController.clear();
+    _cityController.clear();
+    _cityArabicController.clear();
+    _stateArabicController.clear();
+    _stateArabicController.clear();
+    _countryController.clear();
+    _countryArabicController.clear();
+    _poBoxController.clear();
   }
 }

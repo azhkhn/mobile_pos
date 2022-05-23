@@ -83,7 +83,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                             Expanded(
                               flex: 7,
                               child: AutoSizeText(
-                                supplier ? snapshot.data!.contactName : snapshot.data!.customer,
+                                supplier ? snapshot.data!.supplierName : snapshot.data!.customer,
                                 textAlign: TextAlign.end,
                                 maxFontSize: 20,
                                 style: const TextStyle(fontSize: 12),
@@ -112,7 +112,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                             Expanded(
                               flex: 7,
                               child: AutoSizeText(
-                                supplier ? snapshot.data!.contactNumber : snapshot.data!.customerArabic,
+                                supplier ? snapshot.data!.supplierNameArabic : snapshot.data!.customerArabic,
                                 textAlign: TextAlign.end,
                                 maxFontSize: 20,
                                 style: const TextStyle(fontSize: 12),
@@ -125,12 +125,12 @@ class CustomBottomSheetWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Expanded(
+                            Expanded(
                               flex: 5,
                               child: AutoSizeText(
-                                'Company',
+                                supplier ? 'Contact Name' : 'Company',
                                 maxFontSize: 20,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 12,
                                 ),
                               ),
@@ -143,7 +143,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                             Expanded(
                               flex: 7,
                               child: AutoSizeText(
-                                snapshot.data!.supplierName,
+                                supplier ? snapshot.data!.contactName : snapshot.data!.company,
                                 textAlign: TextAlign.end,
                                 maxFontSize: 20,
                                 style: const TextStyle(fontSize: 12),
@@ -156,12 +156,12 @@ class CustomBottomSheetWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Expanded(
+                            Expanded(
                               flex: 5,
                               child: AutoSizeText(
-                                'Company Arabic',
+                                supplier ? 'Contact Number' : 'Company Arabic',
                                 maxFontSize: 20,
-                                style: TextStyle(fontSize: 12),
+                                style: const TextStyle(fontSize: 12),
                               ),
                             ),
                             const Expanded(
@@ -172,7 +172,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                             Expanded(
                               flex: 7,
                               child: AutoSizeText(
-                                snapshot.data!.supplierNameArabic,
+                                supplier ? snapshot.data!.contactNumber : snapshot.data!.companyArabic,
                                 textAlign: TextAlign.end,
                                 maxFontSize: 20,
                                 style: const TextStyle(fontSize: 12),

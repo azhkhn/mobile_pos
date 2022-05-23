@@ -282,20 +282,20 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                                             return InkWell(
                                               onTap: () async {
                                                 if (_builderModel == 0) {
-                                                  log(itemList[index].isCategory);
-                                                  final category = itemList[index].isCategory;
+                                                  log(itemList[index].category);
+                                                  final category = itemList[index].category;
                                                   _builderModel = null;
                                                   PurchaseReturnProductSideWidget.itemsNotifier.value =
                                                       await itemMasterDB.getProductByCategoryId(category);
                                                 } else if (_builderModel == 1) {
-                                                  log(itemList[index].isSubCategory);
-                                                  final subCategory = itemList[index].isSubCategory;
+                                                  log(itemList[index].subCategory);
+                                                  final subCategory = itemList[index].subCategory;
                                                   _builderModel = null;
                                                   PurchaseReturnProductSideWidget.itemsNotifier.value =
                                                       await itemMasterDB.getProductBySubCategoryId(subCategory);
                                                 } else if (_builderModel == 2) {
-                                                  log(itemList[index].isBbrand);
-                                                  final brand = itemList[index].isBbrand;
+                                                  log(itemList[index].brand);
+                                                  final brand = itemList[index].brand;
                                                   _builderModel = null;
                                                   PurchaseReturnProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByBrandId(brand);
                                                 } else {
@@ -357,11 +357,11 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                                                             children: [
                                                               AutoSizeText(
                                                                 _builderModel == 0
-                                                                    ? itemList[index].isCategory
+                                                                    ? itemList[index].category
                                                                     : _builderModel == 1
-                                                                        ? itemList[index].isSubCategory
+                                                                        ? itemList[index].subCategory
                                                                         : _builderModel == 2
-                                                                            ? itemList[index].isBbrand
+                                                                            ? itemList[index].brand
                                                                             : '',
                                                                 textAlign: TextAlign.center,
                                                                 softWrap: true,
@@ -369,11 +369,11 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                                                                 minFontSize: 8,
                                                                 maxFontSize: 10,
                                                                 overflow: TextOverflow.ellipsis,
-                                                                maxLines: _builderModel == 0 && itemList[index].isCategory.toString().contains(' ')
+                                                                maxLines: _builderModel == 0 && itemList[index].category.toString().contains(' ')
                                                                     ? 2
-                                                                    : _builderModel == 1 && itemList[index].isSubCategory.toString().contains(' ')
+                                                                    : _builderModel == 1 && itemList[index].subCategory.toString().contains(' ')
                                                                         ? 2
-                                                                        : _builderModel == 2 && itemList[index].isBbrand.toString().contains(' ')
+                                                                        : _builderModel == 2 && itemList[index].brand.toString().contains(' ')
                                                                             ? 2
                                                                             : 1,
                                                               ),

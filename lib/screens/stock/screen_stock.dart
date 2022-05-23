@@ -287,18 +287,18 @@ class ScreenStock extends StatelessWidget {
                                                     return InkWell(
                                                       onTap: () async {
                                                         if (_builderModel == 0) {
-                                                          log(itemList[index].isCategory);
-                                                          final category = itemList[index].isCategory;
+                                                          log(itemList[index].category);
+                                                          final category = itemList[index].category;
                                                           _builderModel = null;
                                                           itemsNotifier.value = await itemMasterDB.getProductByCategoryId(category);
                                                         } else if (_builderModel == 1) {
-                                                          log(itemList[index].isSubCategory);
-                                                          final subCategory = itemList[index].isSubCategory;
+                                                          log(itemList[index].subCategory);
+                                                          final subCategory = itemList[index].subCategory;
                                                           _builderModel = null;
                                                           itemsNotifier.value = await itemMasterDB.getProductBySubCategoryId(subCategory);
                                                         } else if (_builderModel == 2) {
-                                                          log(itemList[index].isBbrand);
-                                                          final brand = itemList[index].isBbrand;
+                                                          log(itemList[index].brand);
+                                                          final brand = itemList[index].brand;
                                                           _builderModel = null;
                                                           itemsNotifier.value = await itemMasterDB.getProductByBrandId(brand);
                                                         } else {
@@ -383,11 +383,11 @@ class ScreenStock extends StatelessWidget {
                                                                     children: [
                                                                       AutoSizeText(
                                                                         _builderModel == 0
-                                                                            ? itemList[index].isCategory
+                                                                            ? itemList[index].category
                                                                             : _builderModel == 1
-                                                                                ? itemList[index].isSubCategory
+                                                                                ? itemList[index].subCategory
                                                                                 : _builderModel == 2
-                                                                                    ? itemList[index].isBbrand
+                                                                                    ? itemList[index].brand
                                                                                     : '',
                                                                         textAlign: TextAlign.center,
                                                                         softWrap: true,
@@ -395,16 +395,15 @@ class ScreenStock extends StatelessWidget {
                                                                         minFontSize: 9,
                                                                         maxFontSize: 11,
                                                                         overflow: TextOverflow.ellipsis,
-                                                                        maxLines:
-                                                                            _builderModel == 0 && itemList[index].isCategory.toString().contains(' ')
+                                                                        maxLines: _builderModel == 0 &&
+                                                                                itemList[index].category.toString().contains(' ')
+                                                                            ? 2
+                                                                            : _builderModel == 1 &&
+                                                                                    itemList[index].subCategory.toString().contains(' ')
                                                                                 ? 2
-                                                                                : _builderModel == 1 &&
-                                                                                        itemList[index].isSubCategory.toString().contains(' ')
+                                                                                : _builderModel == 2 && itemList[index].brand.toString().contains(' ')
                                                                                     ? 2
-                                                                                    : _builderModel == 2 &&
-                                                                                            itemList[index].isBbrand.toString().contains(' ')
-                                                                                        ? 2
-                                                                                        : 1,
+                                                                                    : 1,
                                                                       ),
                                                                     ],
                                                                   )),
@@ -506,7 +505,7 @@ class ScreenStock extends StatelessWidget {
           itemsNotifier.value = _results;
         } else if (stock == 'Expired Stock') {
           for (var i = 0; i < _items.length; i++) {
-            final DateTime? expDate = DateTime.tryParse(_items[i].expiryDate);
+            final DateTime? expDate = DateTime.tryParse(_items[i].expiryDate!);
 
             if (expDate != null) {
               if (expDate.isBefore(DateTime.now())) {
