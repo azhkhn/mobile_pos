@@ -11,11 +11,13 @@ class DeviceUtil {
     return instance;
   }
 
+  //========== Get Device Type ==========
   static Enum get _getDeviceType {
     final data = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
     return data.size.shortestSide < 550 ? DeviceType.phone : DeviceType.tablet;
   }
 
+  //========== Checking if it's Tablet or Smartphone ==========
   static bool get isTablet {
     return _getDeviceType == DeviceType.tablet;
   }
@@ -24,13 +26,11 @@ class DeviceUtil {
   static bool isLandscape = false;
   static Future<void> toPortrait() async {
     isLandscape = false;
-    await SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   }
 
   static Future<void> toLandscape() async {
     isLandscape = true;
-    await SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
   }
 }

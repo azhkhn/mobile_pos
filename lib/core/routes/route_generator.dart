@@ -37,7 +37,7 @@ class RouteGenerator {
 
     switch (settings.name) {
       case routeRoot:
-        return MaterialPageRoute(builder: (_) => const ScreenSplash());
+        return MaterialPageRoute(builder: (_) => ScreenSplash());
       case routeHome:
         return MaterialPageRoute(builder: (_) => ScreenHome());
       case routeLogin:
