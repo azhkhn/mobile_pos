@@ -6,7 +6,7 @@ import 'package:pdf/pdf.dart' show PdfColors, PdfPageFormat;
 import 'package:pdf/widgets.dart' as pw;
 import 'package:shop_ez/api/invoice/utils/e-invoice_generate.dart';
 import 'package:shop_ez/api/invoice/utils/pdf_action.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/core/utils/vat/vat.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';

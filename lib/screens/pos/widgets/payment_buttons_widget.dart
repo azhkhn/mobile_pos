@@ -23,7 +23,7 @@ import 'package:shop_ez/screens/pos/widgets/product_side_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 
 import '../../../core/constant/sizes.dart';
-import '../../../core/utils/text/converters.dart';
+import '../../../core/utils/converters/converters.dart';
 
 class PaymentButtonsWidget extends StatelessWidget {
   const PaymentButtonsWidget({
@@ -444,7 +444,7 @@ class PaymentButtonsWidget extends StatelessWidget {
         await salesItemDB.createSalesItems(_salesItemsModel);
 
         //==================== Decreasing Item Quantity ====================
-        itemMasterDB.subtractItemQty(SaleSideWidget.selectedProductsNotifier.value[i], num.parse(quantity));
+        itemMasterDB.subtractItemQty(itemId: SaleSideWidget.selectedProductsNotifier.value[i].id!, soldQty: num.parse(quantity));
       }
 
       if (paymentStatus != 'Due') {

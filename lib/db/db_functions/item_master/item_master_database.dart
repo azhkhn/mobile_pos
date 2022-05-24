@@ -103,13 +103,18 @@ class ItemMasterDatabase {
   }
 
   //========== Increase Item Quantity ==========
-  Future<void> additionItemQty(ItemMasterModel itemMasterModel, num purchasedQty) async {
+  Future<void> additionItemQty({required int itemId, required num purchasedQty}) async {
     final db = await dbInstance.database;
-    final num currentQty = num.parse(itemMasterModel.openingStock);
+
+    final _result = await db.query(tableItemMaster, where: '${ItemMasterFields.id} ? = ', whereArgs: [itemId]);
+    final _item = ItemMasterModel.fromJson(_result.first);
+
+    final num currentQty = num.parse(_item.openingStock);
     log('Current Quantity == $currentQty');
     final num newQty = currentQty + purchasedQty;
     log('New Item Quantity == $newQty');
-    final newModel = itemMasterModel.copyWith(openingStock: '$newQty');
+    final newModel = _item.copyWith(openingStock: '$newQty');
+
     await db.update(
       tableItemMaster,
       newModel.toJson(),
@@ -120,13 +125,38 @@ class ItemMasterDatabase {
   }
 
   //========== Decrease Item Quantity ==========
-  Future<void> subtractItemQty(ItemMasterModel itemMasterModel, num soldQty) async {
+  Future<void> subtractItemQty({required int itemId, required num soldQty}) async {
     final db = await dbInstance.database;
-    final num currentQty = num.parse(itemMasterModel.openingStock);
+
+    final _result = await db.query(tableItemMaster, where: '${ItemMasterFields.id} ? = ', whereArgs: [itemId]);
+    final _item = ItemMasterModel.fromJson(_result.first);
+
+    final num currentQty = num.parse(_item.openingStock);
     log('Current Quantity == $currentQty');
     final num newQty = currentQty - soldQty;
     log('New Item Quantity == $newQty');
-    final newModel = itemMasterModel.copyWith(openingStock: '$newQty');
+
+    final newModel = _item.copyWith(openingStock: '$newQty');
+
+    await db.update(
+      tableItemMaster,
+      newModel.toJson(),
+      where: '${ItemMasterFields.id} = ?',
+      whereArgs: [newModel.id],
+    );
+    log('Item Quantity Updated!');
+  }
+
+  //========== Update Item Cost and Quantity ==========
+  Future<void> updateItemCostAndQty({required ItemMasterModel itemMaster, required num purchasedQty}) async {
+    final db = await dbInstance.database;
+
+    final num currentQty = num.parse(itemMaster.openingStock);
+    log('Current Quantity == $currentQty');
+    final num newQty = currentQty + purchasedQty;
+    log('New Item Quantity == $newQty');
+    final newModel = itemMaster.copyWith(openingStock: '$newQty');
+
     await db.update(
       tableItemMaster,
       newModel.toJson(),

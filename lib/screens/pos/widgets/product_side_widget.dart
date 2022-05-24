@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
@@ -303,7 +303,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                             ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByBrandId(brandId);
                                           } else {
 //===================================== if the Product Already Added ====================================
-                                            isProductAlreadyAdded(itemList, index);
+                                            isProductAlreadyAdded(itemList as List<ItemMasterModel>, index);
 //=======================================================================================================
 
                                             SaleSideWidget.selectedProductsNotifier.notifyListeners();
@@ -405,7 +405,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
 // Checking if the product already added then Increasing the Quantity
 //====================================================================
-  void isProductAlreadyAdded(itemList, int index) {
+  void isProductAlreadyAdded(List<ItemMasterModel> itemList, int index) {
     final vatMethod = itemList[index].vatMethod;
     log('VAT Method = ' + vatMethod);
 
@@ -427,11 +427,18 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
     }
     SaleSideWidget.selectedProductsNotifier.value.add(itemList[index]);
 
+    final String unitPrice = vatMethod == 'Inclusive'
+        ? Converter.amountRounder(
+            const SaleSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: itemList[index].vatRate))
+        : Converter.amountRounder(num.tryParse(itemList[index].sellingPrice)!);
+
+    SaleSideWidget.unitPriceNotifier.value.add(TextEditingController(text: unitPrice));
+
+    SaleSideWidget.quantityNotifier.value.add(TextEditingController(text: '1'));
+
     SaleSideWidget.subTotalNotifier.value.add(vatMethod == 'Inclusive'
         ? '${const SaleSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: itemList[index].vatRate)}'
         : itemList[index].sellingPrice);
-
-    SaleSideWidget.quantityNotifier.value.add(TextEditingController(text: '1'));
 
     SaleSideWidget.totalItemsNotifier.value++;
 

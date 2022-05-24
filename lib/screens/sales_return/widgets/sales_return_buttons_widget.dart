@@ -18,7 +18,7 @@ import 'package:shop_ez/screens/sales_return/widgets/sales_return_product_side.d
 import 'package:shop_ez/screens/sales_return/widgets/sales_return_side_widget.dart';
 
 import '../../../core/constant/sizes.dart';
-import '../../../core/utils/text/converters.dart';
+import '../../../core/utils/converters/converters.dart';
 
 class SalesReturnButtonsWidget extends StatelessWidget {
   const SalesReturnButtonsWidget({
@@ -347,7 +347,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         await salesReturnItemsDB.createSalesReturnItems(_salesReturnItemsModel);
 
         //==================== Increasing Item Quantity ====================
-        itemMasterDB.additionItemQty(SalesReturnSideWidget.selectedProductsNotifier.value[i], num.parse(quantity));
+        itemMasterDB.additionItemQty(itemId: SalesReturnSideWidget.selectedProductsNotifier.value[i].id!, purchasedQty: num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(

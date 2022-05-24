@@ -5,7 +5,7 @@ import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 
 import '../../../core/utils/device/device.dart';
-import '../../../core/utils/text/converters.dart';
+import '../../../core/utils/converters/converters.dart';
 
 class PriceSectionWidget extends StatelessWidget {
   const PriceSectionWidget({
@@ -46,32 +46,25 @@ class PriceSectionWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 ValueListenableBuilder(
-                                  valueListenable:
-                                      SaleSideWidget.totalItemsNotifier,
+                                  valueListenable: SaleSideWidget.totalItemsNotifier,
                                   builder: (context, totalItems, child) {
                                     return AutoSizeText(
                                       '$totalItems',
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize:
-                                              DeviceUtil.isTablet ? 12 : 10,
-                                          fontWeight: FontWeight.bold),
+                                      style: TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10, fontWeight: FontWeight.bold),
                                       minFontSize: 10,
                                     );
                                   },
                                 ),
                                 ValueListenableBuilder(
-                                  valueListenable:
-                                      SaleSideWidget.totalQuantityNotifier,
+                                  valueListenable: SaleSideWidget.totalQuantityNotifier,
                                   builder: (context, totalQuantity, child) {
                                     return Flexible(
                                       child: AutoSizeText(
                                         '($totalQuantity)',
                                         softWrap: false,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontSize: isTablet ? 12 : 10,
-                                            fontWeight: FontWeight.bold),
+                                        style: TextStyle(fontSize: isTablet ? 12 : 10, fontWeight: FontWeight.bold),
                                         minFontSize: 10,
                                       ),
                                     );
@@ -96,17 +89,12 @@ class PriceSectionWidget extends StatelessWidget {
                           kWidth5,
                           Flexible(
                             child: ValueListenableBuilder(
-                              valueListenable:
-                                  SaleSideWidget.totalAmountNotifier,
+                              valueListenable: SaleSideWidget.totalAmountNotifier,
                               builder: (context, totalAmount, child) {
                                 return AutoSizeText(
-                                  totalAmount == 0
-                                      ? '0'
-                                      : Converter.currency.format(totalAmount),
+                                  totalAmount == 0 ? '0' : Converter.currency.format(totalAmount),
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: isTablet ? 12 : 10,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: isTablet ? 12 : 10, fontWeight: FontWeight.bold),
                                   minFontSize: 10,
                                 );
                               },
@@ -139,9 +127,7 @@ class PriceSectionWidget extends StatelessWidget {
                             child: AutoSizeText(
                               '(0)0.00',
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontSize: isTablet ? 12 : 10,
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: isTablet ? 12 : 10, fontWeight: FontWeight.bold),
                               minFontSize: 10,
                             ),
                           ),
@@ -164,13 +150,9 @@ class PriceSectionWidget extends StatelessWidget {
                               valueListenable: SaleSideWidget.totalVatNotifier,
                               builder: (context, totalVAT, child) {
                                 return AutoSizeText(
-                                  totalVAT == 0
-                                      ? '0'
-                                      : Converter.currency.format(totalVAT),
+                                  totalVAT == 0 ? '0' : Converter.currency.format(totalVAT),
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: isTablet ? 12 : 10,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: isTablet ? 12 : 10, fontWeight: FontWeight.bold),
                                   minFontSize: 10,
                                 );
                               },

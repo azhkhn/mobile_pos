@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import '../../../../core/utils/device/device.dart';
 
 class PaymentDetailsTableWidget extends StatelessWidget {
@@ -47,10 +47,8 @@ class PaymentDetailsTableWidget extends StatelessWidget {
             bottom: const BorderSide(width: 0.5, color: kBorderColor),
             right: const BorderSide(width: 0.5, color: kBorderColor),
             left: const BorderSide(width: 0.5, color: kBorderColor),
-            horizontalInside: const BorderSide(
-                width: 0.5, color: kBorderColor, style: BorderStyle.solid),
-            verticalInside: const BorderSide(
-                width: 0.5, color: kBorderColor, style: BorderStyle.solid),
+            horizontalInside: const BorderSide(width: 0.5, color: kBorderColor, style: BorderStyle.solid),
+            verticalInside: const BorderSide(width: 0.5, color: kBorderColor, style: BorderStyle.solid),
           ),
           children: [
             TableRow(children: [
@@ -76,9 +74,7 @@ class PaymentDetailsTableWidget extends StatelessWidget {
                     valueListenable: totalPayingNotifier,
                     builder: (__, totalPaying, _) {
                       return AutoSizeText(
-                        firstRow
-                            ? '$totalItems'
-                            : Converter.currency.format(totalPaying),
+                        firstRow ? '$totalItems' : Converter.currency.format(totalPaying),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -112,9 +108,7 @@ class PaymentDetailsTableWidget extends StatelessWidget {
                     valueListenable: balanceNotifier,
                     builder: (_, balance, __) {
                       return AutoSizeText(
-                        firstRow
-                            ? Converter.currency.format(totalPayable)
-                            : Converter.currency.format(balance),
+                        firstRow ? Converter.currency.format(totalPayable) : Converter.currency.format(balance),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(

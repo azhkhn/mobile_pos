@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';

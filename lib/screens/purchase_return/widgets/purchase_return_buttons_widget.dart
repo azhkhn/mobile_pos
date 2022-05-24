@@ -17,7 +17,7 @@ import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_product_
 import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_side_widget.dart';
 
 import '../../../core/constant/sizes.dart';
-import '../../../core/utils/text/converters.dart';
+import '../../../core/utils/converters/converters.dart';
 
 class PurchaseReturnButtonsWidget extends StatelessWidget {
   const PurchaseReturnButtonsWidget({
@@ -336,7 +336,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         await purchaseReturnItemsDB.createPurchaseReturnItems(_purchaseReturnItemsModel);
 
         //==================== Decreasing Item Quantity ====================
-        itemMasterDB.additionItemQty(PurchaseReturnSideWidget.selectedProductsNotifier.value[i], num.parse(quantity));
+        itemMasterDB.additionItemQty(itemId: PurchaseReturnSideWidget.selectedProductsNotifier.value[i].id!, purchasedQty: num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(

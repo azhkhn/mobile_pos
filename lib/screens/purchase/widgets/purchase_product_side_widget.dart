@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_side_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
@@ -298,7 +298,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                             PurchaseProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByBrandId(brandId);
                                           } else {
 //===================================== if the Product Already Added ====================================
-                                            isProductAlreadyAdded(itemList, index);
+                                            isProductAlreadyAdded(itemList as List<ItemMasterModel>, index);
 //=======================================================================================================
 
                                             PurchaseSideWidget.selectedProductsNotifier.notifyListeners();
@@ -397,7 +397,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
 
 // Checking if the product already added then Increasing the Quantity
 //====================================================================
-  void isProductAlreadyAdded(itemList, int index) {
+  void isProductAlreadyAdded(List<ItemMasterModel> itemList, int index) {
     final vatMethod = itemList[index].vatMethod;
     log('VAT Method = ' + vatMethod);
 
@@ -418,11 +418,17 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
     }
     PurchaseSideWidget.selectedProductsNotifier.value.add(itemList[index]);
 
+    final String _itemCost = vatMethod == 'Inclusive'
+        ? Converter.amountRounder(const PurchaseSideWidget().getExclusiveAmount(itemCost: itemList[index].itemCost, vatRate: itemList[index].vatRate))
+        : Converter.amountRounder(num.tryParse(itemList[index].itemCost)!);
+
+    PurchaseSideWidget.costNotifier.value.add(TextEditingController(text: _itemCost));
+
+    PurchaseSideWidget.quantityNotifier.value.add(TextEditingController(text: '1'));
+
     PurchaseSideWidget.subTotalNotifier.value.add(vatMethod == 'Inclusive'
         ? '${const PurchaseSideWidget().getExclusiveAmount(itemCost: itemList[index].itemCost, vatRate: itemList[index].vatRate)}'
         : itemList[index].itemCost);
-
-    PurchaseSideWidget.quantityNotifier.value.add(TextEditingController(text: '1'));
 
     PurchaseSideWidget.totalItemsNotifier.value++;
 

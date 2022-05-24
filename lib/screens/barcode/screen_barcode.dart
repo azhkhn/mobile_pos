@@ -10,7 +10,7 @@ import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -80,9 +80,7 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                           hintStyle: const TextStyle(fontSize: 12),
                           border: const OutlineInputBorder(),
                         )),
-                    noItemsFoundBuilder: (context) => const SizedBox(
-                        height: 50,
-                        child: Center(child: Text('No Product Found!'))),
+                    noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
                     suggestionsCallback: (pattern) async {
                       return _itemMasterDB.getProductSuggestions(pattern);
                     },
@@ -101,20 +99,16 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                       final itemId = suggestion.id;
                       _productController.clear();
 
-                      final _selectedItem =
-                          await _itemMasterDB.getProductById(itemId!);
+                      final _selectedItem = await _itemMasterDB.getProductById(itemId!);
 
                       for (var i = 0; i < itemNotifier.value.length; i++) {
-                        if (_selectedItem.first.id ==
-                            itemNotifier.value[i].id) {
-                          final num qty =
-                              num.parse(_quantityControllers[i].text);
+                        if (_selectedItem.first.id == itemNotifier.value[i].id) {
+                          final num qty = num.parse(_quantityControllers[i].text);
                           _quantityControllers[i].text = (qty + 1).toString();
                           return;
                         }
                       }
-                      _quantityControllers
-                          .add(TextEditingController(text: '1'));
+                      _quantityControllers.add(TextEditingController(text: '1'));
                       itemNotifier.value.add(_selectedItem.first);
                       itemNotifier.notifyListeners();
 
@@ -131,15 +125,13 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                             flex: 3,
                             child: Text(
                               'Product',
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                             ),
                           ),
                           Expanded(
                             child: Text(
                               'Quantity',
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
@@ -166,8 +158,7 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                                             flex: 3,
                                             child: Text(
                                               item.itemName,
-                                              style:
-                                                  const TextStyle(fontSize: 10),
+                                              style: const TextStyle(fontSize: 10),
                                               overflow: TextOverflow.ellipsis,
                                               softWrap: false,
                                             ),
@@ -175,33 +166,21 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                                           kWidth5,
                                           Expanded(
                                             child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 5.0),
+                                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                               color: Colors.white,
                                               height: 30,
                                               alignment: Alignment.topCenter,
                                               child: TextFormField(
-                                                controller:
-                                                    _quantityControllers[index],
-                                                keyboardType:
-                                                    TextInputType.number,
+                                                controller: _quantityControllers[index],
+                                                keyboardType: TextInputType.number,
                                                 textAlign: TextAlign.center,
                                                 maxLines: 1,
-                                                decoration:
-                                                    const InputDecoration(
+                                                decoration: const InputDecoration(
                                                   border: OutlineInputBorder(),
                                                   isDense: true,
-                                                  contentPadding:
-                                                      EdgeInsets.symmetric(
-                                                          vertical: 10),
+                                                  contentPadding: EdgeInsets.symmetric(vertical: 10),
                                                 ),
-                                                style: TextStyle(
-                                                    fontSize:
-                                                        DeviceUtil.isTablet
-                                                            ? 10
-                                                            : 10,
-                                                    color: kBlack),
+                                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 10, color: kBlack),
                                                 onChanged: (value) {},
                                               ),
                                             ),
@@ -211,8 +190,7 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                                       trailing: IconButton(
                                         icon: const Icon(Icons.delete),
                                         color: Colors.black26,
-                                        constraints:
-                                            const BoxConstraints(maxWidth: 30),
+                                        constraints: const BoxConstraints(maxWidth: 30),
                                         onPressed: () {
                                           _quantityControllers.removeAt(index);
                                           itemNotifier.value.removeAt(index);
@@ -221,8 +199,7 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                                       )),
                                 );
                               },
-                              separatorBuilder: (ctx, index) =>
-                                  const SizedBox(),
+                              separatorBuilder: (ctx, index) => const SizedBox(),
                               itemCount: itemNotifier.value.length);
                         }),
                   )
@@ -307,18 +284,15 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                             kHeight5,
                             Text(
                               items.first.itemName,
-                              style: const TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                               maxLines: 2,
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,
                             ),
                             FittedBox(
                               child: Text(
-                                Converter.currency.format(
-                                    num.parse(items.first.sellingPrice)),
-                                style: const TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.bold),
+                                Converter.currency.format(num.parse(items.first.sellingPrice)),
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],

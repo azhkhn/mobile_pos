@@ -5,7 +5,7 @@ import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:pdf/pdf.dart' show PdfColors, PdfPageFormat;
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart' show PdfGoogleFonts;
-import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/core/utils/vat/vat.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';

@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
@@ -193,7 +192,7 @@ class CustomerScreen extends StatelessWidget {
                     controller: _vatNumberController,
                     labelText: 'VAT Number',
                     focusNode: vatNumberFocusNode,
-                    inputFormatters: Converter.digitsOnly,
+                    inputFormatters: Validators.digitsOnly,
                     textInputType: TextInputType.number,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) => Validators.vatValidator(value),

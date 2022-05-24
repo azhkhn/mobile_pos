@@ -3,7 +3,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 
@@ -15,9 +15,7 @@ class HomeCardWidget extends StatelessWidget {
   }) : super(key: key);
 
   //========== Value Notifiers ==========
-  static final ValueNotifier<num> todaySaleNotifier = ValueNotifier(0),
-      todayCashNotifier = ValueNotifier(0),
-      totalAmountNotifier = ValueNotifier(0);
+  static final ValueNotifier<num> todaySaleNotifier = ValueNotifier(0), todayCashNotifier = ValueNotifier(0), totalAmountNotifier = ValueNotifier(0);
 
   static bool detailsCardLoaded = false;
 
@@ -29,8 +27,7 @@ class HomeCardWidget extends StatelessWidget {
           final _date = DateTime.now();
           final _today = Converter.dateFormatReverse.format(_date);
 
-          final List<SalesModel> todaySales =
-              await SalesDatabase.instance.getTodaySales(_today);
+          final List<SalesModel> todaySales = await SalesDatabase.instance.getTodaySales(_today);
           todaySaleNotifier.value = todaySales.length;
 
           for (var i = 0; i < todaySales.length; i++) {
@@ -41,8 +38,7 @@ class HomeCardWidget extends StatelessWidget {
         }
 
         try {
-          final List<SalesModel> salesModel =
-              await SalesDatabase.instance.getAllSales();
+          final List<SalesModel> salesModel = await SalesDatabase.instance.getAllSales();
 
           for (var i = 0; i < salesModel.length; i++) {
             totalAmountNotifier.value += num.parse(salesModel[i].grantTotal);
@@ -76,10 +72,7 @@ class HomeCardWidget extends StatelessWidget {
                     child: Text(
                       "Today's Sale",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: kButtonTextWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10),
+                      style: TextStyle(color: kButtonTextWhite, fontWeight: FontWeight.bold, fontSize: 10),
                     ),
                   ),
                   // kHeight5,
@@ -158,10 +151,7 @@ class HomeCardWidget extends StatelessWidget {
                     child: Text(
                       'Total Cash',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: kButtonTextWhite,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10),
+                      style: TextStyle(color: kButtonTextWhite, fontWeight: FontWeight.bold, fontSize: 10),
                     ),
                   ),
                   // kHeight5,

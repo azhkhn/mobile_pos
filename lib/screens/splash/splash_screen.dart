@@ -22,7 +22,7 @@ class _ScreenSplashState extends State<ScreenSplash> {
   late Size _size;
   @override
   Widget build(BuildContext context) {
-    log('Secondary Splash Screen');
+    log('Splash Screen!');
     _size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: mainColor,
@@ -49,7 +49,6 @@ class _ScreenSplashState extends State<ScreenSplash> {
 
   Future<void> afterSplash() async {
     log('checking UserLogin!');
-
     await Future.delayed(const Duration(seconds: 3));
     final isLogin = await UserDatabase.instance.isLogin();
     if (isLogin == 0) {

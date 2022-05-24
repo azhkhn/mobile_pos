@@ -9,7 +9,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/db_functions/brand/brand_database.dart';
 import 'package:shop_ez/db/db_functions/category/category_db.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';

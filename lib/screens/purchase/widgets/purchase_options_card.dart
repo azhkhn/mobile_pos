@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
-import '../../../core/utils/text/converters.dart';
+import '../../../core/utils/converters/converters.dart';
 
 class PurchaseOptionsCard extends StatelessWidget {
   const PurchaseOptionsCard({
@@ -33,10 +33,7 @@ class PurchaseOptionsCard extends StatelessWidget {
               child: Text(
                 title,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                    color: kButtonTextWhite,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold),
+                style: const TextStyle(color: kButtonTextWhite, fontSize: 11, fontWeight: FontWeight.bold),
               ),
             ),
             kHeight5,

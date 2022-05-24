@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constant/sizes.dart';
 import '../../../core/constant/text.dart';
-import '../../../core/utils/text/converters.dart';
+import '../../../core/utils/converters/converters.dart';
 import '../../../model/sales/sales_model.dart';
 
 class SalesCardWidget extends StatelessWidget {
@@ -89,8 +89,7 @@ class SalesCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.dateFormat
-                              .format(DateTime.parse(sales[index].dateTime)),
+                          Converter.dateFormat.format(DateTime.parse(sales[index].dateTime)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -144,8 +143,7 @@ class SalesCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.currency
-                              .format(num.parse(sales[index].grantTotal)),
+                          Converter.currency.format(num.parse(sales[index].grantTotal)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -168,8 +166,7 @@ class SalesCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.currency
-                              .format(num.parse(sales[index].paid)),
+                          Converter.currency.format(num.parse(sales[index].paid)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -192,8 +189,7 @@ class SalesCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.currency
-                              .format(num.parse(sales[index].balance)),
+                          Converter.currency.format(num.parse(sales[index].balance)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,

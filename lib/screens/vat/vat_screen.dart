@@ -7,7 +7,7 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/icons.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
 import 'package:shop_ez/model/vat/vat_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -87,7 +87,7 @@ class VatScreen extends StatelessWidget {
                         labelText: 'Rate *',
                         controller: _rateController,
                         textInputType: TextInputType.number,
-                        inputFormatters: Converter.digitsOnly,
+                        inputFormatters: Validators.digitsOnly,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'This field is required*';
@@ -202,7 +202,7 @@ class VatScreen extends StatelessWidget {
                                                             labelText: 'VAT Rate',
                                                             controller: _vatRateController,
                                                             textInputType: TextInputType.number,
-                                                            inputFormatters: Converter.digitsOnly,
+                                                            inputFormatters: Validators.digitsOnly,
                                                             floatingLabelBehavior: FloatingLabelBehavior.always,
                                                             inputBorder: const OutlineInputBorder(),
                                                             autovalidateMode: AutovalidateMode.onUserInteraction,

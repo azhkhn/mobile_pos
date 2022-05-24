@@ -5,7 +5,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
+import 'package:shop_ez/core/utils/debouncer/debouncer.dart';
+import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
@@ -30,6 +32,7 @@ class PurchaseSideWidget extends StatelessWidget {
   static final ValueNotifier<List<String>> subTotalNotifier = ValueNotifier([]);
   static final ValueNotifier<List<String>> itemTotalVatNotifier = ValueNotifier([]);
   static final ValueNotifier<List<TextEditingController>> quantityNotifier = ValueNotifier([]);
+  static final ValueNotifier<List<TextEditingController>> costNotifier = ValueNotifier([]);
 
   static final ValueNotifier<int?> supplierIdNotifier = ValueNotifier(null);
   static final ValueNotifier<String?> supplierNameNotifier = ValueNotifier(null);
@@ -52,6 +55,7 @@ class PurchaseSideWidget extends StatelessWidget {
         subTotalNotifier.value.clear();
         itemTotalVatNotifier.value.clear();
         supplierController.clear();
+        costNotifier.value.clear();
         quantityNotifier.value.clear();
         totalItemsNotifier.value = 0;
         totalQuantityNotifier.value = 0;
@@ -238,7 +242,9 @@ class PurchaseSideWidget extends StatelessWidget {
 
             kHeight5,
             //==================== Table Header ====================
-            const SalesTableHeaderWidget(),
+            const SalesTableHeaderWidget(
+              isPurchase: true,
+            ),
 
             //==================== Product Items Table ====================
             Expanded(
@@ -260,6 +266,7 @@ class PurchaseSideWidget extends StatelessWidget {
                         (index) {
                           final ItemMasterModel _product = selectedProducts[index];
                           return TableRow(children: [
+                            //==================== Item Name ====================
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 5.0),
                               color: Colors.white,
@@ -275,22 +282,43 @@ class PurchaseSideWidget extends StatelessWidget {
                                 maxLines: 2,
                               ),
                             ),
+                            //==================== Item Cost ====================
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 5.0),
                               color: Colors.white,
                               height: 30,
-                              alignment: Alignment.center,
-                              child: AutoSizeText(
-                                _product.vatMethod == 'Exclusive'
-                                    ? Converter.currency.format(num.parse(_product.itemCost))
-                                    : Converter.currency.format(getExclusiveAmount(itemCost: _product.itemCost, vatRate: _product.vatRate)),
+                              alignment: Alignment.topCenter,
+                              child: TextFormField(
+                                controller: costNotifier.value[index],
+                                keyboardType: TextInputType.number,
+                                inputFormatters: Validators.digitsOnly,
+                                textAlign: TextAlign.center,
                                 maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
-                                minFontSize: 7,
-                                maxFontSize: 10,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+                                ),
+                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7, color: kBlack),
+                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return '*';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  if (value.isNotEmpty) {
+                                    Debouncer().run(() {
+                                      onItemCostChanged(cost: value, index: index);
+                                    });
+                                  } else {
+                                    onItemCostChanged(cost: '0', index: index);
+                                  }
+                                },
                               ),
                             ),
+                            //==================== Quantity ====================
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 5.0),
                               color: Colors.white,
@@ -299,6 +327,7 @@ class PurchaseSideWidget extends StatelessWidget {
                               child: TextFormField(
                                 controller: quantityNotifier.value[index],
                                 keyboardType: TextInputType.number,
+                                inputFormatters: Validators.digitsOnly,
                                 textAlign: TextAlign.center,
                                 maxLines: 1,
                                 decoration: const InputDecoration(
@@ -308,10 +337,17 @@ class PurchaseSideWidget extends StatelessWidget {
                                 ),
                                 style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7, color: kBlack),
                                 onChanged: (value) {
-                                  onItemQuantityChanged(value, selectedProducts, index);
+                                  if (value.isNotEmpty) {
+                                    Debouncer().run(() {
+                                      onItemQuantityChanged(value, selectedProducts, index);
+                                    });
+                                  } else {
+                                    onItemQuantityChanged('0', selectedProducts, index);
+                                  }
                                 },
                               ),
                             ),
+                            //==================== Sub Total ====================
                             Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                 color: Colors.white,
@@ -329,6 +365,7 @@ class PurchaseSideWidget extends StatelessWidget {
                                         maxFontSize: 10,
                                       );
                                     })),
+                            //==================== Delete Icon ====================
                             Container(
                                 color: Colors.white,
                                 height: 30,
@@ -338,6 +375,7 @@ class PurchaseSideWidget extends StatelessWidget {
                                     selectedProducts.removeAt(index);
                                     subTotalNotifier.value.removeAt(index);
                                     itemTotalVatNotifier.value.removeAt(index);
+                                    costNotifier.value.removeAt(index);
                                     quantityNotifier.value.removeAt(index);
                                     subTotalNotifier.notifyListeners();
                                     selectedProductsNotifier.notifyListeners();
@@ -371,6 +409,22 @@ class PurchaseSideWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  //==================== On Item Cost Changed ====================
+  void onItemCostChanged({required String cost, required int index}) {
+    final qty = num.tryParse(quantityNotifier.value[index].text);
+    final itemCost = num.tryParse(cost);
+    log('Item Cost == $cost');
+
+    if (qty != null && itemCost != null) {
+      selectedProductsNotifier.value[index] = selectedProductsNotifier.value[index].copyWith(itemCost: cost);
+      selectedProductsNotifier.notifyListeners();
+      getSubTotal(selectedProductsNotifier.value, index, qty);
+      getTotalAmount();
+      getTotalVAT();
+      getTotalPayable();
+    }
   }
 
   //==================== On Item Quantity Changed ====================
@@ -504,6 +558,7 @@ class PurchaseSideWidget extends StatelessWidget {
     subTotalNotifier.value.clear();
     itemTotalVatNotifier.value.clear();
     supplierController.clear();
+    costNotifier.value.clear();
     quantityNotifier.value.clear();
     totalItemsNotifier.value = 0;
     totalQuantityNotifier.value = 0;
@@ -516,6 +571,7 @@ class PurchaseSideWidget extends StatelessWidget {
     selectedProductsNotifier.notifyListeners();
     subTotalNotifier.notifyListeners();
     itemTotalVatNotifier.notifyListeners();
+    costNotifier.notifyListeners();
     quantityNotifier.notifyListeners();
     totalItemsNotifier.notifyListeners();
     totalQuantityNotifier.notifyListeners();

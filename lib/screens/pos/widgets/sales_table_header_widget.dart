@@ -7,7 +7,10 @@ import '../../../core/utils/device/device.dart';
 class SalesTableHeaderWidget extends StatelessWidget {
   const SalesTableHeaderWidget({
     Key? key,
+    this.isPurchase = false,
   }) : super(key: key);
+
+  final bool isPurchase;
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +33,7 @@ class SalesTableHeaderWidget extends StatelessWidget {
               'Items',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: DeviceUtil.isTablet ? 13 : 12,
-                  color: kWhite,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: DeviceUtil.isTablet ? 13 : 12, color: kWhite, fontWeight: FontWeight.bold),
               minFontSize: 12,
               maxFontSize: 13,
             ),
@@ -43,13 +43,10 @@ class SalesTableHeaderWidget extends StatelessWidget {
             height: 30,
             alignment: Alignment.center,
             child: AutoSizeText(
-              'Price',
+              !isPurchase ? 'Price' : 'Cost',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: DeviceUtil.isTablet ? 13 : 12,
-                  color: kWhite,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: DeviceUtil.isTablet ? 13 : 12, color: kWhite, fontWeight: FontWeight.bold),
               minFontSize: 12,
               maxFontSize: 13,
             ),
@@ -62,10 +59,7 @@ class SalesTableHeaderWidget extends StatelessWidget {
               'Qty',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: DeviceUtil.isTablet ? 13 : 12,
-                  color: kWhite,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: DeviceUtil.isTablet ? 13 : 12, color: kWhite, fontWeight: FontWeight.bold),
               minFontSize: 12,
               maxFontSize: 13,
             ),
@@ -78,10 +72,7 @@ class SalesTableHeaderWidget extends StatelessWidget {
               'Subtotal',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: DeviceUtil.isTablet ? 13 : 12,
-                  color: kWhite,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: DeviceUtil.isTablet ? 13 : 12, color: kWhite, fontWeight: FontWeight.bold),
               minFontSize: 12,
               maxFontSize: 13,
             ),

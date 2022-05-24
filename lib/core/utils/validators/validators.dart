@@ -1,3 +1,5 @@
+import 'package:flutter/services.dart' show FilteringTextInputFormatter;
+
 class Validators {
   //========== Number Validator ==========
   String? numberValidator(String? value) {
@@ -38,6 +40,9 @@ class Validators {
 
     return null;
   }
+
+  //Force keyboard to input digits only
+  static final List<FilteringTextInputFormatter> digitsOnly = [FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))];
 }
 
 //Validating email pattern that user entered

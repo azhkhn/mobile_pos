@@ -10,7 +10,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
+import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/brand/brand_database.dart';
 import 'package:shop_ez/db/db_functions/category/category_db.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
@@ -254,7 +255,7 @@ class ScreenItemMaster extends StatelessWidget {
                   TextFeildWidget(
                     labelText: 'Item Cost *',
                     textInputType: TextInputType.number,
-                    inputFormatters: Converter.digitsOnly,
+                    inputFormatters: Validators.digitsOnly,
                     controller: _itemCostController,
                     focusNode: itemCostFocusNode,
                     validator: (value) {
@@ -270,7 +271,7 @@ class ScreenItemMaster extends StatelessWidget {
                   TextFeildWidget(
                     labelText: 'Selling Price *',
                     textInputType: TextInputType.number,
-                    inputFormatters: Converter.digitsOnly,
+                    inputFormatters: Validators.digitsOnly,
                     controller: _sellingPriceController,
                     focusNode: sellingPriceFocusNode,
                     validator: (value) {
@@ -402,7 +403,7 @@ class ScreenItemMaster extends StatelessWidget {
                   TextFeildWidget(
                     labelText: 'Opening Stock',
                     textInputType: TextInputType.number,
-                    inputFormatters: Converter.digitsOnly,
+                    inputFormatters: Validators.digitsOnly,
                     controller: _openingStockController,
                   ),
                   kHeight10,
@@ -411,7 +412,7 @@ class ScreenItemMaster extends StatelessWidget {
                   TextFeildWidget(
                     labelText: 'Alert Quantity',
                     textInputType: TextInputType.text,
-                    inputFormatters: Converter.digitsOnly,
+                    inputFormatters: Validators.digitsOnly,
                     controller: _alertQuantityController,
                   ),
                   kHeight20,

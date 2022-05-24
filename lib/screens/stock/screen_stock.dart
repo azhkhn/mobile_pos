@@ -18,7 +18,7 @@ import 'package:shop_ez/screens/stock/widgets/stock_filter_bottom_sheet.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 
 import '../../core/utils/device/device.dart';
-import '../../core/utils/text/converters.dart';
+import '../../core/utils/converters/converters.dart';
 
 //========== DropDown Items ==========
 const List types = ['Negative Stock', 'Zero Stock', 'Expired Stock'];

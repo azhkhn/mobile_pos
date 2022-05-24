@@ -1,11 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_details_table_widget.dart';
 
 import '../../../../core/constant/colors.dart';
 import '../../../../core/constant/sizes.dart';
-import '../../../../core/utils/text/converters.dart';
 import '../../../../widgets/text_field_widgets/text_field_widgets.dart';
 
 //========== DropDown Items ==========
@@ -61,7 +61,7 @@ class PaymentTypeWidget extends StatelessWidget {
                         controller: amountController,
                         inputBorder: const OutlineInputBorder(),
                         textInputType: TextInputType.number,
-                        inputFormatters: Converter.digitsOnly,
+                        inputFormatters: Validators.digitsOnly,
                         onChanged: (value) => amountChanged(value ?? '0'),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         constraints: const BoxConstraints(maxHeight: 45),
@@ -94,8 +94,7 @@ class PaymentTypeWidget extends StatelessWidget {
                           errorStyle: TextStyle(fontSize: 0.01),
                           contentPadding: EdgeInsets.all(10),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          label: Text('Paying By *',
-                              style: TextStyle(color: klabelColorBlack)),
+                          label: Text('Paying By *', style: TextStyle(color: klabelColorBlack)),
                           border: OutlineInputBorder(),
                         ),
                         items: types

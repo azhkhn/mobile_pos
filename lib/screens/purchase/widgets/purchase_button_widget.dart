@@ -19,7 +19,7 @@ import 'package:shop_ez/screens/purchase/widgets/purchase_product_side_widget.da
 import 'package:shop_ez/screens/purchase/widgets/purchase_side_widget.dart';
 
 import '../../../core/constant/sizes.dart';
-import '../../../core/utils/text/converters.dart';
+import '../../../core/utils/converters/converters.dart';
 
 class PurchaseButtonsWidget extends StatelessWidget {
   const PurchaseButtonsWidget({
@@ -291,8 +291,8 @@ class PurchaseButtonsWidget extends StatelessWidget {
         //==================== Create Purchase Items ====================
         await _purchaseItemsDB.createPurchaseItems(_purchaseItemsModel);
 
-        //==================== Decreasing Item Quantity ====================
-        _itemMasterDB.additionItemQty(PurchaseSideWidget.selectedProductsNotifier.value[i], num.parse(quantity));
+        //==================== Update Item Cost and Quantity ====================
+        _itemMasterDB.updateItemCostAndQty(itemMaster: PurchaseSideWidget.selectedProductsNotifier.value[i], purchasedQty: num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(

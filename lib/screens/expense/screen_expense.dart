@@ -8,7 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/utils/text/converters.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
+import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/expense/expense_category_database.dart';
 import 'package:shop_ez/db/db_functions/expense/expense_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
@@ -94,8 +95,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                               _expenseCategoryController = value.toString();
                             },
                             validator: (value) {
-                              if (value == null ||
-                                  _expenseCategoryController == 'null') {
+                              if (value == null || _expenseCategoryController == 'null') {
                                 return 'This field is required*';
                               }
                               return null;
@@ -123,7 +123,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                       TextFeildWidget(
                         labelText: 'Amount *',
                         controller: _amountController,
-                        inputFormatters: Converter.digitsOnly,
+                        inputFormatters: Validators.digitsOnly,
                         textInputType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -154,8 +154,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                             log('selected date == $_selectedDate');
                             log('back to time == ${DateTime.parse(_selectedDate)}');
 
-                            final parseDate =
-                                Converter.dateFormat.format(_date);
+                            final parseDate = Converter.dateFormat.format(_date);
                             _dateController.text = parseDate.toString();
 
                             setState(() {});
@@ -220,8 +219,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                                         width: 100,
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
                                           children: [
                                             Expanded(
                                               child: MaterialButton(
@@ -232,9 +230,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                                                   color: kWhite,
                                                   child: const Text(
                                                     'Edit',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                    style: TextStyle(fontWeight: FontWeight.bold),
                                                   )),
                                             ),
                                             Expanded(
@@ -248,10 +244,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                                                   color: Colors.red[300],
                                                   child: const Text(
                                                     'Delete',
-                                                    style: TextStyle(
-                                                        color: kWhite,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                    style: TextStyle(color: kWhite, fontWeight: FontWeight.bold),
                                                   )),
                                             ),
                                           ],
@@ -300,9 +293,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontWeight: FontWeight.normal,
-                              color: selectedDocument != null
-                                  ? textColor
-                                  : klabelColorGrey,
+                              color: selectedDocument != null ? textColor : klabelColorGrey,
                             ),
                           ),
                         ],
@@ -321,20 +312,12 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
               ),
             ),
           ),
-          floatingActionButton:
-              ExpenseFloatingAddOptions(isDialOpen: isDialOpen)),
+          floatingActionButton: ExpenseFloatingAddOptions(isDialOpen: isDialOpen)),
     );
   }
 
   addExpense() async {
-    final String expenseCategory,
-        expenseTitle,
-        amount,
-        date,
-        note,
-        voucherNumber,
-        payBy,
-        documents;
+    final String expenseCategory, expenseTitle, amount, date, note, voucherNumber, payBy, documents;
 
     //retieving values from TextFields to String
     expenseCategory = _expenseCategoryController.trim();
@@ -375,21 +358,13 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
         documents: documents,
       );
 
-      final _transactionModel = TransactionsModel(
-          category: 'Expense',
-          transactionType: 'Expense',
-          dateTime: date,
-          amount: amount,
-          status: 'Paid',
-          description: '');
+      final _transactionModel =
+          TransactionsModel(category: 'Expense', transactionType: 'Expense', dateTime: date, amount: amount, status: 'Paid', description: '');
 
       try {
         await expenseDB.createExpense(_expenseModel);
         await transactionDatabase.createTransaction(_transactionModel);
-        kSnackBar(
-            context: context,
-            success: true,
-            content: 'Expense "$expenseTitle" added!');
+        kSnackBar(context: context, success: true, content: 'Expense "$expenseTitle" added!');
       } catch (e) {
         kSnackBar(
           context: context,

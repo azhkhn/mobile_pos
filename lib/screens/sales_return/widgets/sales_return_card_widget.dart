@@ -4,7 +4,7 @@ import 'package:shop_ez/model/sales_return/sales_return_model.dart';
 
 import '../../../core/constant/sizes.dart';
 import '../../../core/constant/text.dart';
-import '../../../core/utils/text/converters.dart';
+import '../../../core/utils/converters/converters.dart';
 
 class SalesReturnCardWidget extends StatelessWidget {
   const SalesReturnCardWidget({
@@ -143,8 +143,7 @@ class SalesReturnCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.dateTimeFormat.format(
-                              DateTime.parse(salesReturn[index].dateTime)),
+                          Converter.dateTimeFormat.format(DateTime.parse(salesReturn[index].dateTime)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -167,8 +166,7 @@ class SalesReturnCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.currency
-                              .format(num.parse(salesReturn[index].grantTotal)),
+                          Converter.currency.format(num.parse(salesReturn[index].grantTotal)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -191,8 +189,7 @@ class SalesReturnCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.currency
-                              .format(num.parse(salesReturn[index].paid)),
+                          Converter.currency.format(num.parse(salesReturn[index].paid)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -217,10 +214,7 @@ class SalesReturnCardWidget extends StatelessWidget {
                         child: AutoSizeText(
                           salesReturn[index].salesStatus,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red),
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.red),
                           maxLines: 1,
                           minFontSize: 10,
                           maxFontSize: 14,
