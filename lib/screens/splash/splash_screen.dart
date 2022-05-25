@@ -7,14 +7,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/db/db_functions/auth/user_db.dart';
 
 class ScreenSplash extends StatelessWidget {
   ScreenSplash({Key? key}) : super(key: key);
 
-  bool? orientation;
+  String? dMode;
   SharedPreferences? prefs;
-  final String modeKey = 'vertical';
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class ScreenSplash extends StatelessWidget {
 
       await afterSplash(context);
     });
-    log('Splash Screen!');
+    log('Splash Screen');
     return Scaffold(
       backgroundColor: mainColor,
       body: Container(
@@ -49,70 +49,77 @@ class ScreenSplash extends StatelessWidget {
   }
 
   Future<void> afterSplash(BuildContext context) async {
-    prefs ??= prefs = await SharedPreferences.getInstance();
+    prefs ??= await SharedPreferences.getInstance();
+    // prefs!.remove(OrientationMode.deviceModeKey);
+    dMode = prefs!.getString(OrientationMode.deviceModeKey);
 
     await Future.delayed(const Duration(seconds: 2));
 
-    orientation = prefs!.getBool(modeKey);
-
-    if (orientation == null) {
-      log('Setting up orientation mode');
+    if (dMode == null) {
+      log('=> Setting up orientation mode <=');
 
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => Dialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Choose a Mode from below to continue. The application will be shown based on your choice!, and also you can change it later from the settings menu.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.normal,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: Dialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Choose a Mode from below to continue. The application will be shown based on your choice!, You can change it later from the settings menu.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.normal,
+                      ),
                     ),
-                  ),
-                  kHeight10,
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                        child: MaterialButton(
-                          onPressed: () {
-                            // Navigator.pop(context);
-                          },
-                          child: const Text(
-                            'Vertical Mode',
-                            style: TextStyle(color: kWhite),
+                    kHeight10,
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: MaterialButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              prefs?.setString(OrientationMode.deviceModeKey, OrientationMode.verticalMode);
+                              await OrientationMode.getDeviceMode;
+                              await userAuthentication(context);
+                            },
+                            child: const Text(
+                              'Vertical Mode',
+                              style: TextStyle(color: kWhite),
+                            ),
+                            color: Colors.blueGrey[300],
                           ),
-                          color: Colors.blueGrey[300],
                         ),
-                      ),
-                      kWidth5,
-                      Expanded(
-                        child: MaterialButton(
-                          onPressed: () async {
-                            Navigator.pop(context);
-                            prefs?.setBool(modeKey, false);
-                            await userAuthentication(context);
-                          },
-                          child: const Text(
-                            'Normal Mode',
-                            style: TextStyle(color: kWhite),
+                        kWidth5,
+                        Expanded(
+                          child: MaterialButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              prefs?.setString(OrientationMode.deviceModeKey, OrientationMode.normalMode);
+                              await OrientationMode.getDeviceMode;
+                              await userAuthentication(context);
+                            },
+                            child: const Text(
+                              'Normal Mode',
+                              style: TextStyle(color: kWhite),
+                            ),
+                            color: mainColor.withOpacity(.8),
                           ),
-                          color: mainColor.withOpacity(.8),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )),
+                      ],
+                    ),
+                  ],
+                ),
+              )),
+        ),
       );
     } else {
       await userAuthentication(context);

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/screens/pos/widgets/product_side_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 
@@ -12,15 +10,6 @@ class PosScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (DeviceUtil.isLandscape) {
-        await SystemChrome.setPreferredOrientations([
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight
-        ]);
-      }
-    });
-
     Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
@@ -31,9 +20,7 @@ class PosScreen extends StatelessWidget {
         backgroundColor: kBackgroundGrey,
         body: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: _screenSize.width * .01,
-                horizontal: _screenSize.width * .02),
+            padding: EdgeInsets.symmetric(vertical: _screenSize.height * .015, horizontal: _screenSize.width * .02),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               //==================== Both Sides ====================

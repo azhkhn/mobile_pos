@@ -16,11 +16,8 @@ class PurchaseReturn extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       log('============================== landscape ============================');
 
-      if (DeviceUtil.isLandscape) {
-        await SystemChrome.setPreferredOrientations([
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight
-        ]);
+      if (OrientationMode.isLandscape) {
+        await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
       }
     });
     Size _screenSize = MediaQuery.of(context).size;
@@ -29,9 +26,7 @@ class PurchaseReturn extends StatelessWidget {
       backgroundColor: kBackgroundGrey,
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(
-              vertical: _screenSize.width * .01,
-              horizontal: _screenSize.width * .02),
+          padding: EdgeInsets.symmetric(vertical: _screenSize.width * .01, horizontal: _screenSize.width * .02),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             //==================== Both Sides ====================

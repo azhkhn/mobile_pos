@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum DeviceType { phone, tablet }
 
@@ -21,16 +24,48 @@ class DeviceUtil {
   static bool get isTablet {
     return _getDeviceType == DeviceType.tablet;
   }
+}
+
+//==============================                  ==============================
+//============================== Orientation Mode ==============================
+//==============================                  ==============================
+class OrientationMode {
+  static const String deviceModeKey = 'device_mode';
+  static const String verticalMode = 'vertical';
+  static const String normalMode = 'normal';
+  static String? deviceMode;
+  static bool isLandscape = false;
+
+  //========== Singleton Instance ==========
+  OrientationMode._internal();
+  static OrientationMode instance = OrientationMode._internal();
+  factory OrientationMode() {
+    return instance;
+  }
+
+  //========== Get Current Orientation Mode ==========
+  static Future<String> get getDeviceMode async {
+    if (deviceMode != null) return deviceMode!;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    deviceMode = prefs.getString(deviceModeKey)!;
+    log('Device Mode == $deviceMode');
+    return deviceMode!;
+  }
 
   //========== Portrait and Landscape ==========
-  static bool isLandscape = false;
   static Future<void> toPortrait() async {
-    isLandscape = false;
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    log('Device Mode == $deviceMode');
+    if (await getDeviceMode == normalMode) {
+      isLandscape = false;
+      await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    }
   }
 
   static Future<void> toLandscape() async {
-    isLandscape = true;
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    log('Device Mode == $deviceMode');
+    if (await getDeviceMode == normalMode) {
+      isLandscape = true;
+      await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    }
   }
 }

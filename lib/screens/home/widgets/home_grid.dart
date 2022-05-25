@@ -41,16 +41,14 @@ class HomeGrid extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 3,
       child: Container(
-          decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(20.0)),
+          decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(20.0)),
           child: InkWell(
             onTap: () async {
               switch (index) {
                 case 0:
-                  DeviceUtil.isLandscape = true;
+                  await OrientationMode.toLandscape();
                   await Navigator.pushNamed(context, routePos);
-                  await DeviceUtil.toPortrait();
+                  await OrientationMode.toPortrait();
                   break;
                 case 1:
                   Navigator.pushNamed(context, routeSales);
@@ -65,9 +63,9 @@ class HomeGrid extends StatelessWidget {
                   Navigator.pushNamed(context, routeExpense);
                   break;
                 case 6:
-                  DeviceUtil.isLandscape = true;
+                  await OrientationMode.toLandscape();
                   await Navigator.pushNamed(context, routeStock);
-                  await DeviceUtil.toPortrait();
+                  await OrientationMode.toPortrait();
                   break;
                 default:
               }

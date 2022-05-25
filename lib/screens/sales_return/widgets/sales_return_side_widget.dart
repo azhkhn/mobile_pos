@@ -269,8 +269,8 @@ class SalesReturnSideWidget extends StatelessWidget {
                           maxHeight: 45,
                         ),
                         onPressed: () async {
-                          // DeviceUtil.isLandscape = false;
-                          // await DeviceUtil.toPortrait();
+                          // OrientationMode.isLandscape = false;
+                          // await OrientationMode.toPortrait();
                           final id = await Navigator.pushNamed(context, routeCustomer, arguments: true);
 
                           if (id != null) {
@@ -282,7 +282,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                             log(addedCustomer.company);
                           }
 
-                          // await DeviceUtil.toLandscape();
+                          // await OrientationMode.toLandscape();
                         },
                         icon: const Icon(
                           Icons.person_add,

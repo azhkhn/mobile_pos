@@ -55,9 +55,6 @@ class ScreenStock extends StatelessWidget {
     final bool _isTablet = DeviceUtil.isTablet;
     // Size _screenSize = MediaQuery.of(context).size;
 
-    if (DeviceUtil.isLandscape) {
-      SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
-    }
     return Scaffold(
       // appBar: AppBarWidget(
       //   title: 'Stock',

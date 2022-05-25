@@ -215,8 +215,8 @@ class PurchaseSideWidget extends StatelessWidget {
                           maxHeight: 45,
                         ),
                         onPressed: () async {
-                          // DeviceUtil.isLandscape = false;
-                          // await DeviceUtil.toPortrait();
+                          // OrientationMode.isLandscape = false;
+                          // await OrientationMode.toPortrait();
                           final id = await Navigator.pushNamed(context, routeManageSupplier, arguments: true);
 
                           if (id != null) {
@@ -228,7 +228,7 @@ class PurchaseSideWidget extends StatelessWidget {
                             log(addedSupplier.supplierName);
                           }
 
-                          // await DeviceUtil.toLandscape();
+                          // await OrientationMode.toLandscape();
                         },
                         icon: const Icon(
                           Icons.person_add,

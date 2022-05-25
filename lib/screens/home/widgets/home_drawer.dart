@@ -56,56 +56,47 @@ class HomeDrawer extends StatelessWidget {
       children: [
         FutureBuilder(
           future: BusinessProfileDatabase.instance.getBusinessProfile(),
-          builder: (context, AsyncSnapshot<BusinessProfileModel?> snapshot) =>
-              InkWell(
-                  child: UserAccountsDrawerHeader(
-                    currentAccountPicture:
-                        snapshot.hasData && snapshot.data!.logo != ''
-                            ? CircleAvatar(
-                                backgroundImage:
-                                    FileImage(File(snapshot.data!.logo)))
-                            : FittedBox(
-                                child: Stack(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.center,
-                                      child: CircleAvatar(
-                                        radius: _screenSize.width / 10,
-                                        backgroundColor:
-                                            Colors.black.withOpacity(0.5),
-                                        child: Icon(
-                                          Icons.business,
-                                          size: _screenSize.width / 10,
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 3,
-                                      right: 0,
-                                      child: Icon(
-                                        Icons.edit,
-                                        color: kWhite,
-                                        size: _screenSize.width / 20,
-                                      ),
-                                    ),
-                                  ],
+          builder: (context, AsyncSnapshot<BusinessProfileModel?> snapshot) => InkWell(
+              child: UserAccountsDrawerHeader(
+                currentAccountPicture: snapshot.hasData && snapshot.data!.logo != ''
+                    ? CircleAvatar(backgroundImage: FileImage(File(snapshot.data!.logo)))
+                    : FittedBox(
+                        child: Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.center,
+                              child: CircleAvatar(
+                                radius: _screenSize.width / 10,
+                                backgroundColor: Colors.black.withOpacity(0.5),
+                                child: Icon(
+                                  Icons.business,
+                                  size: _screenSize.width / 10,
                                 ),
                               ),
-                    decoration: const BoxDecoration(color: mainColor),
-                    accountName: Text(snapshot.hasData
-                        ? snapshot.data!.business
-                        : 'Business Name'),
-                    accountEmail: Text(
-                      snapshot.hasData
-                          ? snapshot.data!.vatNumber
-                          : 'Vat Number',
-                      style: kText12,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, routeBusinessProfile);
-                  }),
+                            ),
+                            Positioned(
+                              top: 3,
+                              right: 0,
+                              child: Icon(
+                                Icons.edit,
+                                color: kWhite,
+                                size: _screenSize.width / 20,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                decoration: const BoxDecoration(color: mainColor),
+                accountName: Text(snapshot.hasData ? snapshot.data!.business : 'Business Name'),
+                accountEmail: Text(
+                  snapshot.hasData ? snapshot.data!.vatNumber : 'Vat Number',
+                  style: kText12,
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, routeBusinessProfile);
+              }),
         ),
         Expanded(
           child: SingleChildScrollView(
@@ -149,9 +140,9 @@ class DrawerItemsWidget extends StatelessWidget {
             Navigator.pushNamed(context, routeSales);
             break;
           case 1:
-            DeviceUtil.isLandscape = true;
+            await OrientationMode.toLandscape();
             await Navigator.pushNamed(context, routePos);
-            await DeviceUtil.toPortrait();
+            await OrientationMode.toPortrait();
             break;
           case 2:
             Navigator.pushNamed(context, routePurchase);

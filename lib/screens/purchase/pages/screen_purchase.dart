@@ -135,10 +135,9 @@ class ScreenPurchase extends StatelessWidget {
                           child: MaterialButton(
                             height: 50,
                             onPressed: () async {
-                              DeviceUtil.isLandscape = true;
-                              await Navigator.pushNamed(
-                                  context, routeAddPurchase);
-                              await DeviceUtil.toPortrait();
+                              await OrientationMode.toLandscape();
+                              await Navigator.pushNamed(context, routeAddPurchase);
+                              await OrientationMode.toPortrait();
                               await getPurchasesDetails();
                             },
                             color: Colors.green,
@@ -154,10 +153,9 @@ class ScreenPurchase extends StatelessWidget {
                           child: MaterialButton(
                             height: 50,
                             onPressed: () async {
-                              DeviceUtil.isLandscape = true;
-                              await Navigator.pushNamed(
-                                  context, routePurchaseReturn);
-                              await DeviceUtil.toPortrait();
+                              await OrientationMode.toLandscape();
+                              await Navigator.pushNamed(context, routePurchaseReturn);
+                              await OrientationMode.toPortrait();
                               await getPurchaseDetails();
                             },
                             color: Colors.indigo[400],
@@ -178,8 +176,7 @@ class ScreenPurchase extends StatelessWidget {
                         Expanded(
                           child: MaterialButton(
                             height: 50,
-                            onPressed: () =>
-                                Navigator.pushNamed(context, routeListPurchase),
+                            onPressed: () => Navigator.pushNamed(context, routeListPurchase),
                             color: Colors.deepOrange,
                             textColor: kWhite,
                             child: const Text(
@@ -215,8 +212,7 @@ class ScreenPurchase extends StatelessWidget {
 
   Future<void> getPurchasesDetails() async {
     try {
-      final List<PurchaseModel> purchaseModel =
-          await PurchaseDatabase.instance.getAllPurchases();
+      final List<PurchaseModel> purchaseModel = await PurchaseDatabase.instance.getAllPurchases();
 
       // Checking if new Purchase added!
       if (totalPurchasesNotifier.value == purchaseModel.length) return;
@@ -242,8 +238,7 @@ class ScreenPurchase extends StatelessWidget {
 
   Future<void> getPurchaseDetails() async {
     try {
-      final List<PurchaseModel> purchaseModel =
-          await PurchaseDatabase.instance.getAllPurchases();
+      final List<PurchaseModel> purchaseModel = await PurchaseDatabase.instance.getAllPurchases();
 
       // Checking if new Purchase added!
       if (totalPurchasesNotifier.value == purchaseModel.length) return;

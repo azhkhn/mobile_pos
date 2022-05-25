@@ -136,9 +136,9 @@ class ScreenSales extends StatelessWidget {
                           child: MaterialButton(
                             height: 50,
                             onPressed: () async {
-                              DeviceUtil.isLandscape = true;
+                              await OrientationMode.toLandscape();
                               await Navigator.pushNamed(context, routePos);
-                              await DeviceUtil.toPortrait();
+                              await OrientationMode.toPortrait();
                               await getSalesDetails();
                             },
                             color: Colors.green,
@@ -154,11 +154,10 @@ class ScreenSales extends StatelessWidget {
                           child: MaterialButton(
                             height: 50,
                             onPressed: () async {
-                              DeviceUtil.isLandscape = true;
-                              await Navigator.pushNamed(
-                                  context, routeSalesReturn);
+                              await OrientationMode.toLandscape();
+                              await Navigator.pushNamed(context, routeSalesReturn);
 
-                              await DeviceUtil.toPortrait();
+                              await OrientationMode.toPortrait();
                             },
                             color: Colors.indigo[400],
                             textColor: kWhite,
@@ -178,8 +177,7 @@ class ScreenSales extends StatelessWidget {
                         Expanded(
                           child: MaterialButton(
                             height: 50,
-                            onPressed: () =>
-                                Navigator.pushNamed(context, routeSalesList),
+                            onPressed: () => Navigator.pushNamed(context, routeSalesList),
                             color: Colors.deepOrange,
                             textColor: kWhite,
                             child: const Text(
@@ -193,8 +191,7 @@ class ScreenSales extends StatelessWidget {
                           child: MaterialButton(
                             height: 50,
                             onPressed: () {
-                              Navigator.pushNamed(
-                                  context, routeSalesReturnList);
+                              Navigator.pushNamed(context, routeSalesReturnList);
                             },
                             color: Colors.blueGrey,
                             textColor: kWhite,
@@ -218,8 +215,7 @@ class ScreenSales extends StatelessWidget {
 
   Future<void> getSalesDetails() async {
     try {
-      final List<SalesModel> salesModel =
-          await SalesDatabase.instance.getAllSales();
+      final List<SalesModel> salesModel = await SalesDatabase.instance.getAllSales();
 
       // Checking if new Sale added!
       if (totalSalesNotifier.value == salesModel.length) return;
