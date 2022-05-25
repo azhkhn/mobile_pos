@@ -13,8 +13,8 @@ import 'package:shop_ez/db/db_functions/auth/user_db.dart';
 class ScreenSplash extends StatelessWidget {
   ScreenSplash({Key? key}) : super(key: key);
 
-  String? dMode;
-  SharedPreferences? prefs;
+  String? orientationMode;
+  late SharedPreferences prefs;
 
   @override
   Widget build(BuildContext context) {
@@ -49,13 +49,15 @@ class ScreenSplash extends StatelessWidget {
   }
 
   Future<void> afterSplash(BuildContext context) async {
-    prefs ??= await SharedPreferences.getInstance();
+    // prefs = await SharedPreferences.getInstance();
     // prefs!.remove(OrientationMode.deviceModeKey);
-    dMode = prefs!.getString(OrientationMode.deviceModeKey);
+
+    prefs.setString(OrientationMode.deviceModeKey, OrientationMode.verticalMode);
+    orientationMode = prefs.getString(OrientationMode.deviceModeKey);
 
     await Future.delayed(const Duration(seconds: 2));
 
-    if (dMode == null) {
+    if (orientationMode == null) {
       log('=> Setting up orientation mode <=');
 
       showDialog(
@@ -87,7 +89,7 @@ class ScreenSplash extends StatelessWidget {
                           child: MaterialButton(
                             onPressed: () async {
                               Navigator.pop(context);
-                              prefs?.setString(OrientationMode.deviceModeKey, OrientationMode.verticalMode);
+                              prefs.setString(OrientationMode.deviceModeKey, OrientationMode.verticalMode);
                               await OrientationMode.getDeviceMode;
                               await userAuthentication(context);
                             },
@@ -103,7 +105,7 @@ class ScreenSplash extends StatelessWidget {
                           child: MaterialButton(
                             onPressed: () async {
                               Navigator.pop(context);
-                              prefs?.setString(OrientationMode.deviceModeKey, OrientationMode.normalMode);
+                              prefs.setString(OrientationMode.deviceModeKey, OrientationMode.normalMode);
                               await OrientationMode.getDeviceMode;
                               await userAuthentication(context);
                             },

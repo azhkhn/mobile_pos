@@ -8,34 +8,36 @@ import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/debouncer/debouncer.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
-import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
-import 'package:shop_ez/model/supplier/supplier_model.dart';
+import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
+import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
+import 'package:shop_ez/screens/pos/widgets/payment_buttons_widget.dart';
+import 'package:shop_ez/screens/pos/widgets/price_section_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
-import 'package:shop_ez/screens/purchase/widgets/purchase_button_widget.dart';
-import 'package:shop_ez/screens/purchase/widgets/purchase_price_section_widget.dart';
-import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
-import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
 import '../../../core/utils/device/device.dart';
 import '../../../core/utils/snackbar/snackbar.dart';
+import '../../../widgets/gesture_dismissible_widget/dismissible_widget.dart';
 
-class PurchaseSideWidget extends StatelessWidget {
-  const PurchaseSideWidget({
+class SaleSideWidgetVertical extends StatelessWidget {
+  const SaleSideWidgetVertical({
     Key? key,
+    this.isVertical = false,
   }) : super(key: key);
+
+  final bool isVertical;
 
   //==================== Value Notifiers ====================
   static final ValueNotifier<List<ItemMasterModel>> selectedProductsNotifier = ValueNotifier([]);
   static final ValueNotifier<List<String>> subTotalNotifier = ValueNotifier([]);
   static final ValueNotifier<List<String>> itemTotalVatNotifier = ValueNotifier([]);
   static final ValueNotifier<List<TextEditingController>> quantityNotifier = ValueNotifier([]);
-  static final ValueNotifier<List<TextEditingController>> costNotifier = ValueNotifier([]);
+  static final ValueNotifier<List<TextEditingController>> unitPriceNotifier = ValueNotifier([]);
 
-  static final ValueNotifier<int?> supplierIdNotifier = ValueNotifier(null);
-  static final ValueNotifier<String?> supplierNameNotifier = ValueNotifier(null);
+  static final ValueNotifier<int?> customerIdNotifier = ValueNotifier(null);
+  static final ValueNotifier<String?> customerNameNotifier = ValueNotifier(null);
   static final ValueNotifier<num> totalItemsNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalQuantityNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalAmountNotifier = ValueNotifier(0);
@@ -43,8 +45,10 @@ class PurchaseSideWidget extends StatelessWidget {
   static final ValueNotifier<num> totalPayableNotifier = ValueNotifier(0);
 
   //==================== TextEditing Controllers ====================
-  static final supplierController = TextEditingController();
-  static final referenceNumberController = TextEditingController();
+  static final customerController = TextEditingController();
+
+  //==================== Global Keys ====================
+  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -54,34 +58,35 @@ class PurchaseSideWidget extends StatelessWidget {
         selectedProductsNotifier.value.clear();
         subTotalNotifier.value.clear();
         itemTotalVatNotifier.value.clear();
-        supplierController.clear();
-        costNotifier.value.clear();
+        customerController.clear();
         quantityNotifier.value.clear();
+        unitPriceNotifier.value.clear();
         totalItemsNotifier.value = 0;
         totalQuantityNotifier.value = 0;
         totalAmountNotifier.value = 0;
         totalVatNotifier.value = 0;
         totalPayableNotifier.value = 0;
-        supplierIdNotifier.value = null;
-        supplierNameNotifier.value = null;
+        customerIdNotifier.value = null;
+        customerNameNotifier.value = null;
         return true;
       },
       child: SizedBox(
-        width: _screenSize.width / 2.5,
+        width: isVertical ? double.infinity : _screenSize.width / 2.5,
+        // height: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //==================== Get All Supplier Search Field ====================
+                //==================== Get All Customers Search Field ====================
                 Flexible(
-                  flex: 6,
+                  flex: 8,
                   child: TypeAheadField(
                     debounceDuration: const Duration(milliseconds: 500),
                     hideSuggestionsOnKeyboardHide: false,
                     textFieldConfiguration: TextFieldConfiguration(
-                        controller: supplierController,
+                        controller: customerController,
                         style: const TextStyle(fontSize: 12),
                         decoration: InputDecoration(
                           fillColor: Colors.white,
@@ -96,24 +101,24 @@ class PurchaseSideWidget extends StatelessWidget {
                             child: InkWell(
                               child: const Icon(Icons.clear, size: 15),
                               onTap: () {
-                                supplierIdNotifier.value = null;
-                                supplierController.clear();
+                                customerIdNotifier.value = null;
+                                customerController.clear();
                               },
                             ),
                           ),
                           contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Supplier',
+                          hintText: 'Customer',
                           hintStyle: const TextStyle(fontSize: 12),
                           border: const OutlineInputBorder(),
                         )),
-                    noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No supplier Found!'))),
+                    noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Customer Found!'))),
                     suggestionsCallback: (pattern) async {
-                      return SupplierDatabase.instance.getSupplierSuggestions(pattern);
+                      return CustomerDatabase.instance.getCustomerSuggestions(pattern);
                     },
-                    itemBuilder: (context, SupplierModel suggestion) {
+                    itemBuilder: (context, CustomerModel suggestion) {
                       return ListTile(
                         title: AutoSizeText(
-                          suggestion.contactName,
+                          suggestion.customer,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10),
@@ -122,49 +127,17 @@ class PurchaseSideWidget extends StatelessWidget {
                         ),
                       );
                     },
-                    onSuggestionSelected: (SupplierModel suggestion) {
-                      supplierController.text = suggestion.contactName;
-                      supplierNameNotifier.value = suggestion.contactName;
-                      supplierIdNotifier.value = suggestion.id;
-                      log(suggestion.supplierName);
+                    onSuggestionSelected: (CustomerModel suggestion) {
+                      customerController.text = suggestion.customer;
+                      customerNameNotifier.value = suggestion.customer;
+                      customerIdNotifier.value = suggestion.id;
+                      log(suggestion.company);
                     },
                   ),
                 ),
                 kWidth5,
 
-                Flexible(
-                  flex: 4,
-                  child: TextFeildWidget(
-                    labelText: 'Ref No',
-                    isHint: true,
-                    isDense: true,
-                    suffixIconConstraints: const BoxConstraints(
-                      minWidth: 10,
-                      minHeight: 10,
-                    ),
-                    suffixIcon: Padding(
-                      padding: kClearTextIconPadding,
-                      child: InkWell(
-                        child: const Icon(Icons.clear, size: 15),
-                        onTap: () {
-                          referenceNumberController.clear();
-                        },
-                      ),
-                    ),
-                    controller: referenceNumberController,
-                    textStyle: const TextStyle(fontSize: 12),
-                    inputBorder: const OutlineInputBorder(),
-                    textInputType: TextInputType.text,
-                    constraints: const BoxConstraints(maxHeight: 40),
-                    hintStyle: const TextStyle(fontSize: 12),
-                    contentPadding: const EdgeInsets.all(10),
-                    errorStyle: true,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                  ),
-                ),
-                kWidth5,
-
-                //========== View supplier Button ==========
+                //========== View Customer Button ==========
                 Flexible(
                   flex: 1,
                   child: FittedBox(
@@ -172,12 +145,12 @@ class PurchaseSideWidget extends StatelessWidget {
                         padding: const EdgeInsets.all(5),
                         alignment: Alignment.center,
                         constraints: const BoxConstraints(
-                          minHeight: 45,
-                          maxHeight: 45,
+                          minHeight: 30,
+                          maxHeight: 30,
                         ),
                         onPressed: () {
-                          if (supplierIdNotifier.value != null) {
-                            log('$supplierIdNotifier');
+                          if (customerIdNotifier.value != null) {
+                            log('$customerIdNotifier');
 
                             showModalBottomSheet(
                                 context: context,
@@ -186,13 +159,10 @@ class PurchaseSideWidget extends StatelessWidget {
                                 shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                                 builder: (context) => DismissibleWidget(
                                       context: context,
-                                      child: CustomBottomSheetWidget(
-                                        id: supplierIdNotifier.value,
-                                        supplier: true,
-                                      ),
+                                      child: CustomBottomSheetWidget(id: customerIdNotifier.value),
                                     ));
                           } else {
-                            kSnackBar(context: context, content: 'Please select any Supplier to show details!');
+                            kSnackBar(context: context, content: 'Please select any Customer to show details!');
                           }
                         },
                         icon: const Icon(
@@ -203,38 +173,39 @@ class PurchaseSideWidget extends StatelessWidget {
                   ),
                 ),
 
-                //========== Add supplier Button ==========
+                //========== Add Customer Button ==========
                 Flexible(
                   flex: 1,
                   child: FittedBox(
                     child: IconButton(
-                        padding: const EdgeInsets.all(5),
-                        alignment: Alignment.center,
-                        constraints: const BoxConstraints(
-                          minHeight: 45,
-                          maxHeight: 45,
-                        ),
-                        onPressed: () async {
-                          // OrientationMode.isLandscape = false;
-                          // await OrientationMode.toPortrait();
-                          final id = await Navigator.pushNamed(context, routeAddSupplier, arguments: true);
+                      padding: const EdgeInsets.all(5),
+                      alignment: Alignment.center,
+                      constraints: const BoxConstraints(
+                        minHeight: 30,
+                        maxHeight: 30,
+                      ),
+                      onPressed: () async {
+                        // OrientationMode.isLandscape = false;
+                        // await OrientationMode.toPortrait();
+                        final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: true);
 
-                          if (id != null) {
-                            final addedSupplier = await SupplierDatabase.instance.getSupplierById(id as int);
+                        if (id != null) {
+                          final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
 
-                            supplierController.text = addedSupplier.contactName;
-                            supplierNameNotifier.value = addedSupplier.contactName;
-                            supplierIdNotifier.value = addedSupplier.id;
-                            log(addedSupplier.supplierName);
-                          }
+                          customerController.text = addedCustomer.customer;
+                          customerNameNotifier.value = addedCustomer.customer;
+                          customerIdNotifier.value = addedCustomer.id;
+                          log(addedCustomer.company);
+                        }
 
-                          // await OrientationMode.toLandscape();
-                        },
-                        icon: const Icon(
-                          Icons.person_add,
-                          color: Colors.blue,
-                          size: 25,
-                        )),
+                        // await OrientationMode.toLandscape();
+                      },
+                      icon: const Icon(
+                        Icons.person_add,
+                        color: Colors.blue,
+                        size: 25,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -242,13 +213,12 @@ class PurchaseSideWidget extends StatelessWidget {
 
             kHeight5,
             //==================== Table Header ====================
-            const SalesTableHeaderWidget(
-              isPurchase: true,
-            ),
+            const SalesTableHeaderWidget(),
 
             //==================== Product Items Table ====================
-            Expanded(
-              child: SingleChildScrollView(
+            SingleChildScrollView(
+              child: Form(
+                key: _formKey,
                 child: ValueListenableBuilder(
                   valueListenable: selectedProductsNotifier,
                   builder: (context, List<ItemMasterModel> selectedProducts, child) {
@@ -282,14 +252,15 @@ class PurchaseSideWidget extends StatelessWidget {
                                 maxLines: 2,
                               ),
                             ),
-                            //==================== Item Cost ====================
+
+                            //==================== Unit Price ====================
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 5.0),
                               color: Colors.white,
                               height: 30,
                               alignment: Alignment.topCenter,
                               child: TextFormField(
-                                controller: costNotifier.value[index],
+                                controller: unitPriceNotifier.value[index],
                                 keyboardType: TextInputType.number,
                                 inputFormatters: Validators.digitsOnly,
                                 textAlign: TextAlign.center,
@@ -310,10 +281,10 @@ class PurchaseSideWidget extends StatelessWidget {
                                 onChanged: (value) {
                                   if (value.isNotEmpty) {
                                     Debouncer().run(() {
-                                      onItemCostChanged(cost: value, index: index);
+                                      onItemUnitPriceChanged(unitPrice: value, index: index);
                                     });
                                   } else {
-                                    onItemCostChanged(cost: '0', index: index);
+                                    onItemUnitPriceChanged(unitPrice: '0', index: index);
                                   }
                                 },
                               ),
@@ -336,6 +307,13 @@ class PurchaseSideWidget extends StatelessWidget {
                                   contentPadding: EdgeInsets.symmetric(vertical: 10),
                                 ),
                                 style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7, color: kBlack),
+                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return '*';
+                                  }
+                                  return null;
+                                },
                                 onChanged: (value) {
                                   if (value.isNotEmpty) {
                                     Debouncer().run(() {
@@ -375,8 +353,8 @@ class PurchaseSideWidget extends StatelessWidget {
                                     selectedProducts.removeAt(index);
                                     subTotalNotifier.value.removeAt(index);
                                     itemTotalVatNotifier.value.removeAt(index);
-                                    costNotifier.value.removeAt(index);
                                     quantityNotifier.value.removeAt(index);
+                                    unitPriceNotifier.value.removeAt(index);
                                     subTotalNotifier.notifyListeners();
                                     selectedProductsNotifier.notifyListeners();
                                     totalItemsNotifier.value -= 1;
@@ -400,26 +378,28 @@ class PurchaseSideWidget extends StatelessWidget {
             ),
             kHeight5,
 
-            //==================== Price Sections ====================
-            const PurchasePriceSectionWidget(),
+            // //==================== Price Sections ====================
+            // const PriceSectionWidget(),
 
-            //==================== Payment Buttons Widget ====================
-            const PurchaseButtonsWidget()
+            // //==================== Payment Buttons Widget ====================
+            // const PaymentButtonsWidget()
           ],
         ),
       ),
     );
   }
 
-  //==================== On Item Cost Changed ====================
-  void onItemCostChanged({required String cost, required int index}) {
+  //==================== On Item Unit Price Changed ====================
+  void onItemUnitPriceChanged({required String unitPrice, required int index}) {
     final qty = num.tryParse(quantityNotifier.value[index].text);
-    final itemCost = num.tryParse(cost);
-    log('Item Cost == $cost');
+    final unit = num.tryParse(unitPrice);
 
-    if (qty != null && itemCost != null) {
-      selectedProductsNotifier.value[index] = selectedProductsNotifier.value[index].copyWith(itemCost: cost);
+    log('Unit Price == ' + selectedProductsNotifier.value[index].sellingPrice);
+
+    if (qty != null && unit != null) {
+      selectedProductsNotifier.value[index] = selectedProductsNotifier.value[index].copyWith(sellingPrice: unitPrice);
       selectedProductsNotifier.notifyListeners();
+      log('Unit Price == ' + selectedProductsNotifier.value[index].sellingPrice);
       getSubTotal(selectedProductsNotifier.value, index, qty);
       getTotalAmount();
       getTotalVAT();
@@ -428,8 +408,8 @@ class PurchaseSideWidget extends StatelessWidget {
   }
 
   //==================== On Item Quantity Changed ====================
-  void onItemQuantityChanged(String value, List<ItemMasterModel> selectedProducts, int index) {
-    final qty = num.tryParse(value);
+  void onItemQuantityChanged(String quantity, List<ItemMasterModel> selectedProducts, int index) {
+    final qty = num.tryParse(quantity);
     if (qty != null) {
       getTotalQuantity();
       getSubTotal(selectedProducts, index, qty);
@@ -441,10 +421,10 @@ class PurchaseSideWidget extends StatelessWidget {
 
   //==================== Get SubTotal Amount ====================
   void getSubTotal(List<ItemMasterModel> selectedProducts, int index, num qty) {
-    final cost = num.tryParse(selectedProducts[index].itemCost);
+    final cost = num.tryParse(selectedProducts[index].sellingPrice);
     final vatRate = selectedProducts[index].vatRate;
     if (selectedProducts[index].vatMethod == 'Inclusive') {
-      final _exclusiveCost = getExclusiveAmount(itemCost: selectedProducts[index].itemCost, vatRate: vatRate);
+      final _exclusiveCost = getExclusiveAmount(sellingPrice: selectedProducts[index].sellingPrice, vatRate: vatRate);
       final _subTotal = _exclusiveCost * qty;
       subTotalNotifier.value[index] = '$_subTotal';
     } else {
@@ -494,13 +474,13 @@ class PurchaseSideWidget extends StatelessWidget {
     required int vatRate,
   }) {
     num? itemTotalVat;
-    num itemCost = num.parse(amount);
+    num sellingPrice = num.parse(amount);
 
     if (vatMethod == 'Inclusive') {
-      itemCost = getExclusiveAmount(itemCost: '$itemCost', vatRate: vatRate);
+      sellingPrice = getExclusiveAmount(sellingPrice: '$sellingPrice', vatRate: vatRate);
     }
 
-    itemTotalVat = itemCost * vatRate / 100;
+    itemTotalVat = sellingPrice * vatRate / 100;
     log('Item VAT == $itemTotalVat');
     itemTotalVatNotifier.value.add('$itemTotalVat');
   }
@@ -529,12 +509,11 @@ class PurchaseSideWidget extends StatelessWidget {
   }
 
   //==================== Calculate Exclusive Amount from Inclusive Amount ====================
-  //==================== Calculate Exclusive Amount from Inclusive Amount ====================
-  num getExclusiveAmount({required String itemCost, required int vatRate}) {
+  num getExclusiveAmount({required String sellingPrice, required int vatRate}) {
     num _exclusiveAmount = 0;
     num percentageYouHave = vatRate + 100;
 
-    final _inclusiveAmount = num.tryParse(itemCost);
+    final _inclusiveAmount = num.tryParse(sellingPrice);
 
     _exclusiveAmount = _inclusiveAmount! * 100 / percentageYouHave;
 
@@ -552,33 +531,33 @@ class PurchaseSideWidget extends StatelessWidget {
     log('Total Payable == $_totalPayable');
   }
 
-  //==================== Reset All Values ====================
-  void resetPurchase() {
+//==================== Reset All Values ====================
+  void resetPos() {
     selectedProductsNotifier.value.clear();
     subTotalNotifier.value.clear();
     itemTotalVatNotifier.value.clear();
-    supplierController.clear();
-    costNotifier.value.clear();
+    customerController.clear();
+    unitPriceNotifier.value.clear();
     quantityNotifier.value.clear();
     totalItemsNotifier.value = 0;
     totalQuantityNotifier.value = 0;
     totalAmountNotifier.value = 0;
     totalVatNotifier.value = 0;
     totalPayableNotifier.value = 0;
-    supplierIdNotifier.value = null;
-    supplierNameNotifier.value = null;
+    customerIdNotifier.value = null;
+    customerNameNotifier.value = null;
 
     selectedProductsNotifier.notifyListeners();
     subTotalNotifier.notifyListeners();
     itemTotalVatNotifier.notifyListeners();
-    costNotifier.notifyListeners();
+    unitPriceNotifier.notifyListeners();
     quantityNotifier.notifyListeners();
     totalItemsNotifier.notifyListeners();
     totalQuantityNotifier.notifyListeners();
     totalAmountNotifier.notifyListeners();
     totalVatNotifier.notifyListeners();
     totalPayableNotifier.notifyListeners();
-    supplierIdNotifier.notifyListeners();
-    supplierNameNotifier.notifyListeners();
+    customerIdNotifier.notifyListeners();
+    customerNameNotifier.notifyListeners();
   }
 }

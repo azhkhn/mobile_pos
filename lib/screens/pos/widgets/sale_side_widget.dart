@@ -24,7 +24,10 @@ import '../../../widgets/gesture_dismissible_widget/dismissible_widget.dart';
 class SaleSideWidget extends StatelessWidget {
   const SaleSideWidget({
     Key? key,
+    this.isVertical = false,
   }) : super(key: key);
+
+  final bool isVertical;
 
   //==================== Value Notifiers ====================
   static final ValueNotifier<List<ItemMasterModel>> selectedProductsNotifier = ValueNotifier([]);
@@ -67,337 +70,324 @@ class SaleSideWidget extends StatelessWidget {
         customerNameNotifier.value = null;
         return true;
       },
-      child: SizedBox(
-        width: _screenSize.width / 2.5,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                //==================== Get All Customers Search Field ====================
-                Flexible(
-                  flex: 8,
-                  child: TypeAheadField(
-                    debounceDuration: const Duration(milliseconds: 500),
-                    hideSuggestionsOnKeyboardHide: false,
-                    textFieldConfiguration: TextFieldConfiguration(
-                        controller: customerController,
-                        style: const TextStyle(fontSize: 12),
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          isDense: true,
-                          suffixIconConstraints: const BoxConstraints(
-                            minWidth: 10,
-                            minHeight: 10,
-                          ),
-                          suffixIcon: Padding(
-                            padding: kClearTextIconPadding,
-                            child: InkWell(
-                              child: const Icon(Icons.clear, size: 15),
-                              onTap: () {
-                                customerIdNotifier.value = null;
-                                customerController.clear();
-                              },
+      child: Expanded(
+        child: SizedBox(
+          width: isVertical ? double.infinity : _screenSize.width / 2.5,
+          height: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //==================== Get All Customers Search Field ====================
+                  Flexible(
+                    flex: 8,
+                    child: TypeAheadField(
+                      debounceDuration: const Duration(milliseconds: 500),
+                      hideSuggestionsOnKeyboardHide: false,
+                      textFieldConfiguration: TextFieldConfiguration(
+                          controller: customerController,
+                          style: const TextStyle(fontSize: 12),
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            isDense: true,
+                            suffixIconConstraints: const BoxConstraints(
+                              minWidth: 10,
+                              minHeight: 10,
                             ),
+                            suffixIcon: Padding(
+                              padding: kClearTextIconPadding,
+                              child: InkWell(
+                                child: const Icon(Icons.clear, size: 15),
+                                onTap: () {
+                                  customerIdNotifier.value = null;
+                                  customerController.clear();
+                                },
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.all(10),
+                            hintText: 'Customer',
+                            hintStyle: const TextStyle(fontSize: 12),
+                            border: const OutlineInputBorder(),
+                          )),
+                      noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Customer Found!'))),
+                      suggestionsCallback: (pattern) async {
+                        return CustomerDatabase.instance.getCustomerSuggestions(pattern);
+                      },
+                      itemBuilder: (context, CustomerModel suggestion) {
+                        return ListTile(
+                          title: AutoSizeText(
+                            suggestion.customer,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10),
+                            minFontSize: 10,
+                            maxFontSize: 12,
                           ),
-                          contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Customer',
-                          hintStyle: const TextStyle(fontSize: 12),
-                          border: const OutlineInputBorder(),
-                        )),
-                    noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Customer Found!'))),
-                    suggestionsCallback: (pattern) async {
-                      return CustomerDatabase.instance.getCustomerSuggestions(pattern);
-                    },
-                    itemBuilder: (context, CustomerModel suggestion) {
-                      return ListTile(
-                        title: AutoSizeText(
-                          suggestion.customer,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10),
-                          minFontSize: 10,
-                          maxFontSize: 12,
-                        ),
-                      );
-                    },
-                    onSuggestionSelected: (CustomerModel suggestion) {
-                      customerController.text = suggestion.customer;
-                      customerNameNotifier.value = suggestion.customer;
-                      customerIdNotifier.value = suggestion.id;
-                      log(suggestion.company);
-                    },
+                        );
+                      },
+                      onSuggestionSelected: (CustomerModel suggestion) {
+                        customerController.text = suggestion.customer;
+                        customerNameNotifier.value = suggestion.customer;
+                        customerIdNotifier.value = suggestion.id;
+                        log(suggestion.company);
+                      },
+                    ),
                   ),
-                ),
-                kWidth5,
+                  kWidth5,
 
-                //========== View Customer Button ==========
-                Flexible(
-                  flex: 1,
-                  child: FittedBox(
-                    child: IconButton(
+                  //========== View Customer Button ==========
+                  Flexible(
+                    flex: 1,
+                    child: FittedBox(
+                      child: IconButton(
+                          padding: const EdgeInsets.all(5),
+                          alignment: Alignment.center,
+                          constraints: const BoxConstraints(
+                            minHeight: 30,
+                            maxHeight: 30,
+                          ),
+                          onPressed: () {
+                            if (customerIdNotifier.value != null) {
+                              log('$customerIdNotifier');
+
+                              showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  backgroundColor: kTransparentColor,
+                                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                                  builder: (context) => DismissibleWidget(
+                                        context: context,
+                                        child: CustomBottomSheetWidget(id: customerIdNotifier.value),
+                                      ));
+                            } else {
+                              kSnackBar(context: context, content: 'Please select any Customer to show details!');
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.visibility,
+                            color: Colors.blue,
+                            size: 25,
+                          )),
+                    ),
+                  ),
+
+                  //========== Add Customer Button ==========
+                  Flexible(
+                    flex: 1,
+                    child: FittedBox(
+                      child: IconButton(
                         padding: const EdgeInsets.all(5),
                         alignment: Alignment.center,
                         constraints: const BoxConstraints(
                           minHeight: 30,
                           maxHeight: 30,
                         ),
-                        onPressed: () {
-                          if (customerIdNotifier.value != null) {
-                            log('$customerIdNotifier');
+                        onPressed: () async {
+                          // OrientationMode.isLandscape = false;
+                          // await OrientationMode.toPortrait();
+                          final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: true);
 
-                            showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                backgroundColor: kTransparentColor,
-                                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                                builder: (context) => DismissibleWidget(
-                                      context: context,
-                                      child: CustomBottomSheetWidget(id: customerIdNotifier.value),
-                                    ));
-                          } else {
-                            kSnackBar(context: context, content: 'Please select any Customer to show details!');
+                          if (id != null) {
+                            final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
+
+                            customerController.text = addedCustomer.customer;
+                            customerNameNotifier.value = addedCustomer.customer;
+                            customerIdNotifier.value = addedCustomer.id;
+                            log(addedCustomer.company);
                           }
+
+                          // await OrientationMode.toLandscape();
                         },
                         icon: const Icon(
-                          Icons.visibility,
+                          Icons.person_add,
                           color: Colors.blue,
                           size: 25,
-                        )),
-                  ),
-                ),
-
-                //========== Add Customer Button ==========
-                Flexible(
-                  flex: 1,
-                  child: FittedBox(
-                    child: IconButton(
-                      padding: const EdgeInsets.all(5),
-                      alignment: Alignment.center,
-                      constraints: const BoxConstraints(
-                        minHeight: 30,
-                        maxHeight: 30,
-                      ),
-                      onPressed: () async {
-                        // OrientationMode.isLandscape = false;
-                        // await OrientationMode.toPortrait();
-                        final id = await Navigator.pushNamed(context, routeCustomer, arguments: true);
-
-                        if (id != null) {
-                          final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
-
-                          customerController.text = addedCustomer.customer;
-                          customerNameNotifier.value = addedCustomer.customer;
-                          customerIdNotifier.value = addedCustomer.id;
-                          log(addedCustomer.company);
-                        }
-
-                        // await OrientationMode.toLandscape();
-                      },
-                      icon: const Icon(
-                        Icons.person_add,
-                        color: Colors.blue,
-                        size: 25,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
 
-            kHeight5,
-            //==================== Table Header ====================
-            const SalesTableHeaderWidget(),
+              kHeight5,
+              //==================== Table Header ====================
+              const SalesTableHeaderWidget(),
 
-            //==================== Product Items Table ====================
-            Expanded(
-              child: SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: ValueListenableBuilder(
-                    valueListenable: selectedProductsNotifier,
-                    builder: (context, List<ItemMasterModel> selectedProducts, child) {
-                      return Table(
-                        columnWidths: const {
-                          0: FractionColumnWidth(0.30),
-                          1: FractionColumnWidth(0.23),
-                          2: FractionColumnWidth(0.12),
-                          3: FractionColumnWidth(0.23),
-                          4: FractionColumnWidth(0.12),
-                        },
-                        border: TableBorder.all(color: Colors.grey, width: 0.5),
-                        children: List<TableRow>.generate(
-                          selectedProducts.length,
-                          (index) {
-                            final ItemMasterModel _product = selectedProducts[index];
-                            return TableRow(children: [
-                              //==================== Item Name ====================
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                color: Colors.white,
-                                height: 30,
-                                alignment: Alignment.centerLeft,
-                                child: AutoSizeText(
-                                  _product.itemName,
-                                  softWrap: true,
-                                  style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
-                                  overflow: TextOverflow.ellipsis,
-                                  minFontSize: 7,
-                                  maxFontSize: 10,
-                                  maxLines: 2,
-                                ),
-                              ),
-                              // //==================== Unit Price ====================
-                              // Container(
-                              //   padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                              //   color: Colors.white,
-                              //   height: 30,
-                              //   alignment: Alignment.center,
-                              //   child: AutoSizeText(
-                              //     _product.vatMethod == 'Exclusive'
-                              //         ? Converter.currency.format(num.parse(_product.sellingPrice))
-                              //         : Converter.currency.format(getExclusiveAmount(sellingPrice: _product.sellingPrice, vatRate: _product.vatRate)),
-                              //     maxLines: 1,
-                              //     overflow: TextOverflow.ellipsis,
-                              //     style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
-                              //     minFontSize: 7,
-                              //     maxFontSize: 10,
-                              //   ),
-                              // ),
-                              //==================== Unit Price ====================
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                color: Colors.white,
-                                height: 30,
-                                alignment: Alignment.topCenter,
-                                child: TextFormField(
-                                  controller: unitPriceNotifier.value[index],
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: Validators.digitsOnly,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    isDense: true,
-                                    contentPadding: EdgeInsets.symmetric(vertical: 10),
-                                  ),
-                                  style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7, color: kBlack),
-                                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return '*';
-                                    }
-                                    return null;
-                                  },
-                                  onChanged: (value) {
-                                    if (value.isNotEmpty) {
-                                      Debouncer().run(() {
-                                        onItemUnitPriceChanged(unitPrice: value, index: index);
-                                      });
-                                    } else {
-                                      onItemUnitPriceChanged(unitPrice: '0', index: index);
-                                    }
-                                  },
-                                ),
-                              ),
-                              //==================== Quantity ====================
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                color: Colors.white,
-                                height: 30,
-                                alignment: Alignment.topCenter,
-                                child: TextFormField(
-                                  controller: quantityNotifier.value[index],
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: Validators.digitsOnly,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    isDense: true,
-                                    contentPadding: EdgeInsets.symmetric(vertical: 10),
-                                  ),
-                                  style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7, color: kBlack),
-                                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return '*';
-                                    }
-                                    return null;
-                                  },
-                                  onChanged: (value) {
-                                    if (value.isNotEmpty) {
-                                      Debouncer().run(() {
-                                        onItemQuantityChanged(value, selectedProducts, index);
-                                      });
-                                    } else {
-                                      onItemQuantityChanged('0', selectedProducts, index);
-                                    }
-                                  },
-                                ),
-                              ),
-                              //==================== Sub Total ====================
-                              Container(
+              //==================== Product Items Table ====================
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _formKey,
+                    child: ValueListenableBuilder(
+                      valueListenable: selectedProductsNotifier,
+                      builder: (context, List<ItemMasterModel> selectedProducts, child) {
+                        return Table(
+                          columnWidths: const {
+                            0: FractionColumnWidth(0.30),
+                            1: FractionColumnWidth(0.23),
+                            2: FractionColumnWidth(0.12),
+                            3: FractionColumnWidth(0.23),
+                            4: FractionColumnWidth(0.12),
+                          },
+                          border: TableBorder.all(color: Colors.grey, width: 0.5),
+                          children: List<TableRow>.generate(
+                            selectedProducts.length,
+                            (index) {
+                              final ItemMasterModel _product = selectedProducts[index];
+                              return TableRow(children: [
+                                //==================== Item Name ====================
+                                Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                   color: Colors.white,
                                   height: 30,
-                                  alignment: Alignment.center,
-                                  child: ValueListenableBuilder(
-                                      valueListenable: subTotalNotifier,
-                                      builder: (context, List<String> subTotal, child) {
-                                        return AutoSizeText(
-                                          Converter.currency.format(num.tryParse(subTotal[index])),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
-                                          minFontSize: 7,
-                                          maxFontSize: 10,
-                                        );
-                                      })),
-                              //==================== Delete Icon ====================
-                              Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: AutoSizeText(
+                                    _product.itemName,
+                                    softWrap: true,
+                                    style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
+                                    overflow: TextOverflow.ellipsis,
+                                    minFontSize: 7,
+                                    maxFontSize: 10,
+                                    maxLines: 2,
+                                  ),
+                                ),
+
+                                //==================== Unit Price ====================
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                   color: Colors.white,
                                   height: 30,
-                                  alignment: Alignment.center,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      selectedProducts.removeAt(index);
-                                      subTotalNotifier.value.removeAt(index);
-                                      itemTotalVatNotifier.value.removeAt(index);
-                                      quantityNotifier.value.removeAt(index);
-                                      unitPriceNotifier.value.removeAt(index);
-                                      subTotalNotifier.notifyListeners();
-                                      selectedProductsNotifier.notifyListeners();
-                                      totalItemsNotifier.value -= 1;
-                                      getTotalQuantity();
-                                      getTotalAmount();
-                                      getTotalVAT();
-                                      getTotalPayable();
-                                    },
-                                    icon: const Icon(
-                                      Icons.close,
-                                      size: 16,
+                                  alignment: Alignment.topCenter,
+                                  child: TextFormField(
+                                    controller: unitPriceNotifier.value[index],
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: Validators.digitsOnly,
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.symmetric(vertical: 10),
                                     ),
-                                  ))
-                            ]);
-                          },
-                        ),
-                      );
-                    },
+                                    style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7, color: kBlack),
+                                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return '*';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      if (value.isNotEmpty) {
+                                        Debouncer().run(() {
+                                          onItemUnitPriceChanged(unitPrice: value, index: index);
+                                        });
+                                      } else {
+                                        onItemUnitPriceChanged(unitPrice: '0', index: index);
+                                      }
+                                    },
+                                  ),
+                                ),
+                                //==================== Quantity ====================
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                  color: Colors.white,
+                                  height: 30,
+                                  alignment: Alignment.topCenter,
+                                  child: TextFormField(
+                                    controller: quantityNotifier.value[index],
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: Validators.digitsOnly,
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.symmetric(vertical: 10),
+                                    ),
+                                    style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7, color: kBlack),
+                                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return '*';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      if (value.isNotEmpty) {
+                                        Debouncer().run(() {
+                                          onItemQuantityChanged(value, selectedProducts, index);
+                                        });
+                                      } else {
+                                        onItemQuantityChanged('0', selectedProducts, index);
+                                      }
+                                    },
+                                  ),
+                                ),
+                                //==================== Sub Total ====================
+                                Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                    color: Colors.white,
+                                    height: 30,
+                                    alignment: Alignment.center,
+                                    child: ValueListenableBuilder(
+                                        valueListenable: subTotalNotifier,
+                                        builder: (context, List<String> subTotal, child) {
+                                          return AutoSizeText(
+                                            Converter.currency.format(num.tryParse(subTotal[index])),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
+                                            minFontSize: 7,
+                                            maxFontSize: 10,
+                                          );
+                                        })),
+                                //==================== Delete Icon ====================
+                                Container(
+                                    color: Colors.white,
+                                    height: 30,
+                                    alignment: Alignment.center,
+                                    child: IconButton(
+                                      onPressed: () {
+                                        selectedProducts.removeAt(index);
+                                        subTotalNotifier.value.removeAt(index);
+                                        itemTotalVatNotifier.value.removeAt(index);
+                                        quantityNotifier.value.removeAt(index);
+                                        unitPriceNotifier.value.removeAt(index);
+                                        subTotalNotifier.notifyListeners();
+                                        selectedProductsNotifier.notifyListeners();
+                                        totalItemsNotifier.value -= 1;
+                                        getTotalQuantity();
+                                        getTotalAmount();
+                                        getTotalVAT();
+                                        getTotalPayable();
+                                      },
+                                      icon: const Icon(
+                                        Icons.close,
+                                        size: 16,
+                                      ),
+                                    ))
+                              ]);
+                            },
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-            kHeight5,
+              kHeight5,
 
-            //==================== Price Sections ====================
-            const PriceSectionWidget(),
+              //==================== Price Sections ====================
+              const PriceSectionWidget(),
 
-            //==================== Payment Buttons Widget ====================
-            const PaymentButtonsWidget()
-          ],
+              //==================== Payment Buttons Widget ====================
+              const PaymentButtonsWidget()
+            ],
+          ),
         ),
       ),
     );

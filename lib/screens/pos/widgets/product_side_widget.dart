@@ -21,7 +21,10 @@ import '../../../widgets/button_widgets/material_button_widget.dart';
 class ProductSideWidget extends StatefulWidget {
   const ProductSideWidget({
     Key? key,
+    this.isVertical = false,
   }) : super(key: key);
+
+  final bool isVertical;
 
   //========== Value Notifiers ==========
   static final ValueNotifier<List<dynamic>> itemsNotifier = ValueNotifier([]);
@@ -61,7 +64,8 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
     _screenSize = MediaQuery.of(context).size;
     _builderModel = null;
     return SizedBox(
-      width: _screenSize.width / 1.9,
+      width: widget.isVertical ? double.infinity : _screenSize.width / 1.9,
+      height: widget.isVertical ? _screenSize.height / 2.3 : double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -239,8 +243,9 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
           //==================== Product Listing Grid ====================
           Expanded(
+            flex: widget.isVertical ? 1 : 1,
             child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: FutureBuilder(
                   future: futureGrid,
                   builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
@@ -269,8 +274,6 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                           ProductSideWidget.itemsNotifier.value = [];
                         }
 
-                        // return ProductSideWidget.itemsNotifier.value.isNotEmpty
-                        //     ? ValueListenableBuilder(
                         return ValueListenableBuilder(
                           valueListenable: ProductSideWidget.itemsNotifier,
                           builder: (context, List<dynamic> itemList, _) {
@@ -278,8 +281,9 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
                             return ProductSideWidget.itemsNotifier.value.isNotEmpty
                                 ? GridView.builder(
-                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 5,
+                                    // shrinkWrap: widget.isVertical ? true : false,
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: widget.isVertical ? 4 : 5,
                                       childAspectRatio: (1 / .75),
                                     ),
                                     itemCount: itemList.length,
@@ -302,9 +306,9 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                             _builderModel = null;
                                             ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByBrandId(brandId);
                                           } else {
-//===================================== if the Product Already Added ====================================
+                                            //===================================== if the Product Already Added ====================================
                                             isProductAlreadyAdded(itemList as List<ItemMasterModel>, index);
-//=======================================================================================================
+                                            //=======================================================================================================
 
                                             SaleSideWidget.selectedProductsNotifier.notifyListeners();
 

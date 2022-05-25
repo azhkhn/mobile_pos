@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 
@@ -67,6 +70,9 @@ class HomeGrid extends StatelessWidget {
                   await Navigator.pushNamed(context, routeStock);
                   await OrientationMode.toPortrait();
                   break;
+                case 8:
+                  await changeDeviceMode(context);
+                  break;
                 default:
               }
             },
@@ -91,6 +97,75 @@ class HomeGrid extends StatelessWidget {
               ),
             ),
           )),
+    );
+  }
+
+  Future<void> changeDeviceMode(BuildContext context) async {
+    // prefs = await SharedPreferences.getInstance();
+    // prefs!.remove(OrientationMode.deviceModeKey);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => WillPopScope(
+        onWillPop: () async => false,
+        child: Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Choose a Mode from below to continue. The application will be shown based on your choice!, You can change it later from the settings menu.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  kHeight10,
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: MaterialButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            prefs.setString(OrientationMode.deviceModeKey, OrientationMode.verticalMode);
+                            OrientationMode.deviceMode = OrientationMode.verticalMode;
+                          },
+                          child: const Text(
+                            'Vertical Mode',
+                            style: TextStyle(color: kWhite),
+                          ),
+                          color: Colors.blueGrey[300],
+                        ),
+                      ),
+                      kWidth5,
+                      Expanded(
+                        child: MaterialButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            prefs.setString(OrientationMode.deviceModeKey, OrientationMode.normalMode);
+                            OrientationMode.deviceMode = OrientationMode.normalMode;
+                          },
+                          child: const Text(
+                            'Normal Mode',
+                            style: TextStyle(color: kWhite),
+                          ),
+                          color: mainColor.withOpacity(.8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            )),
+      ),
     );
   }
 }

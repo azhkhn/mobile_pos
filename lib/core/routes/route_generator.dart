@@ -46,19 +46,18 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ScreenSignUp());
       case routeItemMaster:
         return MaterialPageRoute(builder: (_) => ScreenItemMaster());
-      case routeManageSupplier:
-        return MaterialPageRoute(
-            builder: (_) => ScreenSupplier(
-                  purchase: args == true,
-                ));
+      case routeAddSupplier:
+        return MaterialPageRoute(builder: (_) => ScreenSupplier(purchase: args == true));
       case routeCategory:
         return MaterialPageRoute(builder: (_) => CategoryScreen());
       case routeSubCategory:
         return MaterialPageRoute(builder: (_) => SubCategoryScreen());
       case routeBrand:
         return MaterialPageRoute(builder: (_) => BrandScreen());
-      case routeCustomer:
+      case routeAddCustomer:
         return MaterialPageRoute(builder: (_) => CustomerScreen(fromPos: args == true));
+      case routeManageCustomer:
+        return MaterialPageRoute(builder: (_) => CustomerScreen());
       case routeUnit:
         return MaterialPageRoute(builder: (_) => UnitScreen());
       case routeExpense:

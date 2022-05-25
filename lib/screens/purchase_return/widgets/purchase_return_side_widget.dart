@@ -275,7 +275,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                         onPressed: () async {
                           // OrientationMode.isLandscape = false;
                           // await OrientationMode.toPortrait();
-                          final id = await Navigator.pushNamed(context, routeManageSupplier, arguments: true);
+                          final id = await Navigator.pushNamed(context, routeAddSupplier, arguments: true);
 
                           if (id != null) {
                             final addedSupplier = await SupplierDatabase.instance.getSupplierById(id as int);

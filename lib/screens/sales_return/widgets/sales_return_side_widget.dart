@@ -271,7 +271,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                         onPressed: () async {
                           // OrientationMode.isLandscape = false;
                           // await OrientationMode.toPortrait();
-                          final id = await Navigator.pushNamed(context, routeCustomer, arguments: true);
+                          final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: true);
 
                           if (id != null) {
                             final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
