@@ -10,6 +10,7 @@ class CustomMaterialBtton extends StatelessWidget {
     this.buttonColor,
     this.fittedText = false,
     this.minWidth = double.infinity,
+    this.padding,
     Key? key,
   }) : super(key: key);
   final String buttonText;
@@ -19,9 +20,11 @@ class CustomMaterialBtton extends StatelessWidget {
   final double minWidth;
   final Function() onPressed;
   final bool fittedText;
+  final EdgeInsetsGeometry? padding;
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
+      padding: padding,
       minWidth: minWidth,
       onPressed: onPressed,
       child: fittedText
@@ -32,8 +35,7 @@ class CustomMaterialBtton extends StatelessWidget {
                   )))
           : Text(
               buttonText,
-              style: TextStyle(
-                  color: textColor ?? kButtonTextWhite, fontSize: fontSize),
+              style: TextStyle(color: textColor ?? kButtonTextWhite, fontSize: fontSize),
             ),
       color: buttonColor ?? kButtonColor,
     );

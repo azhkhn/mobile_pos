@@ -3,7 +3,6 @@ import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/screens/pos/widgets/product_side_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
-import 'package:shop_ez/screens/pos/widgets/sale_side_widget_vertical.dart';
 
 import '../../core/constant/colors.dart';
 
@@ -52,8 +51,8 @@ class PosScreen extends StatelessWidget {
                       //========================================                     ========================================
                       ProductSideWidget(isVertical: true),
 
-                      //==================== Constant Height ====================
-                      kHeight20,
+                      //==================== Divider ====================
+                      Divider(thickness: 1, height: 10),
 
                       // //========================================                  ========================================
                       // //======================================== Sale Side Widget ========================================

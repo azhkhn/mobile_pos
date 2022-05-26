@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
@@ -28,7 +29,10 @@ import '../../../core/utils/converters/converters.dart';
 class PaymentButtonsWidget extends StatelessWidget {
   const PaymentButtonsWidget({
     Key? key,
+    this.isVertical = false,
   }) : super(key: key);
+
+  final bool isVertical;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +52,7 @@ class PaymentButtonsWidget extends StatelessWidget {
     return Column(
       children: [
         Container(
-          height: _screenSize.width / 25,
+          height: isVertical ? _screenSize.height / 26 : _screenSize.width / 25,
           padding: const EdgeInsets.all(8),
           color: Colors.blueGrey,
           child: Row(
@@ -86,7 +90,7 @@ class PaymentButtonsWidget extends StatelessWidget {
           children: [
             Expanded(
               child: SizedBox(
-                height: _screenSize.width / 25,
+                height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
                     final int? customerId = SaleSideWidget.customerIdNotifier.value;
@@ -102,7 +106,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                         builder: (ctx) {
                           return AlertDialog(
                             title: const Text(
-                              'Credit Payment!',
+                              'Credit Payment',
                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             content: const Text('Do you want to add this sale?'),
@@ -145,7 +149,7 @@ class PaymentButtonsWidget extends StatelessWidget {
             ),
             Expanded(
               child: SizedBox(
-                height: _screenSize.width / 25,
+                height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
                     final int? customerId = SaleSideWidget.customerIdNotifier.value;
@@ -161,7 +165,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                         builder: (ctx) {
                           return AlertDialog(
                             title: const Text(
-                              'Full Payment!',
+                              'Full Payment',
                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             content: const Text('Do you want to add this sale?'),
@@ -199,22 +203,49 @@ class PaymentButtonsWidget extends StatelessWidget {
           children: [
             Expanded(
               child: SizedBox(
-                height: _screenSize.width / 25,
+                height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    SaleSideWidget.selectedProductsNotifier.value.clear();
-                    SaleSideWidget.subTotalNotifier.value.clear();
-                    SaleSideWidget.itemTotalVatNotifier.value.clear();
-                    SaleSideWidget.customerController.clear();
-                    SaleSideWidget.quantityNotifier.value.clear();
-                    SaleSideWidget.totalItemsNotifier.value = 0;
-                    SaleSideWidget.totalQuantityNotifier.value = 0;
-                    SaleSideWidget.totalAmountNotifier.value = 0;
-                    SaleSideWidget.totalVatNotifier.value = 0;
-                    SaleSideWidget.totalPayableNotifier.value = 0;
-                    SaleSideWidget.customerIdNotifier.value = null;
-                    SaleSideWidget.customerNameNotifier.value = null;
-                    Navigator.pop(context);
+                    final items = SaleSideWidget.selectedProductsNotifier.value;
+                    if (items.isEmpty) {
+                      SaleSideWidget.selectedProductsNotifier.value.clear();
+                      SaleSideWidget.subTotalNotifier.value.clear();
+                      SaleSideWidget.itemTotalVatNotifier.value.clear();
+                      SaleSideWidget.customerController.clear();
+                      SaleSideWidget.quantityNotifier.value.clear();
+                      SaleSideWidget.totalItemsNotifier.value = 0;
+                      SaleSideWidget.totalQuantityNotifier.value = 0;
+                      SaleSideWidget.totalAmountNotifier.value = 0;
+                      SaleSideWidget.totalVatNotifier.value = 0;
+                      SaleSideWidget.totalPayableNotifier.value = 0;
+                      SaleSideWidget.customerIdNotifier.value = null;
+                      SaleSideWidget.customerNameNotifier.value = null;
+                      Navigator.pop(context);
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return KAlertDialog(
+                              content: const Text('Are you sure want to cancel the sale?'),
+                              submitAction: () {
+                                Navigator.pop(context);
+                                SaleSideWidget.selectedProductsNotifier.value.clear();
+                                SaleSideWidget.subTotalNotifier.value.clear();
+                                SaleSideWidget.itemTotalVatNotifier.value.clear();
+                                SaleSideWidget.customerController.clear();
+                                SaleSideWidget.quantityNotifier.value.clear();
+                                SaleSideWidget.totalItemsNotifier.value = 0;
+                                SaleSideWidget.totalQuantityNotifier.value = 0;
+                                SaleSideWidget.totalAmountNotifier.value = 0;
+                                SaleSideWidget.totalVatNotifier.value = 0;
+                                SaleSideWidget.totalPayableNotifier.value = 0;
+                                SaleSideWidget.customerIdNotifier.value = null;
+                                SaleSideWidget.customerNameNotifier.value = null;
+                                Navigator.pop(context);
+                              },
+                            );
+                          });
+                    }
                   },
                   padding: const EdgeInsets.all(5),
                   color: Colors.red[400],
@@ -230,7 +261,7 @@ class PaymentButtonsWidget extends StatelessWidget {
             ),
             Expanded(
               child: SizedBox(
-                height: _screenSize.width / 25,
+                height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
                     final int? customerId = SaleSideWidget.customerIdNotifier.value;
@@ -244,6 +275,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                       Navigator.pushNamed(context, routePartialPayment, arguments: {
                         'totalPayable': SaleSideWidget.totalPayableNotifier.value,
                         'totalItems': SaleSideWidget.totalItemsNotifier.value,
+                        'isVertical': isVertical
                       });
                     }
                   },

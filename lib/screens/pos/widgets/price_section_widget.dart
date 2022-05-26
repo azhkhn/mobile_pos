@@ -10,14 +10,17 @@ import '../../../core/utils/converters/converters.dart';
 class PriceSectionWidget extends StatelessWidget {
   const PriceSectionWidget({
     Key? key,
+    this.isVertical = false,
   }) : super(key: key);
+
+  final bool isVertical;
 
   @override
   Widget build(BuildContext context) {
     final bool isTablet = DeviceUtil.isTablet;
     final Size _screenSize = MediaQuery.of(context).size;
     return Container(
-      height: _screenSize.width / 20,
+      height: isVertical ? _screenSize.height / 20 : _screenSize.width / 20,
       color: kWhite,
       child: Padding(
         padding: const EdgeInsets.all(5),

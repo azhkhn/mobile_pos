@@ -72,7 +72,12 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const PosScreen());
       case routePartialPayment:
         if (args is Map) {
-          return MaterialPageRoute(builder: (_) => PartialPayment(paymentDetails: args, purchase: args.containsKey('purchase')));
+          return MaterialPageRoute(
+              builder: (_) => PartialPayment(
+                    paymentDetails: args,
+                    purchase: args.containsKey('purchase'),
+                    isVertical: args['isVertical'],
+                  ));
         }
         return _errorRoute();
       case routeSales:

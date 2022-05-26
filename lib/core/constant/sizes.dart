@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 //========== Constant Sizes ==========
+const kNone = SizedBox();
+
 const kWidth5 = SizedBox(width: 5);
 const kWidth10 = SizedBox(width: 10);
 const kWidth20 = SizedBox(width: 20);
@@ -18,6 +20,5 @@ const kHeight50 = SizedBox(height: 50);
 kHeightDynamic({required double kheight}) => SizedBox(height: kheight);
 
 //========== Edge Insets Sizes ==========
-const kClearTextIconPadding =
-    EdgeInsets.only(top: 5, bottom: 5, right: 5, left: 8);
+const kClearTextIconPadding = EdgeInsets.only(top: 5, bottom: 5, right: 5, left: 8);
 const kPadding0 = EdgeInsets.all(0);

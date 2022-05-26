@@ -77,140 +77,142 @@ class SaleSideWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //==================== Get All Customers Search Field ====================
-                  Flexible(
-                    flex: 8,
-                    child: TypeAheadField(
-                      debounceDuration: const Duration(milliseconds: 500),
-                      hideSuggestionsOnKeyboardHide: false,
-                      textFieldConfiguration: TextFieldConfiguration(
-                          controller: customerController,
-                          style: const TextStyle(fontSize: 12),
-                          decoration: InputDecoration(
-                            fillColor: Colors.white,
-                            filled: true,
-                            isDense: true,
-                            suffixIconConstraints: const BoxConstraints(
-                              minWidth: 10,
-                              minHeight: 10,
-                            ),
-                            suffixIcon: Padding(
-                              padding: kClearTextIconPadding,
-                              child: InkWell(
-                                child: const Icon(Icons.clear, size: 15),
-                                onTap: () {
-                                  customerIdNotifier.value = null;
-                                  customerController.clear();
+              isVertical
+                  ? kNone
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //==================== Get All Customers Search Field ====================
+                        Flexible(
+                          flex: 8,
+                          child: TypeAheadField(
+                            debounceDuration: const Duration(milliseconds: 500),
+                            hideSuggestionsOnKeyboardHide: true,
+                            textFieldConfiguration: TextFieldConfiguration(
+                                controller: customerController,
+                                style: const TextStyle(fontSize: 12),
+                                decoration: InputDecoration(
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  isDense: true,
+                                  suffixIconConstraints: const BoxConstraints(
+                                    minWidth: 10,
+                                    minHeight: 10,
+                                  ),
+                                  suffixIcon: Padding(
+                                    padding: kClearTextIconPadding,
+                                    child: InkWell(
+                                      child: const Icon(Icons.clear, size: 15),
+                                      onTap: () {
+                                        customerIdNotifier.value = null;
+                                        customerController.clear();
+                                      },
+                                    ),
+                                  ),
+                                  contentPadding: const EdgeInsets.all(10),
+                                  hintText: 'Customer',
+                                  hintStyle: const TextStyle(fontSize: 12),
+                                  border: const OutlineInputBorder(),
+                                )),
+                            noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Customer Found!'))),
+                            suggestionsCallback: (pattern) async {
+                              return CustomerDatabase.instance.getCustomerSuggestions(pattern);
+                            },
+                            itemBuilder: (context, CustomerModel suggestion) {
+                              return ListTile(
+                                title: AutoSizeText(
+                                  suggestion.customer,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10),
+                                  minFontSize: 10,
+                                  maxFontSize: 12,
+                                ),
+                              );
+                            },
+                            onSuggestionSelected: (CustomerModel suggestion) {
+                              customerController.text = suggestion.customer;
+                              customerNameNotifier.value = suggestion.customer;
+                              customerIdNotifier.value = suggestion.id;
+                              log(suggestion.company);
+                            },
+                          ),
+                        ),
+                        kWidth5,
+
+                        //========== View Customer Button ==========
+                        Flexible(
+                          flex: 1,
+                          child: FittedBox(
+                            child: IconButton(
+                                padding: const EdgeInsets.all(5),
+                                alignment: Alignment.center,
+                                constraints: const BoxConstraints(
+                                  minHeight: 30,
+                                  maxHeight: 30,
+                                ),
+                                onPressed: () {
+                                  if (customerIdNotifier.value != null) {
+                                    log(' Customer Id == ${customerIdNotifier.value}');
+
+                                    showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        backgroundColor: kTransparentColor,
+                                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                                        builder: (context) => DismissibleWidget(
+                                              context: context,
+                                              child: CustomBottomSheetWidget(id: customerIdNotifier.value),
+                                            ));
+                                  } else {
+                                    kSnackBar(context: context, content: 'Please select any Customer to show details!');
+                                  }
                                 },
+                                icon: const Icon(
+                                  Icons.visibility,
+                                  color: Colors.blue,
+                                  size: 25,
+                                )),
+                          ),
+                        ),
+
+                        //========== Add Customer Button ==========
+                        Flexible(
+                          flex: 1,
+                          child: FittedBox(
+                            child: IconButton(
+                              padding: const EdgeInsets.all(5),
+                              alignment: Alignment.center,
+                              constraints: const BoxConstraints(
+                                minHeight: 30,
+                                maxHeight: 30,
+                              ),
+                              onPressed: () async {
+                                // OrientationMode.isLandscape = false;
+                                // await OrientationMode.toPortrait();
+                                final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: true);
+
+                                if (id != null) {
+                                  final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
+
+                                  customerController.text = addedCustomer.customer;
+                                  customerNameNotifier.value = addedCustomer.customer;
+                                  customerIdNotifier.value = addedCustomer.id;
+                                  log(addedCustomer.company);
+                                }
+
+                                // await OrientationMode.toLandscape();
+                              },
+                              icon: const Icon(
+                                Icons.person_add,
+                                color: Colors.blue,
+                                size: 25,
                               ),
                             ),
-                            contentPadding: const EdgeInsets.all(10),
-                            hintText: 'Customer',
-                            hintStyle: const TextStyle(fontSize: 12),
-                            border: const OutlineInputBorder(),
-                          )),
-                      noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Customer Found!'))),
-                      suggestionsCallback: (pattern) async {
-                        return CustomerDatabase.instance.getCustomerSuggestions(pattern);
-                      },
-                      itemBuilder: (context, CustomerModel suggestion) {
-                        return ListTile(
-                          title: AutoSizeText(
-                            suggestion.customer,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10),
-                            minFontSize: 10,
-                            maxFontSize: 12,
                           ),
-                        );
-                      },
-                      onSuggestionSelected: (CustomerModel suggestion) {
-                        customerController.text = suggestion.customer;
-                        customerNameNotifier.value = suggestion.customer;
-                        customerIdNotifier.value = suggestion.id;
-                        log(suggestion.company);
-                      },
-                    ),
-                  ),
-                  kWidth5,
-
-                  //========== View Customer Button ==========
-                  Flexible(
-                    flex: 1,
-                    child: FittedBox(
-                      child: IconButton(
-                          padding: const EdgeInsets.all(5),
-                          alignment: Alignment.center,
-                          constraints: const BoxConstraints(
-                            minHeight: 30,
-                            maxHeight: 30,
-                          ),
-                          onPressed: () {
-                            if (customerIdNotifier.value != null) {
-                              log('$customerIdNotifier');
-
-                              showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  backgroundColor: kTransparentColor,
-                                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                                  builder: (context) => DismissibleWidget(
-                                        context: context,
-                                        child: CustomBottomSheetWidget(id: customerIdNotifier.value),
-                                      ));
-                            } else {
-                              kSnackBar(context: context, content: 'Please select any Customer to show details!');
-                            }
-                          },
-                          icon: const Icon(
-                            Icons.visibility,
-                            color: Colors.blue,
-                            size: 25,
-                          )),
-                    ),
-                  ),
-
-                  //========== Add Customer Button ==========
-                  Flexible(
-                    flex: 1,
-                    child: FittedBox(
-                      child: IconButton(
-                        padding: const EdgeInsets.all(5),
-                        alignment: Alignment.center,
-                        constraints: const BoxConstraints(
-                          minHeight: 30,
-                          maxHeight: 30,
                         ),
-                        onPressed: () async {
-                          // OrientationMode.isLandscape = false;
-                          // await OrientationMode.toPortrait();
-                          final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: true);
-
-                          if (id != null) {
-                            final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
-
-                            customerController.text = addedCustomer.customer;
-                            customerNameNotifier.value = addedCustomer.customer;
-                            customerIdNotifier.value = addedCustomer.id;
-                            log(addedCustomer.company);
-                          }
-
-                          // await OrientationMode.toLandscape();
-                        },
-                        icon: const Icon(
-                          Icons.person_add,
-                          color: Colors.blue,
-                          size: 25,
-                        ),
-                      ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
 
               kHeight5,
               //==================== Table Header ====================
@@ -247,9 +249,9 @@ class SaleSideWidget extends StatelessWidget {
                                   child: AutoSizeText(
                                     _product.itemName,
                                     softWrap: true,
-                                    style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
+                                    style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 9, color: kTextColor),
                                     overflow: TextOverflow.ellipsis,
-                                    minFontSize: 7,
+                                    minFontSize: 9,
                                     maxFontSize: 10,
                                     maxLines: 2,
                                   ),
@@ -272,7 +274,7 @@ class SaleSideWidget extends StatelessWidget {
                                       isDense: true,
                                       contentPadding: EdgeInsets.symmetric(vertical: 10),
                                     ),
-                                    style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7, color: kBlack),
+                                    style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 9, color: kTextColor),
                                     autovalidateMode: AutovalidateMode.onUserInteraction,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
@@ -308,7 +310,7 @@ class SaleSideWidget extends StatelessWidget {
                                       isDense: true,
                                       contentPadding: EdgeInsets.symmetric(vertical: 10),
                                     ),
-                                    style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7, color: kBlack),
+                                    style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 9, color: kTextColor),
                                     autovalidateMode: AutovalidateMode.onUserInteraction,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
@@ -340,8 +342,8 @@ class SaleSideWidget extends StatelessWidget {
                                             Converter.currency.format(num.tryParse(subTotal[index])),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
-                                            minFontSize: 7,
+                                            style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 9, color: kTextColor),
+                                            minFontSize: 9,
                                             maxFontSize: 10,
                                           );
                                         })),
@@ -368,6 +370,7 @@ class SaleSideWidget extends StatelessWidget {
                                       icon: const Icon(
                                         Icons.close,
                                         size: 16,
+                                        color: kTextColor,
                                       ),
                                     ))
                               ]);
@@ -382,10 +385,10 @@ class SaleSideWidget extends StatelessWidget {
               kHeight5,
 
               //==================== Price Sections ====================
-              const PriceSectionWidget(),
+              PriceSectionWidget(isVertical: isVertical),
 
               //==================== Payment Buttons Widget ====================
-              const PaymentButtonsWidget()
+              PaymentButtonsWidget(isVertical: isVertical)
             ],
           ),
         ),

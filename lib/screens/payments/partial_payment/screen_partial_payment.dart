@@ -14,34 +14,37 @@ class PartialPayment extends StatelessWidget {
     Key? key,
     required this.paymentDetails,
     this.purchase = false,
+    this.isVertical = false,
   }) : super(key: key);
 
   final Map paymentDetails;
   final bool purchase;
+  final bool isVertical;
   @override
   Widget build(BuildContext context) {
+    log('isVetical == $isVertical');
     final Size _screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: _screenSize.width * .02,
-                horizontal: _screenSize.width * .03),
+            padding: isVertical
+                ? EdgeInsets.symmetric(vertical: _screenSize.height * .01, horizontal: _screenSize.width * .015)
+                : EdgeInsets.symmetric(vertical: _screenSize.width * .02, horizontal: _screenSize.width * .03),
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: _screenSize.width * .015),
+                  padding: EdgeInsets.symmetric(horizontal: _screenSize.width * .015),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       //==================== Quick Cash Widget ====================
                       SizedBox(
-                        width: _screenSize.width / 1.3,
+                        width: isVertical ? _screenSize.width / 1.0 : _screenSize.width / 1.3,
                         child: QuickCashWidget(
                           totalPayable: paymentDetails['totalPayable'],
+                          isVertical: isVertical,
                         ),
                       ),
                       kHeight20,
@@ -78,59 +81,44 @@ class PartialPayment extends StatelessWidget {
                 ),
                 CustomMaterialBtton(
                     onPressed: () {
-                      final _formState =
-                          PaymentTypeWidget.formKey.currentState!;
+                      final _formState = PaymentTypeWidget.formKey.currentState!;
                       if (_formState.validate()) {
-                        final String _paid =
-                            PaymentTypeWidget.amountController.text.toString();
+                        final String _paid = PaymentTypeWidget.amountController.text.toString();
 
-                        final String _balance = PaymentDetailsTableWidget
-                            .balanceNotifier.value
-                            .toString();
+                        final String _balance = PaymentDetailsTableWidget.balanceNotifier.value.toString();
 
-                        final String _paymentStatus =
-                            _balance == '0.0' ? 'Paid' : 'Partial';
+                        final String _paymentStatus = _balance == '0.0' ? 'Paid' : 'Partial';
 
                         log(_balance);
 
-                        final String _paymentType =
-                            PaymentTypeWidget.payingByController!;
+                        final String _paymentType = PaymentTypeWidget.payingByController!;
 
                         final String? _paymentNote =
-                            PaymentTypeWidget.payingNoteController.text == ''
-                                ? null
-                                : PaymentTypeWidget.payingNoteController.text;
+                            PaymentTypeWidget.payingNoteController.text == '' ? null : PaymentTypeWidget.payingNoteController.text;
                         showDialog(
                           context: context,
                           builder: (ctx) {
                             return AlertDialog(
                               title: const Text(
-                                'Purchase',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
+                                'Parial Payment',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
-                              content: const Text(
-                                  'Do you want to add this purchase?'),
+                              content: Text(purchase ? 'Do you want to add this purchase?' : 'Do you want to add this sale?'),
                               actions: [
-                                TextButton(
-                                    onPressed: () => Navigator.pop(ctx),
-                                    child: const Text('Cancel')),
+                                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                                 TextButton(
                                     onPressed: () async {
                                       if (purchase) {
                                         //========== Purchase Payment ==========
-                                        await const PurchaseButtonsWidget()
-                                            .addPurchase(context,
-                                                argBalance: _balance,
-                                                argPaymentStatus:
-                                                    _paymentStatus,
-                                                argPaymentType: _paymentType,
-                                                argPaid: _paid,
-                                                argPurchaseNote: _paymentNote);
+                                        await const PurchaseButtonsWidget().addPurchase(context,
+                                            argBalance: _balance,
+                                            argPaymentStatus: _paymentStatus,
+                                            argPaymentType: _paymentType,
+                                            argPaid: _paid,
+                                            argPurchaseNote: _paymentNote);
                                       } else {
                                         //========== Sale Payment ==========
-                                        await const PaymentButtonsWidget()
-                                            .addSale(
+                                        await const PaymentButtonsWidget().addSale(
                                           context,
                                           argBalance: _balance,
                                           argPaymentStatus: _paymentStatus,
