@@ -15,8 +15,8 @@ import '../../core/utils/snackbar/snackbar.dart';
 
 // static const items = ['Cash Customer', 'Credit Customer'];
 
-class CustomerScreen extends StatelessWidget {
-  CustomerScreen({Key? key, this.fromPos = false}) : super(key: key);
+class AddCustomerScreen extends StatelessWidget {
+  AddCustomerScreen({Key? key, this.fromPos = false}) : super(key: key);
 
   //========== Bool ==========
   final bool fromPos;

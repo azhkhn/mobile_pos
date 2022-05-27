@@ -1,11 +1,11 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
 import 'dart:developer';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
@@ -58,31 +58,31 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
   //========== MediaQuery Screen Size ==========
   late Size _screenSize;
 
-  //========== Device Type ==========
-  late bool _isTablet;
-
   //========== TextEditing Controllers ==========
   final _productController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    _isTablet = DeviceUtil.isTablet;
     _screenSize = MediaQuery.of(context).size;
     _builderModel = null;
     return SizedBox(
       width: widget.isVertical ? double.infinity : _screenSize.width / 1.9,
       height: widget.isVertical ? _screenSize.height / 2.25 : double.infinity,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
+          //==================== Search & Filter ====================
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              //==================== Get All Products Search Field ====================
               Row(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  //========== Get All Products Search Field ==========
                   Flexible(
                     flex: 9,
                     child: TypeAheadField(
@@ -127,13 +127,11 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                       },
                       itemBuilder: (context, ItemMasterModel suggestion) {
                         return ListTile(
-                          title: AutoSizeText(
+                          title: Text(
                             suggestion.itemName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: _isTablet ? 12 : 10),
-                            minFontSize: 10,
-                            maxFontSize: 12,
+                            style: kText_10_12,
                           ),
                         );
                       },
@@ -166,8 +164,8 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                   ),
                 ],
               ),
-              kHeight5,
-              //==================== Get All Customers Search Field ====================
+              widget.isVertical ? kHeight5 : kNone,
+              //========== Get All Customers Search Field ==========
               widget.isVertical
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,13 +207,11 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                             },
                             itemBuilder: (context, CustomerModel suggestion) {
                               return ListTile(
-                                title: AutoSizeText(
+                                title: Text(
                                   suggestion.customer,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10),
-                                  minFontSize: 10,
-                                  maxFontSize: 12,
                                 ),
                               );
                             },
@@ -424,7 +420,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                       default:
                         if (snapshot.hasError) {
                           return const Center(
-                            child: AutoSizeText('No Item Found!'),
+                            child: Text('No Item Found!'),
                           );
                         }
                         if (snapshot.hasData) {
@@ -440,7 +436,6 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
                             return ProductSideWidget.itemsNotifier.value.isNotEmpty
                                 ? GridView.builder(
-                                    // shrinkWrap: widget.isVertical ? true : false,
                                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: widget.isVertical ? 4 : 5,
                                       childAspectRatio: (1 / .75),
@@ -483,37 +478,31 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                                       children: [
                                                         Expanded(
                                                           flex: 4,
-                                                          child: AutoSizeText(
+                                                          child: Text(
                                                             itemList[index].itemName ?? '',
                                                             textAlign: TextAlign.center,
                                                             softWrap: true,
-                                                            style: TextStyle(fontSize: _isTablet ? 10 : 8, color: kTextColor),
+                                                            style: kItemsTextStyle,
                                                             overflow: TextOverflow.ellipsis,
                                                             maxLines: 2,
-                                                            minFontSize: 8,
-                                                            maxFontSize: 10,
                                                           ),
                                                         ),
                                                         const Spacer(),
                                                         Expanded(
                                                           flex: 2,
-                                                          child: AutoSizeText(
+                                                          child: Text(
                                                             'Qty : ' + itemList[index].openingStock,
                                                             textAlign: TextAlign.center,
-                                                            style: TextStyle(fontSize: _isTablet ? 10 : 8, color: kTextColor),
+                                                            style: kItemsTextStyle,
                                                             maxLines: 1,
-                                                            minFontSize: 8,
-                                                            maxFontSize: 10,
                                                           ),
                                                         ),
                                                         Expanded(
                                                           flex: 2,
-                                                          child: AutoSizeText(
+                                                          child: Text(
                                                             Converter.currency.format(num.tryParse(itemList[index].sellingPrice)),
-                                                            style: TextStyle(fontSize: _isTablet ? 10 : 8, color: kTextColor),
+                                                            style: kItemsTextStyle,
                                                             maxLines: 1,
-                                                            minFontSize: 8,
-                                                            maxFontSize: 10,
                                                           ),
                                                         )
                                                       ],
@@ -521,7 +510,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                                   : Column(
                                                       mainAxisAlignment: MainAxisAlignment.center,
                                                       children: [
-                                                        AutoSizeText(
+                                                        Text(
                                                           _builderModel == 0
                                                               ? itemList[index].category
                                                               : _builderModel == 1
@@ -531,9 +520,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                                                       : '',
                                                           textAlign: TextAlign.center,
                                                           softWrap: true,
-                                                          style: TextStyle(fontSize: _isTablet ? 10 : 8, color: kTextColor),
-                                                          minFontSize: 8,
-                                                          maxFontSize: 10,
+                                                          style: kItemsTextStyle,
                                                           overflow: TextOverflow.ellipsis,
                                                           maxLines: _builderModel == 0 && itemList[index].category.toString().contains(' ')
                                                               ? 2
@@ -550,12 +537,12 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                     },
                                   )
                                 : const Center(
-                                    child: AutoSizeText('No Item Found!'),
+                                    child: Text('No Item Found!'),
                                   );
                           },
                         );
                       // : const Center(
-                      //     child: AutoSizeText('No Item Found!'),
+                      //     child: Text('No Item Found!'),
                       //   );
                     }
                   },

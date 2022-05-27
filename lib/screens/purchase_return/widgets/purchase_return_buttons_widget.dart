@@ -1,9 +1,7 @@
 import 'dart:developer' show log;
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
@@ -21,22 +19,24 @@ import '../../../core/utils/converters/converters.dart';
 
 class PurchaseReturnButtonsWidget extends StatelessWidget {
   const PurchaseReturnButtonsWidget({
+    this.isVertical = false,
     Key? key,
   }) : super(key: key);
 
+  final bool isVertical;
+
   @override
   Widget build(BuildContext context) {
-    final bool isTablet = DeviceUtil.isTablet;
     Size _screenSize = MediaQuery.of(context).size;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
-        log('==============================');
-        await PurchaseReturnDatabase.instance.getAllPurchasesReturns();
-        log('==============================');
-        await PurchaseReturnItemsDatabase.instance.getAllPurchaseReuturnItems();
-        log('==============================');
-        await TransactionDatabase.instance.getAllTransactions();
+        // log('==============================');
+        // await PurchaseReturnDatabase.instance.getAllPurchasesReturns();
+        // log('==============================');
+        // await PurchaseReturnItemsDatabase.instance.getAllPurchaseReuturnItems();
+        // log('==============================');
+        // await TransactionDatabase.instance.getAllTransactions();
       } catch (e) {
         log(e.toString());
       }
@@ -45,32 +45,27 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
     return Column(
       children: [
         Container(
-          height: _screenSize.width / 25,
+          height: isVertical
+              ? _screenSize.height / 26
+              : isVertical
+                  ? _screenSize.height / 22
+                  : _screenSize.width / 25,
           padding: const EdgeInsets.all(8),
           color: Colors.blueGrey,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              AutoSizeText(
+              Text(
                 'Total Payable',
-                style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
-                minFontSize: 8,
+                style: kItemsButtontyle,
               ),
               kWidth5,
               Flexible(
                 child: ValueListenableBuilder(
                   valueListenable: PurchaseReturnSideWidget.totalPayableNotifier,
                   builder: (context, totalPayable, child) {
-                    return AutoSizeText(
-                      totalPayable == 0 ? '0' : Converter.currency.format(totalPayable),
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: kWhite,
-                        fontWeight: FontWeight.bold,
-                        fontSize: isTablet ? 12 : 11,
-                      ),
-                      minFontSize: 8,
-                    );
+                    return Text(totalPayable == 0 ? '0' : Converter.currency.format(totalPayable),
+                        overflow: TextOverflow.ellipsis, style: kItemsButtontyle);
                   },
                 ),
               )
@@ -83,7 +78,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
           children: [
             Expanded(
               child: SizedBox(
-                height: _screenSize.width / 25,
+                height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
                     PurchaseReturnSideWidget.selectedProductsNotifier.value.clear();
@@ -103,10 +98,9 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(5),
                   color: Colors.red[400],
                   child: Center(
-                    child: AutoSizeText(
+                    child: Text(
                       'Cancel',
-                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
-                      minFontSize: 8,
+                      style: kItemsButtontyle,
                     ),
                   ),
                 ),
@@ -114,7 +108,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
             ),
             Expanded(
               child: SizedBox(
-                height: _screenSize.width / 25,
+                height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () async {
                     final int? customerId = PurchaseReturnSideWidget.supplierIdNotifier.value;
@@ -131,10 +125,9 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(5),
                   color: Colors.green[700],
                   child: Center(
-                    child: AutoSizeText(
+                    child: Text(
                       'Submit',
-                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
-                      minFontSize: 8,
+                      style: kItemsButtontyle,
                     ),
                   ),
                 ),

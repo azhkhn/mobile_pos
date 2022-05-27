@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/screens/barcode/screen_barcode.dart';
+import 'package:shop_ez/screens/customer/screen_customer_list.dart';
 import 'package:shop_ez/screens/invoices/screen_sales_invoice.dart';
 import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
 import 'package:shop_ez/screens/purchase_return/screen_purchase_return.dart';
@@ -14,7 +15,7 @@ import '../../screens/auth/pages/signup_screen.dart';
 import '../../screens/brand/screen_brand.dart';
 import '../../screens/business_profile/business_profile_screen.dart';
 import '../../screens/category/screen_category.dart';
-import '../../screens/customer/screen_customer.dart';
+import '../../screens/customer/screen_add_customer.dart';
 import '../../screens/expense/screen_expense.dart';
 import '../../screens/expense/screen_expense_category.dart';
 import '../../screens/home/home_screen.dart';
@@ -55,9 +56,9 @@ class RouteGenerator {
       case routeBrand:
         return MaterialPageRoute(builder: (_) => BrandScreen());
       case routeAddCustomer:
-        return MaterialPageRoute(builder: (_) => CustomerScreen(fromPos: args == true));
+        return MaterialPageRoute(builder: (_) => AddCustomerScreen(fromPos: args == true));
       case routeManageCustomer:
-        return MaterialPageRoute(builder: (_) => CustomerScreen());
+        return MaterialPageRoute(builder: (_) => CustomerList());
       case routeUnit:
         return MaterialPageRoute(builder: (_) => UnitScreen());
       case routeExpense:

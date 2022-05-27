@@ -1,11 +1,9 @@
 import 'dart:developer' show log;
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
@@ -36,7 +34,6 @@ class PaymentButtonsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isTablet = DeviceUtil.isTablet;
     Size _screenSize = MediaQuery.of(context).size;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -58,25 +55,19 @@ class PaymentButtonsWidget extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              AutoSizeText(
+              Text(
                 'Total Payable',
-                style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
-                minFontSize: 8,
+                style: kItemsButtontyle,
               ),
               kWidth5,
               Flexible(
                 child: ValueListenableBuilder(
                   valueListenable: SaleSideWidget.totalPayableNotifier,
                   builder: (context, totalPayable, child) {
-                    return AutoSizeText(
+                    return Text(
                       totalPayable == 0 ? '0' : Converter.currency.format(totalPayable),
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: kWhite,
-                        fontWeight: FontWeight.bold,
-                        fontSize: isTablet ? 12 : 11,
-                      ),
-                      minFontSize: 8,
+                      style: kItemsButtontyle,
                     );
                   },
                 ),
@@ -138,10 +129,9 @@ class PaymentButtonsWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(5),
                   color: Colors.yellow[800],
                   child: Center(
-                    child: AutoSizeText(
+                    child: Text(
                       'Credit Payment',
-                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
-                      minFontSize: 8,
+                      style: kItemsButtontyle,
                     ),
                   ),
                 ),
@@ -186,10 +176,9 @@ class PaymentButtonsWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(5),
                   color: Colors.green[700],
                   child: Center(
-                    child: AutoSizeText(
+                    child: Text(
                       'Full Payment',
-                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
-                      minFontSize: 8,
+                      style: kItemsButtontyle,
                     ),
                   ),
                 ),
@@ -250,10 +239,9 @@ class PaymentButtonsWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(5),
                   color: Colors.red[400],
                   child: Center(
-                    child: AutoSizeText(
+                    child: Text(
                       'Cancel',
-                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
-                      minFontSize: 8,
+                      style: kItemsButtontyle,
                     ),
                   ),
                 ),
@@ -282,10 +270,9 @@ class PaymentButtonsWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(5),
                   color: Colors.lightGreen[700],
                   child: Center(
-                    child: AutoSizeText(
+                    child: Text(
                       'Partial Payment',
-                      style: TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: isTablet ? 12 : 11),
-                      minFontSize: 8,
+                      style: kItemsButtontyle,
                     ),
                   ),
                 ),

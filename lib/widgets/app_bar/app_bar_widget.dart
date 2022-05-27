@@ -14,7 +14,10 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
     return AppBar(
       backgroundColor: appBarColor,
       elevation: 0,
-      title: Text(title),
+      title: Text(
+        title,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
       actions: actions,
     );
   }

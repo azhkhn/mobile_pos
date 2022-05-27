@@ -1,7 +1,4 @@
-import 'dart:developer' show log;
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
@@ -13,13 +10,6 @@ class PurchaseReturn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      log('============================== landscape ============================');
-
-      if (OrientationMode.isLandscape) {
-        await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
-      }
-    });
     Size _screenSize = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -27,28 +17,43 @@ class PurchaseReturn extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: _screenSize.width * .01, horizontal: _screenSize.width * .02),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            //==================== Both Sides ====================
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                //========================================                                  ========================================
-                //========================================     Purchase Return Side Widget     ========================================
-                //========================================                                  ========================================
-                PurchaseReturnSideWidget(),
+          child: OrientationMode.deviceMode == OrientationMode.normalMode
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    //========================================                                  ========================================
+                    //========================================     Purchase Return Side Widget     ========================================
+                    //========================================                                  ========================================
+                    PurchaseReturnSideWidget(),
 
-                //==================== Constant Width ====================
-                kWidth20,
+                    //==================== Constant Width ====================
+                    kWidth20,
 
-                //========================================                                  ========================================
-                //======================================== Purchase Return Product Side Widget ========================================
-                //========================================                                  ========================================
-                PurchaseReturnProductSideWidget()
-              ],
-            ),
-          ),
+                    //========================================                                  ========================================
+                    //======================================== Purchase Return Product Side Widget ========================================
+                    //========================================                                  ========================================
+                    PurchaseReturnProductSideWidget()
+                  ],
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    //========================================                                  ========================================
+                    //======================================== Purchase Return Product Side Widget ========================================
+                    //========================================                                  ========================================
+                    PurchaseReturnProductSideWidget(isVertical: true),
+
+                    //==================== Divider ====================
+                    Divider(thickness: 1, height: 10),
+
+                    //========================================                                  ========================================
+                    //========================================     Purchase Return Side Widget     ========================================
+                    //========================================                                  ========================================
+                    PurchaseReturnSideWidget(isVertical: true),
+                  ],
+                ),
         ),
       ),
     );

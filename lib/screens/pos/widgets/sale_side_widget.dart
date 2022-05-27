@@ -1,10 +1,11 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
 import 'dart:developer';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/debouncer/debouncer.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
@@ -17,7 +18,6 @@ import 'package:shop_ez/screens/pos/widgets/price_section_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
-import '../../../core/utils/device/device.dart';
 import '../../../core/utils/snackbar/snackbar.dart';
 import '../../../widgets/gesture_dismissible_widget/dismissible_widget.dart';
 
@@ -55,20 +55,46 @@ class SaleSideWidget extends StatelessWidget {
     Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
-        selectedProductsNotifier.value.clear();
-        subTotalNotifier.value.clear();
-        itemTotalVatNotifier.value.clear();
-        customerController.clear();
-        quantityNotifier.value.clear();
-        unitPriceNotifier.value.clear();
-        totalItemsNotifier.value = 0;
-        totalQuantityNotifier.value = 0;
-        totalAmountNotifier.value = 0;
-        totalVatNotifier.value = 0;
-        totalPayableNotifier.value = 0;
-        customerIdNotifier.value = null;
-        customerNameNotifier.value = null;
-        return true;
+        if (selectedProductsNotifier.value.isEmpty) {
+          selectedProductsNotifier.value.clear();
+          subTotalNotifier.value.clear();
+          itemTotalVatNotifier.value.clear();
+          customerController.clear();
+          quantityNotifier.value.clear();
+          unitPriceNotifier.value.clear();
+          totalItemsNotifier.value = 0;
+          totalQuantityNotifier.value = 0;
+          totalAmountNotifier.value = 0;
+          totalVatNotifier.value = 0;
+          totalPayableNotifier.value = 0;
+          customerIdNotifier.value = null;
+          customerNameNotifier.value = null;
+          return true;
+        } else {
+          showDialog(
+              context: context,
+              builder: (context) => KAlertDialog(
+                    content: const Text('Are you sure want to cancel the sale?'),
+                    submitAction: () {
+                      selectedProductsNotifier.value.clear();
+                      subTotalNotifier.value.clear();
+                      itemTotalVatNotifier.value.clear();
+                      customerController.clear();
+                      quantityNotifier.value.clear();
+                      unitPriceNotifier.value.clear();
+                      totalItemsNotifier.value = 0;
+                      totalQuantityNotifier.value = 0;
+                      totalAmountNotifier.value = 0;
+                      totalVatNotifier.value = 0;
+                      totalPayableNotifier.value = 0;
+                      customerIdNotifier.value = null;
+                      customerNameNotifier.value = null;
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                  ));
+          return false;
+        }
       },
       child: Expanded(
         child: SizedBox(
@@ -120,13 +146,11 @@ class SaleSideWidget extends StatelessWidget {
                             },
                             itemBuilder: (context, CustomerModel suggestion) {
                               return ListTile(
-                                title: AutoSizeText(
+                                title: Text(
                                   suggestion.customer,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10),
-                                  minFontSize: 10,
-                                  maxFontSize: 12,
+                                  style: kText_10_12,
                                 ),
                               );
                             },
@@ -246,13 +270,11 @@ class SaleSideWidget extends StatelessWidget {
                                   color: Colors.white,
                                   height: 30,
                                   alignment: Alignment.centerLeft,
-                                  child: AutoSizeText(
+                                  child: Text(
                                     _product.itemName,
                                     softWrap: true,
-                                    style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 9, color: kTextColor),
+                                    style: kItemsTextStyle,
                                     overflow: TextOverflow.ellipsis,
-                                    minFontSize: 9,
-                                    maxFontSize: 10,
                                     maxLines: 2,
                                   ),
                                 ),
@@ -274,7 +296,7 @@ class SaleSideWidget extends StatelessWidget {
                                       isDense: true,
                                       contentPadding: EdgeInsets.symmetric(vertical: 10),
                                     ),
-                                    style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 9, color: kTextColor),
+                                    style: kItemsTextStyle,
                                     autovalidateMode: AutovalidateMode.onUserInteraction,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
@@ -310,7 +332,7 @@ class SaleSideWidget extends StatelessWidget {
                                       isDense: true,
                                       contentPadding: EdgeInsets.symmetric(vertical: 10),
                                     ),
-                                    style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 9, color: kTextColor),
+                                    style: kItemsTextStyle,
                                     autovalidateMode: AutovalidateMode.onUserInteraction,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
@@ -338,13 +360,11 @@ class SaleSideWidget extends StatelessWidget {
                                     child: ValueListenableBuilder(
                                         valueListenable: subTotalNotifier,
                                         builder: (context, List<String> subTotal, child) {
-                                          return AutoSizeText(
+                                          return Text(
                                             Converter.currency.format(num.tryParse(subTotal[index])),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 9, color: kTextColor),
-                                            minFontSize: 9,
-                                            maxFontSize: 10,
+                                            style: kItemsTextStyle,
                                           );
                                         })),
                                 //==================== Delete Icon ====================

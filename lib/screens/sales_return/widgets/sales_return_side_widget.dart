@@ -1,7 +1,6 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
 import 'dart:developer';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
@@ -21,13 +20,15 @@ import 'package:shop_ez/screens/sales_return/widgets/sales_return_price_section.
 import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
-import '../../../core/utils/device/device.dart';
 import '../../../core/utils/snackbar/snackbar.dart';
 
 class SalesReturnSideWidget extends StatelessWidget {
   const SalesReturnSideWidget({
     Key? key,
+    this.isVertical = false,
   }) : super(key: key);
+
+  final bool isVertical;
 
   //==================== Value Notifiers ====================
   static final ValueNotifier<List<ItemMasterModel>> selectedProductsNotifier = ValueNotifier([]);
@@ -58,7 +59,6 @@ class SalesReturnSideWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //========== Device Utils ==========
-    final bool _isTablet = DeviceUtil.isTablet;
     Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
@@ -79,353 +79,351 @@ class SalesReturnSideWidget extends StatelessWidget {
         originalSaleIdNotifier.value = null;
         return true;
       },
-      child: SizedBox(
-        width: _screenSize.width / 2.5,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                //==================== Get All Customer Search Field ====================
-                Flexible(
-                  flex: 5,
-                  child: ValueListenableBuilder(
-                      valueListenable: originalSaleIdNotifier,
-                      builder: (context, _, __) {
-                        return TypeAheadField(
-                          debounceDuration: const Duration(milliseconds: 500),
-                          hideSuggestionsOnKeyboardHide: true,
-                          textFieldConfiguration: TextFieldConfiguration(
-                              enabled: originalSaleIdNotifier.value == null,
-                              controller: customerController,
-                              style: kText_10_12,
-                              decoration: InputDecoration(
-                                fillColor: Colors.white,
-                                filled: true,
-                                isDense: true,
-                                suffixIconConstraints: const BoxConstraints(
-                                  minWidth: 10,
-                                  minHeight: 10,
-                                ),
-                                suffixIcon: Padding(
-                                  padding: kClearTextIconPadding,
-                                  child: InkWell(
-                                    child: const Icon(Icons.clear, size: 15),
-                                    onTap: () {
-                                      customerIdNotifier.value = null;
-                                      customerController.clear();
-                                    },
-                                  ),
-                                ),
-                                contentPadding: const EdgeInsets.all(10),
-                                hintText: 'Customer',
-                                hintStyle: kText_10_12,
-                                border: const OutlineInputBorder(),
-                              )),
-                          noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No customer Found!'))),
-                          suggestionsCallback: (pattern) async {
-                            return CustomerDatabase.instance.getCustomerSuggestions(pattern);
-                          },
-                          itemBuilder: (context, CustomerModel suggestion) {
-                            return Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: AutoSizeText(
-                                suggestion.customer,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: _isTablet ? 12 : 10),
-                                minFontSize: 10,
-                                maxFontSize: 12,
-                              ),
-                            );
-                          },
-                          onSuggestionSelected: (CustomerModel suggestion) {
-                            customerController.text = suggestion.customer;
-                            customerNameNotifier.value = suggestion.customer;
-                            customerIdNotifier.value = suggestion.id;
-                            log(suggestion.company);
-                          },
-                        );
-                      }),
-                ),
-                kWidth5,
-
-                //==================== Get All Sales Invoices ====================
-                Flexible(
-                  flex: 5,
-                  child: TypeAheadField(
-                    debounceDuration: const Duration(milliseconds: 500),
-                    hideSuggestionsOnKeyboardHide: true,
-                    textFieldConfiguration: TextFieldConfiguration(
-                        controller: saleInvoiceController,
-                        style: kText_10_12,
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          isDense: true,
-                          suffixIconConstraints: const BoxConstraints(
-                            minWidth: 10,
-                            minHeight: 10,
-                          ),
-                          suffixIcon: Padding(
-                            padding: kClearTextIconPadding,
-                            child: InkWell(
-                              child: const Icon(
-                                Icons.clear,
-                                size: 15,
-                              ),
-                              onTap: () async {
-                                saleInvoiceController.clear();
-                                if (originalSaleIdNotifier.value != null) {
-                                  return resetSalesReturn();
-                                }
-                                originalInvoiceNumberNotifier.value = null;
-                                originalSaleIdNotifier.value = null;
-                              },
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Invoice No',
-                          hintStyle: kText_10_12,
-                          border: const OutlineInputBorder(),
-                        )),
-                    noItemsFoundBuilder: (context) => SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText_10_12))),
-                    suggestionsCallback: (pattern) async {
-                      return await salesDB.getSalesByInvoiceSuggestions(pattern);
-                    },
-                    itemBuilder: (context, SalesModel suggestion) {
-                      return Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Text(
-                          suggestion.invoiceNumber!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: kText_10_12,
-                        ),
-                      );
-                    },
-                    onSuggestionSelected: (SalesModel sale) async {
-                      resetSalesReturn();
-                      saleInvoiceController.text = sale.invoiceNumber!;
-                      originalInvoiceNumberNotifier.value = sale.invoiceNumber!;
-                      originalSaleIdNotifier.value = sale.id;
-                      await getSalesDetails(sale);
-
-                      log(sale.invoiceNumber!);
-                    },
-                  ),
-                ),
-                kWidth5,
-
-                //========== View customer Button ==========
-                Flexible(
-                  flex: 1,
-                  child: FittedBox(
-                    child: IconButton(
-                        padding: const EdgeInsets.all(5),
-                        alignment: Alignment.center,
-                        constraints: const BoxConstraints(
-                          minHeight: 45,
-                          maxHeight: 45,
-                        ),
-                        onPressed: () {
-                          if (customerIdNotifier.value != null) {
-                            log('${customerIdNotifier.value}');
-
-                            showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                backgroundColor: kTransparentColor,
-                                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                                builder: (context) => DismissibleWidget(
-                                      context: context,
-                                      child: CustomBottomSheetWidget(
-                                        id: customerIdNotifier.value,
-                                        supplier: false,
+      child: Expanded(
+        child: SizedBox(
+          width: isVertical ? double.infinity : _screenSize.width / 2.5,
+          height: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              isVertical
+                  ? kNone
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //==================== Get All Customer Search Field ====================
+                        Flexible(
+                          flex: 5,
+                          child: ValueListenableBuilder(
+                              valueListenable: originalSaleIdNotifier,
+                              builder: (context, _, __) {
+                                return TypeAheadField(
+                                  debounceDuration: const Duration(milliseconds: 500),
+                                  hideSuggestionsOnKeyboardHide: true,
+                                  textFieldConfiguration: TextFieldConfiguration(
+                                      enabled: originalSaleIdNotifier.value == null,
+                                      controller: customerController,
+                                      style: kText_10_12,
+                                      decoration: InputDecoration(
+                                        fillColor: Colors.white,
+                                        filled: true,
+                                        isDense: true,
+                                        suffixIconConstraints: const BoxConstraints(
+                                          minWidth: 10,
+                                          minHeight: 10,
+                                        ),
+                                        suffixIcon: Padding(
+                                          padding: kClearTextIconPadding,
+                                          child: InkWell(
+                                            child: const Icon(Icons.clear, size: 15),
+                                            onTap: () {
+                                              customerIdNotifier.value = null;
+                                              customerController.clear();
+                                            },
+                                          ),
+                                        ),
+                                        contentPadding: const EdgeInsets.all(10),
+                                        hintText: 'Customer',
+                                        hintStyle: kText_10_12,
+                                        border: const OutlineInputBorder(),
+                                      )),
+                                  noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No customer Found!'))),
+                                  suggestionsCallback: (pattern) async {
+                                    return CustomerDatabase.instance.getCustomerSuggestions(pattern);
+                                  },
+                                  itemBuilder: (context, CustomerModel suggestion) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: Text(
+                                        suggestion.customer,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: kText_10_12,
                                       ),
-                                    ));
-                          } else {
-                            kSnackBar(context: context, content: 'Please select any Customer to show details!');
-                          }
-                        },
-                        icon: const Icon(
-                          Icons.visibility,
-                          color: Colors.blue,
-                          size: 25,
-                        )),
-                  ),
-                ),
-
-                //========== Add customer Button ==========
-                Flexible(
-                  flex: 1,
-                  child: FittedBox(
-                    child: IconButton(
-                        padding: const EdgeInsets.all(5),
-                        alignment: Alignment.center,
-                        constraints: const BoxConstraints(
-                          minHeight: 45,
-                          maxHeight: 45,
+                                    );
+                                  },
+                                  onSuggestionSelected: (CustomerModel suggestion) {
+                                    customerController.text = suggestion.customer;
+                                    customerNameNotifier.value = suggestion.customer;
+                                    customerIdNotifier.value = suggestion.id;
+                                    log(suggestion.company);
+                                  },
+                                );
+                              }),
                         ),
-                        onPressed: () async {
-                          // OrientationMode.isLandscape = false;
-                          // await OrientationMode.toPortrait();
-                          final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: true);
+                        kWidth5,
 
-                          if (id != null) {
-                            final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
-
-                            customerController.text = addedCustomer.customer;
-                            customerNameNotifier.value = addedCustomer.customer;
-                            customerIdNotifier.value = addedCustomer.id;
-                            log(addedCustomer.company);
-                          }
-
-                          // await OrientationMode.toLandscape();
-                        },
-                        icon: const Icon(
-                          Icons.person_add,
-                          color: Colors.blue,
-                          size: 25,
-                        )),
-                  ),
-                ),
-              ],
-            ),
-
-            kHeight5,
-            //==================== Table Header ====================
-            const SalesTableHeaderWidget(),
-
-            //==================== Product Items Table ====================
-            Expanded(
-              child: SingleChildScrollView(
-                child: ValueListenableBuilder(
-                  valueListenable: selectedProductsNotifier,
-                  builder: (context, List<ItemMasterModel> selectedProducts, child) {
-                    return Table(
-                      columnWidths: const {
-                        0: FractionColumnWidth(0.30),
-                        1: FractionColumnWidth(0.23),
-                        2: FractionColumnWidth(0.12),
-                        3: FractionColumnWidth(0.23),
-                        4: FractionColumnWidth(0.12),
-                      },
-                      border: TableBorder.all(color: Colors.grey, width: 0.5),
-                      children: List<TableRow>.generate(
-                        selectedProducts.length,
-                        (index) {
-                          final ItemMasterModel _product = selectedProducts[index];
-                          return TableRow(children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                              color: Colors.white,
-                              height: 30,
-                              alignment: Alignment.centerLeft,
-                              child: AutoSizeText(
-                                _product.itemName,
-                                softWrap: true,
-                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
-                                overflow: TextOverflow.ellipsis,
-                                minFontSize: 7,
-                                maxFontSize: 10,
-                                maxLines: 2,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                              color: Colors.white,
-                              height: 30,
-                              alignment: Alignment.center,
-                              child: AutoSizeText(
-                                _product.vatMethod == 'Exclusive'
-                                    ? Converter.currency.format(num.parse(_product.sellingPrice))
-                                    : Converter.currency.format(getExclusiveAmount(sellingPrice: _product.sellingPrice, vatRate: _product.vatRate)),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
-                                minFontSize: 7,
-                                maxFontSize: 10,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                              color: Colors.white,
-                              height: 30,
-                              alignment: Alignment.topCenter,
-                              child: TextFormField(
-                                controller: quantityNotifier.value[index],
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
+                        //==================== Get All Sales Invoices ====================
+                        Flexible(
+                          flex: 5,
+                          child: TypeAheadField(
+                            debounceDuration: const Duration(milliseconds: 500),
+                            hideSuggestionsOnKeyboardHide: true,
+                            textFieldConfiguration: TextFieldConfiguration(
+                                controller: saleInvoiceController,
+                                style: kText_10_12,
+                                decoration: InputDecoration(
+                                  fillColor: Colors.white,
+                                  filled: true,
                                   isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+                                  suffixIconConstraints: const BoxConstraints(
+                                    minWidth: 10,
+                                    minHeight: 10,
+                                  ),
+                                  suffixIcon: Padding(
+                                    padding: kClearTextIconPadding,
+                                    child: InkWell(
+                                      child: const Icon(
+                                        Icons.clear,
+                                        size: 15,
+                                      ),
+                                      onTap: () async {
+                                        saleInvoiceController.clear();
+                                        if (originalSaleIdNotifier.value != null) {
+                                          return resetSalesReturn();
+                                        }
+                                        originalInvoiceNumberNotifier.value = null;
+                                        originalSaleIdNotifier.value = null;
+                                      },
+                                    ),
+                                  ),
+                                  contentPadding: const EdgeInsets.all(10),
+                                  hintText: 'Invoice No',
+                                  hintStyle: kText_10_12,
+                                  border: const OutlineInputBorder(),
+                                )),
+                            noItemsFoundBuilder: (context) =>
+                                SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText_10_12))),
+                            suggestionsCallback: (pattern) async {
+                              return await salesDB.getSalesByInvoiceSuggestions(pattern);
+                            },
+                            itemBuilder: (context, SalesModel suggestion) {
+                              return Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Text(
+                                  suggestion.invoiceNumber!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: kText_10_12,
                                 ),
-                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7, color: kBlack),
-                                onChanged: (value) {
-                                  onItemQuantityChanged(value, selectedProducts, index);
+                              );
+                            },
+                            onSuggestionSelected: (SalesModel sale) async {
+                              resetSalesReturn();
+                              saleInvoiceController.text = sale.invoiceNumber!;
+                              originalInvoiceNumberNotifier.value = sale.invoiceNumber!;
+                              originalSaleIdNotifier.value = sale.id;
+                              await getSalesDetails(sale);
+
+                              log(sale.invoiceNumber!);
+                            },
+                          ),
+                        ),
+                        kWidth5,
+
+                        //========== View customer Button ==========
+                        Flexible(
+                          flex: 1,
+                          child: FittedBox(
+                            child: IconButton(
+                                padding: const EdgeInsets.all(5),
+                                alignment: Alignment.center,
+                                constraints: const BoxConstraints(
+                                  minHeight: 45,
+                                  maxHeight: 45,
+                                ),
+                                onPressed: () {
+                                  if (customerIdNotifier.value != null) {
+                                    log('${customerIdNotifier.value}');
+
+                                    showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        backgroundColor: kTransparentColor,
+                                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                                        builder: (context) => DismissibleWidget(
+                                              context: context,
+                                              child: CustomBottomSheetWidget(
+                                                id: customerIdNotifier.value,
+                                                supplier: false,
+                                              ),
+                                            ));
+                                  } else {
+                                    kSnackBar(context: context, content: 'Please select any Customer to show details!');
+                                  }
                                 },
+                                icon: const Icon(
+                                  Icons.visibility,
+                                  color: Colors.blue,
+                                  size: 25,
+                                )),
+                          ),
+                        ),
+
+                        //========== Add customer Button ==========
+                        Flexible(
+                          flex: 1,
+                          child: FittedBox(
+                            child: IconButton(
+                                padding: const EdgeInsets.all(5),
+                                alignment: Alignment.center,
+                                constraints: const BoxConstraints(
+                                  minHeight: 45,
+                                  maxHeight: 45,
+                                ),
+                                onPressed: () async {
+                                  // OrientationMode.isLandscape = false;
+                                  // await OrientationMode.toPortrait();
+                                  final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: true);
+
+                                  if (id != null) {
+                                    final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
+
+                                    customerController.text = addedCustomer.customer;
+                                    customerNameNotifier.value = addedCustomer.customer;
+                                    customerIdNotifier.value = addedCustomer.id;
+                                    log(addedCustomer.company);
+                                  }
+
+                                  // await OrientationMode.toLandscape();
+                                },
+                                icon: const Icon(
+                                  Icons.person_add,
+                                  color: Colors.blue,
+                                  size: 25,
+                                )),
+                          ),
+                        ),
+                      ],
+                    ),
+
+              kHeight5,
+              //==================== Table Header ====================
+              const SalesTableHeaderWidget(),
+
+              //==================== Product Items Table ====================
+              Expanded(
+                child: SingleChildScrollView(
+                  child: ValueListenableBuilder(
+                    valueListenable: selectedProductsNotifier,
+                    builder: (context, List<ItemMasterModel> selectedProducts, child) {
+                      return Table(
+                        columnWidths: const {
+                          0: FractionColumnWidth(0.30),
+                          1: FractionColumnWidth(0.23),
+                          2: FractionColumnWidth(0.12),
+                          3: FractionColumnWidth(0.23),
+                          4: FractionColumnWidth(0.12),
+                        },
+                        border: TableBorder.all(color: Colors.grey, width: 0.5),
+                        children: List<TableRow>.generate(
+                          selectedProducts.length,
+                          (index) {
+                            final ItemMasterModel _product = selectedProducts[index];
+                            return TableRow(children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                color: Colors.white,
+                                height: 30,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  _product.itemName,
+                                  softWrap: true,
+                                  style: kItemsTextStyle,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
                               ),
-                            ),
-                            Container(
+                              Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                 color: Colors.white,
                                 height: 30,
                                 alignment: Alignment.center,
-                                child: ValueListenableBuilder(
-                                    valueListenable: subTotalNotifier,
-                                    builder: (context, List<String> subTotal, child) {
-                                      return AutoSizeText(
-                                        Converter.currency.format(num.tryParse(subTotal[index])),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 7),
-                                        minFontSize: 7,
-                                        maxFontSize: 10,
-                                      );
-                                    })),
-                            Container(
+                                child: Text(
+                                  _product.vatMethod == 'Exclusive'
+                                      ? Converter.currency.format(num.parse(_product.sellingPrice))
+                                      : Converter.currency.format(getExclusiveAmount(sellingPrice: _product.sellingPrice, vatRate: _product.vatRate)),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: kItemsTextStyle,
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                 color: Colors.white,
                                 height: 30,
-                                alignment: Alignment.center,
-                                child: IconButton(
-                                  onPressed: () {
-                                    selectedProducts.removeAt(index);
-                                    subTotalNotifier.value.removeAt(index);
-                                    itemTotalVatNotifier.value.removeAt(index);
-                                    quantityNotifier.value.removeAt(index);
-                                    subTotalNotifier.notifyListeners();
-                                    selectedProductsNotifier.notifyListeners();
-                                    totalItemsNotifier.value -= 1;
-                                    getTotalQuantity();
-                                    getTotalAmount();
-                                    getTotalVAT();
-                                    getTotalPayable();
-                                  },
-                                  icon: const Icon(
-                                    Icons.close,
-                                    size: 16,
+                                alignment: Alignment.topCenter,
+                                child: TextFormField(
+                                  controller: quantityNotifier.value[index],
+                                  keyboardType: TextInputType.number,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(vertical: 10),
                                   ),
-                                ))
-                          ]);
-                        },
-                      ),
-                    );
-                  },
+                                  style: kItemsTextStyle,
+                                  onChanged: (value) {
+                                    onItemQuantityChanged(value, selectedProducts, index);
+                                  },
+                                ),
+                              ),
+                              Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                  color: Colors.white,
+                                  height: 30,
+                                  alignment: Alignment.center,
+                                  child: ValueListenableBuilder(
+                                      valueListenable: subTotalNotifier,
+                                      builder: (context, List<String> subTotal, child) {
+                                        return Text(
+                                          Converter.currency.format(num.tryParse(subTotal[index])),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: kItemsTextStyle,
+                                        );
+                                      })),
+                              Container(
+                                  color: Colors.white,
+                                  height: 30,
+                                  alignment: Alignment.center,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      selectedProducts.removeAt(index);
+                                      subTotalNotifier.value.removeAt(index);
+                                      itemTotalVatNotifier.value.removeAt(index);
+                                      quantityNotifier.value.removeAt(index);
+                                      subTotalNotifier.notifyListeners();
+                                      selectedProductsNotifier.notifyListeners();
+                                      totalItemsNotifier.value -= 1;
+                                      getTotalQuantity();
+                                      getTotalAmount();
+                                      getTotalVAT();
+                                      getTotalPayable();
+                                    },
+                                    icon: const Icon(
+                                      Icons.close,
+                                      size: 16,
+                                    ),
+                                  ))
+                            ]);
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-            kHeight5,
+              kHeight5,
 
-            //==================== Price Sections ====================
-            const SalesReturnPriceSectionWidget(),
+              //==================== Price Sections ====================
+              SalesReturnPriceSectionWidget(isVertical: isVertical),
 
-            //==================== Payment Buttons Widget ====================
-            const SalesReturnButtonsWidget()
-          ],
+              //==================== Payment Buttons Widget ====================
+              SalesReturnButtonsWidget(isVertical: isVertical)
+            ],
+          ),
         ),
       ),
     );

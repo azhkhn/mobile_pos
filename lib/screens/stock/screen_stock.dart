@@ -1,14 +1,14 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
 
 import 'dart:developer' show log;
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/db/db_functions/brand/brand_database.dart';
 import 'package:shop_ez/db/db_functions/category/category_db.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
@@ -47,12 +47,14 @@ class ScreenStock extends StatelessWidget {
 //========== FutureBuilder Database ==========
   Future<List<dynamic>>? futureGrid;
 
+//========== Orientation Mode ==========
+  final isVertical = OrientationMode.deviceMode == OrientationMode.verticalMode;
+
   @override
   Widget build(BuildContext context) {
     log('ScreenStock => Build() Called!');
     _builderModel = null;
     futureGrid = ItemMasterDatabase.instance.getAllItems();
-    final bool _isTablet = DeviceUtil.isTablet;
     // Size _screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -62,7 +64,7 @@ class ScreenStock extends StatelessWidget {
       backgroundColor: kBackgroundGrey,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: EdgeInsets.all(isVertical ? 10.0 : 20.0),
           child: Stack(
             children: [
               Column(
@@ -116,13 +118,11 @@ class ScreenStock extends StatelessWidget {
                           },
                           itemBuilder: (context, ItemMasterModel suggestion) {
                             return ListTile(
-                              title: AutoSizeText(
+                              title: Text(
                                 suggestion.itemName,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: _isTablet ? 12 : 10),
-                                minFontSize: 10,
-                                maxFontSize: 12,
+                                style: kText_10_12,
                               ),
                             );
                           },
@@ -157,87 +157,106 @@ class ScreenStock extends StatelessWidget {
                     ],
                   ),
 
+                  !isVertical ? kHeight5 : kNone,
+
                   //==================== Quick Filter Buttons ====================
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: CustomMaterialBtton(
-                            buttonColor: Colors.blue,
-                            onPressed: () async {
-                              _builderModel = 0;
+                  Padding(
+                    padding: isVertical ? const EdgeInsets.symmetric(vertical: 5.0) : const EdgeInsets.only(bottom: 5),
+                    child: SizedBox(
+                      height: 30,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 4,
+                            child: CustomMaterialBtton(
+                                buttonColor: Colors.blue,
+                                onPressed: () async {
+                                  _builderModel = 0;
 
-                              if (categories.isNotEmpty) {
-                                itemsNotifier.value = categories;
-                              } else {
-                                categories = await categoryDB.getAllCategories();
-                                itemsNotifier.value = categories;
-                              }
-                            },
-                            buttonText: 'Categories'),
-                      ),
-                      kWidth5,
-                      Expanded(
-                        flex: 5,
-                        child: CustomMaterialBtton(
-                            onPressed: () async {
-                              _builderModel = 1;
-                              if (subCategories.isNotEmpty) {
-                                itemsNotifier.value = subCategories;
-                              } else {
-                                subCategories = await subCategoryDB.getAllSubCategories();
-                                itemsNotifier.value = subCategories;
-                              }
-                            },
-                            buttonColor: Colors.orange,
-                            buttonText: 'Sub Categories'),
-                      ),
-                      kWidth5,
-                      Expanded(
-                        flex: 3,
-                        child: CustomMaterialBtton(
-                          onPressed: () async {
-                            _builderModel = 2;
-                            if (brands.isNotEmpty) {
-                              itemsNotifier.value = brands;
-                            } else {
-                              brands = await brandDB.getAllBrands();
-                              itemsNotifier.value = brands;
-                            }
-                          },
-                          buttonColor: Colors.indigo,
-                          buttonText: 'Brands',
-                        ),
-                      ),
-                      kWidth5,
-                      Expanded(
-                        flex: 2,
-                        child: MaterialButton(
-                          onPressed: () async {
-                            _productController.clear();
-                            _builderModel = null;
-
-                            if (itemsList.isNotEmpty) {
-                              itemsNotifier.value = itemsList;
-                            } else {
-                              itemsList = await itemMasterDB.getAllItems();
-                              itemsNotifier.value = itemsList;
-                            }
-                          },
-                          color: Colors.blue,
-                          child: const Icon(
-                            Icons.rotate_left,
-                            color: kWhite,
+                                  if (categories.isNotEmpty) {
+                                    log('loading Categories..');
+                                    itemsNotifier.value = categories;
+                                    itemsNotifier.notifyListeners();
+                                  } else {
+                                    log('fetching Categories..');
+                                    categories = await categoryDB.getAllCategories();
+                                    itemsNotifier.value = categories;
+                                    itemsNotifier.notifyListeners();
+                                  }
+                                },
+                                padding: kPadding0,
+                                fontSize: 12,
+                                buttonText: 'Categories'),
                           ),
-                        ),
-                      )
-                    ],
+                          kWidth5,
+                          Expanded(
+                            flex: 5,
+                            child: CustomMaterialBtton(
+                                onPressed: () async {
+                                  _builderModel = 1;
+                                  if (subCategories.isNotEmpty) {
+                                    itemsNotifier.value = subCategories;
+                                  } else {
+                                    subCategories = await subCategoryDB.getAllSubCategories();
+                                    itemsNotifier.value = subCategories;
+                                  }
+                                },
+                                padding: kPadding0,
+                                fontSize: 12,
+                                buttonColor: Colors.orange,
+                                buttonText: 'Sub Categories'),
+                          ),
+                          kWidth5,
+                          Expanded(
+                            flex: 3,
+                            child: CustomMaterialBtton(
+                              onPressed: () async {
+                                _builderModel = 2;
+                                if (brands.isNotEmpty) {
+                                  itemsNotifier.value = brands;
+                                } else {
+                                  brands = await brandDB.getAllBrands();
+                                  itemsNotifier.value = brands;
+                                }
+                              },
+                              padding: kPadding0,
+                              buttonColor: Colors.indigo,
+                              fontSize: 12,
+                              buttonText: 'Brands',
+                            ),
+                          ),
+                          kWidth5,
+                          Expanded(
+                            flex: 2,
+                            child: MaterialButton(
+                              onPressed: () async {
+                                _productController.clear();
+                                _builderModel = null;
+
+                                if (itemsList.isNotEmpty) {
+                                  itemsNotifier.value = itemsList;
+                                } else {
+                                  itemsList = await itemMasterDB.getAllItems();
+                                  itemsNotifier.value = itemsList;
+                                }
+                              },
+                              color: Colors.blue,
+                              child: const Icon(
+                                Icons.rotate_left,
+                                color: kWhite,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
                   ),
 
                   //==================== Product Listing Grid ====================
                   Expanded(
                     child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 0),
                         child: FutureBuilder(
                           future: futureGrid,
                           builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
@@ -257,7 +276,7 @@ class ScreenStock extends StatelessWidget {
                               default:
                                 if (snapshot.hasError) {
                                   return const Center(
-                                    child: AutoSizeText('No Item Found!'),
+                                    child: Text('No Item Found!'),
                                   );
                                 }
                                 if (snapshot.hasData) {
@@ -275,9 +294,9 @@ class ScreenStock extends StatelessWidget {
 
                                           return itemsNotifier.value.isNotEmpty
                                               ? GridView.builder(
-                                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 5,
-                                                    childAspectRatio: (1 / .75),
+                                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: isVertical ? 4 : 5,
+                                                    childAspectRatio: (1 / 1),
                                                   ),
                                                   itemCount: itemList.length,
                                                   itemBuilder: (context, index) {
@@ -285,19 +304,19 @@ class ScreenStock extends StatelessWidget {
                                                       onTap: () async {
                                                         if (_builderModel == 0) {
                                                           log(itemList[index].category);
-                                                          final category = itemList[index].category;
+                                                          final categoryId = itemList[index].id;
                                                           _builderModel = null;
-                                                          itemsNotifier.value = await itemMasterDB.getProductByCategoryId(category);
+                                                          itemsNotifier.value = await itemMasterDB.getProductByCategoryId(categoryId);
                                                         } else if (_builderModel == 1) {
                                                           log(itemList[index].subCategory);
-                                                          final subCategory = itemList[index].subCategory;
+                                                          final subCategoryId = itemList[index].id;
                                                           _builderModel = null;
-                                                          itemsNotifier.value = await itemMasterDB.getProductBySubCategoryId(subCategory);
+                                                          itemsNotifier.value = await itemMasterDB.getProductBySubCategoryId(subCategoryId);
                                                         } else if (_builderModel == 2) {
                                                           log(itemList[index].brand);
-                                                          final brand = itemList[index].brand;
+                                                          final brandId = itemList[index].id;
                                                           _builderModel = null;
-                                                          itemsNotifier.value = await itemMasterDB.getProductByBrandId(brand);
+                                                          itemsNotifier.value = await itemMasterDB.getProductByBrandId(brandId);
                                                         } else {
                                                           // //===================================== if the Product Already Added ====================================
                                                           //                                         isProductAlreadyAdded(itemList, index);
@@ -320,7 +339,7 @@ class ScreenStock extends StatelessWidget {
                                                                       Expanded(
                                                                         flex: 4,
                                                                         child: Center(
-                                                                          child: AutoSizeText(
+                                                                          child: Text(
                                                                             itemList[index].itemName,
                                                                             // index == 0
                                                                             //     ? 'Alienware 21x'
@@ -331,46 +350,38 @@ class ScreenStock extends StatelessWidget {
                                                                             //             : 'Samsung Galaxy S9 Plus - 8GB Ram, 64gb Storage',
                                                                             textAlign: TextAlign.center,
                                                                             softWrap: true,
-                                                                            style: TextStyle(fontSize: _isTablet ? 11 : 8),
+                                                                            style: kItemsTextStyle,
                                                                             overflow: TextOverflow.ellipsis,
                                                                             maxLines: 2,
-                                                                            minFontSize: 8,
-                                                                            maxFontSize: 11,
                                                                           ),
                                                                         ),
                                                                       ),
                                                                       const Spacer(),
                                                                       Expanded(
                                                                         flex: 2,
-                                                                        child: AutoSizeText(
+                                                                        child: Text(
                                                                           'Qty : ' + itemList[index].openingStock,
                                                                           textAlign: TextAlign.center,
-                                                                          style: TextStyle(fontSize: _isTablet ? 11 : 8),
+                                                                          style: kItemsTextStyle,
                                                                           maxLines: 1,
-                                                                          minFontSize: 8,
-                                                                          maxFontSize: 11,
                                                                         ),
                                                                       ),
                                                                       Expanded(
                                                                         flex: 2,
-                                                                        child: AutoSizeText(
+                                                                        child: Text(
                                                                           'Cost : ' +
                                                                               Converter.currency.format(num.tryParse(itemList[index].itemCost)),
-                                                                          style: TextStyle(fontSize: _isTablet ? 11 : 8),
+                                                                          style: kItemsTextStyle,
                                                                           maxLines: 1,
-                                                                          minFontSize: 8,
-                                                                          maxFontSize: 11,
                                                                         ),
                                                                       ),
                                                                       Expanded(
                                                                         flex: 2,
-                                                                        child: AutoSizeText(
+                                                                        child: Text(
                                                                           'Price : ' +
                                                                               Converter.currency.format(num.tryParse(itemList[index].sellingPrice)),
-                                                                          style: TextStyle(fontSize: _isTablet ? 11 : 8),
+                                                                          style: kItemsTextStyle,
                                                                           maxLines: 1,
-                                                                          minFontSize: 8,
-                                                                          maxFontSize: 11,
                                                                         ),
                                                                       )
                                                                     ],
@@ -378,7 +389,7 @@ class ScreenStock extends StatelessWidget {
                                                                 : Column(
                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                     children: [
-                                                                      AutoSizeText(
+                                                                      Text(
                                                                         _builderModel == 0
                                                                             ? itemList[index].category
                                                                             : _builderModel == 1
@@ -388,9 +399,7 @@ class ScreenStock extends StatelessWidget {
                                                                                     : '',
                                                                         textAlign: TextAlign.center,
                                                                         softWrap: true,
-                                                                        style: TextStyle(fontSize: _isTablet ? 11 : 9),
-                                                                        minFontSize: 9,
-                                                                        maxFontSize: 11,
+                                                                        style: kItemsTextStyle,
                                                                         overflow: TextOverflow.ellipsis,
                                                                         maxLines: _builderModel == 0 &&
                                                                                 itemList[index].category.toString().contains(' ')
@@ -409,12 +418,12 @@ class ScreenStock extends StatelessWidget {
                                                   },
                                                 )
                                               : const Center(
-                                                  child: AutoSizeText('No Item Found!'),
+                                                  child: Text('No Item Found!'),
                                                 );
                                         },
                                       )
                                     : const Center(
-                                        child: AutoSizeText('No Item Found!'),
+                                        child: Text('No Item Found!'),
                                       );
                             }
                           },
@@ -428,7 +437,7 @@ class ScreenStock extends StatelessWidget {
                   elevation: 10,
                   child: Container(
                     height: 35,
-                    width: 65,
+                    width: 80,
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: kBlack.withOpacity(.1),
@@ -442,11 +451,11 @@ class ScreenStock extends StatelessWidget {
                                 context: context,
                                 shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                                 builder: (ctx) {
-                                  return StockFilterBottomSheet();
+                                  return StockFilterBottomSheet(isVertical: isVertical);
                                 });
                           },
                           icon: const Icon(Icons.filter_list),
-                          label: const Text('Filter')),
+                          label: const Text('Filter', style: kText16)),
                     ),
                   ),
                 ),

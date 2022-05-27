@@ -1,7 +1,7 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_side_widget.dart';
 
 import '../../../core/utils/device/device.dart';
@@ -9,15 +9,17 @@ import '../../../core/utils/converters/converters.dart';
 
 class PurchasePriceSectionWidget extends StatelessWidget {
   const PurchasePriceSectionWidget({
+    this.isVertical = false,
     Key? key,
   }) : super(key: key);
 
+  final bool isVertical;
+
   @override
   Widget build(BuildContext context) {
-    final bool isTablet = DeviceUtil.isTablet;
     final Size _screenSize = MediaQuery.of(context).size;
     return Container(
-      height: _screenSize.width / 20,
+      height: isVertical ? _screenSize.height / 20 : _screenSize.width / 20,
       color: kWhite,
       child: Padding(
         padding: const EdgeInsets.all(5),
@@ -35,10 +37,9 @@ class PurchasePriceSectionWidget extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          AutoSizeText(
+                          Text(
                             'Items',
-                            style: TextStyle(fontSize: isTablet ? 12 : 10),
-                            minFontSize: 10,
+                            style: kItemsPriceStyle,
                           ),
                           kWidth5,
                           Flexible(
@@ -48,11 +49,10 @@ class PurchasePriceSectionWidget extends StatelessWidget {
                                 ValueListenableBuilder(
                                   valueListenable: PurchaseSideWidget.totalItemsNotifier,
                                   builder: (context, totalItems, child) {
-                                    return AutoSizeText(
+                                    return Text(
                                       '$totalItems',
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10, fontWeight: FontWeight.bold),
-                                      minFontSize: 10,
                                     );
                                   },
                                 ),
@@ -60,12 +60,11 @@ class PurchasePriceSectionWidget extends StatelessWidget {
                                   valueListenable: PurchaseSideWidget.totalQuantityNotifier,
                                   builder: (context, totalQuantity, child) {
                                     return Flexible(
-                                      child: AutoSizeText(
+                                      child: Text(
                                         '($totalQuantity)',
                                         softWrap: false,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(fontSize: isTablet ? 12 : 10, fontWeight: FontWeight.bold),
-                                        minFontSize: 10,
+                                        style: kItemsPriceStyleBold,
                                       ),
                                     );
                                   },
@@ -81,21 +80,19 @@ class PurchasePriceSectionWidget extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          AutoSizeText(
+                          Text(
                             'Total',
-                            style: TextStyle(fontSize: isTablet ? 12 : 10),
-                            minFontSize: 10,
+                            style: kItemsPriceStyle,
                           ),
                           kWidth5,
                           Flexible(
                             child: ValueListenableBuilder(
                               valueListenable: PurchaseSideWidget.totalAmountNotifier,
                               builder: (context, totalAmount, child) {
-                                return AutoSizeText(
+                                return Text(
                                   totalAmount == 0 ? '0' : Converter.currency.format(totalAmount),
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontSize: isTablet ? 12 : 10, fontWeight: FontWeight.bold),
-                                  minFontSize: 10,
+                                  style: kItemsPriceStyleBold,
                                 );
                               },
                             ),
@@ -117,18 +114,16 @@ class PurchasePriceSectionWidget extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          AutoSizeText(
+                          Text(
                             'Discount',
-                            style: TextStyle(fontSize: isTablet ? 12 : 10),
-                            minFontSize: 10,
+                            style: kItemsPriceStyle,
                           ),
                           kWidth5,
                           Flexible(
-                            child: AutoSizeText(
+                            child: Text(
                               '(0)0.00',
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: isTablet ? 12 : 10, fontWeight: FontWeight.bold),
-                              minFontSize: 10,
+                              style: kItemsPriceStyleBold,
                             ),
                           ),
                         ],
@@ -139,21 +134,19 @@ class PurchasePriceSectionWidget extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          AutoSizeText(
+                          Text(
                             'VAT',
-                            style: TextStyle(fontSize: isTablet ? 12 : 10),
-                            minFontSize: 10,
+                            style: kItemsPriceStyle,
                           ),
                           kWidth5,
                           Flexible(
                             child: ValueListenableBuilder(
                               valueListenable: PurchaseSideWidget.totalVatNotifier,
                               builder: (context, totalVAT, child) {
-                                return AutoSizeText(
+                                return Text(
                                   totalVAT == 0 ? '0' : Converter.currency.format(totalVAT),
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontSize: isTablet ? 12 : 10, fontWeight: FontWeight.bold),
-                                  minFontSize: 10,
+                                  style: kItemsPriceStyleBold,
                                 );
                               },
                             ),

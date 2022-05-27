@@ -100,7 +100,7 @@ class PartialPayment extends StatelessWidget {
                           builder: (ctx) {
                             return AlertDialog(
                               title: const Text(
-                                'Parial Payment',
+                                'Partial Payment',
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               content: Text(purchase ? 'Do you want to add this purchase?' : 'Do you want to add this sale?'),
