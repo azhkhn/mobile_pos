@@ -42,7 +42,7 @@ class SalesReturn extends StatelessWidget {
                       //========================================                                  ========================================
                       //========================================     Sales Return Side Widget     ========================================
                       //========================================                                  ========================================
-                      // SalesReturnProductSideWidget(isVertical: true),
+                      SalesReturnProductSideWidget(isVertical: true),
 
                       //==================== Divider ====================
                       Divider(thickness: 1, height: 10),
