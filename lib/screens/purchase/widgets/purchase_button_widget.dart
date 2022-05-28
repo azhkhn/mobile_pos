@@ -84,19 +84,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
                 child: MaterialButton(
                   onPressed: () {
                     if (PurchaseSideWidget.selectedProductsNotifier.value.isEmpty) {
-                      PurchaseSideWidget.selectedProductsNotifier.value.clear();
-                      PurchaseSideWidget.subTotalNotifier.value.clear();
-                      PurchaseSideWidget.itemTotalVatNotifier.value.clear();
-                      PurchaseSideWidget.supplierController.clear();
-                      PurchaseSideWidget.costNotifier.value.clear();
-                      PurchaseSideWidget.quantityNotifier.value.clear();
-                      PurchaseSideWidget.totalItemsNotifier.value = 0;
-                      PurchaseSideWidget.totalQuantityNotifier.value = 0;
-                      PurchaseSideWidget.totalAmountNotifier.value = 0;
-                      PurchaseSideWidget.totalVatNotifier.value = 0;
-                      PurchaseSideWidget.totalPayableNotifier.value = 0;
-                      PurchaseSideWidget.supplierIdNotifier.value = null;
-                      PurchaseSideWidget.supplierNameNotifier.value = null;
+                      const PurchaseSideWidget().resetPurchase();
                       Navigator.of(context).pop();
                     } else {
                       showDialog(
@@ -105,19 +93,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
                                 content: const Text('Are you sure want to cancel the purchase?'),
                                 submitAction: () {
                                   Navigator.of(context).pop();
-                                  PurchaseSideWidget.selectedProductsNotifier.value.clear();
-                                  PurchaseSideWidget.subTotalNotifier.value.clear();
-                                  PurchaseSideWidget.itemTotalVatNotifier.value.clear();
-                                  PurchaseSideWidget.supplierController.clear();
-                                  PurchaseSideWidget.costNotifier.value.clear();
-                                  PurchaseSideWidget.quantityNotifier.value.clear();
-                                  PurchaseSideWidget.totalItemsNotifier.value = 0;
-                                  PurchaseSideWidget.totalQuantityNotifier.value = 0;
-                                  PurchaseSideWidget.totalAmountNotifier.value = 0;
-                                  PurchaseSideWidget.totalVatNotifier.value = 0;
-                                  PurchaseSideWidget.totalPayableNotifier.value = 0;
-                                  PurchaseSideWidget.supplierIdNotifier.value = null;
-                                  PurchaseSideWidget.supplierNameNotifier.value = null;
+                                  const PurchaseSideWidget().resetPurchase();
                                   Navigator.of(context).pop();
                                 },
                               ));
@@ -315,7 +291,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
         await _purchaseItemsDB.createPurchaseItems(_purchaseItemsModel);
 
         //==================== Update Item Cost and Quantity ====================
-        _itemMasterDB.updateItemCostAndQty(itemMaster: PurchaseSideWidget.selectedProductsNotifier.value[i], purchasedQty: num.parse(quantity));
+        await _itemMasterDB.updateItemCostAndQty(itemMaster: PurchaseSideWidget.selectedProductsNotifier.value[i], purchasedQty: num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(
@@ -339,9 +315,9 @@ class PurchaseButtonsWidget extends StatelessWidget {
 
       PaymentTypeWidget.amountController.clear();
 
-      PurchaseProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
+      const PurchaseSideWidget().resetPurchase(notify: true);
 
-      const PurchaseSideWidget().resetPurchase();
+      PurchaseProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
 
       Navigator.pop(context);
     } catch (e) {

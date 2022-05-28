@@ -84,21 +84,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
                   onPressed: () {
                     final items = PurchaseReturnSideWidget.selectedProductsNotifier.value;
                     if (items.isEmpty) {
-                      PurchaseReturnSideWidget.selectedProductsNotifier.value.clear();
-                      PurchaseReturnSideWidget.subTotalNotifier.value.clear();
-                      PurchaseReturnSideWidget.itemTotalVatNotifier.value.clear();
-                      PurchaseReturnSideWidget.supplierController.clear();
-                      PurchaseReturnSideWidget.purchaseInvoiceController.clear();
-                      PurchaseReturnSideWidget.quantityNotifier.value.clear();
-                      PurchaseReturnSideWidget.totalItemsNotifier.value = 0;
-                      PurchaseReturnSideWidget.totalQuantityNotifier.value = 0;
-                      PurchaseReturnSideWidget.totalAmountNotifier.value = 0;
-                      PurchaseReturnSideWidget.totalVatNotifier.value = 0;
-                      PurchaseReturnSideWidget.totalPayableNotifier.value = 0;
-                      PurchaseReturnSideWidget.supplierIdNotifier.value = null;
-                      PurchaseReturnSideWidget.supplierNameNotifier.value = null;
-                      PurchaseReturnSideWidget.originalInvoiceNumberNotifier.value = null;
-                      PurchaseReturnSideWidget.originalPurchaseIdNotifier.value = null;
+                      const PurchaseReturnSideWidget().resetPurchaseReturn();
                       PurchaseReturnProductSideWidget.itemsNotifier.value.clear();
                       Navigator.of(context).pop();
                     } else {
@@ -109,21 +95,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
                               content: const Text('Are you sure want to cancel the purchase return?'),
                               submitAction: () {
                                 Navigator.pop(context);
-                                PurchaseReturnSideWidget.selectedProductsNotifier.value.clear();
-                                PurchaseReturnSideWidget.subTotalNotifier.value.clear();
-                                PurchaseReturnSideWidget.itemTotalVatNotifier.value.clear();
-                                PurchaseReturnSideWidget.supplierController.clear();
-                                PurchaseReturnSideWidget.purchaseInvoiceController.clear();
-                                PurchaseReturnSideWidget.quantityNotifier.value.clear();
-                                PurchaseReturnSideWidget.totalItemsNotifier.value = 0;
-                                PurchaseReturnSideWidget.totalQuantityNotifier.value = 0;
-                                PurchaseReturnSideWidget.totalAmountNotifier.value = 0;
-                                PurchaseReturnSideWidget.totalVatNotifier.value = 0;
-                                PurchaseReturnSideWidget.totalPayableNotifier.value = 0;
-                                PurchaseReturnSideWidget.supplierIdNotifier.value = null;
-                                PurchaseReturnSideWidget.supplierNameNotifier.value = null;
-                                PurchaseReturnSideWidget.originalInvoiceNumberNotifier.value = null;
-                                PurchaseReturnSideWidget.originalPurchaseIdNotifier.value = null;
+                                const PurchaseReturnSideWidget().resetPurchaseReturn();
                                 PurchaseReturnProductSideWidget.itemsNotifier.value.clear();
                                 Navigator.pop(context);
                               },
@@ -365,7 +337,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         await purchaseReturnItemsDB.createPurchaseReturnItems(_purchaseReturnItemsModel);
 
         //==================== Decreasing Item Quantity ====================
-        itemMasterDB.subtractItemQty(itemId: PurchaseReturnSideWidget.selectedProductsNotifier.value[i].id!, soldQty: num.parse(quantity));
+        await itemMasterDB.subtractItemQty(itemId: PurchaseReturnSideWidget.selectedProductsNotifier.value[i].id!, soldQty: num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(
@@ -384,9 +356,10 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
 
       // HomeCardWidget.detailsCardLoaded = false;
 
-      PurchaseReturnProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
+      const PurchaseReturnSideWidget().resetPurchaseReturn(notify: true);
+      PurchaseReturnProductSideWidget.itemsNotifier.value.clear();
 
-      const PurchaseReturnSideWidget().resetPurchaseReturn();
+      PurchaseReturnProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
 
       kSnackBar(
         context: context,

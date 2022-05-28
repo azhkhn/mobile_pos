@@ -88,22 +88,9 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                   onPressed: () {
                     final items = SalesReturnSideWidget.selectedProductsNotifier.value;
                     if (items.isEmpty) {
-                      SalesReturnSideWidget.selectedProductsNotifier.value.clear();
-                      SalesReturnSideWidget.subTotalNotifier.value.clear();
-                      SalesReturnSideWidget.itemTotalVatNotifier.value.clear();
-                      SalesReturnSideWidget.customerController.clear();
-                      SalesReturnSideWidget.saleInvoiceController.clear();
-                      SalesReturnSideWidget.quantityNotifier.value.clear();
-                      SalesReturnSideWidget.totalItemsNotifier.value = 0;
-                      SalesReturnSideWidget.totalQuantityNotifier.value = 0;
-                      SalesReturnSideWidget.totalAmountNotifier.value = 0;
-                      SalesReturnSideWidget.totalVatNotifier.value = 0;
-                      SalesReturnSideWidget.totalPayableNotifier.value = 0;
-                      SalesReturnSideWidget.customerIdNotifier.value = null;
-                      SalesReturnSideWidget.customerNameNotifier.value = null;
-                      SalesReturnSideWidget.originalInvoiceNumberNotifier.value = null;
-                      SalesReturnSideWidget.originalSaleIdNotifier.value = null;
+                      const SalesReturnSideWidget().resetSalesReturn();
                       SalesReturnProductSideWidget.itemsNotifier.value.clear();
+
                       Navigator.of(context).pop();
                     } else {
                       showDialog(
@@ -113,22 +100,9 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                               content: const Text('Are you sure want to cancel the sales return?'),
                               submitAction: () {
                                 Navigator.pop(context);
-                                SalesReturnSideWidget.selectedProductsNotifier.value.clear();
-                                SalesReturnSideWidget.subTotalNotifier.value.clear();
-                                SalesReturnSideWidget.itemTotalVatNotifier.value.clear();
-                                SalesReturnSideWidget.customerController.clear();
-                                SalesReturnSideWidget.saleInvoiceController.clear();
-                                SalesReturnSideWidget.quantityNotifier.value.clear();
-                                SalesReturnSideWidget.totalItemsNotifier.value = 0;
-                                SalesReturnSideWidget.totalQuantityNotifier.value = 0;
-                                SalesReturnSideWidget.totalAmountNotifier.value = 0;
-                                SalesReturnSideWidget.totalVatNotifier.value = 0;
-                                SalesReturnSideWidget.totalPayableNotifier.value = 0;
-                                SalesReturnSideWidget.customerIdNotifier.value = null;
-                                SalesReturnSideWidget.customerNameNotifier.value = null;
-                                SalesReturnSideWidget.originalInvoiceNumberNotifier.value = null;
-                                SalesReturnSideWidget.originalSaleIdNotifier.value = null;
+                                const SalesReturnSideWidget().resetSalesReturn();
                                 SalesReturnProductSideWidget.itemsNotifier.value.clear();
+
                                 Navigator.pop(context);
                               },
                             );
@@ -379,7 +353,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         await salesReturnItemsDB.createSalesReturnItems(_salesReturnItemsModel);
 
         //==================== Increasing Item Quantity ====================
-        itemMasterDB.additionItemQty(itemId: SalesReturnSideWidget.selectedProductsNotifier.value[i].id!, purchasedQty: num.parse(quantity));
+        await itemMasterDB.additionItemQty(itemId: SalesReturnSideWidget.selectedProductsNotifier.value[i].id!, purchasedQty: num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(
@@ -397,10 +371,10 @@ class SalesReturnButtonsWidget extends StatelessWidget {
       await transactionDB.createTransaction(_transaction);
 
       // HomeCardWidget.detailsCardLoaded = false;
+      const SalesReturnSideWidget().resetSalesReturn(notify: true);
+      SalesReturnProductSideWidget.itemsNotifier.value.clear();
 
       SalesReturnProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
-
-      const SalesReturnSideWidget().resetSalesReturn();
 
       kSnackBar(
         context: context,

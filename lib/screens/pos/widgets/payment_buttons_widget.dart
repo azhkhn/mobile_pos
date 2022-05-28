@@ -197,20 +197,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                   onPressed: () {
                     final items = SaleSideWidget.selectedProductsNotifier.value;
                     if (items.isEmpty) {
-                      SaleSideWidget.selectedProductsNotifier.value.clear();
-                      SaleSideWidget.subTotalNotifier.value.clear();
-                      SaleSideWidget.itemTotalVatNotifier.value.clear();
-                      SaleSideWidget.customerController.clear();
-                      SaleSideWidget.quantityNotifier.value.clear();
-                      SaleSideWidget.unitPriceNotifier.value.clear();
-                      SaleSideWidget.totalItemsNotifier.value = 0;
-                      SaleSideWidget.totalQuantityNotifier.value = 0;
-                      SaleSideWidget.totalAmountNotifier.value = 0;
-                      SaleSideWidget.totalVatNotifier.value = 0;
-                      SaleSideWidget.totalPayableNotifier.value = 0;
-                      SaleSideWidget.customerIdNotifier.value = null;
-                      SaleSideWidget.customerNameNotifier.value = null;
-                      ProductSideWidget.itemsNotifier.value.clear();
+                      const SaleSideWidget().resetPos();
                       Navigator.pop(context);
                     } else {
                       showDialog(
@@ -220,20 +207,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                               content: const Text('Are you sure want to cancel the sale?'),
                               submitAction: () {
                                 Navigator.pop(context);
-                                SaleSideWidget.selectedProductsNotifier.value.clear();
-                                SaleSideWidget.subTotalNotifier.value.clear();
-                                SaleSideWidget.itemTotalVatNotifier.value.clear();
-                                SaleSideWidget.customerController.clear();
-                                SaleSideWidget.quantityNotifier.value.clear();
-                                SaleSideWidget.unitPriceNotifier.value.clear();
-                                SaleSideWidget.totalItemsNotifier.value = 0;
-                                SaleSideWidget.totalQuantityNotifier.value = 0;
-                                SaleSideWidget.totalAmountNotifier.value = 0;
-                                SaleSideWidget.totalVatNotifier.value = 0;
-                                SaleSideWidget.totalPayableNotifier.value = 0;
-                                SaleSideWidget.customerIdNotifier.value = null;
-                                SaleSideWidget.customerNameNotifier.value = null;
-                                ProductSideWidget.itemsNotifier.value.clear();
+                                const SaleSideWidget().resetPos();
                                 Navigator.pop(context);
                               },
                             );
@@ -467,7 +441,7 @@ class PaymentButtonsWidget extends StatelessWidget {
         await salesItemDB.createSalesItems(_salesItemsModel);
 
         //==================== Decreasing Item Quantity ====================
-        itemMasterDB.subtractItemQty(itemId: SaleSideWidget.selectedProductsNotifier.value[i].id!, soldQty: num.parse(quantity));
+        await itemMasterDB.subtractItemQty(itemId: SaleSideWidget.selectedProductsNotifier.value[i].id!, soldQty: num.parse(quantity));
         log('==============================================');
       }
 
@@ -489,10 +463,9 @@ class PaymentButtonsWidget extends StatelessWidget {
       PaymentTypeWidget.amountController.clear();
 
       HomeCardWidget.detailsCardLoaded = false;
+      const SaleSideWidget().resetPos(notify: true);
 
       ProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
-
-      const SaleSideWidget().resetPos();
 
       kSnackBar(
         context: context,

@@ -65,22 +65,9 @@ class SalesReturnSideWidget extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         if (selectedProductsNotifier.value.isEmpty) {
-          selectedProductsNotifier.value.clear();
-          subTotalNotifier.value.clear();
-          itemTotalVatNotifier.value.clear();
-          customerController.clear();
-          saleInvoiceController.clear();
-          quantityNotifier.value.clear();
-          totalItemsNotifier.value = 0;
-          totalQuantityNotifier.value = 0;
-          totalAmountNotifier.value = 0;
-          totalVatNotifier.value = 0;
-          totalPayableNotifier.value = 0;
-          customerIdNotifier.value = null;
-          customerNameNotifier.value = null;
-          originalInvoiceNumberNotifier.value = null;
-          originalSaleIdNotifier.value = null;
+          resetSalesReturn();
           SalesReturnProductSideWidget.itemsNotifier.value.clear();
+
           return true;
         } else {
           showDialog(
@@ -90,22 +77,10 @@ class SalesReturnSideWidget extends StatelessWidget {
                   content: const Text('Are you sure want to cancel the sales return?'),
                   submitAction: () {
                     Navigator.pop(context);
-                    selectedProductsNotifier.value.clear();
-                    subTotalNotifier.value.clear();
-                    itemTotalVatNotifier.value.clear();
-                    customerController.clear();
-                    saleInvoiceController.clear();
-                    quantityNotifier.value.clear();
-                    totalItemsNotifier.value = 0;
-                    totalQuantityNotifier.value = 0;
-                    totalAmountNotifier.value = 0;
-                    totalVatNotifier.value = 0;
-                    totalPayableNotifier.value = 0;
-                    customerIdNotifier.value = null;
-                    customerNameNotifier.value = null;
-                    originalInvoiceNumberNotifier.value = null;
-                    originalSaleIdNotifier.value = null;
+
+                    resetSalesReturn();
                     SalesReturnProductSideWidget.itemsNotifier.value.clear();
+
                     Navigator.pop(context);
                   },
                 );
@@ -116,6 +91,7 @@ class SalesReturnSideWidget extends StatelessWidget {
       child: Expanded(
         child: SizedBox(
           width: isVertical ? double.infinity : _screenSize.width / 2.5,
+          // width: double.infinity,
           height: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -587,41 +563,6 @@ class SalesReturnSideWidget extends StatelessWidget {
     log('Total Payable == $_totalPayable');
   }
 
-  //==================== Reset All Values ====================
-  void resetSalesReturn() {
-    selectedProductsNotifier.value.clear();
-    subTotalNotifier.value.clear();
-    itemTotalVatNotifier.value.clear();
-    customerController.clear();
-    saleInvoiceController.clear();
-    quantityNotifier.value.clear();
-    totalItemsNotifier.value = 0;
-    totalQuantityNotifier.value = 0;
-    totalAmountNotifier.value = 0;
-    totalVatNotifier.value = 0;
-    totalPayableNotifier.value = 0;
-    customerIdNotifier.value = null;
-    customerNameNotifier.value = null;
-    originalInvoiceNumberNotifier.value = null;
-    originalSaleIdNotifier.value = null;
-
-    selectedProductsNotifier.notifyListeners();
-    subTotalNotifier.notifyListeners();
-    itemTotalVatNotifier.notifyListeners();
-    quantityNotifier.notifyListeners();
-    totalItemsNotifier.notifyListeners();
-    totalQuantityNotifier.notifyListeners();
-    totalAmountNotifier.notifyListeners();
-    totalVatNotifier.notifyListeners();
-    totalPayableNotifier.notifyListeners();
-    customerIdNotifier.notifyListeners();
-    customerNameNotifier.notifyListeners();
-    originalInvoiceNumberNotifier.notifyListeners();
-    originalSaleIdNotifier.notifyListeners();
-
-    log('========== Sales Return values has been cleared! ==========');
-  }
-
   //==================== Get Sales Details ====================
   Future<void> getSalesDetails(SalesModel sale) async {
     final List<ItemMasterModel> soldItems = [];
@@ -703,5 +644,43 @@ class SalesReturnSideWidget extends StatelessWidget {
     customerNameNotifier.notifyListeners();
     originalInvoiceNumberNotifier.notifyListeners();
     originalSaleIdNotifier.notifyListeners();
+  }
+
+  //==================== Reset All Values ====================
+  void resetSalesReturn({bool notify = false}) {
+    selectedProductsNotifier.value.clear();
+    subTotalNotifier.value.clear();
+    itemTotalVatNotifier.value.clear();
+    customerController.clear();
+    saleInvoiceController.clear();
+    quantityNotifier.value.clear();
+    totalItemsNotifier.value = 0;
+    totalQuantityNotifier.value = 0;
+    totalAmountNotifier.value = 0;
+    totalVatNotifier.value = 0;
+    totalPayableNotifier.value = 0;
+    customerIdNotifier.value = null;
+    customerNameNotifier.value = null;
+    originalInvoiceNumberNotifier.value = null;
+    originalSaleIdNotifier.value = null;
+    // SalesReturnProductSideWidget.itemsNotifier.value.clear();
+
+    if (notify) {
+      selectedProductsNotifier.notifyListeners();
+      subTotalNotifier.notifyListeners();
+      itemTotalVatNotifier.notifyListeners();
+      quantityNotifier.notifyListeners();
+      totalItemsNotifier.notifyListeners();
+      totalQuantityNotifier.notifyListeners();
+      totalAmountNotifier.notifyListeners();
+      totalVatNotifier.notifyListeners();
+      totalPayableNotifier.notifyListeners();
+      customerIdNotifier.notifyListeners();
+      customerNameNotifier.notifyListeners();
+      originalInvoiceNumberNotifier.notifyListeners();
+      originalSaleIdNotifier.notifyListeners();
+    }
+
+    log('========== Sales Return values has been cleared! ==========');
   }
 }

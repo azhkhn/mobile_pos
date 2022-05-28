@@ -57,41 +57,17 @@ class SaleSideWidget extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         if (selectedProductsNotifier.value.isEmpty) {
-          selectedProductsNotifier.value.clear();
-          subTotalNotifier.value.clear();
-          itemTotalVatNotifier.value.clear();
-          customerController.clear();
-          quantityNotifier.value.clear();
-          unitPriceNotifier.value.clear();
-          totalItemsNotifier.value = 0;
-          totalQuantityNotifier.value = 0;
-          totalAmountNotifier.value = 0;
-          totalVatNotifier.value = 0;
-          totalPayableNotifier.value = 0;
-          customerIdNotifier.value = null;
-          customerNameNotifier.value = null;
-          ProductSideWidget.itemsNotifier.value.clear();
+          resetPos();
+
           return true;
         } else {
           showDialog(
               context: context,
               builder: (context) => KAlertDialog(
                     content: const Text('Are you sure want to cancel the sale?'),
-                    submitAction: () {
-                      selectedProductsNotifier.value.clear();
-                      subTotalNotifier.value.clear();
-                      itemTotalVatNotifier.value.clear();
-                      customerController.clear();
-                      quantityNotifier.value.clear();
-                      unitPriceNotifier.value.clear();
-                      totalItemsNotifier.value = 0;
-                      totalQuantityNotifier.value = 0;
-                      totalAmountNotifier.value = 0;
-                      totalVatNotifier.value = 0;
-                      totalPayableNotifier.value = 0;
-                      customerIdNotifier.value = null;
-                      customerNameNotifier.value = null;
+                    submitAction: () async {
                       Navigator.pop(context);
+                      resetPos();
                       Navigator.pop(context);
                     },
                   ));
@@ -561,13 +537,13 @@ class SaleSideWidget extends StatelessWidget {
   }
 
 //==================== Reset All Values ====================
-  void resetPos() {
+  void resetPos({bool notify = false}) {
     selectedProductsNotifier.value.clear();
     subTotalNotifier.value.clear();
     itemTotalVatNotifier.value.clear();
     customerController.clear();
-    unitPriceNotifier.value.clear();
     quantityNotifier.value.clear();
+    unitPriceNotifier.value.clear();
     totalItemsNotifier.value = 0;
     totalQuantityNotifier.value = 0;
     totalAmountNotifier.value = 0;
@@ -575,18 +551,21 @@ class SaleSideWidget extends StatelessWidget {
     totalPayableNotifier.value = 0;
     customerIdNotifier.value = null;
     customerNameNotifier.value = null;
+    ProductSideWidget.itemsNotifier.value.clear();
 
-    selectedProductsNotifier.notifyListeners();
-    subTotalNotifier.notifyListeners();
-    itemTotalVatNotifier.notifyListeners();
-    unitPriceNotifier.notifyListeners();
-    quantityNotifier.notifyListeners();
-    totalItemsNotifier.notifyListeners();
-    totalQuantityNotifier.notifyListeners();
-    totalAmountNotifier.notifyListeners();
-    totalVatNotifier.notifyListeners();
-    totalPayableNotifier.notifyListeners();
-    customerIdNotifier.notifyListeners();
-    customerNameNotifier.notifyListeners();
+    if (notify) {
+      selectedProductsNotifier.notifyListeners();
+      subTotalNotifier.notifyListeners();
+      itemTotalVatNotifier.notifyListeners();
+      unitPriceNotifier.notifyListeners();
+      quantityNotifier.notifyListeners();
+      totalItemsNotifier.notifyListeners();
+      totalQuantityNotifier.notifyListeners();
+      totalAmountNotifier.notifyListeners();
+      totalVatNotifier.notifyListeners();
+      totalPayableNotifier.notifyListeners();
+      customerIdNotifier.notifyListeners();
+      customerNameNotifier.notifyListeners();
+    }
   }
 }

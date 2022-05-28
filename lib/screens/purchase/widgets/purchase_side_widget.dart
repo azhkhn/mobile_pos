@@ -16,6 +16,7 @@ import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_button_widget.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_price_section_widget.dart';
+import 'package:shop_ez/screens/purchase/widgets/purchase_product_side_widget.dart';
 import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import '../../../core/constant/colors.dart';
@@ -57,19 +58,7 @@ class PurchaseSideWidget extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         if (selectedProductsNotifier.value.isEmpty) {
-          selectedProductsNotifier.value.clear();
-          subTotalNotifier.value.clear();
-          itemTotalVatNotifier.value.clear();
-          supplierController.clear();
-          costNotifier.value.clear();
-          quantityNotifier.value.clear();
-          totalItemsNotifier.value = 0;
-          totalQuantityNotifier.value = 0;
-          totalAmountNotifier.value = 0;
-          totalVatNotifier.value = 0;
-          totalPayableNotifier.value = 0;
-          supplierIdNotifier.value = null;
-          supplierNameNotifier.value = null;
+          resetPurchase();
           return true;
         } else {
           showDialog(
@@ -77,20 +66,8 @@ class PurchaseSideWidget extends StatelessWidget {
               builder: (context) => KAlertDialog(
                     content: const Text('Are you sure want to cancel the purchase?'),
                     submitAction: () {
-                      selectedProductsNotifier.value.clear();
-                      subTotalNotifier.value.clear();
-                      itemTotalVatNotifier.value.clear();
-                      supplierController.clear();
-                      costNotifier.value.clear();
-                      quantityNotifier.value.clear();
-                      totalItemsNotifier.value = 0;
-                      totalQuantityNotifier.value = 0;
-                      totalAmountNotifier.value = 0;
-                      totalVatNotifier.value = 0;
-                      totalPayableNotifier.value = 0;
-                      supplierIdNotifier.value = null;
-                      supplierNameNotifier.value = null;
                       Navigator.pop(context);
+                      resetPurchase();
                       Navigator.pop(context);
                     },
                   ));
@@ -584,7 +561,7 @@ class PurchaseSideWidget extends StatelessWidget {
   }
 
   //==================== Reset All Values ====================
-  void resetPurchase() {
+  void resetPurchase({bool notify = false}) {
     selectedProductsNotifier.value.clear();
     subTotalNotifier.value.clear();
     itemTotalVatNotifier.value.clear();
@@ -598,18 +575,21 @@ class PurchaseSideWidget extends StatelessWidget {
     totalPayableNotifier.value = 0;
     supplierIdNotifier.value = null;
     supplierNameNotifier.value = null;
+    PurchaseProductSideWidget.itemsNotifier.value.clear();
 
-    selectedProductsNotifier.notifyListeners();
-    subTotalNotifier.notifyListeners();
-    itemTotalVatNotifier.notifyListeners();
-    costNotifier.notifyListeners();
-    quantityNotifier.notifyListeners();
-    totalItemsNotifier.notifyListeners();
-    totalQuantityNotifier.notifyListeners();
-    totalAmountNotifier.notifyListeners();
-    totalVatNotifier.notifyListeners();
-    totalPayableNotifier.notifyListeners();
-    supplierIdNotifier.notifyListeners();
-    supplierNameNotifier.notifyListeners();
+    if (notify) {
+      selectedProductsNotifier.notifyListeners();
+      subTotalNotifier.notifyListeners();
+      itemTotalVatNotifier.notifyListeners();
+      costNotifier.notifyListeners();
+      quantityNotifier.notifyListeners();
+      totalItemsNotifier.notifyListeners();
+      totalQuantityNotifier.notifyListeners();
+      totalAmountNotifier.notifyListeners();
+      totalVatNotifier.notifyListeners();
+      totalPayableNotifier.notifyListeners();
+      supplierIdNotifier.notifyListeners();
+      supplierNameNotifier.notifyListeners();
+    }
   }
 }

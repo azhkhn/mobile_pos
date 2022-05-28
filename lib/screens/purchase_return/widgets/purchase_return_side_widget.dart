@@ -63,21 +63,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         if (selectedProductsNotifier.value.isEmpty) {
-          selectedProductsNotifier.value.clear();
-          subTotalNotifier.value.clear();
-          itemTotalVatNotifier.value.clear();
-          supplierController.clear();
-          purchaseInvoiceController.clear();
-          quantityNotifier.value.clear();
-          totalItemsNotifier.value = 0;
-          totalQuantityNotifier.value = 0;
-          totalAmountNotifier.value = 0;
-          totalVatNotifier.value = 0;
-          totalPayableNotifier.value = 0;
-          supplierIdNotifier.value = null;
-          supplierNameNotifier.value = null;
-          originalInvoiceNumberNotifier.value = null;
-          originalPurchaseIdNotifier.value = null;
+          resetPurchaseReturn();
           PurchaseReturnProductSideWidget.itemsNotifier.value.clear();
           return true;
         } else {
@@ -88,21 +74,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                   content: const Text('Are you sure want to cancel the purchase return?'),
                   submitAction: () {
                     Navigator.pop(context);
-                    selectedProductsNotifier.value.clear();
-                    subTotalNotifier.value.clear();
-                    itemTotalVatNotifier.value.clear();
-                    supplierController.clear();
-                    purchaseInvoiceController.clear();
-                    quantityNotifier.value.clear();
-                    totalItemsNotifier.value = 0;
-                    totalQuantityNotifier.value = 0;
-                    totalAmountNotifier.value = 0;
-                    totalVatNotifier.value = 0;
-                    totalPayableNotifier.value = 0;
-                    supplierIdNotifier.value = null;
-                    supplierNameNotifier.value = null;
-                    originalInvoiceNumberNotifier.value = null;
-                    originalPurchaseIdNotifier.value = null;
+                    resetPurchaseReturn();
                     PurchaseReturnProductSideWidget.itemsNotifier.value.clear();
 
                     Navigator.pop(context);
@@ -594,41 +566,6 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     log('Total Payable == $_totalPayable');
   }
 
-  //==================== Reset All Values ====================
-  void resetPurchaseReturn() {
-    selectedProductsNotifier.value.clear();
-    subTotalNotifier.value.clear();
-    itemTotalVatNotifier.value.clear();
-    supplierController.clear();
-    purchaseInvoiceController.clear();
-    quantityNotifier.value.clear();
-    totalItemsNotifier.value = 0;
-    totalQuantityNotifier.value = 0;
-    totalAmountNotifier.value = 0;
-    totalVatNotifier.value = 0;
-    totalPayableNotifier.value = 0;
-    supplierIdNotifier.value = null;
-    supplierNameNotifier.value = null;
-    originalInvoiceNumberNotifier.value = null;
-    originalPurchaseIdNotifier.value = null;
-
-    selectedProductsNotifier.notifyListeners();
-    subTotalNotifier.notifyListeners();
-    itemTotalVatNotifier.notifyListeners();
-    quantityNotifier.notifyListeners();
-    totalItemsNotifier.notifyListeners();
-    totalQuantityNotifier.notifyListeners();
-    totalAmountNotifier.notifyListeners();
-    totalVatNotifier.notifyListeners();
-    totalPayableNotifier.notifyListeners();
-    supplierIdNotifier.notifyListeners();
-    supplierNameNotifier.notifyListeners();
-    originalInvoiceNumberNotifier.notifyListeners();
-    originalPurchaseIdNotifier.notifyListeners();
-
-    log('========== Purchase Return values has been cleared! ==========');
-  }
-
   //==================== Get Purchase Details ====================
   Future<void> getPurchaseDetails(PurchaseModel purchase) async {
     final List<ItemMasterModel> purchasedItems = [];
@@ -710,5 +647,43 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     supplierNameNotifier.notifyListeners();
     originalInvoiceNumberNotifier.notifyListeners();
     originalPurchaseIdNotifier.notifyListeners();
+  }
+
+  //==================== Reset All Values ====================
+  void resetPurchaseReturn({bool notify = false}) {
+    selectedProductsNotifier.value.clear();
+    subTotalNotifier.value.clear();
+    itemTotalVatNotifier.value.clear();
+    supplierController.clear();
+    purchaseInvoiceController.clear();
+    quantityNotifier.value.clear();
+    totalItemsNotifier.value = 0;
+    totalQuantityNotifier.value = 0;
+    totalAmountNotifier.value = 0;
+    totalVatNotifier.value = 0;
+    totalPayableNotifier.value = 0;
+    supplierIdNotifier.value = null;
+    supplierNameNotifier.value = null;
+    originalInvoiceNumberNotifier.value = null;
+    originalPurchaseIdNotifier.value = null;
+    // PurchaseReturnProductSideWidget.itemsNotifier.value.clear();
+
+    if (notify) {
+      selectedProductsNotifier.notifyListeners();
+      subTotalNotifier.notifyListeners();
+      itemTotalVatNotifier.notifyListeners();
+      quantityNotifier.notifyListeners();
+      totalItemsNotifier.notifyListeners();
+      totalQuantityNotifier.notifyListeners();
+      totalAmountNotifier.notifyListeners();
+      totalVatNotifier.notifyListeners();
+      totalPayableNotifier.notifyListeners();
+      supplierIdNotifier.notifyListeners();
+      supplierNameNotifier.notifyListeners();
+      originalInvoiceNumberNotifier.notifyListeners();
+      originalPurchaseIdNotifier.notifyListeners();
+    }
+
+    log('========== Purchase Return values has been cleared! ==========');
   }
 }
