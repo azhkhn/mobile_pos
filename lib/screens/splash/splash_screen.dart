@@ -52,7 +52,7 @@ class ScreenSplash extends StatelessWidget {
     // prefs = await SharedPreferences.getInstance();
     // prefs!.remove(OrientationMode.deviceModeKey);
 
-    prefs.setString(OrientationMode.deviceModeKey, OrientationMode.verticalMode);
+    // prefs.setString(OrientationMode.deviceModeKey, OrientationMode.verticalMode);
     orientationMode = prefs.getString(OrientationMode.deviceModeKey);
 
     await Future.delayed(const Duration(seconds: 2));

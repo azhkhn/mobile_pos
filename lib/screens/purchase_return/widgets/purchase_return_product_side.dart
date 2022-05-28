@@ -162,7 +162,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                   ),
                 ],
               ),
-              widget.isVertical ? kHeight5 : kNone,
+              kHeight5,
               widget.isVertical
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.start,

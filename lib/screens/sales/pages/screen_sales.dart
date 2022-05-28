@@ -196,7 +196,7 @@ class ScreenSales extends StatelessWidget {
                             color: Colors.blueGrey,
                             textColor: kWhite,
                             child: const Text(
-                              'Returns List',
+                              'Return List',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),

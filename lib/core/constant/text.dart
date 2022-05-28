@@ -16,6 +16,7 @@ const kText12Bold = TextStyle(fontSize: 12, fontWeight: FontWeight.bold);
 const kText16 = TextStyle(fontSize: 16);
 final kText_10_12 = TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10);
 final kItemsTextStyle = TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 8, color: kTextColor);
+final kItemsTextStyleStock = TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 9, color: kTextColor);
 final kItemsPriceStyle = TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10);
 final kItemsPriceStyleBold = TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10, fontWeight: FontWeight.bold);
 final kItemsButtontyle = TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: DeviceUtil.isTablet ? 12 : 11);

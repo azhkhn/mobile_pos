@@ -289,14 +289,13 @@ class ScreenStock extends StatelessWidget {
                                     ? ValueListenableBuilder(
                                         valueListenable: itemsNotifier,
                                         builder: (context, List<dynamic> itemList, _) {
-                                          log('hellootherererj');
                                           log('Total Products == ${itemsNotifier.value.length}');
 
                                           return itemsNotifier.value.isNotEmpty
                                               ? GridView.builder(
                                                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: isVertical ? 4 : 5,
-                                                    childAspectRatio: (1 / 1),
+                                                    crossAxisCount: isVertical ? 4 : 6,
+                                                    childAspectRatio: (1 / .9),
                                                   ),
                                                   itemCount: itemList.length,
                                                   itemBuilder: (context, index) {
@@ -350,7 +349,7 @@ class ScreenStock extends StatelessWidget {
                                                                             //             : 'Samsung Galaxy S9 Plus - 8GB Ram, 64gb Storage',
                                                                             textAlign: TextAlign.center,
                                                                             softWrap: true,
-                                                                            style: kItemsTextStyle,
+                                                                            style: isVertical ? kItemsTextStyle : kItemsTextStyleStock,
                                                                             overflow: TextOverflow.ellipsis,
                                                                             maxLines: 2,
                                                                           ),
@@ -362,7 +361,7 @@ class ScreenStock extends StatelessWidget {
                                                                         child: Text(
                                                                           'Qty : ' + itemList[index].openingStock,
                                                                           textAlign: TextAlign.center,
-                                                                          style: kItemsTextStyle,
+                                                                          style: isVertical ? kItemsTextStyle : kItemsTextStyleStock,
                                                                           maxLines: 1,
                                                                         ),
                                                                       ),
@@ -371,7 +370,7 @@ class ScreenStock extends StatelessWidget {
                                                                         child: Text(
                                                                           'Cost : ' +
                                                                               Converter.currency.format(num.tryParse(itemList[index].itemCost)),
-                                                                          style: kItemsTextStyle,
+                                                                          style: isVertical ? kItemsTextStyle : kItemsTextStyleStock,
                                                                           maxLines: 1,
                                                                         ),
                                                                       ),
@@ -380,7 +379,7 @@ class ScreenStock extends StatelessWidget {
                                                                         child: Text(
                                                                           'Price : ' +
                                                                               Converter.currency.format(num.tryParse(itemList[index].sellingPrice)),
-                                                                          style: kItemsTextStyle,
+                                                                          style: isVertical ? kItemsTextStyle : kItemsTextStyleStock,
                                                                           maxLines: 1,
                                                                         ),
                                                                       )
@@ -399,7 +398,7 @@ class ScreenStock extends StatelessWidget {
                                                                                     : '',
                                                                         textAlign: TextAlign.center,
                                                                         softWrap: true,
-                                                                        style: kItemsTextStyle,
+                                                                        style: isVertical ? kItemsTextStyle : kItemsTextStyleStock,
                                                                         overflow: TextOverflow.ellipsis,
                                                                         maxLines: _builderModel == 0 &&
                                                                                 itemList[index].category.toString().contains(' ')
@@ -455,7 +454,7 @@ class ScreenStock extends StatelessWidget {
                                 });
                           },
                           icon: const Icon(Icons.filter_list),
-                          label: const Text('Filter', style: kText16)),
+                          label: const Text('Filter', style: TextStyle(fontSize: 17))),
                     ),
                   ),
                 ),

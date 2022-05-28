@@ -86,10 +86,22 @@ class PartialPayment extends StatelessWidget {
                         final String _paid = PaymentTypeWidget.amountController.text.toString();
 
                         final String _balance = PaymentDetailsTableWidget.balanceNotifier.value.toString();
+                        final String _totalPayable = paymentDetails['totalPayable'].toString();
+                        final String _paymentStatus = _balance == '0.0'
+                            ? 'Paid'
+                            : _balance == _totalPayable
+                                ? 'Due'
+                                : 'Partial';
 
-                        final String _paymentStatus = _balance == '0.0' ? 'Paid' : 'Partial';
+                        if (_totalPayable == _balance) {
+                          log('zero');
+                        } else {
+                          log('not equal');
+                        }
 
-                        log(_balance);
+                        log('Total Payable = $_totalPayable');
+                        log('Balance = $_balance');
+                        log('Payment Status = $_paymentStatus');
 
                         final String _paymentType = PaymentTypeWidget.payingByController!;
 

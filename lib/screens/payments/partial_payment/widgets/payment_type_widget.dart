@@ -62,7 +62,11 @@ class PaymentTypeWidget extends StatelessWidget {
                         inputBorder: const OutlineInputBorder(),
                         textInputType: TextInputType.number,
                         inputFormatters: Validators.digitsOnly,
-                        onChanged: (value) => amountChanged(value ?? '0'),
+                        onChanged: (value) {
+                          if (value != null) {
+                            amountChanged(value.isNotEmpty ? value : '0');
+                          }
+                        },
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         constraints: const BoxConstraints(maxHeight: 45),
                         contentPadding: const EdgeInsets.all(10),
@@ -137,6 +141,7 @@ class PaymentTypeWidget extends StatelessWidget {
     );
   }
 
+  //========== On Amount Changed ==========
   amountChanged(String amount) {
     final num? _totalPaying = num.tryParse(amount);
     PaymentDetailsTableWidget.totalPayingNotifier.value = _totalPaying ?? 0;

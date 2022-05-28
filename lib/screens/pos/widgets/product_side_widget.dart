@@ -164,7 +164,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                   ),
                 ],
               ),
-              widget.isVertical ? kHeight5 : kNone,
+              kHeight5,
               //========== Get All Customers Search Field ==========
               widget.isVertical
                   ? Row(

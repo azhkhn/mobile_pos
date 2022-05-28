@@ -106,7 +106,7 @@ class ItemMasterDatabase {
   Future<void> additionItemQty({required int itemId, required num purchasedQty}) async {
     final db = await dbInstance.database;
 
-    final _result = await db.query(tableItemMaster, where: '${ItemMasterFields.id} ? = ', whereArgs: [itemId]);
+    final _result = await db.query(tableItemMaster, where: '${ItemMasterFields.id} = ?', whereArgs: [itemId]);
     final _item = ItemMasterModel.fromJson(_result.first);
 
     final num currentQty = num.parse(_item.openingStock);
@@ -128,7 +128,7 @@ class ItemMasterDatabase {
   Future<void> subtractItemQty({required int itemId, required num soldQty}) async {
     final db = await dbInstance.database;
 
-    final _result = await db.query(tableItemMaster, where: '${ItemMasterFields.id} ? = ', whereArgs: [itemId]);
+    final _result = await db.query(tableItemMaster, where: '${ItemMasterFields.id} = ?', whereArgs: [itemId]);
     final _item = ItemMasterModel.fromJson(_result.first);
 
     final num currentQty = num.parse(_item.openingStock);

@@ -215,13 +215,14 @@ class SalesCardWidget extends StatelessWidget {
                           sales[index].paymentStatus,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: sales[index].paymentStatus == 'Paid'
-                                  ? Colors.green
-                                  : sales[index].paymentStatus == 'Partial'
-                                      ? Colors.orange
-                                      : Colors.red),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: sales[index].paymentStatus == 'Paid'
+                                ? Colors.green
+                                : sales[index].paymentStatus == 'Partial'
+                                    ? Colors.orange
+                                    : Colors.red,
+                          ),
                           maxLines: 1,
                           minFontSize: 10,
                           maxFontSize: 14,

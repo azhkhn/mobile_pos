@@ -124,6 +124,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
                         'totalPayable': PurchaseSideWidget.totalPayableNotifier.value,
                         'totalItems': PurchaseSideWidget.totalItemsNotifier.value,
                         'purchase': true,
+                        'isVertical': isVertical,
                       });
                     }
                   },

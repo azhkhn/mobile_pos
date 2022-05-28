@@ -214,7 +214,15 @@ class PurchaseCardWidget extends StatelessWidget {
                         child: AutoSizeText(
                           purchases[index].paymentStatus,
                           overflow: TextOverflow.ellipsis,
-                          style: kTextSalesCard,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: purchases[index].paymentStatus == 'Paid'
+                                ? Colors.green
+                                : purchases[index].paymentStatus == 'Partial'
+                                    ? Colors.orange
+                                    : Colors.red,
+                          ),
                           maxLines: 1,
                           minFontSize: 10,
                           maxFontSize: 14,
