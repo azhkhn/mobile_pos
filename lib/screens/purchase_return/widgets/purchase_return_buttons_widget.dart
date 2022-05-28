@@ -2,6 +2,7 @@ import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/text.dart';
+import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
@@ -81,19 +82,54 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    PurchaseReturnSideWidget.selectedProductsNotifier.value.clear();
-                    PurchaseReturnSideWidget.subTotalNotifier.value.clear();
-                    PurchaseReturnSideWidget.itemTotalVatNotifier.value.clear();
-                    PurchaseReturnSideWidget.supplierController.clear();
-                    PurchaseReturnSideWidget.quantityNotifier.value.clear();
-                    PurchaseReturnSideWidget.totalItemsNotifier.value = 0;
-                    PurchaseReturnSideWidget.totalQuantityNotifier.value = 0;
-                    PurchaseReturnSideWidget.totalAmountNotifier.value = 0;
-                    PurchaseReturnSideWidget.totalVatNotifier.value = 0;
-                    PurchaseReturnSideWidget.totalPayableNotifier.value = 0;
-                    PurchaseReturnSideWidget.supplierIdNotifier.value = null;
-                    PurchaseReturnSideWidget.supplierNameNotifier.value = null;
-                    Navigator.of(context).pop();
+                    final items = PurchaseReturnSideWidget.selectedProductsNotifier.value;
+                    if (items.isEmpty) {
+                      PurchaseReturnSideWidget.selectedProductsNotifier.value.clear();
+                      PurchaseReturnSideWidget.subTotalNotifier.value.clear();
+                      PurchaseReturnSideWidget.itemTotalVatNotifier.value.clear();
+                      PurchaseReturnSideWidget.supplierController.clear();
+                      PurchaseReturnSideWidget.purchaseInvoiceController.clear();
+                      PurchaseReturnSideWidget.quantityNotifier.value.clear();
+                      PurchaseReturnSideWidget.totalItemsNotifier.value = 0;
+                      PurchaseReturnSideWidget.totalQuantityNotifier.value = 0;
+                      PurchaseReturnSideWidget.totalAmountNotifier.value = 0;
+                      PurchaseReturnSideWidget.totalVatNotifier.value = 0;
+                      PurchaseReturnSideWidget.totalPayableNotifier.value = 0;
+                      PurchaseReturnSideWidget.supplierIdNotifier.value = null;
+                      PurchaseReturnSideWidget.supplierNameNotifier.value = null;
+                      PurchaseReturnSideWidget.originalInvoiceNumberNotifier.value = null;
+                      PurchaseReturnSideWidget.originalPurchaseIdNotifier.value = null;
+                      PurchaseReturnProductSideWidget.itemsNotifier.value.clear();
+                      Navigator.of(context).pop();
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return KAlertDialog(
+                              content: const Text('Are you sure want to cancel the purchase return?'),
+                              submitAction: () {
+                                Navigator.pop(context);
+                                PurchaseReturnSideWidget.selectedProductsNotifier.value.clear();
+                                PurchaseReturnSideWidget.subTotalNotifier.value.clear();
+                                PurchaseReturnSideWidget.itemTotalVatNotifier.value.clear();
+                                PurchaseReturnSideWidget.supplierController.clear();
+                                PurchaseReturnSideWidget.purchaseInvoiceController.clear();
+                                PurchaseReturnSideWidget.quantityNotifier.value.clear();
+                                PurchaseReturnSideWidget.totalItemsNotifier.value = 0;
+                                PurchaseReturnSideWidget.totalQuantityNotifier.value = 0;
+                                PurchaseReturnSideWidget.totalAmountNotifier.value = 0;
+                                PurchaseReturnSideWidget.totalVatNotifier.value = 0;
+                                PurchaseReturnSideWidget.totalPayableNotifier.value = 0;
+                                PurchaseReturnSideWidget.supplierIdNotifier.value = null;
+                                PurchaseReturnSideWidget.supplierNameNotifier.value = null;
+                                PurchaseReturnSideWidget.originalInvoiceNumberNotifier.value = null;
+                                PurchaseReturnSideWidget.originalPurchaseIdNotifier.value = null;
+                                PurchaseReturnProductSideWidget.itemsNotifier.value.clear();
+                                Navigator.pop(context);
+                              },
+                            );
+                          });
+                    }
                   },
                   padding: const EdgeInsets.all(5),
                   color: Colors.red[400],
@@ -329,7 +365,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         await purchaseReturnItemsDB.createPurchaseReturnItems(_purchaseReturnItemsModel);
 
         //==================== Decreasing Item Quantity ====================
-        itemMasterDB.additionItemQty(itemId: PurchaseReturnSideWidget.selectedProductsNotifier.value[i].id!, purchasedQty: num.parse(quantity));
+        itemMasterDB.subtractItemQty(itemId: PurchaseReturnSideWidget.selectedProductsNotifier.value[i].id!, soldQty: num.parse(quantity));
       }
 
       final TransactionsModel _transaction = TransactionsModel(

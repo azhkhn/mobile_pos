@@ -424,7 +424,11 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                           );
                         }
                         if (snapshot.hasData) {
-                          ProductSideWidget.itemsNotifier.value = snapshot.data!;
+                          // log(snapshot.data!.toString());
+                          log(futureGrid.toString());
+                          if (ProductSideWidget.itemsNotifier.value.isEmpty) {
+                            ProductSideWidget.itemsNotifier.value = snapshot.data!;
+                          }
                         } else {
                           ProductSideWidget.itemsNotifier.value = [];
                         }

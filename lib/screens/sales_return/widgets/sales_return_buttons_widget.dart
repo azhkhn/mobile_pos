@@ -2,6 +2,7 @@ import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/text.dart';
+import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
@@ -85,19 +86,54 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                         : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    SalesReturnSideWidget.selectedProductsNotifier.value.clear();
-                    SalesReturnSideWidget.subTotalNotifier.value.clear();
-                    SalesReturnSideWidget.itemTotalVatNotifier.value.clear();
-                    SalesReturnSideWidget.customerController.clear();
-                    SalesReturnSideWidget.quantityNotifier.value.clear();
-                    SalesReturnSideWidget.totalItemsNotifier.value = 0;
-                    SalesReturnSideWidget.totalQuantityNotifier.value = 0;
-                    SalesReturnSideWidget.totalAmountNotifier.value = 0;
-                    SalesReturnSideWidget.totalVatNotifier.value = 0;
-                    SalesReturnSideWidget.totalPayableNotifier.value = 0;
-                    SalesReturnSideWidget.customerIdNotifier.value = null;
-                    SalesReturnSideWidget.customerNameNotifier.value = null;
-                    Navigator.of(context).pop();
+                    final items = SalesReturnSideWidget.selectedProductsNotifier.value;
+                    if (items.isEmpty) {
+                      SalesReturnSideWidget.selectedProductsNotifier.value.clear();
+                      SalesReturnSideWidget.subTotalNotifier.value.clear();
+                      SalesReturnSideWidget.itemTotalVatNotifier.value.clear();
+                      SalesReturnSideWidget.customerController.clear();
+                      SalesReturnSideWidget.saleInvoiceController.clear();
+                      SalesReturnSideWidget.quantityNotifier.value.clear();
+                      SalesReturnSideWidget.totalItemsNotifier.value = 0;
+                      SalesReturnSideWidget.totalQuantityNotifier.value = 0;
+                      SalesReturnSideWidget.totalAmountNotifier.value = 0;
+                      SalesReturnSideWidget.totalVatNotifier.value = 0;
+                      SalesReturnSideWidget.totalPayableNotifier.value = 0;
+                      SalesReturnSideWidget.customerIdNotifier.value = null;
+                      SalesReturnSideWidget.customerNameNotifier.value = null;
+                      SalesReturnSideWidget.originalInvoiceNumberNotifier.value = null;
+                      SalesReturnSideWidget.originalSaleIdNotifier.value = null;
+                      SalesReturnProductSideWidget.itemsNotifier.value.clear();
+                      Navigator.of(context).pop();
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return KAlertDialog(
+                              content: const Text('Are you sure want to cancel the sales return?'),
+                              submitAction: () {
+                                Navigator.pop(context);
+                                SalesReturnSideWidget.selectedProductsNotifier.value.clear();
+                                SalesReturnSideWidget.subTotalNotifier.value.clear();
+                                SalesReturnSideWidget.itemTotalVatNotifier.value.clear();
+                                SalesReturnSideWidget.customerController.clear();
+                                SalesReturnSideWidget.saleInvoiceController.clear();
+                                SalesReturnSideWidget.quantityNotifier.value.clear();
+                                SalesReturnSideWidget.totalItemsNotifier.value = 0;
+                                SalesReturnSideWidget.totalQuantityNotifier.value = 0;
+                                SalesReturnSideWidget.totalAmountNotifier.value = 0;
+                                SalesReturnSideWidget.totalVatNotifier.value = 0;
+                                SalesReturnSideWidget.totalPayableNotifier.value = 0;
+                                SalesReturnSideWidget.customerIdNotifier.value = null;
+                                SalesReturnSideWidget.customerNameNotifier.value = null;
+                                SalesReturnSideWidget.originalInvoiceNumberNotifier.value = null;
+                                SalesReturnSideWidget.originalSaleIdNotifier.value = null;
+                                SalesReturnProductSideWidget.itemsNotifier.value.clear();
+                                Navigator.pop(context);
+                              },
+                            );
+                          });
+                    }
                   },
                   padding: const EdgeInsets.all(5),
                   color: Colors.red[400],

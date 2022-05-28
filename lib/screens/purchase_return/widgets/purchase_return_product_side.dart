@@ -506,7 +506,9 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                           );
                         }
                         if (snapshot.hasData) {
-                          PurchaseReturnProductSideWidget.itemsNotifier.value = snapshot.data!;
+                          if (PurchaseReturnProductSideWidget.itemsNotifier.value.isEmpty) {
+                            PurchaseReturnProductSideWidget.itemsNotifier.value = snapshot.data!;
+                          }
                         } else {
                           PurchaseReturnProductSideWidget.itemsNotifier.value = [];
                         }

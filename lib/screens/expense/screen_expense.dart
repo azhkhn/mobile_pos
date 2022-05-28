@@ -364,6 +364,8 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
       try {
         await expenseDB.createExpense(_expenseModel);
         await transactionDatabase.createTransaction(_transactionModel);
+        _formState.reset();
+        expenseReset();
         kSnackBar(context: context, success: true, content: 'Expense "$expenseTitle" added!');
       } catch (e) {
         kSnackBar(
@@ -468,5 +470,19 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
     } on PlatformException catch (e) {
       log('Failed to Pick Image $e');
     }
+  }
+
+  expenseReset() {
+    _expenseTitleController.clear();
+    _amountController.clear();
+    _payByController.clear();
+    _noteController.clear();
+    _voucherNumberController.clear();
+    _dateController.clear();
+    _expenseCategoryController = '';
+    _selectedDate = '';
+    selectedDocument = null;
+    documentName = 'Document';
+    setState(() {});
   }
 }

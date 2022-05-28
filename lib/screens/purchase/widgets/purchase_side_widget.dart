@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/debouncer/debouncer.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
@@ -55,20 +56,46 @@ class PurchaseSideWidget extends StatelessWidget {
     Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
-        selectedProductsNotifier.value.clear();
-        subTotalNotifier.value.clear();
-        itemTotalVatNotifier.value.clear();
-        supplierController.clear();
-        costNotifier.value.clear();
-        quantityNotifier.value.clear();
-        totalItemsNotifier.value = 0;
-        totalQuantityNotifier.value = 0;
-        totalAmountNotifier.value = 0;
-        totalVatNotifier.value = 0;
-        totalPayableNotifier.value = 0;
-        supplierIdNotifier.value = null;
-        supplierNameNotifier.value = null;
-        return true;
+        if (selectedProductsNotifier.value.isEmpty) {
+          selectedProductsNotifier.value.clear();
+          subTotalNotifier.value.clear();
+          itemTotalVatNotifier.value.clear();
+          supplierController.clear();
+          costNotifier.value.clear();
+          quantityNotifier.value.clear();
+          totalItemsNotifier.value = 0;
+          totalQuantityNotifier.value = 0;
+          totalAmountNotifier.value = 0;
+          totalVatNotifier.value = 0;
+          totalPayableNotifier.value = 0;
+          supplierIdNotifier.value = null;
+          supplierNameNotifier.value = null;
+          return true;
+        } else {
+          showDialog(
+              context: context,
+              builder: (context) => KAlertDialog(
+                    content: const Text('Are you sure want to cancel the purchase?'),
+                    submitAction: () {
+                      selectedProductsNotifier.value.clear();
+                      subTotalNotifier.value.clear();
+                      itemTotalVatNotifier.value.clear();
+                      supplierController.clear();
+                      costNotifier.value.clear();
+                      quantityNotifier.value.clear();
+                      totalItemsNotifier.value = 0;
+                      totalQuantityNotifier.value = 0;
+                      totalAmountNotifier.value = 0;
+                      totalVatNotifier.value = 0;
+                      totalPayableNotifier.value = 0;
+                      supplierIdNotifier.value = null;
+                      supplierNameNotifier.value = null;
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                  ));
+          return false;
+        }
       },
       child: Expanded(
         child: SizedBox(

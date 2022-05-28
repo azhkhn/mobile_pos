@@ -202,6 +202,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                       SaleSideWidget.itemTotalVatNotifier.value.clear();
                       SaleSideWidget.customerController.clear();
                       SaleSideWidget.quantityNotifier.value.clear();
+                      SaleSideWidget.unitPriceNotifier.value.clear();
                       SaleSideWidget.totalItemsNotifier.value = 0;
                       SaleSideWidget.totalQuantityNotifier.value = 0;
                       SaleSideWidget.totalAmountNotifier.value = 0;
@@ -209,6 +210,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                       SaleSideWidget.totalPayableNotifier.value = 0;
                       SaleSideWidget.customerIdNotifier.value = null;
                       SaleSideWidget.customerNameNotifier.value = null;
+                      ProductSideWidget.itemsNotifier.value.clear();
                       Navigator.pop(context);
                     } else {
                       showDialog(
@@ -223,6 +225,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                                 SaleSideWidget.itemTotalVatNotifier.value.clear();
                                 SaleSideWidget.customerController.clear();
                                 SaleSideWidget.quantityNotifier.value.clear();
+                                SaleSideWidget.unitPriceNotifier.value.clear();
                                 SaleSideWidget.totalItemsNotifier.value = 0;
                                 SaleSideWidget.totalQuantityNotifier.value = 0;
                                 SaleSideWidget.totalAmountNotifier.value = 0;
@@ -230,6 +233,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                                 SaleSideWidget.totalPayableNotifier.value = 0;
                                 SaleSideWidget.customerIdNotifier.value = null;
                                 SaleSideWidget.customerNameNotifier.value = null;
+                                ProductSideWidget.itemsNotifier.value.clear();
                                 Navigator.pop(context);
                               },
                             );
@@ -437,7 +441,7 @@ class PaymentButtonsWidget extends StatelessWidget {
         log(' VAT id == $vatId');
         log(' VAT Percentage == $vatPercentage');
         log(' VAT Total == $vatTotal');
-        log('\n==============================================\n');
+        log('==============================================');
 
         final SalesItemsModel _salesItemsModel = SalesItemsModel(
           saleId: salesId,
@@ -464,6 +468,7 @@ class PaymentButtonsWidget extends StatelessWidget {
 
         //==================== Decreasing Item Quantity ====================
         itemMasterDB.subtractItemQty(itemId: SaleSideWidget.selectedProductsNotifier.value[i].id!, soldQty: num.parse(quantity));
+        log('==============================================');
       }
 
       if (paymentStatus != 'Due') {

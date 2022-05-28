@@ -93,12 +93,6 @@ class PartialPayment extends StatelessWidget {
                                 ? 'Due'
                                 : 'Partial';
 
-                        if (_totalPayable == _balance) {
-                          log('zero');
-                        } else {
-                          log('not equal');
-                        }
-
                         log('Total Payable = $_totalPayable');
                         log('Balance = $_balance');
                         log('Payment Status = $_paymentStatus');

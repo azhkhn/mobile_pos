@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
@@ -17,6 +18,7 @@ import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
 import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_buttons_widget.dart';
 import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_price_section.dart';
+import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_product_side.dart';
 import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
@@ -60,22 +62,55 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
-        selectedProductsNotifier.value.clear();
-        subTotalNotifier.value.clear();
-        itemTotalVatNotifier.value.clear();
-        supplierController.clear();
-        purchaseInvoiceController.clear();
-        quantityNotifier.value.clear();
-        totalItemsNotifier.value = 0;
-        totalQuantityNotifier.value = 0;
-        totalAmountNotifier.value = 0;
-        totalVatNotifier.value = 0;
-        totalPayableNotifier.value = 0;
-        supplierIdNotifier.value = null;
-        supplierNameNotifier.value = null;
-        originalInvoiceNumberNotifier.value = null;
-        originalPurchaseIdNotifier.value = null;
-        return true;
+        if (selectedProductsNotifier.value.isEmpty) {
+          selectedProductsNotifier.value.clear();
+          subTotalNotifier.value.clear();
+          itemTotalVatNotifier.value.clear();
+          supplierController.clear();
+          purchaseInvoiceController.clear();
+          quantityNotifier.value.clear();
+          totalItemsNotifier.value = 0;
+          totalQuantityNotifier.value = 0;
+          totalAmountNotifier.value = 0;
+          totalVatNotifier.value = 0;
+          totalPayableNotifier.value = 0;
+          supplierIdNotifier.value = null;
+          supplierNameNotifier.value = null;
+          originalInvoiceNumberNotifier.value = null;
+          originalPurchaseIdNotifier.value = null;
+          PurchaseReturnProductSideWidget.itemsNotifier.value.clear();
+          return true;
+        } else {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return KAlertDialog(
+                  content: const Text('Are you sure want to cancel the purchase return?'),
+                  submitAction: () {
+                    Navigator.pop(context);
+                    selectedProductsNotifier.value.clear();
+                    subTotalNotifier.value.clear();
+                    itemTotalVatNotifier.value.clear();
+                    supplierController.clear();
+                    purchaseInvoiceController.clear();
+                    quantityNotifier.value.clear();
+                    totalItemsNotifier.value = 0;
+                    totalQuantityNotifier.value = 0;
+                    totalAmountNotifier.value = 0;
+                    totalVatNotifier.value = 0;
+                    totalPayableNotifier.value = 0;
+                    supplierIdNotifier.value = null;
+                    supplierNameNotifier.value = null;
+                    originalInvoiceNumberNotifier.value = null;
+                    originalPurchaseIdNotifier.value = null;
+                    PurchaseReturnProductSideWidget.itemsNotifier.value.clear();
+
+                    Navigator.pop(context);
+                  },
+                );
+              });
+          return false;
+        }
       },
       child: Expanded(
         child: SizedBox(

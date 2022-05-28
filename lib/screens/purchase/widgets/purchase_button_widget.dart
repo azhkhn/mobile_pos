@@ -3,6 +3,7 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
@@ -82,19 +83,45 @@ class PurchaseButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    PurchaseSideWidget.selectedProductsNotifier.value.clear();
-                    PurchaseSideWidget.subTotalNotifier.value.clear();
-                    PurchaseSideWidget.itemTotalVatNotifier.value.clear();
-                    PurchaseSideWidget.supplierController.clear();
-                    PurchaseSideWidget.quantityNotifier.value.clear();
-                    PurchaseSideWidget.totalItemsNotifier.value = 0;
-                    PurchaseSideWidget.totalQuantityNotifier.value = 0;
-                    PurchaseSideWidget.totalAmountNotifier.value = 0;
-                    PurchaseSideWidget.totalVatNotifier.value = 0;
-                    PurchaseSideWidget.totalPayableNotifier.value = 0;
-                    PurchaseSideWidget.supplierIdNotifier.value = null;
-                    PurchaseSideWidget.supplierNameNotifier.value = null;
-                    Navigator.of(context).pop();
+                    if (PurchaseSideWidget.selectedProductsNotifier.value.isEmpty) {
+                      PurchaseSideWidget.selectedProductsNotifier.value.clear();
+                      PurchaseSideWidget.subTotalNotifier.value.clear();
+                      PurchaseSideWidget.itemTotalVatNotifier.value.clear();
+                      PurchaseSideWidget.supplierController.clear();
+                      PurchaseSideWidget.costNotifier.value.clear();
+                      PurchaseSideWidget.quantityNotifier.value.clear();
+                      PurchaseSideWidget.totalItemsNotifier.value = 0;
+                      PurchaseSideWidget.totalQuantityNotifier.value = 0;
+                      PurchaseSideWidget.totalAmountNotifier.value = 0;
+                      PurchaseSideWidget.totalVatNotifier.value = 0;
+                      PurchaseSideWidget.totalPayableNotifier.value = 0;
+                      PurchaseSideWidget.supplierIdNotifier.value = null;
+                      PurchaseSideWidget.supplierNameNotifier.value = null;
+                      Navigator.of(context).pop();
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (context) => KAlertDialog(
+                                content: const Text('Are you sure want to cancel the purchase?'),
+                                submitAction: () {
+                                  Navigator.of(context).pop();
+                                  PurchaseSideWidget.selectedProductsNotifier.value.clear();
+                                  PurchaseSideWidget.subTotalNotifier.value.clear();
+                                  PurchaseSideWidget.itemTotalVatNotifier.value.clear();
+                                  PurchaseSideWidget.supplierController.clear();
+                                  PurchaseSideWidget.costNotifier.value.clear();
+                                  PurchaseSideWidget.quantityNotifier.value.clear();
+                                  PurchaseSideWidget.totalItemsNotifier.value = 0;
+                                  PurchaseSideWidget.totalQuantityNotifier.value = 0;
+                                  PurchaseSideWidget.totalAmountNotifier.value = 0;
+                                  PurchaseSideWidget.totalVatNotifier.value = 0;
+                                  PurchaseSideWidget.totalPayableNotifier.value = 0;
+                                  PurchaseSideWidget.supplierIdNotifier.value = null;
+                                  PurchaseSideWidget.supplierNameNotifier.value = null;
+                                  Navigator.of(context).pop();
+                                },
+                              ));
+                    }
                   },
                   padding: const EdgeInsets.all(5),
                   color: Colors.red[400],

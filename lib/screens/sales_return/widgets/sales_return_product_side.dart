@@ -500,7 +500,9 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                           );
                         }
                         if (snapshot.hasData) {
-                          SalesReturnProductSideWidget.itemsNotifier.value = snapshot.data!;
+                          if (SalesReturnProductSideWidget.itemsNotifier.value.isEmpty) {
+                            SalesReturnProductSideWidget.itemsNotifier.value = snapshot.data!;
+                          }
                         } else {
                           SalesReturnProductSideWidget.itemsNotifier.value = [];
                         }

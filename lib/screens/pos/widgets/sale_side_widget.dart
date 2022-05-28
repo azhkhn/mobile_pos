@@ -15,6 +15,7 @@ import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/payment_buttons_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/price_section_widget.dart';
+import 'package:shop_ez/screens/pos/widgets/product_side_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
@@ -69,6 +70,7 @@ class SaleSideWidget extends StatelessWidget {
           totalPayableNotifier.value = 0;
           customerIdNotifier.value = null;
           customerNameNotifier.value = null;
+          ProductSideWidget.itemsNotifier.value.clear();
           return true;
         } else {
           showDialog(

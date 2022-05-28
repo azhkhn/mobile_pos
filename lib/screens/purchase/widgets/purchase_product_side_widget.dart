@@ -459,7 +459,9 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                           );
                         }
                         if (snapshot.hasData) {
-                          PurchaseProductSideWidget.itemsNotifier.value = snapshot.data!;
+                          if (PurchaseProductSideWidget.itemsNotifier.value.isEmpty) {
+                            PurchaseProductSideWidget.itemsNotifier.value = snapshot.data!;
+                          }
                         } else {
                           PurchaseProductSideWidget.itemsNotifier.value = [];
                         }
