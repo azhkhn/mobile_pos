@@ -317,6 +317,8 @@ class PurchaseButtonsWidget extends StatelessWidget {
 
       const PurchaseSideWidget().resetPurchase(notify: true);
 
+      PaymentTypeWidget.formKey.currentState!.reset();
+
       PurchaseProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
 
       Navigator.pop(context);

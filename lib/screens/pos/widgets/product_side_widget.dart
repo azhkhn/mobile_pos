@@ -10,6 +10,7 @@ import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
+import 'package:shop_ez/core/utils/vat/vat.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
@@ -558,8 +559,9 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
 // Checking if the product already added then Increasing the Quantity
 //====================================================================
-  void isProductAlreadyAdded(List<ItemMasterModel> itemList, int index) {
+  void isProductAlreadyAdded(List<ItemMasterModel> itemList, int index) async {
     final vatMethod = itemList[index].vatMethod;
+    final _vat = await VatUtils.instance.getVatById(vatId: itemList[index].vatId);
     log('VAT Method = ' + vatMethod);
 
     for (var i = 0; i < SaleSideWidget.selectedProductsNotifier.value.length; i++) {
@@ -579,10 +581,10 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
       }
     }
     SaleSideWidget.selectedProductsNotifier.value.add(itemList[index]);
+    SaleSideWidget.vatRateNotifier.value.add(_vat.rate);
 
     final String unitPrice = vatMethod == 'Inclusive'
-        ? Converter.amountRounder(
-            const SaleSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: itemList[index].vatRate))
+        ? Converter.amountRounder(const SaleSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: _vat.rate))
         : Converter.amountRounder(num.tryParse(itemList[index].sellingPrice)!);
 
     SaleSideWidget.unitPriceNotifier.value.add(TextEditingController(text: unitPrice));
@@ -590,12 +592,12 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
     SaleSideWidget.quantityNotifier.value.add(TextEditingController(text: '1'));
 
     SaleSideWidget.subTotalNotifier.value.add(vatMethod == 'Inclusive'
-        ? '${const SaleSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: itemList[index].vatRate)}'
+        ? '${const SaleSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: _vat.rate)}'
         : itemList[index].sellingPrice);
 
     SaleSideWidget.totalItemsNotifier.value++;
 
-    const SaleSideWidget().getItemVat(vatMethod: vatMethod, amount: itemList[index].sellingPrice, vatRate: itemList[index].vatRate);
+    const SaleSideWidget().getItemVat(vatMethod: vatMethod, amount: itemList[index].sellingPrice, vatRate: _vat.rate);
     const SaleSideWidget().getTotalAmount();
     const SaleSideWidget().getTotalVAT();
     const SaleSideWidget().getTotalPayable();

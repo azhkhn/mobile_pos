@@ -151,6 +151,7 @@ class ScreenSalesInvoice extends StatelessWidget {
                   pdfPreview.value = snapshot.data!.last;
 
                   return PdfPreview(
+                      initialPageFormat: PdfPageFormat.roll57,
                       useActions: false,
                       canChangeOrientation: true,
                       loadingWidget: const CircularProgressIndicator(),
@@ -190,6 +191,8 @@ class ScreenSalesInvoice extends StatelessWidget {
     } else {
       final pdfFiles = await PdfSalesInvoice.generate(salesModel: salesModal);
       return pdfFiles;
+      // final pdfFiles = await PdfSalesReceipt.generate(salesModel: salesModal);
+      // return pdfFiles;
     }
   }
 }

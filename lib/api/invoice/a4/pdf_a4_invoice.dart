@@ -34,9 +34,9 @@ class PdfSalesInvoice {
       items = await SalesItemsDatabase.instance.getSalesItemBySaleId(sale.id!);
     }
 
-    ByteData _bytes = await rootBundle.load('assets/images/invoice_logo.png');
-    final logoBytes = _bytes.buffer.asUint8List();
-    pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
+    // ByteData _bytes = await rootBundle.load('assets/images/invoice_logo.png');
+    // final logoBytes = _bytes.buffer.asUint8List();
+    // pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
 
     ByteData data = await rootBundle.load("assets/fonts/ibm_plex_sans_arabic.ttf");
     final arabicFont = pw.Font.ttf(data);
@@ -46,6 +46,10 @@ class PdfSalesInvoice {
 
     final businessProfile = await UserUtils.instance.businessProfile;
     final customer = await CustomerDatabase.instance.getCustomerById(sale.customerId);
+
+    final businessLogo = businessProfile.logo;
+    final logoBytes = await File(businessLogo).readAsBytes();
+    final pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
 
     //========== Pdf Preview ==========
     pdfPreview.addPage(pw.MultiPage(

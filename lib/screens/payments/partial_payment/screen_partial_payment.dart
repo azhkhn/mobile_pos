@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
+import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_details_table_widget.dart';
 import 'package:shop_ez/screens/payments/partial_payment/widgets/quick_cash_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/payment_buttons_widget.dart';
@@ -114,6 +116,7 @@ class PartialPayment extends StatelessWidget {
                                 TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                                 TextButton(
                                     onPressed: () async {
+                                      late final SalesModel? salesModel;
                                       if (purchase) {
                                         //========== Purchase Payment ==========
                                         await const PurchaseButtonsWidget().addPurchase(context,
@@ -124,7 +127,7 @@ class PartialPayment extends StatelessWidget {
                                             argPurchaseNote: _paymentNote);
                                       } else {
                                         //========== Sale Payment ==========
-                                        await const PaymentButtonsWidget().addSale(
+                                        salesModel = await const PaymentButtonsWidget().addSale(
                                           context,
                                           argBalance: _balance,
                                           argPaymentStatus: _paymentStatus,
@@ -132,16 +135,22 @@ class PartialPayment extends StatelessWidget {
                                           argPaid: _paid,
                                           argSalesNote: _paymentNote,
                                         );
-                                        Navigator.pop(context);
+                                        Navigator.pop(context, salesModel);
                                       }
 
-                                      Navigator.pop(context);
+                                      if (salesModel != null) {
+                                        Navigator.pop(context, salesModel);
+                                      } else {
+                                        Navigator.pop(context);
+                                      }
                                     },
                                     child: const Text('Accept')),
                               ],
                             );
                           },
                         );
+                      } else {
+                        kSnackBar(context: context, content: 'Please fill the required informations', error: true);
                       }
                     },
                     buttonText: 'Submit'),

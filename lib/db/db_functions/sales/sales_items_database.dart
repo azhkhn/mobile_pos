@@ -25,8 +25,7 @@ class SalesItemsDatabase {
     // db.delete(tableSalesItems);
     log('Sales Items By SaleId $saleId == $_result');
     if (_result.isNotEmpty) {
-      final _salesItems =
-          _result.map((json) => SalesItemsModel.fromJson(json)).toList();
+      final _salesItems = _result.map((json) => SalesItemsModel.fromJson(json)).toList();
       return _salesItems;
     } else {
       throw 'Sales Items is Empty!';
@@ -40,8 +39,7 @@ class SalesItemsDatabase {
     // db.delete(tableSalesItems);
     log('Sales Items == $_result');
     if (_result.isNotEmpty) {
-      final _salesItems =
-          _result.map((json) => SalesItemsModel.fromJson(json)).toList();
+      final _salesItems = _result.map((json) => SalesItemsModel.fromJson(json)).toList();
       return _salesItems;
     } else {
       throw 'Sales Items is Empty!';

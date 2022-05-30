@@ -17,7 +17,6 @@ import 'package:shop_ez/model/sales/sales_items_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
 import 'package:shop_ez/screens/home/widgets/home_card_widget.dart';
-import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_type_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/product_side_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
 
@@ -108,16 +107,24 @@ class PaymentButtonsWidget extends StatelessWidget {
                                   },
                                   child: const Text('Cancel')),
                               TextButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     Navigator.pop(ctx);
                                     final String _balance = SaleSideWidget.totalPayableNotifier.value.toString();
-                                    addSale(
+                                    final SalesModel? salesModel = await addSale(
                                       context,
                                       argPaid: '0',
                                       argBalance: _balance,
                                       argPaymentStatus: 'Due',
                                       argPaymentType: '',
                                     );
+
+                                    if (salesModel != null) {
+                                      Navigator.pushNamed(
+                                        context,
+                                        routeSalesInvoice,
+                                        arguments: [salesModel, false],
+                                      );
+                                    }
                                   },
                                   child: const Text('Accept')),
                             ],
@@ -162,9 +169,16 @@ class PaymentButtonsWidget extends StatelessWidget {
                             actions: [
                               TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                               TextButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     Navigator.pop(ctx);
-                                    addSale(context);
+                                    final SalesModel? salesModel = await addSale(context);
+                                    if (salesModel != null) {
+                                      Navigator.pushNamed(
+                                        context,
+                                        routeSalesInvoice,
+                                        arguments: [salesModel, false],
+                                      );
+                                    }
                                   },
                                   child: const Text('Accept')),
                             ],
@@ -229,7 +243,7 @@ class PaymentButtonsWidget extends StatelessWidget {
               child: SizedBox(
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
-                  onPressed: () {
+                  onPressed: () async {
                     final int? customerId = SaleSideWidget.customerIdNotifier.value;
                     final num items = SaleSideWidget.totalItemsNotifier.value;
 
@@ -238,11 +252,19 @@ class PaymentButtonsWidget extends StatelessWidget {
                     } else if (items == 0) {
                       return kSnackBar(context: context, content: 'Please select any Products to add Sale!');
                     } else {
-                      Navigator.pushNamed(context, routePartialPayment, arguments: {
+                      final salesModel = await Navigator.pushNamed(context, routePartialPayment, arguments: {
                         'totalPayable': SaleSideWidget.totalPayableNotifier.value,
                         'totalItems': SaleSideWidget.totalItemsNotifier.value,
                         'isVertical': isVertical
                       });
+
+                      if (salesModel is SalesModel) {
+                        Navigator.pushNamed(
+                          context,
+                          routeSalesInvoice,
+                          arguments: [salesModel, false],
+                        );
+                      }
                     }
                   },
                   padding: const EdgeInsets.all(5),
@@ -265,7 +287,7 @@ class PaymentButtonsWidget extends StatelessWidget {
 //========================================          ========================================
 //======================================== Add Sale ========================================
 //========================================          ========================================
-  addSale(
+  Future<SalesModel?> addSale(
     BuildContext context, {
     String? argBalance,
     String? argPaymentStatus,
@@ -310,7 +332,8 @@ class PaymentButtonsWidget extends StatelessWidget {
       log('Biller Name ==== $_biller');
     } catch (e) {
       kSnackBar(context: context, content: 'Business Profile is empty! Please fill your profile', error: true);
-      return log(e.toString());
+      log(e.toString());
+      return null;
     }
 
 //Checking if it's Partial Payment then Including Balance Amount
@@ -373,7 +396,8 @@ class PaymentButtonsWidget extends StatelessWidget {
 
     try {
       //==================== Create Sales ====================
-      salesId = await salesDB.createSales(_salesModel);
+      final _newSale = await salesDB.createSales(_salesModel);
+      salesId = _newSale.id!;
 
       final num items = SaleSideWidget.totalItemsNotifier.value;
       for (var i = 0; i < items; i++) {
@@ -460,18 +484,28 @@ class PaymentButtonsWidget extends StatelessWidget {
         await transactionDB.createTransaction(_transaction);
       }
 
-      PaymentTypeWidget.amountController.clear();
+      // PaymentTypeWidget.amountController.clear();
 
       HomeCardWidget.detailsCardLoaded = false;
       const SaleSideWidget().resetPos(notify: true);
 
       ProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
 
+      // PaymentTypeWidget.formKey.currentState?.reset();
+
       kSnackBar(
         context: context,
         success: true,
         content: "Sale has been added successfully!",
       );
+
+      return _newSale;
+
+      // Navigator.pushNamed(
+      //   context,
+      //   routeSalesInvoice,
+      //   arguments: [_newSale, false],
+      // );
     } catch (e) {
       log('$e');
       kSnackBar(
@@ -479,6 +513,8 @@ class PaymentButtonsWidget extends StatelessWidget {
         content: 'Something went wrong! Please try again later.',
         error: true,
       );
+
+      return null;
     }
   }
 }

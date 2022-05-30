@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/db/db_functions/auth/user_db.dart';
 import 'package:shop_ez/screens/auth/widgets/login_signup_buttons.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import 'package:shop_ez/widgets/wave_clip.dart';
@@ -11,7 +12,7 @@ class ScreenLogin extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size _screenSise = MediaQuery.of(context).size;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // await UserDatabase.instance.getAllUsers();
+      await UserDatabase.instance.getAllUsers();
     });
     return Scaffold(
       body: SingleChildScrollView(
@@ -64,10 +65,8 @@ class SignInFields extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  static final ValueNotifier<TextEditingController> usernameController =
-      ValueNotifier(TextEditingController());
-  static final ValueNotifier<TextEditingController> passwordController =
-      ValueNotifier(TextEditingController());
+  static final ValueNotifier<TextEditingController> usernameController = ValueNotifier(TextEditingController());
+  static final ValueNotifier<TextEditingController> passwordController = ValueNotifier(TextEditingController());
   static final _formStateKey = GlobalKey<FormState>();
   static ValueNotifier<bool> obscureState = ValueNotifier(false);
 
@@ -122,9 +121,7 @@ class SignInFields extends StatelessWidget {
                               obscureState.value = true;
                             }
                           },
-                          icon: obscureState.value == false
-                              ? const Icon(Icons.visibility_off)
-                              : const Icon(Icons.visibility),
+                          icon: obscureState.value == false ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {

@@ -1,10 +1,11 @@
 import 'dart:developer' show log;
-import 'dart:typed_data' show Uint8List;
+import 'dart:io';
 
 import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:pdf/pdf.dart' show PdfColors, PdfPageFormat;
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart' show PdfGoogleFonts;
+import 'package:shop_ez/api/invoice/utils/e-invoice_generate.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/core/utils/vat/vat.dart';
@@ -19,6 +20,7 @@ import 'package:shop_ez/model/sales_return/sales_return_model.dart';
 
 class PdfSalesReceipt {
   static Future<pw.Document> generate({SalesModel? salesModel, SalesReturnModal? salesReturnModal, bool isReturn = false}) async {
+    // static Future<List<File>> generate({SalesModel? salesModel, SalesReturnModal? salesReturnModal, bool isReturn = false}) async {
     final pw.Document pdf = pw.Document();
     final dynamic sale;
     final dynamic saleItems;
@@ -33,9 +35,9 @@ class PdfSalesReceipt {
       saleItems = await SalesItemsDatabase.instance.getSalesItemBySaleId(sale.id!);
     }
 
-    final ByteData _bytes = await rootBundle.load('assets/images/invoice_logo.png');
-    final Uint8List logoBytes = _bytes.buffer.asUint8List();
-    final pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
+    // final ByteData _bytes = await rootBundle.load('assets/images/invoice_logo.png');
+    // final Uint8List logoBytes = _bytes.buffer.asUint8List();
+    // final pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
 
     // final emojiFont = await PdfGoogleFonts.notoColorEmoji();
     // final arabicFont = await PdfGoogleFonts.iBMPlexSansArabicBold();
@@ -46,6 +48,10 @@ class PdfSalesReceipt {
     final businessProfile = await UserUtils.instance.businessProfile;
     final customer = await CustomerDatabase.instance.getCustomerById(sale.customerId);
 
+    final businessLogo = businessProfile.logo;
+    final logoBytes = await File(businessLogo).readAsBytes();
+    final pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
+
     //========== Pdf Preview ==========
     pdf.addPage(pw.Page(
       orientation: pw.PageOrientation.portrait,
@@ -55,21 +61,23 @@ class PdfSalesReceipt {
       ),
       build: (context) {
         return builder(
-            business: businessProfile,
-            titleFont: titleFont,
-            logoImage: logoImage,
-            sale: sale,
-            customer: customer,
-            saleItems: saleItems,
-            arabicFont: arabicFont,
-            isReturn: isReturn);
+          business: businessProfile,
+          titleFont: titleFont,
+          logoImage: logoImage,
+          sale: sale,
+          customer: customer,
+          saleItems: saleItems,
+          arabicFont: arabicFont,
+          isReturn: isReturn,
+        );
       },
     ));
 
-    // final pdfFile =
-    //     await PdfAction.saveDocument(name: 'sale_receipt.pdf', pdf: pdf);
+    // final pdfFile = await PdfAction.saveDocument(name: 'sale_receipt.pdf', pdf: pdf);
 
     return pdf;
+
+    // return [pdfFile, pdfFile];
   }
 
   static pw.Widget builder(
@@ -91,7 +99,25 @@ class PdfSalesReceipt {
         buildInvoice(saleItems: saleItems, arabicFont: arabicFont),
         pw.SizedBox(height: 1 * PdfPageFormat.mm),
         pw.Divider(height: 2 * PdfPageFormat.mm, thickness: 0.5),
-        buildTotal(sale, arabicFont)
+        buildTotal(sale, arabicFont, business),
+        pw.Divider(height: 5 * PdfPageFormat.mm, thickness: 0.5),
+        pw.Align(
+          alignment: pw.Alignment.center,
+          child: pw.Container(
+            height: 40,
+            width: 40,
+            child: pw.BarcodeWidget(
+              barcode: pw.Barcode.qrCode(),
+              data: EInvoiceGenerator.getEInvoiceCode(
+                  name: business.business,
+                  vatNumber: business.vatNumber,
+                  invoiceDate: DateTime.parse(sale.dateTime),
+                  invoiceTotal: Converter.amountRounder(num.parse(sale.grantTotal)),
+                  vatTotal: Converter.amountRounder(num.parse(sale.vatAmount))),
+              drawText: false,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -109,6 +135,7 @@ class PdfSalesReceipt {
             child: pw.Image(
               logoImage,
             )),
+        pw.SizedBox(height: 1 * PdfPageFormat.mm),
         pw.SizedBox(
           width: double.infinity,
           child: pw.Text(business.business,
@@ -120,7 +147,7 @@ class PdfSalesReceipt {
             business.address,
             textAlign: pw.TextAlign.center,
             style: const pw.TextStyle(
-              fontSize: 6,
+              fontSize: 7,
             ),
           ),
         ),
@@ -129,7 +156,7 @@ class PdfSalesReceipt {
           child: pw.Text('VAT NO. ' + business.vatNumber,
               textAlign: pw.TextAlign.center,
               style: const pw.TextStyle(
-                fontSize: 6,
+                fontSize: 7,
               )),
         ),
         pw.SizedBox(
@@ -137,7 +164,7 @@ class PdfSalesReceipt {
           child: pw.Text('PH NO. ' + business.phoneNumber,
               textAlign: pw.TextAlign.center,
               style: const pw.TextStyle(
-                fontSize: 6,
+                fontSize: 7,
               )),
         ),
         pw.SizedBox(height: 1 * PdfPageFormat.mm),
@@ -165,7 +192,7 @@ class PdfSalesReceipt {
 
   //========== Sale Info ==========
   static pw.Widget saleInfo({required final sale}) {
-    const kStyle = pw.TextStyle(fontSize: 5);
+    const kStyle = pw.TextStyle(fontSize: 6);
     return pw.Column(children: [
       pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -179,7 +206,7 @@ class PdfSalesReceipt {
 
   //========== Customer Info ==========
   static pw.Widget customerInfo({required final CustomerModel customer, required final pw.Font arabicFont}) {
-    final kStyle = pw.TextStyle(fontSize: 5, font: arabicFont);
+    final kStyle = pw.TextStyle(fontSize: 6, font: arabicFont);
     return pw.Column(children: [
       pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -201,23 +228,23 @@ class PdfSalesReceipt {
               ),
             ],
           ),
-          pw.Row(
-            mainAxisAlignment: pw.MainAxisAlignment.start,
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text(
-                ': الرقم الضريبي VAT No /',
-                style: kStyle,
-                textDirection: pw.TextDirection.rtl,
-              ),
-              pw.SizedBox(width: 1 * PdfPageFormat.mm),
-              pw.Text(
-                customer.vatNumber ?? '',
-                style: kStyle,
-                textDirection: pw.TextDirection.rtl,
-              ),
-            ],
-          )
+          // pw.Row(
+          //   mainAxisAlignment: pw.MainAxisAlignment.start,
+          //   crossAxisAlignment: pw.CrossAxisAlignment.start,
+          //   children: [
+          //     pw.Text(
+          //       ': الرقم الضريبي VAT No /',
+          //       style: kStyle,
+          //       textDirection: pw.TextDirection.rtl,
+          //     ),
+          //     pw.SizedBox(width: 1 * PdfPageFormat.mm),
+          //     pw.Text(
+          //       customer.vatNumber ?? '',
+          //       style: kStyle,
+          //       textDirection: pw.TextDirection.rtl,
+          //     ),
+          //   ],
+          // )
         ],
       ),
       pw.Row(
@@ -239,7 +266,24 @@ class PdfSalesReceipt {
             ),
           ),
         ],
-      )
+      ),
+      pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.start,
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text(
+            ': الرقم الضريبي VAT No /',
+            style: kStyle,
+            textDirection: pw.TextDirection.rtl,
+          ),
+          pw.SizedBox(width: 1 * PdfPageFormat.mm),
+          pw.Text(
+            customer.vatNumber ?? '',
+            style: kStyle,
+            textDirection: pw.TextDirection.rtl,
+          ),
+        ],
+      ),
     ]);
   }
 
@@ -282,12 +326,12 @@ class PdfSalesReceipt {
       data: data,
       border: null,
       cellStyle: pw.TextStyle(
-        fontSize: 4,
+        fontSize: 6,
         fontWeight: pw.FontWeight.normal,
       ),
-      headerStyle: pw.TextStyle(fontSize: 5, fontWeight: pw.FontWeight.bold, fontFallback: [arabicFont]),
-      headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
-      cellHeight: 10,
+      headerStyle: pw.TextStyle(fontSize: 6, fontWeight: pw.FontWeight.bold, fontFallback: [arabicFont]),
+      headerDecoration: pw.BoxDecoration(border: pw.Border.all(width: .5)),
+      cellHeight: 12,
       columnWidths: const {
         1: pw.FractionColumnWidth(0.30),
         2: pw.FractionColumnWidth(0.10),
@@ -315,7 +359,7 @@ class PdfSalesReceipt {
   }
 
   //==================== Total Section ====================
-  static pw.Widget buildTotal(final sale, pw.Font arabicFont) {
+  static pw.Widget buildTotal(final sale, pw.Font arabicFont, BusinessProfileModel business) {
     return pw.Container(
         child: pw.Expanded(
       child: pw.Row(
@@ -389,7 +433,7 @@ class PdfSalesReceipt {
     final style = pw.TextStyle(
       fontWeight: pw.FontWeight.bold,
       font: arabicFont,
-      fontSize: 5,
+      fontSize: 7,
     );
 
     return pw.Container(

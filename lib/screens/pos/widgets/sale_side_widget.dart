@@ -36,6 +36,7 @@ class SaleSideWidget extends StatelessWidget {
   static final ValueNotifier<List<String>> itemTotalVatNotifier = ValueNotifier([]);
   static final ValueNotifier<List<TextEditingController>> quantityNotifier = ValueNotifier([]);
   static final ValueNotifier<List<TextEditingController>> unitPriceNotifier = ValueNotifier([]);
+  static final ValueNotifier<List<int>> vatRateNotifier = ValueNotifier([]);
 
   static final ValueNotifier<int?> customerIdNotifier = ValueNotifier(null);
   static final ValueNotifier<String?> customerNameNotifier = ValueNotifier(null);
@@ -238,7 +239,7 @@ class SaleSideWidget extends StatelessWidget {
                           },
                           border: TableBorder.all(color: Colors.grey, width: 0.5),
                           children: List<TableRow>.generate(
-                            selectedProducts.length,
+                            selectedProductsNotifier.value.length,
                             (index) {
                               final ItemMasterModel _product = selectedProducts[index];
                               return TableRow(children: [
@@ -354,6 +355,7 @@ class SaleSideWidget extends StatelessWidget {
                                       onPressed: () {
                                         selectedProducts.removeAt(index);
                                         subTotalNotifier.value.removeAt(index);
+                                        vatRateNotifier.value.removeAt(index);
                                         itemTotalVatNotifier.value.removeAt(index);
                                         quantityNotifier.value.removeAt(index);
                                         unitPriceNotifier.value.removeAt(index);
@@ -425,16 +427,17 @@ class SaleSideWidget extends StatelessWidget {
   }
 
   //==================== Get SubTotal Amount ====================
-  void getSubTotal(List<ItemMasterModel> selectedProducts, int index, num qty) {
-    final cost = num.tryParse(selectedProducts[index].sellingPrice);
-    final vatRate = selectedProducts[index].vatRate;
-    if (selectedProducts[index].vatMethod == 'Inclusive') {
-      final _exclusiveCost = getExclusiveAmount(sellingPrice: selectedProducts[index].sellingPrice, vatRate: vatRate);
+  void getSubTotal(List<ItemMasterModel> selectedProducts, int i, num qty) async {
+    final cost = num.tryParse(selectedProducts[i].sellingPrice);
+
+    final vatRate = vatRateNotifier.value[i];
+    if (selectedProducts[i].vatMethod == 'Inclusive') {
+      final _exclusiveCost = getExclusiveAmount(sellingPrice: selectedProducts[i].sellingPrice, vatRate: vatRate);
       final _subTotal = _exclusiveCost * qty;
-      subTotalNotifier.value[index] = '$_subTotal';
+      subTotalNotifier.value[i] = '$_subTotal';
     } else {
       final _subTotal = cost! * qty;
-      subTotalNotifier.value[index] = '$_subTotal';
+      subTotalNotifier.value[i] = '$_subTotal';
     }
 
     subTotalNotifier.notifyListeners();
@@ -491,7 +494,7 @@ class SaleSideWidget extends StatelessWidget {
   }
 
   //==================== Get Total VAT ====================
-  void getTotalVAT() {
+  void getTotalVAT() async {
     num _totalVAT = 0;
     int _vatRate;
     num _subTotal;
@@ -501,7 +504,8 @@ class SaleSideWidget extends StatelessWidget {
     } else {
       for (var i = 0; i < subTotalNotifier.value.length; i++) {
         _subTotal = num.parse(subTotalNotifier.value[i]);
-        _vatRate = selectedProductsNotifier.value[i].vatRate;
+
+        _vatRate = vatRateNotifier.value[i];
         itemTotalVatNotifier.value[i] = '${_subTotal * _vatRate / 100}';
 
         log('Item Total VAT == ${itemTotalVatNotifier.value[i]}');
@@ -540,6 +544,7 @@ class SaleSideWidget extends StatelessWidget {
   void resetPos({bool notify = false}) {
     selectedProductsNotifier.value.clear();
     subTotalNotifier.value.clear();
+    vatRateNotifier.value.clear();
     itemTotalVatNotifier.value.clear();
     customerController.clear();
     quantityNotifier.value.clear();
@@ -556,6 +561,7 @@ class SaleSideWidget extends StatelessWidget {
     if (notify) {
       selectedProductsNotifier.notifyListeners();
       subTotalNotifier.notifyListeners();
+      vatRateNotifier.notifyListeners();
       itemTotalVatNotifier.notifyListeners();
       unitPriceNotifier.notifyListeners();
       quantityNotifier.notifyListeners();

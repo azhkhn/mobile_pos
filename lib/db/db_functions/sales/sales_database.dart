@@ -8,11 +8,10 @@ class SalesDatabase {
   SalesDatabase._init();
 
 //==================== Create Sales ====================
-  Future<int> createSales(SalesModel _salesModel) async {
+  Future<SalesModel> createSales(SalesModel _salesModel) async {
     final db = await dbInstance.database;
 
-    final _sale = await db.rawQuery(
-        '''select * from $tableSales where ${SalesFields.invoiceNumber} = "${_salesModel.invoiceNumber}"''');
+    final _sale = await db.rawQuery('''select * from $tableSales where ${SalesFields.invoiceNumber} = "${_salesModel.invoiceNumber}"''');
 
     if (_sale.isNotEmpty) {
       throw 'Invoice Number Already Exist!';
@@ -31,14 +30,14 @@ class SalesDatabase {
 
         final id = await db.insert(tableSales, _newSale.toJson());
         log('Sale Created! ($id)');
-        return id;
+        return _newSale.copyWith(id: id);
       } else {
         final _newSale = _salesModel.copyWith(invoiceNumber: 'SA-1');
 
         log('New Invoice Number == ' + _newSale.invoiceNumber!);
         final id = await db.insert(tableSales, _newSale.toJson());
         log('Sale Created! ($id)');
-        return id;
+        return _newSale.copyWith(id: id);
       }
     }
   }
@@ -46,12 +45,10 @@ class SalesDatabase {
 //========== Get Today's Sales ==========
   Future<List<SalesModel>> getTodaySales(String today) async {
     final db = await dbInstance.database;
-    final _result = await db.rawQuery(
-        '''SELECT * FROM $tableSales WHERE ${SalesFields.dateTime} LIKE "%$today%"''');
+    final _result = await db.rawQuery('''SELECT * FROM $tableSales WHERE ${SalesFields.dateTime} LIKE "%$today%"''');
     log('Sales of Today === $_result');
     if (_result.isNotEmpty) {
-      final _todaySales =
-          _result.map((json) => SalesModel.fromJson(json)).toList();
+      final _todaySales = _result.map((json) => SalesModel.fromJson(json)).toList();
       return _todaySales;
     } else {
       throw 'Sales of Today is Empty!';
@@ -61,11 +58,9 @@ class SalesDatabase {
   //========== Get All Sales By Query ==========
   Future<List<SalesModel>> getSalesByInvoiceSuggestions(String pattern) async {
     final db = await dbInstance.database;
-    final res = await db.rawQuery(
-        '''select * from $tableSales where ${SalesFields.invoiceNumber} LIKE "%$pattern%"''');
+    final res = await db.rawQuery('''select * from $tableSales where ${SalesFields.invoiceNumber} LIKE "%$pattern%"''');
 
-    List<SalesModel> list =
-        res.isNotEmpty ? res.map((c) => SalesModel.fromJson(c)).toList() : [];
+    List<SalesModel> list = res.isNotEmpty ? res.map((c) => SalesModel.fromJson(c)).toList() : [];
 
     return list;
   }
@@ -79,8 +74,7 @@ class SalesDatabase {
       whereArgs: [id],
     );
 
-    List<SalesModel> list =
-        res.isNotEmpty ? res.map((c) => SalesModel.fromJson(c)).toList() : [];
+    List<SalesModel> list = res.isNotEmpty ? res.map((c) => SalesModel.fromJson(c)).toList() : [];
 
     return list;
   }

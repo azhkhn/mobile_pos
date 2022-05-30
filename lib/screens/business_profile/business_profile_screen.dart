@@ -28,6 +28,7 @@ class BusinessProfile extends StatefulWidget {
 class _BusinessProfileState extends State<BusinessProfile> {
   //========== Image File Path ==========
   File? image, selectedImage;
+  File? oldImage;
 
   //========== Database Instances ==========
   final businessProfileDB = BusinessProfileDatabase.instance;
@@ -68,10 +69,9 @@ class _BusinessProfileState extends State<BusinessProfile> {
   final FocusNode _countryArabicFocusNode = FocusNode();
 
   @override
-  void initState() {
-    //====== retrieving profile details ======
-    getBusinessProfileModel();
-    super.initState();
+  void didChangeDependencies() async {
+    await getBusinessProfileModel();
+    super.didChangeDependencies();
   }
 
   @override
@@ -273,8 +273,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
                       if (value == null || value.trim().isEmpty) {
                         return null;
                       } else {
-                        if (!RegExp(r'^(?:[+0][1-9])?[0-9]{10,12}$')
-                            .hasMatch(value)) {
+                        if (!RegExp(r'^(?:[+0][1-9])?[0-9]{10,12}$').hasMatch(value)) {
                           if (value.length != 10) {
                             return 'Mobile number must 10 digits';
                           } else {
@@ -412,8 +411,8 @@ class _BusinessProfileState extends State<BusinessProfile> {
   Future<File?> imageCropper(File imageFile) async {
     return await ImageCropper().cropImage(
       sourcePath: imageFile.path,
-      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
-      aspectRatioPresets: [CropAspectRatioPreset.square],
+      // aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      aspectRatioPresets: [CropAspectRatioPreset.square, CropAspectRatioPreset.ratio3x2, CropAspectRatioPreset.original],
       androidUiSettings: const AndroidUiSettings(toolbarTitle: 'Crop Image'),
     );
   }
@@ -451,7 +450,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
     vatNumber = _vatNumberController.text.trim();
     phoneNumber = _phoneNumberController.text.trim();
     email = _emailController.text.trim();
-    if (selectedImage != null) {
+    if (selectedImage != null && oldImage == null) {
       //========== Getting Directory Path ==========
       final Directory extDir = await getApplicationDocumentsDirectory();
       String dirPath = extDir.path;
@@ -463,6 +462,8 @@ class _BusinessProfileState extends State<BusinessProfile> {
       //========== Coping Image to new path ==========
       image = await selectedImage!.copy(filePath);
       logo = image!.path;
+    } else if (selectedImage != null) {
+      logo = selectedImage!.path;
     } else {
       logo = '';
     }
@@ -489,14 +490,11 @@ class _BusinessProfileState extends State<BusinessProfile> {
 
       try {
         await businessProfileDB.createBusinessProfile(_businessProfileModel);
-        UserUtils.businessProfileModel == null;
+        UserUtils().getBusinessProfile();
         Navigator.pop(context);
         log('Profile Updated!');
 
-        kSnackBar(
-            context: context,
-            success: true,
-            content: 'Profile updated successfully!');
+        kSnackBar(context: context, success: true, content: 'Profile updated successfully!');
       } catch (e) {
         log(e.toString());
         log('Something went wrong!');
@@ -547,6 +545,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
       _emailController.text = _businessProfileModel.email;
       if (_businessProfileModel.logo != '') {
         selectedImage = File(_businessProfileModel.logo);
+        oldImage = File(_businessProfileModel.logo);
       }
 
       setState(() {});

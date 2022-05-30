@@ -36,6 +36,7 @@ class PurchaseSideWidget extends StatelessWidget {
   static final ValueNotifier<List<String>> itemTotalVatNotifier = ValueNotifier([]);
   static final ValueNotifier<List<TextEditingController>> quantityNotifier = ValueNotifier([]);
   static final ValueNotifier<List<TextEditingController>> costNotifier = ValueNotifier([]);
+  static final ValueNotifier<List<int>> vatRateNotifier = ValueNotifier([]);
 
   static final ValueNotifier<int?> supplierIdNotifier = ValueNotifier(null);
   static final ValueNotifier<String?> supplierNameNotifier = ValueNotifier(null);
@@ -380,6 +381,7 @@ class PurchaseSideWidget extends StatelessWidget {
                                       onPressed: () {
                                         selectedProducts.removeAt(index);
                                         subTotalNotifier.value.removeAt(index);
+                                        vatRateNotifier.value.removeAt(index);
                                         itemTotalVatNotifier.value.removeAt(index);
                                         costNotifier.value.removeAt(index);
                                         quantityNotifier.value.removeAt(index);
@@ -448,9 +450,10 @@ class PurchaseSideWidget extends StatelessWidget {
   }
 
   //==================== Get SubTotal Amount ====================
-  void getSubTotal(List<ItemMasterModel> selectedProducts, int index, num qty) {
+  void getSubTotal(List<ItemMasterModel> selectedProducts, int index, num qty) async {
     final cost = num.tryParse(selectedProducts[index].itemCost);
-    final vatRate = selectedProducts[index].vatRate;
+
+    final vatRate = vatRateNotifier.value[index];
     if (selectedProducts[index].vatMethod == 'Inclusive') {
       final _exclusiveCost = getExclusiveAmount(itemCost: selectedProducts[index].itemCost, vatRate: vatRate);
       final _subTotal = _exclusiveCost * qty;
@@ -514,7 +517,7 @@ class PurchaseSideWidget extends StatelessWidget {
   }
 
   //==================== Get Total VAT ====================
-  void getTotalVAT() {
+  void getTotalVAT() async {
     num _totalVAT = 0;
     int _vatRate;
     num _subTotal;
@@ -524,7 +527,8 @@ class PurchaseSideWidget extends StatelessWidget {
     } else {
       for (var i = 0; i < subTotalNotifier.value.length; i++) {
         _subTotal = num.parse(subTotalNotifier.value[i]);
-        _vatRate = selectedProductsNotifier.value[i].vatRate;
+        _vatRate = vatRateNotifier.value[i];
+
         itemTotalVatNotifier.value[i] = '${_subTotal * _vatRate / 100}';
 
         log('Item Total VAT == ${itemTotalVatNotifier.value[i]}');
@@ -536,7 +540,6 @@ class PurchaseSideWidget extends StatelessWidget {
     }
   }
 
-  //==================== Calculate Exclusive Amount from Inclusive Amount ====================
   //==================== Calculate Exclusive Amount from Inclusive Amount ====================
   num getExclusiveAmount({required String itemCost, required int vatRate}) {
     num _exclusiveAmount = 0;
@@ -564,6 +567,7 @@ class PurchaseSideWidget extends StatelessWidget {
   void resetPurchase({bool notify = false}) {
     selectedProductsNotifier.value.clear();
     subTotalNotifier.value.clear();
+    vatRateNotifier.value.clear();
     itemTotalVatNotifier.value.clear();
     supplierController.clear();
     costNotifier.value.clear();
@@ -580,6 +584,7 @@ class PurchaseSideWidget extends StatelessWidget {
     if (notify) {
       selectedProductsNotifier.notifyListeners();
       subTotalNotifier.notifyListeners();
+      vatRateNotifier.notifyListeners();
       itemTotalVatNotifier.notifyListeners();
       costNotifier.notifyListeners();
       quantityNotifier.notifyListeners();

@@ -60,9 +60,9 @@ class VatDatabase {
   }
 
   //========== Update VAT ==========
-  Future<void> updateVAT({required VatModel vat, required String vatName, required int vatRate}) async {
+  Future<void> updateVAT({required VatModel vat, required String vatName, required int vatRate, required String vatType}) async {
     final db = await dbInstance.database;
-    final updatedVat = vat.copyWith(name: vatName, rate: vatRate);
+    final updatedVat = vat.copyWith(name: vatName, rate: vatRate, type: vatType);
     await db.update(
       tableVat,
       updatedVat.toJson(),

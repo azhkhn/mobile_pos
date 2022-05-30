@@ -175,6 +175,7 @@ class VatScreen extends StatelessWidget {
                                             onPressed: () async {
                                               final _vatNameController = TextEditingController(text: vats[index].name);
                                               final _vatRateController = TextEditingController(text: vats[index].rate.toString());
+                                              String _vatTypeController = vats[index].type;
 
                                               showDialog(
                                                   context: context,
@@ -214,16 +215,49 @@ class VatScreen extends StatelessWidget {
                                                               return null;
                                                             },
                                                           ),
+
+                                                          kHeight10,
+
+                                                          //========== Type DropDown ==========
+                                                          DropdownButtonFormField(
+                                                            decoration: const InputDecoration(
+                                                                label: Text('VAT Type', style: TextStyle(color: klabelColorGrey)),
+                                                                border: OutlineInputBorder(),
+                                                                floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                                contentPadding: EdgeInsets.all(15)),
+                                                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                                                            isDense: true,
+                                                            items: types
+                                                                .map((values) => DropdownMenuItem<String>(
+                                                                      value: values,
+                                                                      child: Text(values),
+                                                                    ))
+                                                                .toList(),
+                                                            onChanged: (value) {
+                                                              _vatTypeController = value.toString();
+                                                            },
+                                                            value: _vatTypeController,
+                                                            validator: (value) {
+                                                              if (value == null) {
+                                                                return 'This field is required*';
+                                                              }
+                                                              return null;
+                                                            },
+                                                          ),
                                                           kHeight5,
                                                           CustomMaterialBtton(
                                                               onPressed: () async {
                                                                 final String vatName = _vatNameController.text.trim();
                                                                 final int vatRate = int.parse(_vatRateController.text.trim());
+                                                                final String vatType = _vatTypeController.trim();
 
-                                                                if (vatName == vats[index].name && vatRate == vats[index].rate) {
+                                                                if (vatName == vats[index].name &&
+                                                                    vatRate == vats[index].rate &&
+                                                                    vatType == vats[index].type) {
                                                                   return Navigator.pop(context);
                                                                 }
-                                                                await vatDB.updateVAT(vat: vats[index], vatName: vatName, vatRate: vatRate);
+                                                                await vatDB.updateVAT(
+                                                                    vat: vats[index], vatName: vatName, vatRate: vatRate, vatType: vatType);
                                                                 Navigator.pop(context);
 
                                                                 kSnackBar(
