@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_product_side.dart';
 import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_side_widget.dart';
+import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 
 class PurchaseReturn extends StatelessWidget {
   const PurchaseReturn({Key? key}) : super(key: key);
@@ -14,6 +13,7 @@ class PurchaseReturn extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: kBackgroundGrey,
+      appBar: OrientationMode.deviceMode == OrientationMode.verticalMode ? AppBarWidget(title: 'Purchase Return') : null,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: _screenSize.width * .01, horizontal: _screenSize.width * .02),
@@ -27,13 +27,13 @@ class PurchaseReturn extends StatelessWidget {
                     //========================================                                  ========================================
                     PurchaseReturnSideWidget(),
 
-                    //==================== Constant Width ====================
-                    kWidth20,
+                    // //==================== Constant Width ====================
+                    // kWidth20,
 
-                    //========================================                                  ========================================
-                    //======================================== Purchase Return Product Side Widget ========================================
-                    //========================================                                  ========================================
-                    PurchaseReturnProductSideWidget()
+                    // //========================================                                  ========================================
+                    // //======================================== Purchase Return Product Side Widget ========================================
+                    // //========================================                                  ========================================
+                    // PurchaseReturnProductSideWidget()
                   ],
                 )
               : Column(
@@ -43,10 +43,10 @@ class PurchaseReturn extends StatelessWidget {
                     //========================================                                  ========================================
                     //======================================== Purchase Return Product Side Widget ========================================
                     //========================================                                  ========================================
-                    PurchaseReturnProductSideWidget(isVertical: true),
+                    // PurchaseReturnProductSideWidget(isVertical: true),
 
-                    //==================== Divider ====================
-                    Divider(thickness: 1, height: 10),
+                    // //==================== Divider ====================
+                    // Divider(thickness: 1, height: 10),
 
                     //========================================                                  ========================================
                     //========================================     Purchase Return Side Widget     ========================================

@@ -30,7 +30,7 @@ class VatUtils {
   }
 
 //========== Model Classes ==========
-  static List<VatModel> vats = [];
+  List<VatModel> vats = [];
 
 //========== Get Vat ==========
   Future<VatModel> getVatById({required int vatId}) async {
@@ -40,9 +40,9 @@ class VatUtils {
   }
 
   Future<void> getVats() async {
-    log('Fetching Vats...');
+    log('Fetching Vats from database to in-memmory');
     final VatDatabase userDB = VatDatabase.instance;
     vats = await userDB.getAllVats();
-    log('Done!');
+    log('Vat fetched successfully!');
   }
 }

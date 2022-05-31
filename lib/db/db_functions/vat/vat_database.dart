@@ -3,6 +3,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/utils/vat/vat.dart';
 import 'package:shop_ez/db/database.dart';
 import 'package:shop_ez/model/vat/vat_model.dart';
 
@@ -28,6 +29,7 @@ class VatDatabase {
       vatNotifer.value.add(_vatModel.copyWith(id: id));
       vatNotifer.notifyListeners();
       log('VAT id == $id');
+      VatUtils().getVats();
     }
   }
 
@@ -73,6 +75,7 @@ class VatDatabase {
     final index = vatNotifer.value.indexOf(vat);
     vatNotifer.value[index] = updatedVat;
     vatNotifer.notifyListeners();
+    VatUtils().getVats();
   }
 
 //========== Delete VAT ==========

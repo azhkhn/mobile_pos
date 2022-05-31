@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
@@ -59,7 +58,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size _screenSize = MediaQuery.of(context).size;
+    // Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         if (selectedProductsNotifier.value.isEmpty) {
@@ -86,92 +85,29 @@ class PurchaseReturnSideWidget extends StatelessWidget {
       },
       child: Expanded(
         child: SizedBox(
-          width: isVertical ? double.infinity : _screenSize.width / 2.5,
+          // width: isVertical ? double.infinity : _screenSize.width / 2.5,
+          width: double.infinity,
           height: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              isVertical
-                  ? kNone
-                  : Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //========== Get All Products Search Field ==========
-                        Flexible(
-                          flex: 5,
-                          child: ValueListenableBuilder(
-                              valueListenable: originalPurchaseIdNotifier,
-                              builder: (context, _, __) {
-                                return TypeAheadField(
-                                  debounceDuration: const Duration(milliseconds: 500),
-                                  hideSuggestionsOnKeyboardHide: true,
-                                  textFieldConfiguration: TextFieldConfiguration(
-                                      enabled: originalPurchaseIdNotifier.value == null,
-                                      controller: supplierController,
-                                      style: kText_10_12,
-                                      decoration: InputDecoration(
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        isDense: true,
-                                        suffixIconConstraints: const BoxConstraints(
-                                          minWidth: 10,
-                                          minHeight: 10,
-                                        ),
-                                        suffixIcon: Padding(
-                                          padding: kClearTextIconPadding,
-                                          child: InkWell(
-                                            child: const Icon(Icons.clear, size: 15),
-                                            onTap: () {
-                                              supplierIdNotifier.value = null;
-                                              supplierController.clear();
-                                            },
-                                          ),
-                                        ),
-                                        contentPadding: const EdgeInsets.all(10),
-                                        hintText: 'Supplier',
-                                        hintStyle: kText_10_12,
-                                        border: const OutlineInputBorder(),
-                                      )),
-                                  noItemsFoundBuilder: (context) => SizedBox(
-                                      height: 50,
-                                      child: Center(
-                                          child: Text(
-                                        'No supplier found!',
-                                        style: kText_10_12,
-                                      ))),
-                                  suggestionsCallback: (pattern) async {
-                                    return SupplierDatabase.instance.getSupplierSuggestions(pattern);
-                                  },
-                                  itemBuilder: (context, SupplierModel suggestion) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Text(
-                                        suggestion.contactName,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: kText_10_12,
-                                      ),
-                                    );
-                                  },
-                                  onSuggestionSelected: (SupplierModel suggestion) {
-                                    supplierController.text = suggestion.contactName;
-                                    supplierNameNotifier.value = suggestion.contactName;
-                                    supplierIdNotifier.value = suggestion.id;
-                                    log(suggestion.supplierName);
-                                  },
-                                );
-                              }),
-                        ),
-                        kWidth5,
-
-                        //==================== Get All Purchases Invoices ====================
-                        Flexible(
-                          flex: 5,
-                          child: TypeAheadField(
+              // isVertical
+              //     ? kNone :
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //========== Get All Products Search Field ==========
+                  Flexible(
+                    flex: 9,
+                    child: ValueListenableBuilder(
+                        valueListenable: originalPurchaseIdNotifier,
+                        builder: (context, _, __) {
+                          return TypeAheadField(
                             debounceDuration: const Duration(milliseconds: 500),
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
-                                controller: purchaseInvoiceController,
+                                enabled: originalPurchaseIdNotifier.value == null,
+                                controller: supplierController,
                                 style: kText_10_12,
                                 decoration: InputDecoration(
                                   fillColor: Colors.white,
@@ -184,131 +120,194 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                                   suffixIcon: Padding(
                                     padding: kClearTextIconPadding,
                                     child: InkWell(
-                                      child: const Icon(
-                                        Icons.clear,
-                                        size: 15,
-                                      ),
-                                      onTap: () async {
-                                        purchaseInvoiceController.clear();
-
-                                        if (originalPurchaseIdNotifier.value != null) {
-                                          return resetPurchaseReturn();
-                                        }
-
-                                        originalInvoiceNumberNotifier.value = null;
-                                        originalPurchaseIdNotifier.value = null;
+                                      child: const Icon(Icons.clear, size: 15),
+                                      onTap: () {
+                                        supplierIdNotifier.value = null;
+                                        supplierController.clear();
                                       },
                                     ),
                                   ),
                                   contentPadding: const EdgeInsets.all(10),
-                                  hintText: 'Invoice No',
+                                  hintText: 'Supplier',
                                   hintStyle: kText_10_12,
                                   border: const OutlineInputBorder(),
                                 )),
-                            noItemsFoundBuilder: (context) =>
-                                SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText_10_12))),
+                            noItemsFoundBuilder: (context) => SizedBox(
+                                height: 50,
+                                child: Center(
+                                    child: Text(
+                                  'No supplier found!',
+                                  style: kText_10_12,
+                                ))),
                             suggestionsCallback: (pattern) async {
-                              return await purchaseDatabase.getPurchaseByInvoiceSuggestions(pattern);
+                              return SupplierDatabase.instance.getSupplierSuggestions(pattern);
                             },
-                            itemBuilder: (context, PurchaseModel suggestion) {
+                            itemBuilder: (context, SupplierModel suggestion) {
                               return Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Text(
-                                  suggestion.invoiceNumber!,
+                                  suggestion.contactName,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: kText_10_12,
                                 ),
                               );
                             },
-                            onSuggestionSelected: (PurchaseModel purchase) async {
-                              resetPurchaseReturn();
-                              purchaseInvoiceController.text = purchase.invoiceNumber!;
-                              originalInvoiceNumberNotifier.value = purchase.invoiceNumber!;
-                              originalPurchaseIdNotifier.value = purchase.id;
-                              await getPurchaseDetails(purchase);
-
-                              log(purchase.invoiceNumber!);
+                            onSuggestionSelected: (SupplierModel suggestion) {
+                              supplierController.text = suggestion.contactName;
+                              supplierNameNotifier.value = suggestion.contactName;
+                              supplierIdNotifier.value = suggestion.id;
+                              log(suggestion.supplierName);
                             },
-                          ),
-                        ),
-                        kWidth5,
+                          );
+                        }),
+                  ),
+                  kWidth5,
 
-                        //========== View Supplier Button ==========
-                        Flexible(
-                          flex: 1,
-                          child: FittedBox(
-                            child: IconButton(
-                                padding: const EdgeInsets.all(5),
-                                alignment: Alignment.center,
-                                constraints: const BoxConstraints(
-                                  minHeight: 45,
-                                  maxHeight: 45,
+                  //==================== Get All Purchases Invoices ====================
+                  Flexible(
+                    flex: 9,
+                    child: TypeAheadField(
+                      debounceDuration: const Duration(milliseconds: 500),
+                      hideSuggestionsOnKeyboardHide: true,
+                      textFieldConfiguration: TextFieldConfiguration(
+                          controller: purchaseInvoiceController,
+                          style: kText_10_12,
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            isDense: true,
+                            suffixIconConstraints: const BoxConstraints(
+                              minWidth: 10,
+                              minHeight: 10,
+                            ),
+                            suffixIcon: Padding(
+                              padding: kClearTextIconPadding,
+                              child: InkWell(
+                                child: const Icon(
+                                  Icons.clear,
+                                  size: 15,
                                 ),
-                                onPressed: () {
-                                  if (supplierIdNotifier.value != null) {
-                                    log('${supplierIdNotifier.value}');
+                                onTap: () async {
+                                  purchaseInvoiceController.clear();
 
-                                    showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        backgroundColor: kTransparentColor,
-                                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                                        builder: (context) => DismissibleWidget(
-                                              context: context,
-                                              child: CustomBottomSheetWidget(
-                                                id: supplierIdNotifier.value,
-                                                supplier: true,
-                                              ),
-                                            ));
-                                  } else {
-                                    kSnackBar(context: context, content: 'Please select any Supplier to show details!');
-                                  }
-                                },
-                                icon: const Icon(
-                                  Icons.visibility,
-                                  color: Colors.blue,
-                                  size: 25,
-                                )),
-                          ),
-                        ),
-
-                        //========== Add supplier Button ==========
-                        Flexible(
-                          flex: 1,
-                          child: FittedBox(
-                            child: IconButton(
-                                padding: const EdgeInsets.all(5),
-                                alignment: Alignment.center,
-                                constraints: const BoxConstraints(
-                                  minHeight: 45,
-                                  maxHeight: 45,
-                                ),
-                                onPressed: () async {
-                                  // OrientationMode.isLandscape = false;
-                                  // await OrientationMode.toPortrait();
-                                  final id = await Navigator.pushNamed(context, routeAddSupplier, arguments: true);
-
-                                  if (id != null) {
-                                    final addedSupplier = await SupplierDatabase.instance.getSupplierById(id as int);
-
-                                    supplierController.text = addedSupplier.contactName;
-                                    supplierNameNotifier.value = addedSupplier.contactName;
-                                    supplierIdNotifier.value = addedSupplier.id;
-                                    log(addedSupplier.supplierName);
+                                  if (originalPurchaseIdNotifier.value != null) {
+                                    return resetPurchaseReturn();
                                   }
 
-                                  // await OrientationMode.toLandscape();
+                                  originalInvoiceNumberNotifier.value = null;
+                                  originalPurchaseIdNotifier.value = null;
                                 },
-                                icon: const Icon(
-                                  Icons.person_add,
-                                  color: Colors.blue,
-                                  size: 25,
-                                )),
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.all(10),
+                            hintText: 'Invoice No',
+                            hintStyle: kText_10_12,
+                            border: const OutlineInputBorder(),
+                          )),
+                      noItemsFoundBuilder: (context) => SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText_10_12))),
+                      suggestionsCallback: (pattern) async {
+                        return await purchaseDatabase.getPurchaseByInvoiceSuggestions(pattern);
+                      },
+                      itemBuilder: (context, PurchaseModel suggestion) {
+                        return Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Text(
+                            suggestion.invoiceNumber!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: kText_10_12,
                           ),
-                        ),
-                      ],
+                        );
+                      },
+                      onSuggestionSelected: (PurchaseModel purchase) async {
+                        resetPurchaseReturn();
+                        purchaseInvoiceController.text = purchase.invoiceNumber!;
+                        originalInvoiceNumberNotifier.value = purchase.invoiceNumber!;
+                        originalPurchaseIdNotifier.value = purchase.id;
+                        await getPurchaseDetails(purchase);
+
+                        log(purchase.invoiceNumber!);
+                      },
                     ),
+                  ),
+                  kWidth5,
+
+                  //========== View Supplier Button ==========
+                  Flexible(
+                    flex: isVertical ? 2 : 1,
+                    child: Center(
+                      child: IconButton(
+                          padding: const EdgeInsets.all(0),
+                          alignment: Alignment.center,
+                          constraints: const BoxConstraints(
+                            minHeight: 30,
+                            maxHeight: 30,
+                          ),
+                          onPressed: () {
+                            if (supplierIdNotifier.value != null) {
+                              log('${supplierIdNotifier.value}');
+
+                              showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  backgroundColor: kTransparentColor,
+                                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                                  builder: (context) => DismissibleWidget(
+                                        context: context,
+                                        child: CustomBottomSheetWidget(
+                                          id: supplierIdNotifier.value,
+                                          supplier: true,
+                                        ),
+                                      ));
+                            } else {
+                              kSnackBar(context: context, content: 'Please select any Supplier to show details!');
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.person_search,
+                            color: Colors.blue,
+                            size: 28,
+                          )),
+                    ),
+                  ),
+
+                  // //========== Add supplier Button ==========
+                  // Flexible(
+                  //   flex: 1,
+                  //   child: FittedBox(
+                  //     child: IconButton(
+                  //         padding: const EdgeInsets.all(5),
+                  //         alignment: Alignment.center,
+                  //         constraints: const BoxConstraints(
+                  //           minHeight: 45,
+                  //           maxHeight: 45,
+                  //         ),
+                  //         onPressed: () async {
+                  //           // OrientationMode.isLandscape = false;
+                  //           // await OrientationMode.toPortrait();
+                  //           final id = await Navigator.pushNamed(context, routeAddSupplier, arguments: true);
+
+                  //           if (id != null) {
+                  //             final addedSupplier = await SupplierDatabase.instance.getSupplierById(id as int);
+
+                  //             supplierController.text = addedSupplier.contactName;
+                  //             supplierNameNotifier.value = addedSupplier.contactName;
+                  //             supplierIdNotifier.value = addedSupplier.id;
+                  //             log(addedSupplier.supplierName);
+                  //           }
+
+                  //           // await OrientationMode.toLandscape();
+                  //         },
+                  //         icon: const Icon(
+                  //           Icons.person_add,
+                  //           color: Colors.blue,
+                  //           size: 25,
+                  //         )),
+                  //   ),
+                  // ),
+                ],
+              ),
 
               kHeight5,
               //==================== Table Header ====================

@@ -138,6 +138,10 @@ class PartialPayment extends StatelessWidget {
                                         Navigator.pop(context, salesModel);
                                       }
 
+                                      PaymentTypeWidget.payingNoteController.clear();
+                                      PaymentTypeWidget.amountController.clear();
+                                      PaymentTypeWidget.payingByController = null;
+
                                       if (salesModel != null) {
                                         Navigator.pop(context, salesModel);
                                       } else {

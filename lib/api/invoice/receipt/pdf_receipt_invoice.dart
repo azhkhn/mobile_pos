@@ -118,6 +118,8 @@ class PdfSalesReceipt {
             ),
           ),
         ),
+        pw.SizedBox(height: .5 * PdfPageFormat.mm),
+        pw.Text('Thank you for shopping with us', style: pw.TextStyle(fontSize: 7, fontWeight: pw.FontWeight.normal))
       ],
     );
   }
@@ -289,12 +291,12 @@ class PdfSalesReceipt {
 
   //==================== Invoice Table ====================
   static pw.Widget buildInvoice({required final List<dynamic> saleItems, required final pw.Font arabicFont}) {
+    //  'VAT\n ةيبرضلا',
     final headers = [
       'S.No',
       'Description / فصو',
       'QTY\n ةيمك',
       'Rate\n رعسلا',
-      'VAT\n ةيبرضلا',
       'AMT\n رادقم',
     ];
     int i = 0;
@@ -308,13 +310,13 @@ class PdfSalesReceipt {
       }
 
       // final totalAmount = num.parse(item.subTotal) + num.parse(item.vatTotal);
+      // Converter.currency.format(num.parse(item.vatTotal)).replaceAll('₹', ''),
 
       return [
         '$i',
-        item.productName,
+        'Samsung Galaxy S9 plus black with special edition',
         item.quantity,
         Converter.currency.format(exclusiveAmount).replaceAll('₹', ''),
-        Converter.currency.format(num.parse(item.vatTotal)).replaceAll('₹', ''),
         Converter.currency.format(num.parse(item.subTotal)).replaceAll('₹', ''),
       ];
     }).toList();
@@ -367,7 +369,7 @@ class PdfSalesReceipt {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
           pw.Spacer(),
-          pw.SizedBox(width: 0.05 * PdfPageFormat.roll80.availableWidth),
+          pw.SizedBox(width: 1 * PdfPageFormat.mm),
           pw.Expanded(
             flex: 5,
             child: pw.Column(
@@ -410,10 +412,10 @@ class PdfSalesReceipt {
                   unite: true,
                   arabicFont: arabicFont,
                 ),
-                pw.SizedBox(height: 1 * PdfPageFormat.mm),
-                pw.Divider(height: .5, color: PdfColors.grey400),
-                pw.SizedBox(height: 0.5 * PdfPageFormat.mm),
-                pw.Divider(height: .5, color: PdfColors.grey400),
+                pw.SizedBox(height: .5 * PdfPageFormat.mm),
+                pw.Divider(height: .5, color: PdfColors.black, thickness: .5),
+                pw.SizedBox(height: 0.3 * PdfPageFormat.mm),
+                pw.Divider(height: .5, color: PdfColors.black, thickness: .5),
               ],
             ),
           ),

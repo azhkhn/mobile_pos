@@ -38,6 +38,7 @@ class PaymentTypeWidget extends StatelessWidget {
       onWillPop: () async {
         amountController.clear();
         payingNoteController.clear();
+        payingByController = null;
         return true;
       },
       child: Container(

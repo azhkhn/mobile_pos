@@ -343,7 +343,6 @@ class VatScreen extends StatelessWidget {
       try {
         await vatDB.createVAT(_vatModel);
         log('VAT Created Successfully');
-
         _formState.reset();
 
         kSnackBar(context: context, success: true, content: 'Vat added successfully!');

@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
@@ -61,7 +60,7 @@ class SalesReturnSideWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //========== Device Utils ==========
-    Size _screenSize = MediaQuery.of(context).size;
+    // Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         if (selectedProductsNotifier.value.isEmpty) {
@@ -77,7 +76,6 @@ class SalesReturnSideWidget extends StatelessWidget {
                   content: const Text('Are you sure want to cancel the sales return?'),
                   submitAction: () {
                     Navigator.pop(context);
-
                     resetSalesReturn();
                     SalesReturnProductSideWidget.itemsNotifier.value.clear();
 
@@ -90,87 +88,29 @@ class SalesReturnSideWidget extends StatelessWidget {
       },
       child: Expanded(
         child: SizedBox(
-          width: isVertical ? double.infinity : _screenSize.width / 2.5,
-          // width: double.infinity,
+          // width: isVertical ? double.infinity : _screenSize.width / 2.5,
+          width: double.infinity,
           height: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              isVertical
-                  ? kNone
-                  : Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //==================== Get All Customer Search Field ====================
-                        Flexible(
-                          flex: 5,
-                          child: ValueListenableBuilder(
-                              valueListenable: originalSaleIdNotifier,
-                              builder: (context, _, __) {
-                                return TypeAheadField(
-                                  debounceDuration: const Duration(milliseconds: 500),
-                                  hideSuggestionsOnKeyboardHide: true,
-                                  textFieldConfiguration: TextFieldConfiguration(
-                                      enabled: originalSaleIdNotifier.value == null,
-                                      controller: customerController,
-                                      style: kText_10_12,
-                                      decoration: InputDecoration(
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        isDense: true,
-                                        suffixIconConstraints: const BoxConstraints(
-                                          minWidth: 10,
-                                          minHeight: 10,
-                                        ),
-                                        suffixIcon: Padding(
-                                          padding: kClearTextIconPadding,
-                                          child: InkWell(
-                                            child: const Icon(Icons.clear, size: 15),
-                                            onTap: () {
-                                              customerIdNotifier.value = null;
-                                              customerController.clear();
-                                            },
-                                          ),
-                                        ),
-                                        contentPadding: const EdgeInsets.all(10),
-                                        hintText: 'Customer',
-                                        hintStyle: kText_10_12,
-                                        border: const OutlineInputBorder(),
-                                      )),
-                                  noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No customer Found!'))),
-                                  suggestionsCallback: (pattern) async {
-                                    return CustomerDatabase.instance.getCustomerSuggestions(pattern);
-                                  },
-                                  itemBuilder: (context, CustomerModel suggestion) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Text(
-                                        suggestion.customer,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: kText_10_12,
-                                      ),
-                                    );
-                                  },
-                                  onSuggestionSelected: (CustomerModel suggestion) {
-                                    customerController.text = suggestion.customer;
-                                    customerNameNotifier.value = suggestion.customer;
-                                    customerIdNotifier.value = suggestion.id;
-                                    log(suggestion.company);
-                                  },
-                                );
-                              }),
-                        ),
-                        kWidth5,
-
-                        //==================== Get All Sales Invoices ====================
-                        Flexible(
-                          flex: 5,
-                          child: TypeAheadField(
+              // isVertical
+              //     ? kNone :
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //==================== Get All Customer Search Field ====================
+                  Flexible(
+                    flex: 9,
+                    child: ValueListenableBuilder(
+                        valueListenable: originalSaleIdNotifier,
+                        builder: (context, _, __) {
+                          return TypeAheadField(
                             debounceDuration: const Duration(milliseconds: 500),
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
-                                controller: saleInvoiceController,
+                                enabled: originalSaleIdNotifier.value == null,
+                                controller: customerController,
                                 style: kText_10_12,
                                 decoration: InputDecoration(
                                   fillColor: Colors.white,
@@ -183,129 +123,186 @@ class SalesReturnSideWidget extends StatelessWidget {
                                   suffixIcon: Padding(
                                     padding: kClearTextIconPadding,
                                     child: InkWell(
-                                      child: const Icon(
-                                        Icons.clear,
-                                        size: 15,
-                                      ),
-                                      onTap: () async {
-                                        saleInvoiceController.clear();
-                                        if (originalSaleIdNotifier.value != null) {
-                                          return resetSalesReturn();
-                                        }
-                                        originalInvoiceNumberNotifier.value = null;
-                                        originalSaleIdNotifier.value = null;
+                                      child: const Icon(Icons.clear, size: 15),
+                                      onTap: () {
+                                        customerIdNotifier.value = null;
+                                        customerController.clear();
                                       },
                                     ),
                                   ),
                                   contentPadding: const EdgeInsets.all(10),
-                                  hintText: 'Invoice No',
+                                  hintText: 'Customer',
                                   hintStyle: kText_10_12,
                                   border: const OutlineInputBorder(),
                                 )),
-                            noItemsFoundBuilder: (context) =>
-                                SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText_10_12))),
+                            noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No customer Found!'))),
                             suggestionsCallback: (pattern) async {
-                              return await salesDB.getSalesByInvoiceSuggestions(pattern);
+                              return CustomerDatabase.instance.getCustomerSuggestions(pattern);
                             },
-                            itemBuilder: (context, SalesModel suggestion) {
+                            itemBuilder: (context, CustomerModel suggestion) {
                               return Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Text(
-                                  suggestion.invoiceNumber!,
+                                  suggestion.customer,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: kText_10_12,
                                 ),
                               );
                             },
-                            onSuggestionSelected: (SalesModel sale) async {
-                              resetSalesReturn();
-                              saleInvoiceController.text = sale.invoiceNumber!;
-                              originalInvoiceNumberNotifier.value = sale.invoiceNumber!;
-                              originalSaleIdNotifier.value = sale.id;
-                              await getSalesDetails(sale);
-
-                              log(sale.invoiceNumber!);
+                            onSuggestionSelected: (CustomerModel suggestion) {
+                              customerController.text = suggestion.customer;
+                              customerNameNotifier.value = suggestion.customer;
+                              customerIdNotifier.value = suggestion.id;
+                              log(suggestion.company);
                             },
-                          ),
-                        ),
-                        kWidth5,
+                          );
+                        }),
+                  ),
+                  kWidth5,
 
-                        //========== View customer Button ==========
-                        Flexible(
-                          flex: 1,
-                          child: FittedBox(
-                            child: IconButton(
-                                padding: const EdgeInsets.all(5),
-                                alignment: Alignment.center,
-                                constraints: const BoxConstraints(
-                                  minHeight: 45,
-                                  maxHeight: 45,
+                  //==================== Get All Sales Invoices ====================
+                  Flexible(
+                    flex: 9,
+                    child: TypeAheadField(
+                      debounceDuration: const Duration(milliseconds: 500),
+                      hideSuggestionsOnKeyboardHide: true,
+                      textFieldConfiguration: TextFieldConfiguration(
+                          controller: saleInvoiceController,
+                          style: kText_10_12,
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            isDense: true,
+                            suffixIconConstraints: const BoxConstraints(
+                              minWidth: 10,
+                              minHeight: 10,
+                            ),
+                            suffixIcon: Padding(
+                              padding: kClearTextIconPadding,
+                              child: InkWell(
+                                child: const Icon(
+                                  Icons.clear,
+                                  size: 15,
                                 ),
-                                onPressed: () {
-                                  if (customerIdNotifier.value != null) {
-                                    log('${customerIdNotifier.value}');
-
-                                    showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        backgroundColor: kTransparentColor,
-                                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                                        builder: (context) => DismissibleWidget(
-                                              context: context,
-                                              child: CustomBottomSheetWidget(
-                                                id: customerIdNotifier.value,
-                                                supplier: false,
-                                              ),
-                                            ));
-                                  } else {
-                                    kSnackBar(context: context, content: 'Please select any Customer to show details!');
+                                onTap: () async {
+                                  saleInvoiceController.clear();
+                                  if (originalSaleIdNotifier.value != null) {
+                                    return resetSalesReturn();
                                   }
+                                  originalInvoiceNumberNotifier.value = null;
+                                  originalSaleIdNotifier.value = null;
                                 },
-                                icon: const Icon(
-                                  Icons.visibility,
-                                  color: Colors.blue,
-                                  size: 25,
-                                )),
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.all(10),
+                            hintText: 'Invoice No',
+                            hintStyle: kText_10_12,
+                            border: const OutlineInputBorder(),
+                          )),
+                      noItemsFoundBuilder: (context) => SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText_10_12))),
+                      suggestionsCallback: (pattern) async {
+                        return await salesDB.getSalesByInvoiceSuggestions(pattern);
+                      },
+                      itemBuilder: (context, SalesModel suggestion) {
+                        return Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Text(
+                            suggestion.invoiceNumber!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: kText_10_12,
                           ),
-                        ),
+                        );
+                      },
+                      onSuggestionSelected: (SalesModel sale) async {
+                        resetSalesReturn();
+                        saleInvoiceController.text = sale.invoiceNumber!;
+                        originalInvoiceNumberNotifier.value = sale.invoiceNumber!;
+                        originalSaleIdNotifier.value = sale.id;
+                        await getSalesDetails(sale);
 
-                        //========== Add customer Button ==========
-                        Flexible(
-                          flex: 1,
-                          child: FittedBox(
-                            child: IconButton(
-                                padding: const EdgeInsets.all(5),
-                                alignment: Alignment.center,
-                                constraints: const BoxConstraints(
-                                  minHeight: 45,
-                                  maxHeight: 45,
-                                ),
-                                onPressed: () async {
-                                  // OrientationMode.isLandscape = false;
-                                  // await OrientationMode.toPortrait();
-                                  final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: true);
-
-                                  if (id != null) {
-                                    final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
-
-                                    customerController.text = addedCustomer.customer;
-                                    customerNameNotifier.value = addedCustomer.customer;
-                                    customerIdNotifier.value = addedCustomer.id;
-                                    log(addedCustomer.company);
-                                  }
-
-                                  // await OrientationMode.toLandscape();
-                                },
-                                icon: const Icon(
-                                  Icons.person_add,
-                                  color: Colors.blue,
-                                  size: 25,
-                                )),
-                          ),
-                        ),
-                      ],
+                        log(sale.invoiceNumber!);
+                      },
                     ),
+                  ),
+                  kWidth5,
+
+                  //========== View customer Button ==========
+                  Flexible(
+                    flex: isVertical ? 2 : 1,
+                    child: Center(
+                      child: IconButton(
+                          padding: const EdgeInsets.all(0),
+                          alignment: Alignment.center,
+                          constraints: const BoxConstraints(
+                            minHeight: 30,
+                            maxHeight: 30,
+                          ),
+                          onPressed: () {
+                            if (customerIdNotifier.value != null) {
+                              log('${customerIdNotifier.value}');
+
+                              showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  backgroundColor: kTransparentColor,
+                                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                                  builder: (context) => DismissibleWidget(
+                                        context: context,
+                                        child: CustomBottomSheetWidget(
+                                          id: customerIdNotifier.value,
+                                          supplier: false,
+                                        ),
+                                      ));
+                            } else {
+                              kSnackBar(context: context, content: 'Please select any Customer to show details!');
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.person_search,
+                            color: Colors.blue,
+                            size: 28,
+                          )),
+                    ),
+                  ),
+
+                  // //========== Add customer Button ==========
+                  // Flexible(
+                  //   flex: 1,
+                  //   child: FittedBox(
+                  //     child: IconButton(
+                  //         padding: const EdgeInsets.all(5),
+                  //         alignment: Alignment.center,
+                  //         constraints: const BoxConstraints(
+                  //           minHeight: 30,
+                  //           maxHeight: 30,
+                  //         ),
+                  //         onPressed: () async {
+                  //           // OrientationMode.isLandscape = false;
+                  //           // await OrientationMode.toPortrait();
+                  //           final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: true);
+
+                  //           if (id != null) {
+                  //             final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
+
+                  //             customerController.text = addedCustomer.customer;
+                  //             customerNameNotifier.value = addedCustomer.customer;
+                  //             customerIdNotifier.value = addedCustomer.id;
+                  //             log(addedCustomer.company);
+                  //           }
+
+                  //           // await OrientationMode.toLandscape();
+                  //         },
+                  //         icon: const Icon(
+                  //           Icons.person_add,
+                  //           color: Colors.blue,
+                  //           size: 25,
+                  //         )),
+                  //   ),
+                  // ),
+                ],
+              ),
 
               kHeight5,
               //==================== Table Header ====================

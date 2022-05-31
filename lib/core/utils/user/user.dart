@@ -14,7 +14,7 @@ class UserUtils {
 
 //========== Model Classes ==========
   UserModel? userModel;
-  static BusinessProfileModel? businessProfileModel;
+  BusinessProfileModel? businessProfileModel;
 
 //========== Get Logged User Details ==========
   Future<UserModel> get loggedUser async {
@@ -36,8 +36,7 @@ class UserUtils {
 //Checking Business Profile details already Assigned (Access User details all over the Application)
   Future<void> getBusinessProfile() async {
     log('Fetching Business Profile details..');
-    final BusinessProfileDatabase businessProfileDB =
-        BusinessProfileDatabase.instance;
+    final BusinessProfileDatabase businessProfileDB = BusinessProfileDatabase.instance;
     final _businessProfile = await businessProfileDB.getBusinessProfile();
     businessProfileModel = _businessProfile;
     log('Done!');
