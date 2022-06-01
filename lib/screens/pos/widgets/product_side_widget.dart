@@ -43,34 +43,84 @@ class ProductSideWidget extends StatefulWidget {
   State<ProductSideWidget> createState() => _ProductSideWidgetState();
 
 //==================== Notify stock while Item clicked ====================
-  static void notifyStock({required int index, bool dicrease = true, num quantity = 0, bool bulk = false, bool reset = false}) {
-    final ItemMasterModel selectedItem = itemsNotifier.value[index] as ItemMasterModel;
+  static void notifyStock({required int itemId, bool dicrease = true, num quantity = 0, bool bulk = false, bool reset = false}) {
+    final List<ItemMasterModel> itemsList = _ProductSideWidgetState.itemsList;
+    log('got here === ' + itemsList.toString());
+    log('got here22 === ' + _ProductSideWidgetState.itemsList.toString());
+
+    final builderModel = _ProductSideWidgetState()._builderModel;
+    final ItemMasterModel selectedItem = itemsList.firstWhere((element) => element.id == itemId);
     final num currentQty = num.parse(selectedItem.openingStock);
-    final ItemMasterModel stableItem = stableItemsNotifier.value[index];
+    final ItemMasterModel stableItem = stableItemsNotifier.value.firstWhere((element) => element.id == itemId);
     final num stableQty = num.parse(stableItem.openingStock);
+    final index = itemsList.indexWhere((element) => element.id == itemId);
 
     log('selected indexes == ' + selectedItemIndex.value.toString());
     log('current Stock == ' + selectedItem.openingStock);
-    log('Actual Stock == ' + stableItemsNotifier.value[index].openingStock);
+    log('Actual Stock == ' + stableItem.openingStock);
 
     if (bulk) {
       if (reset) {
         log('resetting stock..');
-        itemsNotifier.value[index] = stableItem;
+        _ProductSideWidgetState.itemsList[index] = stableItem;
+        if (builderModel == null) {
+          itemsNotifier.value[index] = stableItem;
+        }
       } else {
-        itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (stableQty - quantity).toString());
+        _ProductSideWidgetState.itemsList[index] = selectedItem.copyWith(openingStock: (stableQty - quantity).toString());
+        if (builderModel == null) {
+          itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (stableQty - quantity).toString());
+        }
       }
       itemsNotifier.notifyListeners();
     } else {
       if (dicrease) {
-        itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty - 1).toString());
+        log('Decrease quantity == $quantity');
+        _ProductSideWidgetState.itemsList[index] = selectedItem.copyWith(openingStock: (currentQty - 1).toString());
+        if (builderModel == null) {
+          itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty - 1).toString());
+        }
       } else {
         log('Increase quantity == $quantity');
-        itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty + quantity).toString());
+
+        _ProductSideWidgetState.itemsList[index] = selectedItem.copyWith(openingStock: (currentQty + quantity).toString());
+        if (builderModel == null) {
+          itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty + quantity).toString());
+        }
       }
       itemsNotifier.notifyListeners();
     }
   }
+  //   static void notifyStock({required int itemId, bool dicrease = true, num quantity = 0, bool bulk = false, bool reset = false}) {
+  //   final ItemMasterModel selectedItem = itemsNotifier.value.firstWhere((element) => element.id == itemId);
+  //   final num currentQty = num.parse(selectedItem.openingStock);
+  //   final ItemMasterModel stableItem = stableItemsNotifier.value.firstWhere((element) => element.id == itemId);
+  //   final num stableQty = num.parse(stableItem.openingStock);
+  //   final index = itemsNotifier.value.indexWhere((element) => element.id == itemId);
+
+  //   log('selected indexes == ' + selectedItemIndex.value.toString());
+  //   log('current Stock == ' + selectedItem.openingStock);
+  //   log('Actual Stock == ' + stableItem.openingStock);
+
+  //   if (bulk) {
+  //     if (reset) {
+  //       log('resetting stock..');
+
+  //       itemsNotifier.value[index] = stableItem;
+  //     } else {
+  //       itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (stableQty - quantity).toString());
+  //     }
+  //     itemsNotifier.notifyListeners();
+  //   } else {
+  //     if (dicrease) {
+  //       itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty - 1).toString());
+  //     } else {
+  //       log('Increase quantity == $quantity');
+  //       itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty + quantity).toString());
+  //     }
+  //     itemsNotifier.notifyListeners();
+  //   }
+  // }
 }
 
 class _ProductSideWidgetState extends State<ProductSideWidget> {
@@ -90,7 +140,9 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
   int? _builderModel;
 
   //========== Lists ==========
-  List categories = [], subCategories = [], brands = [], itemsList = [];
+  List categories = [], subCategories = [], brands = [];
+
+  static List<ItemMasterModel> itemsList = [];
 
   //========== MediaQuery Screen Size ==========
   late Size _screenSize;
@@ -472,7 +524,12 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                         if (snapshot.hasData) {
                           if (ProductSideWidget.itemsNotifier.value.isEmpty) {
                             ProductSideWidget.itemsNotifier.value = snapshot.data!;
-                            itemsList = ProductSideWidget.itemsNotifier.value;
+                            if (ProductSideWidget.itemsNotifier.value is List<ItemMasterModel>) {
+                              log('Fetching items to ItemsList');
+                              itemsList = ProductSideWidget.itemsNotifier.value as List<ItemMasterModel>;
+                            } else {
+                              log('Not Items');
+                            }
                           }
                         } else {
                           ProductSideWidget.itemsNotifier.value = [];
@@ -518,7 +575,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                             ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByBrandId(brandId);
                                           } else {
                                             //===================================== if the Product Already Added ====================================
-                                            isProductAlreadyAdded(itemList as List<ItemMasterModel>, index);
+                                            isProductAlreadyAdded(itemList, index);
                                             //=======================================================================================================
 
                                             SaleSideWidget.selectedProductsNotifier.notifyListeners();
@@ -614,7 +671,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
   }
 
 // Checking if the product already added then Increasing the Quantity
-  void isProductAlreadyAdded(List<ItemMasterModel> itemList, int index) async {
+  void isProductAlreadyAdded(List<dynamic> itemList, int index) async {
     final vatMethod = itemList[index].vatMethod;
     final _vat = await VatUtils.instance.getVatById(vatId: itemList[index].vatId);
     log('VAT Method = ' + vatMethod);
@@ -634,14 +691,14 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
           i,
         );
 //==================== Notify stock while Item clicked ====================
-        ProductSideWidget.notifyStock(index: index);
+        ProductSideWidget.notifyStock(itemId: itemList[index].id!);
         return;
       }
     }
     SaleSideWidget.selectedProductsNotifier.value.add(itemList[index]);
     SaleSideWidget.vatRateNotifier.value.add(_vat.rate);
 
-    ProductSideWidget.notifyStock(index: index);
+    ProductSideWidget.notifyStock(itemId: itemList[index].id!);
     ProductSideWidget.selectedItemIndex.value.add(index);
 
     final String unitPrice = vatMethod == 'Inclusive'

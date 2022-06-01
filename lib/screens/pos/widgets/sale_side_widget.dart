@@ -326,6 +326,7 @@ class SaleSideWidget extends StatelessWidget {
                                     return null;
                                   },
                                   onChanged: (value) {
+                                    final int itemId = selectedProducts[index].id!;
                                     if (num.tryParse(value) != null) {
                                       if (num.parse(value) <= 0) {
                                         quantityNotifier.value[index].clear();
@@ -338,16 +339,14 @@ class SaleSideWidget extends StatelessWidget {
 
                                             log('new Quantity == ' + _newQuantity.toString());
 
-                                            ProductSideWidget.notifyStock(
-                                                index: ProductSideWidget.selectedItemIndex.value[index], bulk: true, quantity: _newQuantity);
+                                            ProductSideWidget.notifyStock(itemId: itemId, bulk: true, quantity: _newQuantity);
                                           }
                                         });
                                       }
                                     } else {
                                       if (value.isEmpty) {
                                         onItemQuantityChanged('0', selectedProducts, index);
-                                        ProductSideWidget.notifyStock(
-                                            index: ProductSideWidget.selectedItemIndex.value[index], bulk: true, reset: true);
+                                        ProductSideWidget.notifyStock(itemId: itemId, bulk: true, reset: true);
                                       }
                                     }
                                   },
@@ -376,12 +375,16 @@ class SaleSideWidget extends StatelessWidget {
                                   alignment: Alignment.center,
                                   child: IconButton(
                                     onPressed: () {
+                                      final int itemId = selectedProducts[index].id!;
+                                      log('id = $itemId');
                                       selectedProducts.removeAt(index);
                                       subTotalNotifier.value.removeAt(index);
                                       vatRateNotifier.value.removeAt(index);
                                       itemTotalVatNotifier.value.removeAt(index);
                                       quantityNotifier.value.removeAt(index);
                                       unitPriceNotifier.value.removeAt(index);
+                                      // selectedProductsNotifier.value.removeAt(index);
+
                                       subTotalNotifier.notifyListeners();
                                       selectedProductsNotifier.notifyListeners();
                                       totalItemsNotifier.value -= 1;
@@ -389,7 +392,7 @@ class SaleSideWidget extends StatelessWidget {
                                       getTotalAmount();
                                       getTotalVAT();
                                       getTotalPayable();
-                                      ProductSideWidget.notifyStock(index: ProductSideWidget.selectedItemIndex.value[index], bulk: true, reset: true);
+                                      ProductSideWidget.notifyStock(itemId: itemId, bulk: true, reset: true);
                                       ProductSideWidget.selectedItemIndex.value.removeAt(index);
                                     },
                                     icon: const Icon(
