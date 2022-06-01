@@ -258,77 +258,77 @@ class PurchaseSideWidget extends StatelessWidget {
               //==================== Product Items Table ====================
               Expanded(
                 child: SingleChildScrollView(
-                  child: Form(
-                    key: _formKey,
-                    child: ValueListenableBuilder(
-                      valueListenable: selectedProductsNotifier,
-                      builder: (context, List<ItemMasterModel> selectedProducts, child) {
-                        return Table(
-                          columnWidths: const {
-                            0: FractionColumnWidth(0.30),
-                            1: FractionColumnWidth(0.23),
-                            2: FractionColumnWidth(0.12),
-                            3: FractionColumnWidth(0.23),
-                            4: FractionColumnWidth(0.12),
-                          },
-                          border: TableBorder.all(color: Colors.grey, width: 0.5),
-                          children: List<TableRow>.generate(
-                            selectedProducts.length,
-                            (index) {
-                              final ItemMasterModel _product = selectedProducts[index];
-                              return TableRow(children: [
-                                //==================== Item Name ====================
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                  color: Colors.white,
-                                  height: 30,
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    _product.itemName,
-                                    softWrap: true,
-                                    style: kItemsTextStyle,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  ),
+                  child: ValueListenableBuilder(
+                    valueListenable: selectedProductsNotifier,
+                    builder: (context, List<ItemMasterModel> selectedProducts, child) {
+                      return Table(
+                        columnWidths: const {
+                          0: FractionColumnWidth(0.30),
+                          1: FractionColumnWidth(0.23),
+                          2: FractionColumnWidth(0.12),
+                          3: FractionColumnWidth(0.23),
+                          4: FractionColumnWidth(0.12),
+                        },
+                        border: TableBorder.all(color: Colors.grey, width: 0.5),
+                        children: List<TableRow>.generate(
+                          selectedProducts.length,
+                          (index) {
+                            final ItemMasterModel _product = selectedProducts[index];
+                            return TableRow(children: [
+                              //==================== Item Name ====================
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                color: Colors.white,
+                                height: 30,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  _product.itemName,
+                                  softWrap: true,
+                                  style: kItemsTextStyle,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
                                 ),
-                                //==================== Item Cost ====================
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                  color: Colors.white,
-                                  height: 30,
-                                  alignment: Alignment.topCenter,
-                                  child: TextFormField(
-                                    controller: costNotifier.value[index],
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: Validators.digitsOnly,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.symmetric(vertical: 10),
-                                    ),
-                                    style: kItemsTextStyle,
-                                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return '*';
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      if (value.isNotEmpty) {
-                                        Debouncer().run(() {
-                                          onItemCostChanged(cost: value, index: index);
-                                        });
-                                      } else {
-                                        onItemCostChanged(cost: '0', index: index);
-                                      }
-                                    },
+                              ),
+                              //==================== Item Cost ====================
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                color: Colors.white,
+                                height: 30,
+                                alignment: Alignment.topCenter,
+                                child: TextFormField(
+                                  controller: costNotifier.value[index],
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: Validators.digitsOnly,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(vertical: 10),
                                   ),
+                                  style: kItemsTextStyle,
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return '*';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    if (value.isNotEmpty) {
+                                      Debouncer().run(() {
+                                        onItemCostChanged(cost: value, index: index);
+                                      });
+                                    } else {
+                                      onItemCostChanged(cost: '0', index: index);
+                                    }
+                                  },
                                 ),
-                                //==================== Quantity ====================
-                                Container(
+                              ),
+                              //==================== Quantity ====================
+                              Form(
+                                key: _formKey,
+                                child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                   color: Colors.white,
                                   height: 30,
@@ -345,65 +345,83 @@ class PurchaseSideWidget extends StatelessWidget {
                                       contentPadding: EdgeInsets.symmetric(vertical: 10),
                                     ),
                                     style: kItemsTextStyle,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return '*';
+                                      }
+                                      return null;
+                                    },
                                     onChanged: (value) {
-                                      if (value.isNotEmpty) {
-                                        Debouncer().run(() {
-                                          onItemQuantityChanged(value, selectedProducts, index);
-                                        });
+                                      if (num.tryParse(value) != null) {
+                                        if (num.parse(value) <= 0) {
+                                          quantityNotifier.value[index].clear();
+                                        } else {
+                                          Debouncer().run(() {
+                                            if (value.isNotEmpty && value != '.') {
+                                              final num _newQuantity = num.parse(value);
+
+                                              onItemQuantityChanged(value, selectedProducts, index);
+
+                                              log('new Quantity == ' + _newQuantity.toString());
+                                            }
+                                          });
+                                        }
                                       } else {
-                                        onItemQuantityChanged('0', selectedProducts, index);
+                                        if (value.isEmpty) {
+                                          onItemQuantityChanged('0', selectedProducts, index);
+                                        }
                                       }
                                     },
                                   ),
                                 ),
-                                //==================== Sub Total ====================
-                                Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                    color: Colors.white,
-                                    height: 30,
-                                    alignment: Alignment.center,
-                                    child: ValueListenableBuilder(
-                                        valueListenable: subTotalNotifier,
-                                        builder: (context, List<String> subTotal, child) {
-                                          return Text(
-                                            Converter.currency.format(num.tryParse(subTotal[index])),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: kItemsTextStyle,
-                                          );
-                                        })),
-                                //==================== Delete Icon ====================
-                                Container(
-                                    color: Colors.white,
-                                    height: 30,
-                                    alignment: Alignment.center,
-                                    child: IconButton(
-                                      onPressed: () {
-                                        selectedProducts.removeAt(index);
-                                        subTotalNotifier.value.removeAt(index);
-                                        vatRateNotifier.value.removeAt(index);
-                                        itemTotalVatNotifier.value.removeAt(index);
-                                        costNotifier.value.removeAt(index);
-                                        quantityNotifier.value.removeAt(index);
-                                        subTotalNotifier.notifyListeners();
-                                        selectedProductsNotifier.notifyListeners();
-                                        totalItemsNotifier.value -= 1;
-                                        getTotalQuantity();
-                                        getTotalAmount();
-                                        getTotalVAT();
-                                        getTotalPayable();
-                                      },
-                                      icon: const Icon(
-                                        Icons.close,
-                                        size: 16,
-                                      ),
-                                    ))
-                              ]);
-                            },
-                          ),
-                        );
-                      },
-                    ),
+                              ),
+                              //==================== Sub Total ====================
+                              Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                  color: Colors.white,
+                                  height: 30,
+                                  alignment: Alignment.center,
+                                  child: ValueListenableBuilder(
+                                      valueListenable: subTotalNotifier,
+                                      builder: (context, List<String> subTotal, child) {
+                                        return Text(
+                                          Converter.currency.format(num.tryParse(subTotal[index])),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: kItemsTextStyle,
+                                        );
+                                      })),
+                              //==================== Delete Icon ====================
+                              Container(
+                                  color: Colors.white,
+                                  height: 30,
+                                  alignment: Alignment.center,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      selectedProducts.removeAt(index);
+                                      subTotalNotifier.value.removeAt(index);
+                                      vatRateNotifier.value.removeAt(index);
+                                      itemTotalVatNotifier.value.removeAt(index);
+                                      costNotifier.value.removeAt(index);
+                                      quantityNotifier.value.removeAt(index);
+                                      subTotalNotifier.notifyListeners();
+                                      selectedProductsNotifier.notifyListeners();
+                                      totalItemsNotifier.value -= 1;
+                                      getTotalQuantity();
+                                      getTotalAmount();
+                                      getTotalVAT();
+                                      getTotalPayable();
+                                    },
+                                    icon: const Icon(
+                                      Icons.close,
+                                      size: 16,
+                                    ),
+                                  ))
+                            ]);
+                          },
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -471,7 +489,7 @@ class PurchaseSideWidget extends StatelessWidget {
     num? _totalQuantiy = 0;
 
     for (var i = 0; i < selectedProductsNotifier.value.length; i++) {
-      _totalQuantiy = _totalQuantiy! + num.tryParse(quantityNotifier.value[i].value.text)!;
+      _totalQuantiy = _totalQuantiy! + num.parse(quantityNotifier.value[i].value.text.isNotEmpty ? quantityNotifier.value[i].value.text : '0');
     }
     await Future.delayed(const Duration(milliseconds: 0));
     totalQuantityNotifier.value = _totalQuantiy!;

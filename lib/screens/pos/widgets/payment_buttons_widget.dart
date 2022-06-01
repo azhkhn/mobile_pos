@@ -13,6 +13,7 @@ import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart'
 import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
+import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/model/sales/sales_items_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
@@ -49,29 +50,37 @@ class PaymentButtonsWidget extends StatelessWidget {
       children: [
         Container(
           height: isVertical ? _screenSize.height / 26 : _screenSize.width / 25,
-          padding: const EdgeInsets.all(8),
+          width: double.infinity,
           color: Colors.blueGrey,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Total Payable',
-                style: kItemsButtontyle,
-              ),
-              kWidth5,
-              Flexible(
-                child: ValueListenableBuilder(
-                  valueListenable: SaleSideWidget.totalPayableNotifier,
-                  builder: (context, totalPayable, child) {
-                    return Text(
-                      totalPayable == 0 ? '0' : Converter.currency.format(totalPayable),
-                      overflow: TextOverflow.ellipsis,
-                      style: kItemsButtontyle,
-                    );
-                  },
+          child: FractionallySizedBox(
+            widthFactor: .95,
+            heightFactor: .90,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                FittedBox(
+                  child: Text(
+                    'Total Payable',
+                    style: kItemsButtontyle,
+                  ),
                 ),
-              )
-            ],
+                kWidth5,
+                Flexible(
+                  child: ValueListenableBuilder(
+                    valueListenable: SaleSideWidget.totalPayableNotifier,
+                    builder: (context, totalPayable, child) {
+                      return FittedBox(
+                        child: Text(
+                          totalPayable == 0 ? '0' : Converter.currency.format(totalPayable),
+                          overflow: TextOverflow.ellipsis,
+                          style: kItemsButtontyle,
+                        ),
+                      );
+                    },
+                  ),
+                )
+              ],
+            ),
           ),
         ),
         Row(
@@ -91,46 +100,67 @@ class PaymentButtonsWidget extends StatelessWidget {
                     } else if (items == 0) {
                       return kSnackBar(context: context, content: 'Please select any Products to add sale!');
                     } else {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) {
-                          return AlertDialog(
-                            title: const Text(
-                              'Credit Payment',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                            content: const Text('Do you want to add this sale?'),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(ctx);
-                                  },
-                                  child: const Text('Cancel')),
-                              TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(ctx);
-                                    final String _balance = SaleSideWidget.totalPayableNotifier.value.toString();
-                                    final SalesModel? salesModel = await addSale(
-                                      context,
-                                      argPaid: '0',
-                                      argBalance: _balance,
-                                      argPaymentStatus: 'Due',
-                                      argPaymentType: '',
-                                    );
+                      final _quantities = SaleSideWidget.quantityNotifier.value;
+                      bool isValid = false;
 
-                                    if (salesModel != null) {
-                                      Navigator.pushNamed(
+                      for (var quantity in _quantities) {
+                        final num? qty = num.tryParse(quantity.text);
+
+                        if (qty != null && qty > 0) {
+                          isValid = true;
+                          log('valid = $qty');
+                          continue;
+                        } else {
+                          isValid = false;
+                          log('not valid = $qty');
+                          break;
+                        }
+                      }
+
+                      if (isValid) {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) {
+                            return AlertDialog(
+                              title: const Text(
+                                'Credit Payment',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              content: const Text('Do you want to add this sale?'),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(ctx);
+                                    },
+                                    child: const Text('Cancel')),
+                                TextButton(
+                                    onPressed: () async {
+                                      Navigator.pop(ctx);
+                                      final String _balance = SaleSideWidget.totalPayableNotifier.value.toString();
+                                      final SalesModel? salesModel = await addSale(
                                         context,
-                                        routeSalesInvoice,
-                                        arguments: [salesModel, false],
+                                        argPaid: '0',
+                                        argBalance: _balance,
+                                        argPaymentStatus: 'Due',
+                                        argPaymentType: '',
                                       );
-                                    }
-                                  },
-                                  child: const Text('Accept')),
-                            ],
-                          );
-                        },
-                      );
+
+                                      if (salesModel != null) {
+                                        Navigator.pushNamed(
+                                          context,
+                                          routeSalesInvoice,
+                                          arguments: [salesModel, false],
+                                        );
+                                      }
+                                    },
+                                    child: const Text('Accept')),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        kSnackBar(context: context, content: 'Please enter valid item quantity', error: true);
+                      }
                     }
                   },
                   padding: const EdgeInsets.all(5),
@@ -157,34 +187,55 @@ class PaymentButtonsWidget extends StatelessWidget {
                     } else if (items == 0) {
                       return kSnackBar(context: context, content: 'Please select any Products to add sale!');
                     } else {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) {
-                          return AlertDialog(
-                            title: const Text(
-                              'Full Payment',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                            content: const Text('Do you want to add this sale?'),
-                            actions: [
-                              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-                              TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(ctx);
-                                    final SalesModel? salesModel = await addSale(context);
-                                    if (salesModel != null) {
-                                      Navigator.pushNamed(
-                                        context,
-                                        routeSalesInvoice,
-                                        arguments: [salesModel, false],
-                                      );
-                                    }
-                                  },
-                                  child: const Text('Accept')),
-                            ],
-                          );
-                        },
-                      );
+                      final _quantities = SaleSideWidget.quantityNotifier.value;
+                      bool isValid = false;
+
+                      for (var quantity in _quantities) {
+                        final num? qty = num.tryParse(quantity.text);
+
+                        if (qty != null && qty > 0) {
+                          isValid = true;
+                          log('valid = $qty');
+                          continue;
+                        } else {
+                          isValid = false;
+                          log('not valid = $qty');
+                          break;
+                        }
+                      }
+
+                      if (isValid) {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) {
+                            return AlertDialog(
+                              title: const Text(
+                                'Full Payment',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              content: const Text('Do you want to add this sale?'),
+                              actions: [
+                                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+                                TextButton(
+                                    onPressed: () async {
+                                      Navigator.pop(ctx);
+                                      final SalesModel? salesModel = await addSale(context);
+                                      if (salesModel != null) {
+                                        Navigator.pushNamed(
+                                          context,
+                                          routeSalesInvoice,
+                                          arguments: [salesModel, false],
+                                        );
+                                      }
+                                    },
+                                    child: const Text('Accept')),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        kSnackBar(context: context, content: 'Please enter valid item quantity', error: true);
+                      }
                     }
                   },
                   padding: const EdgeInsets.all(5),
@@ -252,18 +303,39 @@ class PaymentButtonsWidget extends StatelessWidget {
                     } else if (items == 0) {
                       return kSnackBar(context: context, content: 'Please select any Products to add Sale!');
                     } else {
-                      final salesModel = await Navigator.pushNamed(context, routePartialPayment, arguments: {
-                        'totalPayable': SaleSideWidget.totalPayableNotifier.value,
-                        'totalItems': SaleSideWidget.totalItemsNotifier.value,
-                        'isVertical': isVertical
-                      });
+                      final _quantities = SaleSideWidget.quantityNotifier.value;
+                      bool isValid = false;
 
-                      if (salesModel is SalesModel) {
-                        Navigator.pushNamed(
-                          context,
-                          routeSalesInvoice,
-                          arguments: [salesModel, false],
-                        );
+                      for (var quantity in _quantities) {
+                        final num? qty = num.tryParse(quantity.text);
+
+                        if (qty != null && qty > 0) {
+                          isValid = true;
+                          log('valid = $qty');
+                          continue;
+                        } else {
+                          isValid = false;
+                          log('not valid = $qty');
+                          break;
+                        }
+                      }
+
+                      if (isValid) {
+                        final salesModel = await Navigator.pushNamed(context, routePartialPayment, arguments: {
+                          'totalPayable': SaleSideWidget.totalPayableNotifier.value,
+                          'totalItems': SaleSideWidget.totalItemsNotifier.value,
+                          'isVertical': isVertical
+                        });
+
+                        if (salesModel is SalesModel) {
+                          Navigator.pushNamed(
+                            context,
+                            routeSalesInvoice,
+                            arguments: [salesModel, false],
+                          );
+                        }
+                      } else {
+                        kSnackBar(context: context, content: 'Please enter valid item quantity', error: true);
                       }
                     }
                   },
@@ -484,14 +556,11 @@ class PaymentButtonsWidget extends StatelessWidget {
         await transactionDB.createTransaction(_transaction);
       }
 
-      // PaymentTypeWidget.amountController.clear();
-
       HomeCardWidget.detailsCardLoaded = false;
       const SaleSideWidget().resetPos(notify: true);
 
       ProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
-
-      // PaymentTypeWidget.formKey.currentState?.reset();
+      ProductSideWidget.stableItemsNotifier.value = ProductSideWidget.itemsNotifier.value as List<ItemMasterModel>;
 
       kSnackBar(
         context: context,
@@ -500,12 +569,6 @@ class PaymentButtonsWidget extends StatelessWidget {
       );
 
       return _newSale;
-
-      // Navigator.pushNamed(
-      //   context,
-      //   routeSalesInvoice,
-      //   arguments: [_newSale, false],
-      // );
     } catch (e) {
       log('$e');
       kSnackBar(

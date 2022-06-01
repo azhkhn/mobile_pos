@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member, must_be_immutable
 
 import 'dart:developer';
 import 'package:flutter/material.dart';
@@ -35,16 +35,52 @@ class ProductSideWidget extends StatefulWidget {
 
   //========== Value Notifiers ==========
   static final ValueNotifier<List<dynamic>> itemsNotifier = ValueNotifier([]);
+  static final ValueNotifier<List<ItemMasterModel>> stableItemsNotifier = ValueNotifier([]);
+
+  static final ValueNotifier<List<int>> selectedItemIndex = ValueNotifier([]);
 
   @override
   State<ProductSideWidget> createState() => _ProductSideWidgetState();
+
+//==================== Notify stock while Item clicked ====================
+  static void notifyStock({required int index, bool dicrease = true, num quantity = 0, bool bulk = false, bool reset = false}) {
+    final ItemMasterModel selectedItem = itemsNotifier.value[index] as ItemMasterModel;
+    final num currentQty = num.parse(selectedItem.openingStock);
+    final ItemMasterModel stableItem = stableItemsNotifier.value[index];
+    final num stableQty = num.parse(stableItem.openingStock);
+
+    log('selected indexes == ' + selectedItemIndex.value.toString());
+    log('current Stock == ' + selectedItem.openingStock);
+    log('Actual Stock == ' + stableItemsNotifier.value[index].openingStock);
+
+    if (bulk) {
+      if (reset) {
+        log('resetting stock..');
+        itemsNotifier.value[index] = stableItem;
+      } else {
+        itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (stableQty - quantity).toString());
+      }
+      itemsNotifier.notifyListeners();
+    } else {
+      if (dicrease) {
+        itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty - 1).toString());
+      } else {
+        log('Increase quantity == $quantity');
+        itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty + quantity).toString());
+      }
+      itemsNotifier.notifyListeners();
+    }
+  }
 }
 
 class _ProductSideWidgetState extends State<ProductSideWidget> {
-  //========== Database Instances ==========
+  // static GlobalKey<_ProductSideWidgetState> productSideWidget = GlobalKey();
   final categoryDB = CategoryDatabase.instance;
+
   final subCategoryDB = SubCategoryDatabase.instance;
+
   final brandDB = BrandDatabase.instance;
+
   final itemMasterDB = ItemMasterDatabase.instance;
 
   //========== FutureBuilder Database ==========
@@ -63,9 +99,17 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
   final _productController = TextEditingController();
 
   @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    if (ProductSideWidget.stableItemsNotifier.value.isEmpty) {
+      ProductSideWidget.stableItemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;
-    _builderModel = null;
+    // _builderModel = null;
     return SizedBox(
       width: widget.isVertical ? double.infinity : _screenSize.width / 1.9,
       height: widget.isVertical ? _screenSize.height / 2.25 : double.infinity,
@@ -428,6 +472,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                         if (snapshot.hasData) {
                           if (ProductSideWidget.itemsNotifier.value.isEmpty) {
                             ProductSideWidget.itemsNotifier.value = snapshot.data!;
+                            itemsList = ProductSideWidget.itemsNotifier.value;
                           }
                         } else {
                           ProductSideWidget.itemsNotifier.value = [];
@@ -452,7 +497,15 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                             log(itemList[index].category);
                                             final categoryId = itemList[index].id;
                                             _builderModel = null;
-                                            ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByCategoryId(categoryId);
+                                            final List<ItemMasterModel> itemsByCategory = [];
+
+                                            for (ItemMasterModel item in itemsList) {
+                                              if (item.itemCategoryId == categoryId as int) {
+                                                itemsByCategory.add(item);
+                                              }
+                                            }
+                                            // ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByCategoryId(categoryId);
+                                            ProductSideWidget.itemsNotifier.value = itemsByCategory;
                                           } else if (_builderModel == 1) {
                                             log(itemList[index].subCategory);
                                             final subCategoryId = itemList[index].id;
@@ -497,7 +550,10 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                                           child: Text(
                                                             'Qty : ' + itemList[index].openingStock,
                                                             textAlign: TextAlign.center,
-                                                            style: kItemsTextStyle,
+                                                            style: TextStyle(
+                                                              fontSize: DeviceUtil.isTablet ? 10 : 8,
+                                                              color: num.parse(itemList[index].openingStock) <= 0 ? kTextErrorColor : kTextColor,
+                                                            ),
                                                             maxLines: 1,
                                                           ),
                                                         ),
@@ -558,7 +614,6 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
   }
 
 // Checking if the product already added then Increasing the Quantity
-//====================================================================
   void isProductAlreadyAdded(List<ItemMasterModel> itemList, int index) async {
     final vatMethod = itemList[index].vatMethod;
     final _vat = await VatUtils.instance.getVatById(vatId: itemList[index].vatId);
@@ -567,9 +622,10 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
     for (var i = 0; i < SaleSideWidget.selectedProductsNotifier.value.length; i++) {
       //========== If Product already added ==========
       if (SaleSideWidget.selectedProductsNotifier.value[i].id == itemList[index].id) {
-        final _currentQty = num.tryParse(SaleSideWidget.quantityNotifier.value[i].value.text);
+        final _currentQty =
+            num.parse(SaleSideWidget.quantityNotifier.value[i].value.text.isNotEmpty ? SaleSideWidget.quantityNotifier.value[i].value.text : '0');
 
-        SaleSideWidget.quantityNotifier.value[i].text = '${_currentQty! + 1}';
+        SaleSideWidget.quantityNotifier.value[i].text = '${_currentQty + 1}';
 
 //==================== On Item Quantity Changed ====================
         const SaleSideWidget().onItemQuantityChanged(
@@ -577,11 +633,16 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
           SaleSideWidget.selectedProductsNotifier.value,
           i,
         );
+//==================== Notify stock while Item clicked ====================
+        ProductSideWidget.notifyStock(index: index);
         return;
       }
     }
     SaleSideWidget.selectedProductsNotifier.value.add(itemList[index]);
     SaleSideWidget.vatRateNotifier.value.add(_vat.rate);
+
+    ProductSideWidget.notifyStock(index: index);
+    ProductSideWidget.selectedItemIndex.value.add(index);
 
     final String unitPrice = vatMethod == 'Inclusive'
         ? Converter.amountRounder(const SaleSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: _vat.rate))
@@ -603,6 +664,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
     const SaleSideWidget().getTotalPayable();
   }
 
+//==================== On Barcode Scan ====================
   Future onBarcodeScan() async {
     final String _scanResult;
 

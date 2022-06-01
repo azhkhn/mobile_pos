@@ -27,6 +27,7 @@ const kSnackBarErrorColor = Color(0xFFEF5350);
 const kSnackBarDeleteColor = Color(0xFFEF5350);
 const kSnackBarUpdateColor = Color(0xFF7E57C2);
 const kTextColor = Color(0xFF616161);
+const kTextErrorColor = Color(0xFFEF5350);
 
 //=================== Barcode & QRcode Scanner Color Code ====================
 const scannerColor = '#ff6666';

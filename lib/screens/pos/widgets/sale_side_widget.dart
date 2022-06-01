@@ -50,7 +50,7 @@ class SaleSideWidget extends StatelessWidget {
   static final customerController = TextEditingController();
 
   //==================== Global Keys ====================
-  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  // static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -224,161 +224,185 @@ class SaleSideWidget extends StatelessWidget {
               //==================== Product Items Table ====================
               Expanded(
                 child: SingleChildScrollView(
-                  child: Form(
-                    key: _formKey,
-                    child: ValueListenableBuilder(
-                      valueListenable: selectedProductsNotifier,
-                      builder: (context, List<ItemMasterModel> selectedProducts, child) {
-                        return Table(
-                          columnWidths: const {
-                            0: FractionColumnWidth(0.30),
-                            1: FractionColumnWidth(0.23),
-                            2: FractionColumnWidth(0.12),
-                            3: FractionColumnWidth(0.23),
-                            4: FractionColumnWidth(0.12),
-                          },
-                          border: TableBorder.all(color: Colors.grey, width: 0.5),
-                          children: List<TableRow>.generate(
-                            selectedProductsNotifier.value.length,
-                            (index) {
-                              final ItemMasterModel _product = selectedProducts[index];
-                              return TableRow(children: [
-                                //==================== Item Name ====================
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                  color: Colors.white,
-                                  height: 30,
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    _product.itemName,
-                                    softWrap: true,
-                                    style: kItemsTextStyle,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  ),
+                  child: ValueListenableBuilder(
+                    valueListenable: selectedProductsNotifier,
+                    builder: (context, List<ItemMasterModel> selectedProducts, child) {
+                      return Table(
+                        columnWidths: const {
+                          0: FractionColumnWidth(0.30),
+                          1: FractionColumnWidth(0.23),
+                          2: FractionColumnWidth(0.12),
+                          3: FractionColumnWidth(0.23),
+                          4: FractionColumnWidth(0.12),
+                        },
+                        border: TableBorder.all(color: Colors.grey, width: 0.5),
+                        children: List<TableRow>.generate(
+                          selectedProductsNotifier.value.length,
+                          (index) {
+                            final ItemMasterModel _product = selectedProducts[index];
+                            return TableRow(children: [
+                              //==================== Item Name ====================
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                color: Colors.white,
+                                height: 30,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  _product.itemName,
+                                  softWrap: true,
+                                  style: kItemsTextStyle,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
                                 ),
+                              ),
 
-                                //==================== Unit Price ====================
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                  color: Colors.white,
-                                  height: 30,
-                                  alignment: Alignment.topCenter,
-                                  child: TextFormField(
-                                    controller: unitPriceNotifier.value[index],
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: Validators.digitsOnly,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.symmetric(vertical: 10),
-                                    ),
-                                    style: kItemsTextStyle,
-                                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return '*';
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      if (value.isNotEmpty) {
-                                        Debouncer().run(() {
-                                          onItemUnitPriceChanged(unitPrice: value, index: index);
-                                        });
-                                      } else {
-                                        onItemUnitPriceChanged(unitPrice: '0', index: index);
-                                      }
-                                    },
+                              //==================== Unit Price ====================
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                color: Colors.white,
+                                height: 30,
+                                alignment: Alignment.topCenter,
+                                child: TextFormField(
+                                  controller: unitPriceNotifier.value[index],
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: Validators.digitsOnly,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(vertical: 10),
                                   ),
+                                  style: kItemsTextStyle,
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return '*';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    if (value.isNotEmpty) {
+                                      Debouncer().run(() {
+                                        onItemUnitPriceChanged(unitPrice: value, index: index);
+                                      });
+                                    } else {
+                                      onItemUnitPriceChanged(unitPrice: '0', index: index);
+                                    }
+                                  },
                                 ),
-                                //==================== Quantity ====================
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                  color: Colors.white,
-                                  height: 30,
-                                  alignment: Alignment.topCenter,
-                                  child: TextFormField(
-                                    controller: quantityNotifier.value[index],
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: Validators.digitsOnly,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.symmetric(vertical: 10),
+                              ),
+                              //==================== Quantity ====================
+                              Container(
+                                color: Colors.white,
+                                height: 30,
+                                alignment: Alignment.topCenter,
+                                child: TextFormField(
+                                  controller: quantityNotifier.value[index],
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: Validators.digitsOnly,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                    errorStyle: TextStyle(fontSize: 0.1),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.zero,
+                                      borderSide: BorderSide(color: kTextErrorColor, width: 0.8),
                                     ),
-                                    style: kItemsTextStyle,
-                                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return '*';
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      if (value.isNotEmpty) {
-                                        Debouncer().run(() {
-                                          onItemQuantityChanged(value, selectedProducts, index);
-                                        });
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.zero,
+                                      borderSide: BorderSide(color: kTextErrorColor, width: 0.8),
+                                    ),
+                                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
+                                  ),
+                                  style: kItemsTextStyle,
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty || value == '.') {
+                                      return '*';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    if (num.tryParse(value) != null) {
+                                      if (num.parse(value) <= 0) {
+                                        quantityNotifier.value[index].clear();
                                       } else {
+                                        Debouncer().run(() {
+                                          if (value.isNotEmpty && value != '.') {
+                                            final num _newQuantity = num.parse(value);
+
+                                            onItemQuantityChanged(value, selectedProducts, index);
+
+                                            log('new Quantity == ' + _newQuantity.toString());
+
+                                            ProductSideWidget.notifyStock(
+                                                index: ProductSideWidget.selectedItemIndex.value[index], bulk: true, quantity: _newQuantity);
+                                          }
+                                        });
+                                      }
+                                    } else {
+                                      if (value.isEmpty) {
                                         onItemQuantityChanged('0', selectedProducts, index);
+                                        ProductSideWidget.notifyStock(
+                                            index: ProductSideWidget.selectedItemIndex.value[index], bulk: true, reset: true);
                                       }
-                                    },
-                                  ),
+                                    }
+                                  },
                                 ),
-                                //==================== Sub Total ====================
-                                Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                    color: Colors.white,
-                                    height: 30,
-                                    alignment: Alignment.center,
-                                    child: ValueListenableBuilder(
-                                        valueListenable: subTotalNotifier,
-                                        builder: (context, List<String> subTotal, child) {
-                                          return Text(
-                                            Converter.currency.format(num.tryParse(subTotal[index])),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: kItemsTextStyle,
-                                          );
-                                        })),
-                                //==================== Delete Icon ====================
-                                Container(
-                                    color: Colors.white,
-                                    height: 30,
-                                    alignment: Alignment.center,
-                                    child: IconButton(
-                                      onPressed: () {
-                                        selectedProducts.removeAt(index);
-                                        subTotalNotifier.value.removeAt(index);
-                                        vatRateNotifier.value.removeAt(index);
-                                        itemTotalVatNotifier.value.removeAt(index);
-                                        quantityNotifier.value.removeAt(index);
-                                        unitPriceNotifier.value.removeAt(index);
-                                        subTotalNotifier.notifyListeners();
-                                        selectedProductsNotifier.notifyListeners();
-                                        totalItemsNotifier.value -= 1;
-                                        getTotalQuantity();
-                                        getTotalAmount();
-                                        getTotalVAT();
-                                        getTotalPayable();
-                                      },
-                                      icon: const Icon(
-                                        Icons.close,
-                                        size: 16,
-                                        color: kTextColor,
-                                      ),
-                                    ))
-                              ]);
-                            },
-                          ),
-                        );
-                      },
-                    ),
+                              ),
+                              //==================== Sub Total ====================
+                              Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                  color: Colors.white,
+                                  height: 30,
+                                  alignment: Alignment.center,
+                                  child: ValueListenableBuilder(
+                                      valueListenable: subTotalNotifier,
+                                      builder: (context, List<String> subTotal, child) {
+                                        return Text(
+                                          Converter.currency.format(num.tryParse(subTotal[index])),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: kItemsTextStyle,
+                                        );
+                                      })),
+                              //==================== Delete Icon ====================
+                              Container(
+                                  color: Colors.white,
+                                  height: 30,
+                                  alignment: Alignment.center,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      selectedProducts.removeAt(index);
+                                      subTotalNotifier.value.removeAt(index);
+                                      vatRateNotifier.value.removeAt(index);
+                                      itemTotalVatNotifier.value.removeAt(index);
+                                      quantityNotifier.value.removeAt(index);
+                                      unitPriceNotifier.value.removeAt(index);
+                                      subTotalNotifier.notifyListeners();
+                                      selectedProductsNotifier.notifyListeners();
+                                      totalItemsNotifier.value -= 1;
+                                      getTotalQuantity();
+                                      getTotalAmount();
+                                      getTotalVAT();
+                                      getTotalPayable();
+                                      ProductSideWidget.notifyStock(index: ProductSideWidget.selectedItemIndex.value[index], bulk: true, reset: true);
+                                      ProductSideWidget.selectedItemIndex.value.removeAt(index);
+                                    },
+                                    icon: const Icon(
+                                      Icons.close,
+                                      size: 16,
+                                      color: kTextColor,
+                                    ),
+                                  ))
+                            ]);
+                          },
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -448,7 +472,7 @@ class SaleSideWidget extends StatelessWidget {
     num? _totalQuantiy = 0;
 
     for (var i = 0; i < selectedProductsNotifier.value.length; i++) {
-      _totalQuantiy = _totalQuantiy! + num.tryParse(quantityNotifier.value[i].value.text)!;
+      _totalQuantiy = _totalQuantiy! + num.parse(quantityNotifier.value[i].value.text.isNotEmpty ? quantityNotifier.value[i].value.text : '0');
     }
     await Future.delayed(const Duration(milliseconds: 0));
     totalQuantityNotifier.value = _totalQuantiy!;
@@ -557,6 +581,8 @@ class SaleSideWidget extends StatelessWidget {
     customerIdNotifier.value = null;
     customerNameNotifier.value = null;
     ProductSideWidget.itemsNotifier.value.clear();
+    ProductSideWidget.stableItemsNotifier.value.clear();
+    ProductSideWidget.selectedItemIndex.value.clear();
 
     if (notify) {
       selectedProductsNotifier.notifyListeners();
@@ -572,6 +598,9 @@ class SaleSideWidget extends StatelessWidget {
       totalPayableNotifier.notifyListeners();
       customerIdNotifier.notifyListeners();
       customerNameNotifier.notifyListeners();
+      ProductSideWidget.itemsNotifier.notifyListeners();
+      ProductSideWidget.stableItemsNotifier.notifyListeners();
+      ProductSideWidget.selectedItemIndex.notifyListeners();
     }
   }
 }
