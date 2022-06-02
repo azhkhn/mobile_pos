@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
@@ -38,7 +40,10 @@ class QuickCashWidget extends StatelessWidget {
                         flex: 2,
                         child: CustomMaterialBtton(
                           onPressed: () {
-                            PaymentTypeWidget.amountController.text = '$totalPayable';
+                            // PaymentTypeWidget.amountController.text = '$totalPayable';
+                            PaymentTypeWidget.amountController.text = Converter.currency.format(totalPayable);
+                            log('total payable == ' + Converter.currency.format(totalPayable));
+
                             return PaymentTypeWidget(
                               totalPayable: totalPayable,
                             ).amountChanged('$totalPayable');
@@ -180,7 +185,9 @@ class QuickCashWidget extends StatelessWidget {
                     flex: 6,
                     child: CustomMaterialBtton(
                       onPressed: () {
-                        PaymentTypeWidget.amountController.text = '$totalPayable';
+                        // PaymentTypeWidget.amountController.text = '$totalPayable';
+                        PaymentTypeWidget.amountController.text = Converter.currency.format(totalPayable);
+                        log('total payable == ' + Converter.currency.format(totalPayable));
                         return PaymentTypeWidget(
                           totalPayable: totalPayable,
                         ).amountChanged('$totalPayable');

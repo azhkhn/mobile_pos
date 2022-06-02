@@ -65,11 +65,11 @@ class PriceSectionWidget extends StatelessWidget {
                                   ),
                                   ValueListenableBuilder(
                                     valueListenable: SaleSideWidget.totalQuantityNotifier,
-                                    builder: (context, totalQuantity, child) {
+                                    builder: (context, num totalQuantity, child) {
                                       return Flexible(
                                         child: FittedBox(
                                           child: Text(
-                                            '($totalQuantity)',
+                                            '(${Converter.amountRounder(totalQuantity)})',
                                             softWrap: false,
                                             overflow: TextOverflow.ellipsis,
                                             style: kItemsPriceStyleBold,

@@ -37,25 +37,41 @@ class ProductSideWidget extends StatefulWidget {
   static final ValueNotifier<List<dynamic>> itemsNotifier = ValueNotifier([]);
   static final ValueNotifier<List<ItemMasterModel>> stableItemsNotifier = ValueNotifier([]);
 
-  static final ValueNotifier<List<int>> selectedItemIndex = ValueNotifier([]);
+  //========== FutureBuilder ModelClass by Integer ==========
+  static int? builderModel;
 
   @override
   State<ProductSideWidget> createState() => _ProductSideWidgetState();
 
 //==================== Notify stock while Item clicked ====================
   static void notifyStock({required int itemId, bool dicrease = true, num quantity = 0, bool bulk = false, bool reset = false}) {
-    final List<ItemMasterModel> itemsList = _ProductSideWidgetState.itemsList;
-    log('got here === ' + itemsList.toString());
-    log('got here22 === ' + _ProductSideWidgetState.itemsList.toString());
+    if (_ProductSideWidgetState.itemsList.isEmpty) {
+      _ProductSideWidgetState.itemsList = ProductSideWidget.itemsNotifier.value as List<ItemMasterModel>;
+      log('items List === ' + _ProductSideWidgetState.itemsList.toString());
+    }
 
-    final builderModel = _ProductSideWidgetState()._builderModel;
-    final ItemMasterModel selectedItem = itemsList.firstWhere((element) => element.id == itemId);
+    final ItemMasterModel selectedItem = _ProductSideWidgetState.itemsList.firstWhere((element) => element.id == itemId);
     final num currentQty = num.parse(selectedItem.openingStock);
     final ItemMasterModel stableItem = stableItemsNotifier.value.firstWhere((element) => element.id == itemId);
     final num stableQty = num.parse(stableItem.openingStock);
-    final index = itemsList.indexWhere((element) => element.id == itemId);
+    final index1 = _ProductSideWidgetState.itemsList.indexWhere((element) => element.id == itemId);
+    final index2 = ProductSideWidget.itemsNotifier.value.indexWhere((element) => element.id == itemId);
 
-    log('selected indexes == ' + selectedItemIndex.value.toString());
+    log('builderModel == ' + builderModel.toString());
+
+    int index = 0;
+    bool isIndexSame = false;
+
+    if (index1 == index2) {
+      log('Same Index');
+      index = index1;
+      isIndexSame = true;
+    } else {
+      log('Different Index');
+      index = index1;
+      isIndexSame = false;
+    }
+
     log('current Stock == ' + selectedItem.openingStock);
     log('Actual Stock == ' + stableItem.openingStock);
 
@@ -64,63 +80,52 @@ class ProductSideWidget extends StatefulWidget {
         log('resetting stock..');
         _ProductSideWidgetState.itemsList[index] = stableItem;
         if (builderModel == null) {
-          itemsNotifier.value[index] = stableItem;
+          if (isIndexSame) {
+            itemsNotifier.value[index] = stableItem;
+          } else {
+            itemsNotifier.value[index2] = stableItem;
+          }
         }
       } else {
         _ProductSideWidgetState.itemsList[index] = selectedItem.copyWith(openingStock: (stableQty - quantity).toString());
+
         if (builderModel == null) {
-          itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (stableQty - quantity).toString());
+          if (isIndexSame) {
+            itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (stableQty - quantity).toString());
+          } else {
+            itemsNotifier.value[index2] = selectedItem.copyWith(openingStock: (stableQty - quantity).toString());
+          }
         }
       }
       itemsNotifier.notifyListeners();
     } else {
       if (dicrease) {
-        log('Decrease quantity == $quantity');
+        log('Decreasing stock..');
         _ProductSideWidgetState.itemsList[index] = selectedItem.copyWith(openingStock: (currentQty - 1).toString());
+        itemsNotifier.value[index2] = selectedItem.copyWith(openingStock: (currentQty - 1).toString());
+
         if (builderModel == null) {
-          itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty - 1).toString());
+          if (isIndexSame) {
+            itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty - 1).toString());
+          } else {
+            itemsNotifier.value[index2] = selectedItem.copyWith(openingStock: (currentQty - 1).toString());
+          }
         }
       } else {
-        log('Increase quantity == $quantity');
+        log('Increasing stock.. == $quantity');
 
         _ProductSideWidgetState.itemsList[index] = selectedItem.copyWith(openingStock: (currentQty + quantity).toString());
         if (builderModel == null) {
-          itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty + quantity).toString());
+          if (isIndexSame) {
+            itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty + quantity).toString());
+          } else {
+            itemsNotifier.value[index2] = selectedItem.copyWith(openingStock: (currentQty + quantity).toString());
+          }
         }
       }
       itemsNotifier.notifyListeners();
     }
   }
-  //   static void notifyStock({required int itemId, bool dicrease = true, num quantity = 0, bool bulk = false, bool reset = false}) {
-  //   final ItemMasterModel selectedItem = itemsNotifier.value.firstWhere((element) => element.id == itemId);
-  //   final num currentQty = num.parse(selectedItem.openingStock);
-  //   final ItemMasterModel stableItem = stableItemsNotifier.value.firstWhere((element) => element.id == itemId);
-  //   final num stableQty = num.parse(stableItem.openingStock);
-  //   final index = itemsNotifier.value.indexWhere((element) => element.id == itemId);
-
-  //   log('selected indexes == ' + selectedItemIndex.value.toString());
-  //   log('current Stock == ' + selectedItem.openingStock);
-  //   log('Actual Stock == ' + stableItem.openingStock);
-
-  //   if (bulk) {
-  //     if (reset) {
-  //       log('resetting stock..');
-
-  //       itemsNotifier.value[index] = stableItem;
-  //     } else {
-  //       itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (stableQty - quantity).toString());
-  //     }
-  //     itemsNotifier.notifyListeners();
-  //   } else {
-  //     if (dicrease) {
-  //       itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty - 1).toString());
-  //     } else {
-  //       log('Increase quantity == $quantity');
-  //       itemsNotifier.value[index] = selectedItem.copyWith(openingStock: (currentQty + quantity).toString());
-  //     }
-  //     itemsNotifier.notifyListeners();
-  //   }
-  // }
 }
 
 class _ProductSideWidgetState extends State<ProductSideWidget> {
@@ -135,9 +140,6 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
   //========== FutureBuilder Database ==========
   Future<List<dynamic>>? futureGrid = ItemMasterDatabase.instance.getAllItems();
-
-  //========== FutureBuilder ModelClass by Integer ==========
-  int? _builderModel;
 
   //========== Lists ==========
   List categories = [], subCategories = [], brands = [];
@@ -202,7 +204,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                 child: const Icon(Icons.clear, size: 15),
                                 onTap: () async {
                                   _productController.clear();
-                                  _builderModel = null;
+                                  ProductSideWidget.builderModel = null;
                                   futureGrid = ItemMasterDatabase.instance.getAllItems();
                                   if (itemsList.isNotEmpty) {
                                     ProductSideWidget.itemsNotifier.value = itemsList;
@@ -236,8 +238,10 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                         _productController.text = selectedItem.itemName;
                         Future<List<dynamic>> future() async => [selectedItem];
                         futureGrid = future();
-                        _builderModel = null;
-                        ProductSideWidget.itemsNotifier.value = [selectedItem];
+                        ProductSideWidget.builderModel = null;
+                        final _item = itemsList.firstWhere((item) => item.id == selectedItem.id);
+                        final _currentQty = _item.openingStock;
+                        ProductSideWidget.itemsNotifier.value = [selectedItem.copyWith(openingStock: _currentQty)];
                         log(selectedItem.itemName);
                       },
                     ),
@@ -412,7 +416,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                     child: CustomMaterialBtton(
                         buttonColor: Colors.blue,
                         onPressed: () async {
-                          _builderModel = 0;
+                          ProductSideWidget.builderModel = 0;
 
                           if (categories.isNotEmpty) {
                             log('loading Categories..');
@@ -434,7 +438,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                     flex: 5,
                     child: CustomMaterialBtton(
                         onPressed: () async {
-                          _builderModel = 1;
+                          ProductSideWidget.builderModel = 1;
                           if (subCategories.isNotEmpty) {
                             ProductSideWidget.itemsNotifier.value = subCategories;
                           } else {
@@ -452,7 +456,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                     flex: 3,
                     child: CustomMaterialBtton(
                       onPressed: () async {
-                        _builderModel = 2;
+                        ProductSideWidget.builderModel = 2;
                         if (brands.isNotEmpty) {
                           ProductSideWidget.itemsNotifier.value = brands;
                         } else {
@@ -472,7 +476,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                     child: MaterialButton(
                       onPressed: () async {
                         _productController.clear();
-                        _builderModel = null;
+                        ProductSideWidget.builderModel = null;
 
                         if (itemsList.isNotEmpty) {
                           ProductSideWidget.itemsNotifier.value = itemsList;
@@ -550,10 +554,10 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                     itemBuilder: (context, index) {
                                       return InkWell(
                                         onTap: () async {
-                                          if (_builderModel == 0) {
+                                          if (ProductSideWidget.builderModel == 0) {
                                             log(itemList[index].category);
                                             final categoryId = itemList[index].id;
-                                            _builderModel = null;
+                                            ProductSideWidget.builderModel = null;
                                             final List<ItemMasterModel> itemsByCategory = [];
 
                                             for (ItemMasterModel item in itemsList) {
@@ -561,18 +565,37 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                                 itemsByCategory.add(item);
                                               }
                                             }
-                                            // ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByCategoryId(categoryId);
                                             ProductSideWidget.itemsNotifier.value = itemsByCategory;
-                                          } else if (_builderModel == 1) {
+                                            // ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByCategoryId(categoryId);
+                                          } else if (ProductSideWidget.builderModel == 1) {
                                             log(itemList[index].subCategory);
                                             final subCategoryId = itemList[index].id;
-                                            _builderModel = null;
-                                            ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductBySubCategoryId(subCategoryId);
-                                          } else if (_builderModel == 2) {
+                                            ProductSideWidget.builderModel = null;
+
+                                            final List<ItemMasterModel> itemsBySubCategory = [];
+
+                                            for (ItemMasterModel item in itemsList) {
+                                              if (item.itemSubCategoryId == subCategoryId as int) {
+                                                itemsBySubCategory.add(item);
+                                              }
+                                            }
+                                            ProductSideWidget.itemsNotifier.value = itemsBySubCategory;
+
+                                            // ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductBySubCategoryId(subCategoryId);
+                                          } else if (ProductSideWidget.builderModel == 2) {
                                             log(itemList[index].brand);
                                             final brandId = itemList[index].id;
-                                            _builderModel = null;
-                                            ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByBrandId(brandId);
+                                            ProductSideWidget.builderModel = null;
+                                            final List<ItemMasterModel> itemsByBrand = [];
+
+                                            for (ItemMasterModel item in itemsList) {
+                                              if (item.itemBrandId == brandId as int) {
+                                                itemsByBrand.add(item);
+                                              }
+                                            }
+                                            ProductSideWidget.itemsNotifier.value = itemsByBrand;
+
+                                            // ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByBrandId(brandId);
                                           } else {
                                             //===================================== if the Product Already Added ====================================
                                             isProductAlreadyAdded(itemList, index);
@@ -587,7 +610,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                           elevation: 10,
                                           child: Padding(
                                               padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-                                              child: _builderModel == null
+                                              child: ProductSideWidget.builderModel == null
                                                   ? Column(
                                                       children: [
                                                         Expanded(
@@ -628,24 +651,27 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                                       mainAxisAlignment: MainAxisAlignment.center,
                                                       children: [
                                                         Text(
-                                                          _builderModel == 0
+                                                          ProductSideWidget.builderModel == 0
                                                               ? itemList[index].category
-                                                              : _builderModel == 1
+                                                              : ProductSideWidget.builderModel == 1
                                                                   ? itemList[index].subCategory
-                                                                  : _builderModel == 2
+                                                                  : ProductSideWidget.builderModel == 2
                                                                       ? itemList[index].brand
                                                                       : '',
                                                           textAlign: TextAlign.center,
                                                           softWrap: true,
                                                           style: kItemsTextStyle,
                                                           overflow: TextOverflow.ellipsis,
-                                                          maxLines: _builderModel == 0 && itemList[index].category.toString().contains(' ')
-                                                              ? 2
-                                                              : _builderModel == 1 && itemList[index].subCategory.toString().contains(' ')
+                                                          maxLines:
+                                                              ProductSideWidget.builderModel == 0 && itemList[index].category.toString().contains(' ')
                                                                   ? 2
-                                                                  : _builderModel == 2 && itemList[index].brand.toString().contains(' ')
+                                                                  : ProductSideWidget.builderModel == 1 &&
+                                                                          itemList[index].subCategory.toString().contains(' ')
                                                                       ? 2
-                                                                      : 1,
+                                                                      : ProductSideWidget.builderModel == 2 &&
+                                                                              itemList[index].brand.toString().contains(' ')
+                                                                          ? 2
+                                                                          : 1,
                                                         ),
                                                       ],
                                                     )),
@@ -698,8 +724,8 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
     SaleSideWidget.selectedProductsNotifier.value.add(itemList[index]);
     SaleSideWidget.vatRateNotifier.value.add(_vat.rate);
 
+    log('itemList[index].id! == ' + itemList[index].id!.toString());
     ProductSideWidget.notifyStock(itemId: itemList[index].id!);
-    ProductSideWidget.selectedItemIndex.value.add(index);
 
     final String unitPrice = vatMethod == 'Inclusive'
         ? Converter.amountRounder(const SaleSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: _vat.rate))
@@ -735,7 +761,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
       log('Item Code == $_scanResult');
       if (_scanResult == '-1') return;
       final String _itemCode = _scanResult;
-      _builderModel = null;
+      ProductSideWidget.builderModel = null;
       ProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByItemCode(_itemCode);
     } on PlatformException catch (_) {
       log('Failed to get Platform version!');

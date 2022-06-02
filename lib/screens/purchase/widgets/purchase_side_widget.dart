@@ -50,9 +50,6 @@ class PurchaseSideWidget extends StatelessWidget {
   static final supplierController = TextEditingController();
   static final referenceNumberController = TextEditingController();
 
-  //==================== Global Keys ====================
-  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     Size _screenSize = MediaQuery.of(context).size;
@@ -326,53 +323,59 @@ class PurchaseSideWidget extends StatelessWidget {
                                 ),
                               ),
                               //==================== Quantity ====================
-                              Form(
-                                key: _formKey,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                  color: Colors.white,
-                                  height: 30,
-                                  alignment: Alignment.topCenter,
-                                  child: TextFormField(
-                                    controller: quantityNotifier.value[index],
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: Validators.digitsOnly,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.symmetric(vertical: 10),
+                              Container(
+                                color: Colors.white,
+                                height: 30,
+                                alignment: Alignment.topCenter,
+                                child: TextFormField(
+                                  controller: quantityNotifier.value[index],
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: Validators.digitsOnly,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                    errorStyle: TextStyle(fontSize: 0.1),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.zero,
+                                      borderSide: BorderSide(color: kTextErrorColor, width: 0.8),
                                     ),
-                                    style: kItemsTextStyle,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return '*';
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      if (num.tryParse(value) != null) {
-                                        if (num.parse(value) <= 0) {
-                                          quantityNotifier.value[index].clear();
-                                        } else {
-                                          Debouncer().run(() {
-                                            if (value.isNotEmpty && value != '.') {
-                                              final num _newQuantity = num.parse(value);
-
-                                              onItemQuantityChanged(value, selectedProducts, index);
-
-                                              log('new Quantity == ' + _newQuantity.toString());
-                                            }
-                                          });
-                                        }
-                                      } else {
-                                        if (value.isEmpty) {
-                                          onItemQuantityChanged('0', selectedProducts, index);
-                                        }
-                                      }
-                                    },
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.zero,
+                                      borderSide: BorderSide(color: kTextErrorColor, width: 0.8),
+                                    ),
+                                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
                                   ),
+                                  style: kItemsTextStyle,
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty || value == '.') {
+                                      return '*';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    if (num.tryParse(value) != null) {
+                                      if (num.parse(value) <= 0) {
+                                        quantityNotifier.value[index].clear();
+                                      } else {
+                                        Debouncer().run(() {
+                                          if (value.isNotEmpty && value != '.') {
+                                            final num _newQuantity = num.parse(value);
+
+                                            onItemQuantityChanged(value, selectedProducts, index);
+
+                                            log('new Quantity == ' + _newQuantity.toString());
+                                          }
+                                        });
+                                      }
+                                    } else {
+                                      if (value.isEmpty) {
+                                        onItemQuantityChanged('0', selectedProducts, index);
+                                      }
+                                    }
+                                  },
                                 ),
                               ),
                               //==================== Sub Total ====================

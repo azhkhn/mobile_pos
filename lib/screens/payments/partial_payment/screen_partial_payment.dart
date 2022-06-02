@@ -116,7 +116,7 @@ class PartialPayment extends StatelessWidget {
                                 TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                                 TextButton(
                                     onPressed: () async {
-                                      late final SalesModel? salesModel;
+                                      SalesModel? salesModel;
                                       if (purchase) {
                                         //========== Purchase Payment ==========
                                         await const PurchaseButtonsWidget().addPurchase(context,

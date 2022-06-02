@@ -393,7 +393,6 @@ class SaleSideWidget extends StatelessWidget {
                                       getTotalVAT();
                                       getTotalPayable();
                                       ProductSideWidget.notifyStock(itemId: itemId, bulk: true, reset: true);
-                                      ProductSideWidget.selectedItemIndex.value.removeAt(index);
                                     },
                                     icon: const Icon(
                                       Icons.close,
@@ -585,7 +584,7 @@ class SaleSideWidget extends StatelessWidget {
     customerNameNotifier.value = null;
     ProductSideWidget.itemsNotifier.value.clear();
     ProductSideWidget.stableItemsNotifier.value.clear();
-    ProductSideWidget.selectedItemIndex.value.clear();
+    ProductSideWidget.builderModel = null;
 
     if (notify) {
       selectedProductsNotifier.notifyListeners();
@@ -603,7 +602,6 @@ class SaleSideWidget extends StatelessWidget {
       customerNameNotifier.notifyListeners();
       ProductSideWidget.itemsNotifier.notifyListeners();
       ProductSideWidget.stableItemsNotifier.notifyListeners();
-      ProductSideWidget.selectedItemIndex.notifyListeners();
     }
   }
 }

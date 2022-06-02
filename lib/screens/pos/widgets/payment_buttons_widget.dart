@@ -138,6 +138,8 @@ class PaymentButtonsWidget extends StatelessWidget {
                                     onPressed: () async {
                                       Navigator.pop(ctx);
                                       final String _balance = SaleSideWidget.totalPayableNotifier.value.toString();
+
+                                      //========== Adding Sale ==========
                                       final SalesModel? salesModel = await addSale(
                                         context,
                                         argPaid: '0',

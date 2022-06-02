@@ -114,7 +114,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
               child: SizedBox(
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
-                  onPressed: () {
+                  onPressed: () async {
                     final int? customerId = PurchaseSideWidget.supplierIdNotifier.value;
                     final num items = PurchaseSideWidget.totalItemsNotifier.value;
 
@@ -123,12 +123,33 @@ class PurchaseButtonsWidget extends StatelessWidget {
                     } else if (items == 0) {
                       return kSnackBar(context: context, content: 'Please select any Products to add Purchase!');
                     } else {
-                      Navigator.pushNamed(context, routePartialPayment, arguments: {
-                        'totalPayable': PurchaseSideWidget.totalPayableNotifier.value,
-                        'totalItems': PurchaseSideWidget.totalItemsNotifier.value,
-                        'purchase': true,
-                        'isVertical': isVertical,
-                      });
+                      final _quantities = PurchaseSideWidget.quantityNotifier.value;
+                      bool isValid = false;
+
+                      for (var quantity in _quantities) {
+                        final num? qty = num.tryParse(quantity.text);
+
+                        if (qty != null && qty > 0) {
+                          isValid = true;
+                          log('valid = $qty');
+                          continue;
+                        } else {
+                          isValid = false;
+                          log('not valid = $qty');
+                          break;
+                        }
+                      }
+
+                      if (isValid) {
+                        Navigator.pushNamed(context, routePartialPayment, arguments: {
+                          'totalPayable': PurchaseSideWidget.totalPayableNotifier.value,
+                          'totalItems': PurchaseSideWidget.totalItemsNotifier.value,
+                          'purchase': true,
+                          'isVertical': isVertical,
+                        });
+                      } else {
+                        kSnackBar(context: context, content: 'Please enter valid item quantity', error: true);
+                      }
                     }
                   },
                   padding: const EdgeInsets.all(5),

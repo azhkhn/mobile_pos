@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_details_table_widget.dart';
 
@@ -74,9 +75,10 @@ class PaymentTypeWidget extends StatelessWidget {
                         errorStyle: true,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
+                          final _totalPayable = num.parse(Converter.currency.format(totalPayable));
                           if (value == null || value.trim().isEmpty) {
                             return 'This field is required*';
-                          } else if (num.parse(value) > totalPayable) {
+                          } else if (num.parse(value) > _totalPayable) {
                             return 'Amount is higher than payable*';
                           }
                           return null;
