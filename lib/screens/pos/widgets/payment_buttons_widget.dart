@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
@@ -146,11 +147,13 @@ class PaymentButtonsWidget extends StatelessWidget {
                                       );
 
                                       if (salesModel != null) {
-                                        Navigator.pushNamed(
+                                        await OrientationMode.toPortrait();
+                                        await Navigator.pushNamed(
                                           context,
                                           routeSalesInvoice,
                                           arguments: [salesModel, false],
                                         );
+                                        await OrientationMode.toLandscape();
                                       }
                                     },
                                     child: const Text('Accept')),
@@ -221,11 +224,13 @@ class PaymentButtonsWidget extends StatelessWidget {
                                       Navigator.pop(ctx);
                                       final SalesModel? salesModel = await addSale(context);
                                       if (salesModel != null) {
-                                        Navigator.pushNamed(
+                                        await OrientationMode.toPortrait();
+                                        await Navigator.pushNamed(
                                           context,
                                           routeSalesInvoice,
                                           arguments: [salesModel, false],
                                         );
+                                        await OrientationMode.toLandscape();
                                       }
                                     },
                                     child: const Text('Accept')),
@@ -328,11 +333,13 @@ class PaymentButtonsWidget extends StatelessWidget {
                         });
 
                         if (salesModel is SalesModel) {
-                          Navigator.pushNamed(
+                          await OrientationMode.toPortrait();
+                          await Navigator.pushNamed(
                             context,
                             routeSalesInvoice,
                             arguments: [salesModel, false],
                           );
+                          await OrientationMode.toLandscape();
                         }
                       } else {
                         kSnackBar(context: context, content: 'Please enter valid item quantity', error: true);

@@ -69,9 +69,9 @@ class _BusinessProfileState extends State<BusinessProfile> {
   final FocusNode _countryArabicFocusNode = FocusNode();
 
   @override
-  void didChangeDependencies() async {
-    await getBusinessProfileModel();
-    super.didChangeDependencies();
+  void initState() {
+    getBusinessProfileModel();
+    super.initState();
   }
 
   @override

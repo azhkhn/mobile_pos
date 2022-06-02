@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 
 class Converter {
   //==================== Convert Amount to Currency depending on the locale ====================
-  static final NumberFormat currency = NumberFormat.currency(symbol: '₹', locale: "en_IN");
+  static final NumberFormat currency = NumberFormat.currency(symbol: '', locale: 'en_US');
 
   //==================== Round Number ====================
   static String amountRounder(num amount) {

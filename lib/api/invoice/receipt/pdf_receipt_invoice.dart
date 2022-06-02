@@ -56,6 +56,7 @@ class PdfSalesReceipt {
     pdf.addPage(pw.Page(
       orientation: pw.PageOrientation.portrait,
       pageFormat: PdfPageFormat.roll80,
+      textDirection: pw.TextDirection.rtl,
       theme: pw.ThemeData.withFont(
         base: arabicFont,
       ),
@@ -91,9 +92,9 @@ class PdfSalesReceipt {
       required final bool isReturn}) {
     return pw.Column(
       children: [
-        header(business: business, titleFont: titleFont, isReturn: isReturn, logoImage: logoImage),
+        header(business: business, titleFont: titleFont, isReturn: isReturn, logoImage: logoImage, arabicFont: arabicFont),
         pw.Divider(height: 2 * PdfPageFormat.mm),
-        saleInfo(sale: sale),
+        saleInfo(sale: sale, arabicFont: arabicFont),
         customerInfo(customer: customer, arabicFont: arabicFont),
         pw.SizedBox(height: 1 * PdfPageFormat.mm),
         buildInvoice(saleItems: saleItems, arabicFont: arabicFont),
@@ -126,7 +127,11 @@ class PdfSalesReceipt {
 
   //========== Header ==========
   static pw.Widget header(
-      {required final BusinessProfileModel business, required pw.Font titleFont, required pw.MemoryImage logoImage, required final bool isReturn}) {
+      {required final BusinessProfileModel business,
+      required pw.Font titleFont,
+      required pw.MemoryImage logoImage,
+      required final bool isReturn,
+      required pw.Font arabicFont}) {
     return pw.Column(
       mainAxisAlignment: pw.MainAxisAlignment.start,
       crossAxisAlignment: pw.CrossAxisAlignment.center,
@@ -141,12 +146,15 @@ class PdfSalesReceipt {
         pw.SizedBox(
           width: double.infinity,
           child: pw.Text(business.business,
-              textAlign: pw.TextAlign.center, style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold, font: titleFont)),
+              textDirection: pw.TextDirection.ltr,
+              textAlign: pw.TextAlign.center,
+              style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold, font: titleFont)),
         ),
         pw.SizedBox(
           width: double.infinity,
           child: pw.Text(
             business.address,
+            textDirection: pw.TextDirection.ltr,
             textAlign: pw.TextAlign.center,
             style: const pw.TextStyle(
               fontSize: 7,
@@ -155,27 +163,54 @@ class PdfSalesReceipt {
         ),
         pw.SizedBox(
           width: double.infinity,
-          child: pw.Text('VAT NO. ' + business.vatNumber,
+          child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.center, children: [
+            pw.Text(
+              ' الرقم الضريبية',
+              textDirection: pw.TextDirection.rtl,
               textAlign: pw.TextAlign.center,
-              style: const pw.TextStyle(
+              style: pw.TextStyle(
                 fontSize: 7,
-              )),
+                font: arabicFont,
+              ),
+            ),
+            pw.Text('VAT NO. ' + business.vatNumber,
+                textAlign: pw.TextAlign.center,
+                style: const pw.TextStyle(
+                  fontSize: 7,
+                )),
+          ]),
         ),
         pw.SizedBox(
           width: double.infinity,
-          child: pw.Text('PH NO. ' + business.phoneNumber,
+          child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.center, children: [
+            pw.Text(
+              ' هاتف',
+              textDirection: pw.TextDirection.rtl,
               textAlign: pw.TextAlign.center,
-              style: const pw.TextStyle(
+              style: pw.TextStyle(
                 fontSize: 7,
-              )),
+                font: arabicFont,
+              ),
+            ),
+            pw.Text('PH NO. ' + business.phoneNumber,
+                textAlign: pw.TextAlign.center,
+                style: const pw.TextStyle(
+                  fontSize: 7,
+                )),
+          ]),
         ),
         pw.SizedBox(height: 1 * PdfPageFormat.mm),
         pw.SizedBox(
           width: double.infinity,
           child: pw.Text(
-            'TAX INVOICE',
+            'فاتورة ضريبية TAX INVOICE',
+            textDirection: pw.TextDirection.rtl,
             textAlign: pw.TextAlign.center,
-            style: pw.TextStyle(fontSize: 9, font: titleFont),
+            style: pw.TextStyle(
+              fontSize: 9,
+              fontWeight: pw.FontWeight.bold,
+              font: arabicFont,
+            ),
           ),
         ),
         // isReturn
@@ -193,14 +228,40 @@ class PdfSalesReceipt {
   }
 
   //========== Sale Info ==========
-  static pw.Widget saleInfo({required final sale}) {
+  static pw.Widget saleInfo({required final sale, required final pw.Font arabicFont}) {
     const kStyle = pw.TextStyle(fontSize: 6);
     return pw.Column(children: [
       pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          pw.Text('Inv No: ' + sale.invoiceNumber!, style: kStyle),
-          pw.Text('Date: ' + Converter.dateTimeFormatAmPm.format(DateTime.parse(sale.dateTime)), style: kStyle)
+          pw.Row(children: [
+            pw.Text('Inv No / ', style: kStyle),
+            pw.Text(
+              ': رقم الفاتورة',
+              textDirection: pw.TextDirection.rtl,
+              textAlign: pw.TextAlign.center,
+              style: pw.TextStyle(
+                fontSize: 6,
+                font: arabicFont,
+              ),
+            ),
+            pw.SizedBox(width: 1 * PdfPageFormat.mm),
+            pw.Text(sale.invoiceNumber!, style: kStyle),
+          ]),
+          pw.Row(children: [
+            pw.Text('Date / ', style: kStyle),
+            pw.Text(
+              ': التاريخ',
+              textDirection: pw.TextDirection.rtl,
+              textAlign: pw.TextAlign.center,
+              style: pw.TextStyle(
+                fontSize: 6,
+                font: arabicFont,
+              ),
+            ),
+            pw.SizedBox(width: 1 * PdfPageFormat.mm),
+            pw.Text(Converter.dateTimeFormatAmPm.format(DateTime.parse(sale.dateTime)), style: kStyle),
+          ]),
         ],
       ),
     ]);
@@ -264,7 +325,7 @@ class PdfSalesReceipt {
               customer.addressArabic.toString().isNotEmpty ? customer.addressArabic : customer.address,
               style: kStyle,
               maxLines: 2,
-              textDirection: pw.TextDirection.rtl,
+              textDirection: customer.addressArabic.toString().isNotEmpty ? pw.TextDirection.rtl : pw.TextDirection.ltr,
             ),
           ),
         ],
@@ -294,10 +355,10 @@ class PdfSalesReceipt {
     //  'VAT\n ةيبرضلا',
     final headers = [
       'S.No',
-      'Description / فصو',
-      'QTY\n ةيمك',
-      'Rate\n رعسلا',
-      'AMT\n رادقم',
+      'وصف Description / ',
+      'Qty\n كمية',
+      'Rate\n معدل',
+      'AMT\n مقدار',
     ];
     int i = 0;
     final data = saleItems.map((item) {
@@ -314,7 +375,7 @@ class PdfSalesReceipt {
 
       return [
         '$i',
-        'Samsung Galaxy S9 plus black with special edition',
+        item.productName,
         item.quantity,
         Converter.currency.format(exclusiveAmount).replaceAll('₹', ''),
         Converter.currency.format(num.parse(item.subTotal)).replaceAll('₹', ''),
@@ -331,7 +392,7 @@ class PdfSalesReceipt {
         fontSize: 6,
         fontWeight: pw.FontWeight.normal,
       ),
-      headerStyle: pw.TextStyle(fontSize: 6, fontWeight: pw.FontWeight.bold, fontFallback: [arabicFont]),
+      headerStyle: pw.TextStyle(fontSize: 6, fontWeight: pw.FontWeight.bold, font: arabicFont),
       headerDecoration: pw.BoxDecoration(border: pw.Border.all(width: .5)),
       cellHeight: 12,
       columnWidths: const {
