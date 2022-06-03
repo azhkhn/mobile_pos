@@ -144,7 +144,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                                         context,
                                         argPaid: '0',
                                         argBalance: _balance,
-                                        argPaymentStatus: 'Due',
+                                        argPaymentStatus: 'Credit',
                                         argPaymentType: '',
                                       );
 
@@ -550,7 +550,7 @@ class PaymentButtonsWidget extends StatelessWidget {
         log('==============================================');
       }
 
-      if (paymentStatus != 'Due') {
+      if (paymentStatus != 'Credit') {
         final TransactionsModel _transaction = TransactionsModel(
           category: 'Sales',
           transactionType: 'Income',

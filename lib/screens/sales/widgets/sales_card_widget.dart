@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 
 import '../../../core/constant/sizes.dart';
 import '../../../core/constant/text.dart';
@@ -218,10 +219,10 @@ class SalesCardWidget extends StatelessWidget {
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: sales[index].paymentStatus == 'Paid'
-                                ? Colors.green
+                                ? kGreen
                                 : sales[index].paymentStatus == 'Partial'
-                                    ? Colors.orange
-                                    : Colors.red,
+                                    ? kOrange
+                                    : kRed,
                           ),
                           maxLines: 1,
                           minFontSize: 10,

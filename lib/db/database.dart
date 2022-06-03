@@ -40,7 +40,7 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 1, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 2, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -52,37 +52,14 @@ class EzDatabase {
     // const intNull = 'INTEGER';
     // const intType = 'INTEGER NOT NULL';
 
-    // await db.execute("DROP TABLE IF EXISTS $tableSales");
-    // await db.execute("DROP TABLE IF EXISTS $tableSalesItems");
-    // await db.execute("DROP TABLE IF EXISTS $tableTransactions");
-    // await db.execute("DROP TABLE IF EXISTS $tableSalesReturn");
-    // await db.execute("DROP TABLE IF EXISTS $tableSalesReturnItems");
-    // await db.execute("DROP TABLE IF EXISTS $tablePurchaseReturn");
-    // await db.execute("DROP TABLE IF EXISTS $tablePurchaseItemsReturn");
+    final result = await db.query(tableSales, where: '${SalesFields.paymentStatus} = ?', whereArgs: ['Due']);
 
-    //**
-    //    await db.execute(
-    //    "ALTER TABLE TABLE_NAME ADD COLUMN COLUMN_NAME $textType DEFAULT ''");
-    //
-    //    await db.rawQuery('DROP TABLE IF EXISTS TABLE_NAME');
-    // await db.execute("ALTER TABLE $TABLE_NAME RENAME TO TABLE_NAME_COPY");
+    final List<SalesModel> sales = result.map((json) => SalesModel.fromJson(json)).toList();
 
-    // //========== Table Item-Master ==========
-    // await db.execute('''CREATE TABLE $TABLE_NAME (
-    // ${ItemMasterFields.id} $idAuto,
-    // ${ItemMasterFields.productType} $textType,
-    // ${ItemMasterFields.itemName} $textType)''');
-
-    // await db.execute(
-    //     "INSERT INTO $TABLE_NAME (${ItemMasterFields.id},${ItemMasterFields.productType},${ItemMasterFields.itemName}) SELECT ${ItemMasterFields.id},${ItemMasterFields.productType},${ItemMasterFields.itemName} FROM items_old");
-
-    // await db.execute("DROP TABLE items_old;");
-    //
-    // */
-    // if (oldVersion == 6) {
-    //   await db.execute(
-    //       "ALTER TABLE TABLE_NAME RENAME COLUMN COLUMN_NAME TO NEW_COLUMN_NAME");
-    // }
+    for (SalesModel sale in sales) {
+      final newSale = sale.copyWith(paymentStatus: 'Credit');
+      await db.update(tableSales, newSale.toJson(), where: '${SalesFields.id} = ?', whereArgs: [sale.id]);
+    }
   }
 
   Future close() async {
