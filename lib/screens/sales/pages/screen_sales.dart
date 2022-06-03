@@ -5,6 +5,7 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
+import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
@@ -30,6 +31,7 @@ class ScreenSales extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await getSalesDetails();
+      await TransactionDatabase.instance.getAllTransactions();
     });
 
     return Scaffold(

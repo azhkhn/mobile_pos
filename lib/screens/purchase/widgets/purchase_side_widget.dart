@@ -591,6 +591,7 @@ class PurchaseSideWidget extends StatelessWidget {
     vatRateNotifier.value.clear();
     itemTotalVatNotifier.value.clear();
     supplierController.clear();
+    referenceNumberController.clear();
     costNotifier.value.clear();
     quantityNotifier.value.clear();
     totalItemsNotifier.value = 0;

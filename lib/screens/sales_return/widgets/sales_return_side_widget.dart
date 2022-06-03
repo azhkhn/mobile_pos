@@ -12,6 +12,7 @@ import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_items_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
+import 'package:shop_ez/model/sales/sales_items_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
@@ -220,6 +221,8 @@ class SalesReturnSideWidget extends StatelessWidget {
                         saleInvoiceController.text = sale.invoiceNumber!;
                         originalInvoiceNumberNotifier.value = sale.invoiceNumber!;
                         originalSaleIdNotifier.value = sale.id;
+
+                        //========== Get Sales Details ==========
                         await getSalesDetails(sale);
 
                         log(sale.invoiceNumber!);
@@ -560,7 +563,9 @@ class SalesReturnSideWidget extends StatelessWidget {
     log('Total Payable == $_totalPayable');
   }
 
-  //==================== Get Sales Details ====================
+  //========================================                   ========================================
+  //======================================== Get Sales Details ========================================
+  //========================================                   ========================================
   Future<void> getSalesDetails(SalesModel sale) async {
     final List<ItemMasterModel> soldItems = [];
 
@@ -568,12 +573,14 @@ class SalesReturnSideWidget extends StatelessWidget {
     customerIdNotifier.value = sale.customerId;
     customerNameNotifier.value = sale.customerName;
 
-    final salesItems = await salesItemDB.getSalesItemBySaleId(sale.id!);
+    //==================== Fetch sales items based on Sales Id ====================
+    final List<SalesItemsModel> salesItems = await salesItemDB.getSalesItemBySaleId(sale.id!);
 
+    //==================== Adding sold items to UI ====================
     for (var i = 0; i < salesItems.length; i++) {
-      final soldItem = salesItems[i];
-      final items = await itemDB.getProductById(soldItem.productId);
-      final item = items.first;
+      final SalesItemsModel soldItem = salesItems[i];
+      final List<ItemMasterModel> items = await itemDB.getProductById(soldItem.productId);
+      final ItemMasterModel item = items.first;
 
       log('item Id == ' '${item.id}');
       log('item Name == ' + item.itemName);
@@ -585,8 +592,9 @@ class SalesReturnSideWidget extends StatelessWidget {
       log('Quantity == ' + soldItem.quantity);
       log('Unit Code == ' + soldItem.unitCode);
       log('Vat Id == ${soldItem.vatId}');
-      log('Products Vat Method == ' + item.vatMethod);
-      log('Vat Method == ' + item.vatMethod);
+      log('Vat Rate == ${soldItem.vatRate}');
+      log('Products Vat Method == ' + soldItem.vatMethod);
+      log('Vat Method == ' + soldItem.vatMethod);
       log('Vat Percentage == ' + soldItem.vatPercentage);
       log('Vat Total == ' + soldItem.vatTotal);
 
@@ -605,7 +613,7 @@ class SalesReturnSideWidget extends StatelessWidget {
         vatMethod: item.vatMethod,
         productVAT: item.productVAT,
         vatId: soldItem.vatId,
-        vatRate: item.vatRate,
+        vatRate: soldItem.vatRate,
         unit: soldItem.unitCode,
         expiryDate: item.expiryDate,
         openingStock: item.openingStock,
