@@ -40,7 +40,7 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 4, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 10, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {

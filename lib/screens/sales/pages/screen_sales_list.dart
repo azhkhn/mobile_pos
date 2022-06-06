@@ -92,7 +92,7 @@ class SalesList extends StatelessWidget {
                                                               ),
                                                               kWidth5,
                                                               Text(
-                                                                'Invoice',
+                                                                'View Invoice',
                                                                 style: TextStyle(fontWeight: FontWeight.bold, color: kWhite),
                                                               ),
                                                             ],
@@ -104,8 +104,8 @@ class SalesList extends StatelessWidget {
                                                                 Navigator.pop(context);
                                                                 await Navigator.pushNamed(
                                                                   context,
-                                                                  routePartialPayment,
-                                                                  arguments: [sales[index], false],
+                                                                  routeTransaction,
+                                                                  arguments: sales[index],
                                                                 );
                                                               },
                                                               color: Colors.teal[400],
@@ -118,7 +118,7 @@ class SalesList extends StatelessWidget {
                                                                   ),
                                                                   kWidth5,
                                                                   Text(
-                                                                    'Payment',
+                                                                    'Make Payment',
                                                                     style: TextStyle(fontWeight: FontWeight.bold, color: kWhite),
                                                                   ),
                                                                 ],

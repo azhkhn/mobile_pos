@@ -79,23 +79,12 @@ class SalesDatabase {
     return list;
   }
 
-// //========== Update Sales When get Returned ==========
-//   Future<void> updateReturnedSale(
-//       {required int saleId,
-//       required int salesReturnId,
-//       required String salesReturnInvoice}) async {
-//     final db = await dbInstance.database;
-//     final _sale = await db
-//         .query(tableSales, where: '${SalesFields.id} =? ', whereArgs: [saleId]);
-//     final updatedSale = SalesModel.fromJson(_sale.first).copyWith(
-//         salesReturnId: salesReturnId,
-//         salesReturnInvoiceNumber: salesReturnInvoice);
-
-//     final id = await db.update(tableSales, updatedSale.toJson(),
-//         where: '${SalesFields.id} = ? ', whereArgs: [saleId]);
-
-//     log('Sale Updated Successfully! $id');
-//   }
+//========== Update Sales When get Returned ==========
+  Future<void> updateReturnedSale({required final SalesModel sale}) async {
+    final db = await dbInstance.database;
+    await db.update(tableSales, sale.toJson(), where: '${SalesFields.id} = ?', whereArgs: [sale.id]);
+    log('Sale Updated Successfully! ${sale.id}');
+  }
 
 //========== Get All Sales ==========
   Future<List<SalesModel>> getAllSales() async {

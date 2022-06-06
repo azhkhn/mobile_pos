@@ -29,3 +29,4 @@ const routeSalesReturnList = '/sales_return_list';
 const routePurchaseReturn = '/purchase_return';
 const routeSalesInvoice = '/sales_invoice';
 const routeManageCustomer = '/manage_customer';
+const routeTransaction = '/transaction';

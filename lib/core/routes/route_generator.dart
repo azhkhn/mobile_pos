@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/barcode/screen_barcode.dart';
 import 'package:shop_ez/screens/customer/screen_customer_list.dart';
 import 'package:shop_ez/screens/invoices/screen_sales_invoice.dart';
@@ -9,6 +10,7 @@ import 'package:shop_ez/screens/sales/pages/screen_sales_list.dart';
 import 'package:shop_ez/screens/sales_return/pages/screen_sales_return.dart';
 import 'package:shop_ez/screens/sales_return/pages/screen_sales_return_list.dart';
 import 'package:shop_ez/screens/stock/screen_stock.dart';
+import 'package:shop_ez/screens/transaction/screen_transaction.dart';
 
 import '../../screens/auth/pages/login_screen.dart';
 import '../../screens/auth/pages/signup_screen.dart';
@@ -78,6 +80,14 @@ class RouteGenerator {
                     paymentDetails: args,
                     purchase: args.containsKey('purchase'),
                     isVertical: args['isVertical'],
+                  ));
+        }
+        return _errorRoute();
+      case routeTransaction:
+        if (args is SalesModel) {
+          return MaterialPageRoute(
+              builder: (_) => TransactionScreen(
+                    salesModel: args,
                   ));
         }
         return _errorRoute();

@@ -6,6 +6,7 @@ import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
+import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/db/db_functions/sales_return/sales_return_database.dart';
 import 'package:shop_ez/db/db_functions/sales_return/sales_return_items_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
@@ -239,7 +240,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         createdBy;
 
     //==================== Database Instances ====================
-    // final SalesDatabase salesDatabase = SalesDatabase.instance;
+    final SalesDatabase salesDatabase = SalesDatabase.instance;
     final SalesReturnDatabase salesReturnDB = SalesReturnDatabase.instance;
     final SalesReturnItemsDatabase salesReturnItemsDB = SalesReturnItemsDatabase.instance;
     final TransactionDatabase transactionDB = TransactionDatabase.instance;
@@ -405,47 +406,8 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         await itemMasterDB.additionItemQty(itemId: SalesReturnSideWidget.selectedProductsNotifier.value[i].id!, purchasedQty: num.parse(quantity));
       }
 
-      if (paymentStatus == 'Paid') {
-        final TransactionsModel _transaction = TransactionsModel(
-          category: 'Sales Return',
-          transactionType: 'Expense',
-          dateTime: dateTime,
-          amount: returnAmount,
-          status: paymentStatus,
-          description: 'Transaction ',
-          salesId: originalSaleId,
-          salesReturnId: 0,
-        );
-
-        //==================== Create Transactions ====================
-        await transactionDB.createTransaction(_transaction);
-      } else {
-        final TransactionsModel _transactionS = TransactionsModel(
-          category: 'Sales',
-          transactionType: 'Income',
-          dateTime: dateTime,
-          amount: returnAmount,
-          status: paymentStatus,
-          description: 'Transaction ',
-          salesId: originalSaleId,
-          salesReturnId: 0,
-        );
-
-        final TransactionsModel _transactionSR = TransactionsModel(
-          category: 'Sales Return',
-          transactionType: 'Expense',
-          dateTime: dateTime,
-          amount: returnAmount,
-          status: paymentStatus,
-          description: 'Transaction ',
-          salesId: originalSaleId,
-          salesReturnId: 0,
-        );
-
-        //==================== Create Transactions ====================
-        await transactionDB.createTransaction(_transactionSR);
-        await transactionDB.createTransaction(_transactionS);
-      }
+      //==================== Create Transaction based on status ====================
+      await createTransaction(paymentStatus, dateTime, returnAmount, originalSaleId, transactionDB, sale, salesReturnId, salesDatabase);
 
       // HomeCardWidget.detailsCardLoaded = false;
 
@@ -465,6 +427,184 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         content: 'Something went wrong! Please try again later.',
         error: true,
       );
+    }
+  }
+
+  //==================== Create Transaction ====================
+  Future<void> createTransaction(String paymentStatus, String dateTime, String returnAmount, int? originalSaleId, TransactionDatabase transactionDB,
+      SalesModel sale, int salesReturnId, SalesDatabase salesDatabase) async {
+    if (paymentStatus == 'Paid') {
+      final num _totalAmount = num.parse(sale.grantTotal);
+      final num _alreadyReturnAmount = num.parse(sale.returnAmount ?? '0');
+      final num _returnAmount = num.parse(returnAmount);
+
+      final TransactionsModel _transaction = TransactionsModel(
+        category: 'Sales Return',
+        transactionType: 'Expense',
+        dateTime: dateTime,
+        amount: returnAmount,
+        status: paymentStatus,
+        description: 'Transaction ',
+        salesId: originalSaleId,
+        salesReturnId: 0,
+      );
+
+      //==================== Update Sale with Sales Return ====================
+      final num _newReturnAmount = _alreadyReturnAmount + _returnAmount;
+      final num _newPaidAmount = _totalAmount - _newReturnAmount;
+
+      final String newPaymentStatus;
+
+      log('newPaid = $_newPaidAmount');
+      log('newReturn = $_newReturnAmount');
+      log('newPaid = $_newPaidAmount');
+
+      if (_newPaidAmount == 0) {
+        newPaymentStatus = 'Returned';
+      } else {
+        newPaymentStatus = 'Paid';
+      }
+
+      final updatedSale = sale.copyWith(
+        returnAmount: _newReturnAmount.toString(),
+        paymentStatus: newPaymentStatus,
+        paid: _newPaidAmount.toString(),
+      );
+
+      await salesDatabase.updateReturnedSale(sale: updatedSale);
+
+      //==================== Create Transactions ====================
+      await transactionDB.createTransaction(_transaction);
+    } else if (paymentStatus == 'Partial') {
+      final num _totalAmount = num.parse(sale.grantTotal);
+      final num _paidAmount = num.parse(sale.paid);
+      final num _alreadyReturnAmount = num.parse(sale.returnAmount ?? '0');
+      final num _returnAmount = num.parse(returnAmount);
+
+      final TransactionsModel _transactionS = TransactionsModel(
+        category: 'Sales',
+        transactionType: 'Income',
+        dateTime: dateTime,
+        amount: returnAmount,
+        status: paymentStatus,
+        description: 'Transaction $salesReturnId',
+        salesId: originalSaleId,
+        salesReturnId: salesReturnId,
+      );
+
+      final TransactionsModel _transactionSR = TransactionsModel(
+        category: 'Sales Return',
+        transactionType: 'Expense',
+        dateTime: dateTime,
+        amount: returnAmount,
+        status: paymentStatus,
+        description: 'Transaction $salesReturnId',
+        salesId: originalSaleId,
+        salesReturnId: salesReturnId,
+      );
+
+      //==================== Create Transactions ====================
+      await transactionDB.createTransaction(_transactionSR);
+      await transactionDB.createTransaction(_transactionS);
+
+      //==================== Update Sale with Sales Return ====================
+      final num _newReturnAmount = _alreadyReturnAmount + _returnAmount;
+      num _newBalance = _totalAmount - _paidAmount - _alreadyReturnAmount - _returnAmount;
+      final String _newPaidAmount;
+      String _newPaymentStatus = 'Partial';
+
+      if (_newBalance == 0) {
+        _newPaymentStatus = 'Paid';
+      } else if (_newBalance > 0) {
+        _newPaymentStatus = 'Partial';
+      }
+
+      if (_newReturnAmount == _totalAmount) {
+        log('everything Returned');
+        _newPaymentStatus = 'Returned';
+        _newBalance = 0;
+        _newPaidAmount = '0';
+
+        final TransactionsModel _transactionSR = TransactionsModel(
+            category: 'Sales Return',
+            transactionType: 'Expense',
+            dateTime: dateTime,
+            amount: _paidAmount.toString(),
+            status: paymentStatus,
+            description: 'Transaction $salesReturnId',
+            salesId: originalSaleId,
+            salesReturnId: salesReturnId);
+
+        await transactionDB.createTransaction(_transactionSR);
+
+        final updatedSale = sale.copyWith(
+          returnAmount: _newReturnAmount.toString(),
+          balance: _newBalance.toString(),
+          paymentStatus: _newPaymentStatus,
+          paid: _newPaidAmount,
+        );
+
+        await salesDatabase.updateReturnedSale(sale: updatedSale);
+
+        return;
+      }
+
+      final updatedSale = sale.copyWith(
+        returnAmount: _newReturnAmount.toString(),
+        balance: _newBalance.toString(),
+        paymentStatus: _newPaymentStatus,
+      );
+
+      await salesDatabase.updateReturnedSale(sale: updatedSale);
+    } else {
+      final num _totalAmount = num.parse(sale.grantTotal);
+      final num _alreadyReturnAmount = num.parse(sale.returnAmount ?? '0');
+      final num _returnAmount = num.parse(returnAmount);
+
+      final TransactionsModel _transactionS = TransactionsModel(
+        category: 'Sales',
+        transactionType: 'Income',
+        dateTime: dateTime,
+        amount: returnAmount,
+        status: paymentStatus,
+        description: 'Transaction $salesReturnId',
+        salesId: originalSaleId,
+        salesReturnId: salesReturnId,
+      );
+
+      final TransactionsModel _transactionSR = TransactionsModel(
+        category: 'Sales Return',
+        transactionType: 'Expense',
+        dateTime: dateTime,
+        amount: returnAmount,
+        status: paymentStatus,
+        description: 'Transaction $salesReturnId',
+        salesId: originalSaleId,
+        salesReturnId: salesReturnId,
+      );
+
+      //==================== Create Transactions ====================
+      await transactionDB.createTransaction(_transactionSR);
+      await transactionDB.createTransaction(_transactionS);
+
+      //==================== Update Sale with Sales Return ====================
+      final num _newReturnAmount = _alreadyReturnAmount + _returnAmount;
+      final String newPaymentStatus;
+      final num _newBalance = _totalAmount - _newReturnAmount;
+
+      if (_totalAmount == _newReturnAmount) {
+        newPaymentStatus = 'Returned';
+      } else {
+        newPaymentStatus = 'Credit';
+      }
+
+      final updatedSale = sale.copyWith(
+        returnAmount: _newReturnAmount.toString(),
+        balance: _newBalance.toString(),
+        paymentStatus: newPaymentStatus,
+      );
+
+      await salesDatabase.updateReturnedSale(sale: updatedSale);
     }
   }
 }

@@ -192,7 +192,7 @@ class PdfSalesReceipt {
                 font: arabicFont,
               ),
             ),
-            pw.Text('PH NO. ' + business.phoneNumber,
+            pw.Text('Tel. ' + business.phoneNumber,
                 textAlign: pw.TextAlign.center,
                 style: const pw.TextStyle(
                   fontSize: 7,
@@ -202,15 +202,25 @@ class PdfSalesReceipt {
         pw.SizedBox(height: 1 * PdfPageFormat.mm),
         pw.SizedBox(
           width: double.infinity,
-          child: pw.Text(
-            'فاتورة ضريبية TAX INVOICE',
-            textDirection: pw.TextDirection.rtl,
-            textAlign: pw.TextAlign.center,
-            style: pw.TextStyle(
-              fontSize: 9,
-              fontWeight: pw.FontWeight.bold,
-              font: arabicFont,
-            ),
+          child: pw.Column(
+            mainAxisSize: pw.MainAxisSize.min,
+            children: [
+              pw.Text(
+                'فاتورة ضریبیة المبسطة',
+                textDirection: pw.TextDirection.rtl,
+                textAlign: pw.TextAlign.center,
+                style: pw.TextStyle(
+                  fontSize: 8,
+                  fontWeight: pw.FontWeight.bold,
+                  font: arabicFont,
+                ),
+              ),
+              pw.Text('Simplified Tax Invoice',
+                  style: pw.TextStyle(
+                    fontSize: 8,
+                    fontWeight: pw.FontWeight.bold,
+                  ))
+            ],
           ),
         ),
         // isReturn
@@ -356,9 +366,9 @@ class PdfSalesReceipt {
     final headers = [
       'S.No',
       'وصف Description / ',
-      'Qty\n كمية',
-      'Rate\n معدل',
-      'AMT\n مقدار',
+      'Quantity\n كمية',
+      'Rate\n نسبة',
+      'Amount\n المبلغ',
     ];
     int i = 0;
     final data = saleItems.map((item) {
@@ -397,7 +407,7 @@ class PdfSalesReceipt {
       cellHeight: 12,
       columnWidths: const {
         1: pw.FractionColumnWidth(0.30),
-        2: pw.FractionColumnWidth(0.10),
+        2: pw.FractionColumnWidth(0.11),
         3: pw.FractionColumnWidth(0.15),
         4: pw.FractionColumnWidth(0.15),
         5: pw.FractionColumnWidth(0.15),
