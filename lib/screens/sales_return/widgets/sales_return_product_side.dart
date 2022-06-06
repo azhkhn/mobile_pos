@@ -10,6 +10,7 @@ import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
+import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
@@ -173,13 +174,13 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                         Flexible(
                           flex: 5,
                           child: ValueListenableBuilder(
-                              valueListenable: SalesReturnSideWidget.originalSaleIdNotifier,
+                              valueListenable: SalesReturnSideWidget.originalSaleNotifier,
                               builder: (context, _, __) {
                                 return TypeAheadField(
                                   debounceDuration: const Duration(milliseconds: 500),
                                   hideSuggestionsOnKeyboardHide: true,
                                   textFieldConfiguration: TextFieldConfiguration(
-                                      enabled: SalesReturnSideWidget.originalSaleIdNotifier.value == null,
+                                      enabled: SalesReturnSideWidget.originalSaleNotifier.value == null,
                                       controller: SalesReturnSideWidget.customerController,
                                       style: kText_10_12,
                                       decoration: InputDecoration(
@@ -257,11 +258,11 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                                       ),
                                       onTap: () async {
                                         SalesReturnSideWidget.saleInvoiceController.clear();
-                                        if (SalesReturnSideWidget.originalSaleIdNotifier.value != null) {
+                                        if (SalesReturnSideWidget.originalSaleNotifier.value != null) {
                                           return const SalesReturnSideWidget().resetSalesReturn();
                                         }
-                                        SalesReturnSideWidget.originalInvoiceNumberNotifier.value = null;
-                                        SalesReturnSideWidget.originalSaleIdNotifier.value = null;
+                                        SalesReturnSideWidget.originalSaleNotifier.value = null;
+                                        SalesReturnSideWidget.originalSaleNotifier.value = null;
                                       },
                                     ),
                                   ),
@@ -273,7 +274,7 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                             noItemsFoundBuilder: (context) =>
                                 SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText_10_12))),
                             suggestionsCallback: (pattern) async {
-                              return await SalesReturnSideWidget.salesDB.getSalesByInvoiceSuggestions(pattern);
+                              return await SalesDatabase.instance.getSalesByInvoiceSuggestions(pattern);
                             },
                             itemBuilder: (context, SalesModel suggestion) {
                               return Padding(
@@ -289,8 +290,7 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                             onSuggestionSelected: (SalesModel sale) async {
                               const SalesReturnSideWidget().resetSalesReturn();
                               SalesReturnSideWidget.saleInvoiceController.text = sale.invoiceNumber!;
-                              SalesReturnSideWidget.originalInvoiceNumberNotifier.value = sale.invoiceNumber!;
-                              SalesReturnSideWidget.originalSaleIdNotifier.value = sale.id;
+                              SalesReturnSideWidget.originalSaleNotifier.value = sale;
                               await const SalesReturnSideWidget().getSalesDetails(sale);
 
                               log(sale.invoiceNumber!);

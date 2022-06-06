@@ -614,7 +614,7 @@ class PdfSalesInvoice {
                 ),
                 pw.Divider(),
                 buildText(
-                  title: ' / Grant Total  المجموع الكل',
+                  title: ' / Grand Total  المجموع الكل',
                   value: Converter.currency.format(num.parse(sale.grantTotal)).replaceAll("₹", ''),
                   unite: true,
                   arabicFont: arabicFont,

@@ -92,7 +92,7 @@ class PartialPayment extends StatelessWidget {
                         final String _paymentStatus = _balance == '0.0'
                             ? 'Paid'
                             : _balance == _totalPayable
-                                ? 'Due'
+                                ? 'Credit'
                                 : 'Partial';
 
                         log('Total Payable = $_totalPayable');

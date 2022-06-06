@@ -75,7 +75,7 @@ class PaymentTypeWidget extends StatelessWidget {
                         errorStyle: true,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
-                          final _totalPayable = num.parse(Converter.currency.format(totalPayable));
+                          final _totalPayable = num.parse(Converter.amountRounder(totalPayable));
                           if (value == null || value.trim().isEmpty) {
                             return 'This field is required*';
                           } else if (num.parse(value) > _totalPayable) {

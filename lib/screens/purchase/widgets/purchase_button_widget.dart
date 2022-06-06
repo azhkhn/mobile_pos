@@ -44,34 +44,38 @@ class PurchaseButtonsWidget extends StatelessWidget {
     return Column(
       children: [
         Container(
-          height: isVertical
-              ? _screenSize.height / 26
-              : isVertical
-                  ? _screenSize.height / 22
-                  : _screenSize.width / 25,
-          padding: const EdgeInsets.all(8),
+          height: isVertical ? _screenSize.height / 26 : _screenSize.width / 25,
+          width: double.infinity,
           color: Colors.blueGrey,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Total Payable',
-                style: kItemsButtontyle,
-              ),
-              kWidth5,
-              Flexible(
-                child: ValueListenableBuilder(
-                  valueListenable: PurchaseSideWidget.totalPayableNotifier,
-                  builder: (context, totalPayable, child) {
-                    return Text(
-                      totalPayable == 0 ? '0' : Converter.currency.format(totalPayable),
-                      overflow: TextOverflow.ellipsis,
-                      style: kItemsButtontyle,
-                    );
-                  },
+          child: FractionallySizedBox(
+            widthFactor: .95,
+            heightFactor: .90,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                FittedBox(
+                  child: Text(
+                    'Total Payable',
+                    style: kItemsButtontyle,
+                  ),
                 ),
-              )
-            ],
+                kWidth5,
+                Flexible(
+                  child: ValueListenableBuilder(
+                    valueListenable: PurchaseSideWidget.totalPayableNotifier,
+                    builder: (context, totalPayable, child) {
+                      return FittedBox(
+                        child: Text(
+                          totalPayable == 0 ? '0' : Converter.currency.format(totalPayable),
+                          overflow: TextOverflow.ellipsis,
+                          style: kItemsButtontyle,
+                        ),
+                      );
+                    },
+                  ),
+                )
+              ],
+            ),
           ),
         ),
         Row(

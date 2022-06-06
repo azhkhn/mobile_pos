@@ -18,8 +18,7 @@ class ExpenseCategoryModel with _$ExpenseCategoryModel {
     required String expense,
   }) = _ExpenseCategoryModel;
 
-  factory ExpenseCategoryModel.fromJson(Map<String, dynamic> json) =>
-      _$ExpenseCategoryModelFromJson(json);
+  factory ExpenseCategoryModel.fromJson(Map<String, dynamic> json) => _$ExpenseCategoryModelFromJson(json);
 
   String get() {
     return expense;

@@ -11,6 +11,7 @@ const kTransparentColor = Colors.transparent;
 const kWhite = Colors.white;
 const kBlack = Colors.black;
 const kRed = Colors.red;
+const kGreen = Colors.green;
 const kOrange = Colors.orange;
 
 //=================== Const Colors for Widgets ====================

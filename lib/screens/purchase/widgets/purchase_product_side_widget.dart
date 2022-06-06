@@ -500,7 +500,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                             PurchaseProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByBrandId(brandId);
                                           } else {
 //===================================== if the Product Already Added ====================================
-                                            isProductAlreadyAdded(itemList as List<ItemMasterModel>, index);
+                                            isProductAlreadyAdded(itemList, index);
 //=======================================================================================================
 
                                             PurchaseSideWidget.selectedProductsNotifier.notifyListeners();
@@ -591,7 +591,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
 
 // Checking if the product already added then Increasing the Quantity
 //====================================================================
-  void isProductAlreadyAdded(List<ItemMasterModel> itemList, int index) async {
+  void isProductAlreadyAdded(itemList, int index) async {
     final vatMethod = itemList[index].vatMethod;
     final _vat = await VatUtils.instance.getVatById(vatId: itemList[index].vatId);
     log('VAT Method = ' + vatMethod);
