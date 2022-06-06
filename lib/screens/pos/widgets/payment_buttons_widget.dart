@@ -555,7 +555,7 @@ class PaymentButtonsWidget extends StatelessWidget {
           category: 'Sales',
           transactionType: 'Income',
           dateTime: dateTime,
-          amount: grantTotal,
+          amount: paid,
           status: paymentStatus,
           description: 'Transaction $salesId',
           salesId: salesId,

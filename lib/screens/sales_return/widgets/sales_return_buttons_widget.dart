@@ -10,6 +10,7 @@ import 'package:shop_ez/db/db_functions/sales_return/sales_return_database.dart'
 import 'package:shop_ez/db/db_functions/sales_return/sales_return_items_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
 import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
+import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/sales_return/sales_return_items_model.dart';
 import 'package:shop_ez/model/sales_return/sales_return_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
@@ -177,8 +178,8 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                                   onPressed: () async {
                                     Navigator.pop(ctx);
                                     //========== Add Sales Return =========
-                                    final paymentStatus = SalesReturnSideWidget.originalSaleNotifier.value?.paymentStatus;
-                                    await addSalesReturn(context, argPaymentStatus: paymentStatus);
+                                    final sale = SalesReturnSideWidget.originalSaleNotifier.value!;
+                                    await addSalesReturn(context, sale, argPaymentStatus: sale.paymentStatus);
                                   },
                                   child: const Text('Accept')),
                             ],
@@ -210,7 +211,8 @@ class SalesReturnButtonsWidget extends StatelessWidget {
 //======================================== Add Sale Return ========================================
 //========================================                 ========================================
   addSalesReturn(
-    BuildContext context, {
+    BuildContext context,
+    SalesModel sale, {
     String? argBalance,
     String? argPaymentStatus,
     String? argPaymentType,
@@ -228,7 +230,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         vatAmount,
         subTotal,
         discount,
-        grandTotal,
+        returnAmount,
         paid,
         balance,
         paymentType,
@@ -290,7 +292,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
     vatAmount = SalesReturnSideWidget.totalVatNotifier.value.toString();
     subTotal = SalesReturnSideWidget.totalAmountNotifier.value.toString();
     discount = '';
-    grandTotal = SalesReturnSideWidget.totalPayableNotifier.value.toString();
+    returnAmount = SalesReturnSideWidget.totalPayableNotifier.value.toString();
     salesStatus = 'Returned';
     createdBy = _user;
 
@@ -306,7 +308,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
       vatAmount: vatAmount,
       subTotal: subTotal,
       discount: discount,
-      grantTotal: grandTotal,
+      grantTotal: returnAmount,
       paid: paid,
       balance: balance,
       paymentType: paymentType,
@@ -408,16 +410,43 @@ class SalesReturnButtonsWidget extends StatelessWidget {
           category: 'Sales Return',
           transactionType: 'Expense',
           dateTime: dateTime,
-          amount: grandTotal,
+          amount: returnAmount,
           status: paymentStatus,
-          description: 'Transaction $salesReturnId',
+          description: 'Transaction ',
           salesId: originalSaleId,
-          salesReturnId: salesReturnId,
+          salesReturnId: 0,
         );
 
         //==================== Create Transactions ====================
         await transactionDB.createTransaction(_transaction);
+      } else {
+        final TransactionsModel _transactionS = TransactionsModel(
+          category: 'Sales',
+          transactionType: 'Income',
+          dateTime: dateTime,
+          amount: returnAmount,
+          status: paymentStatus,
+          description: 'Transaction ',
+          salesId: originalSaleId,
+          salesReturnId: 0,
+        );
+
+        final TransactionsModel _transactionSR = TransactionsModel(
+          category: 'Sales Return',
+          transactionType: 'Expense',
+          dateTime: dateTime,
+          amount: returnAmount,
+          status: paymentStatus,
+          description: 'Transaction ',
+          salesId: originalSaleId,
+          salesReturnId: 0,
+        );
+
+        //==================== Create Transactions ====================
+        await transactionDB.createTransaction(_transactionSR);
+        await transactionDB.createTransaction(_transactionS);
       }
+
       // HomeCardWidget.detailsCardLoaded = false;
 
       const SalesReturnSideWidget().resetSalesReturn(notify: true);

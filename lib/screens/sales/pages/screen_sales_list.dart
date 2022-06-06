@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
@@ -15,8 +16,7 @@ class SalesList extends StatelessWidget {
   }) : super(key: key);
 
   //========== Value Notifier ==========
-  static final ValueNotifier<List<SalesModel>> salesNotifier =
-      ValueNotifier([]);
+  static final ValueNotifier<List<SalesModel>> salesNotifier = ValueNotifier([]);
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +35,10 @@ class SalesList extends StatelessWidget {
               Expanded(
                 child: FutureBuilder(
                     future: SalesDatabase.instance.getAllSales(),
-                    builder:
-                        (context, AsyncSnapshot<List<SalesModel>> snapshot) {
+                    builder: (context, AsyncSnapshot<List<SalesModel>> snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
-                          return const Center(
-                              child: CircularProgressIndicator());
+                          return const Center(child: CircularProgressIndicator());
                         case ConnectionState.done:
 
                         default:
@@ -54,31 +52,88 @@ class SalesList extends StatelessWidget {
                                 return sales.isNotEmpty
                                     ? ListView.separated(
                                         itemCount: sales.length,
-                                        separatorBuilder:
-                                            (BuildContext context, int index) =>
-                                                kHeight5,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
+                                        separatorBuilder: (BuildContext context, int index) => kHeight5,
+                                        itemBuilder: (BuildContext context, int index) {
                                           return InkWell(
                                             child: SalesCardWidget(
                                               index: index,
                                               sales: sales,
                                             ),
                                             onTap: () async {
-                                              await Navigator.pushNamed(
-                                                context,
-                                                routeSalesInvoice,
-                                                arguments: [
-                                                  sales[index],
-                                                  false
-                                                ],
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => AlertDialog(
+                                                  contentPadding: kPadding0,
+                                                  content: SizedBox(
+                                                    height: 100,
+                                                    width: 100,
+                                                    child: Column(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                      children: [
+                                                        Expanded(
+                                                            child: MaterialButton(
+                                                          onPressed: () async {
+                                                            Navigator.pop(context);
+
+                                                            await Navigator.pushNamed(
+                                                              context,
+                                                              routeSalesInvoice,
+                                                              arguments: [sales[index], false],
+                                                            );
+                                                          },
+                                                          color: Colors.blueGrey[400],
+                                                          child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: const [
+                                                              Icon(
+                                                                Icons.receipt_outlined,
+                                                                color: kWhite,
+                                                              ),
+                                                              kWidth5,
+                                                              Text(
+                                                                'Invoice',
+                                                                style: TextStyle(fontWeight: FontWeight.bold, color: kWhite),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )),
+                                                        Expanded(
+                                                          child: MaterialButton(
+                                                              onPressed: () async {
+                                                                Navigator.pop(context);
+                                                                await Navigator.pushNamed(
+                                                                  context,
+                                                                  routePartialPayment,
+                                                                  arguments: [sales[index], false],
+                                                                );
+                                                              },
+                                                              color: Colors.teal[400],
+                                                              child: Row(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                children: const [
+                                                                  Icon(
+                                                                    Icons.payment_outlined,
+                                                                    color: kWhite,
+                                                                  ),
+                                                                  kWidth5,
+                                                                  Text(
+                                                                    'Payment',
+                                                                    style: TextStyle(fontWeight: FontWeight.bold, color: kWhite),
+                                                                  ),
+                                                                ],
+                                                              )),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
                                               );
                                             },
                                           );
                                         },
                                       )
-                                    : const Center(
-                                        child: Text('Sales is Empty!'));
+                                    : const Center(child: Text('Sales is Empty!'));
                               });
                       }
                     }),

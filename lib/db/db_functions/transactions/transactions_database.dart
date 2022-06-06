@@ -15,9 +15,12 @@ class TransactionDatabase {
   }
 
 //==================== Get All Transactions ====================
-  Future<void> getAllTransactions() async {
+  Future<List<TransactionsModel>> getAllTransactions() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableTransactions);
     log('Transactions == $_result');
+    final _transactions = _result.map((json) => TransactionsModel.fromJson(json)).toList();
+
+    return _transactions;
   }
 }
