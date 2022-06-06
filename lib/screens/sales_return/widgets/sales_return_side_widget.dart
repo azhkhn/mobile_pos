@@ -6,19 +6,22 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
+import 'package:shop_ez/core/utils/debouncer/debouncer.dart';
+import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_items_database.dart';
+import 'package:shop_ez/db/db_functions/sales_return/sales_return_items_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/model/sales/sales_items_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/model/sales_return/sales_return_items_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
 import 'package:shop_ez/screens/sales_return/widgets/sales_return_buttons_widget.dart';
 import 'package:shop_ez/screens/sales_return/widgets/sales_return_price_section.dart';
-import 'package:shop_ez/screens/sales_return/widgets/sales_return_product_side.dart';
 import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
@@ -38,8 +41,7 @@ class SalesReturnSideWidget extends StatelessWidget {
   static final ValueNotifier<List<String>> itemTotalVatNotifier = ValueNotifier([]);
   static final ValueNotifier<List<TextEditingController>> quantityNotifier = ValueNotifier([]);
 
-  static final ValueNotifier<String?> originalInvoiceNumberNotifier = ValueNotifier(null);
-  static final ValueNotifier<int?> originalSaleIdNotifier = ValueNotifier(null);
+  static final ValueNotifier<SalesModel?> originalSaleNotifier = ValueNotifier(null);
 
   static final ValueNotifier<int?> customerIdNotifier = ValueNotifier(null);
   static final ValueNotifier<String?> customerNameNotifier = ValueNotifier(null);
@@ -53,11 +55,6 @@ class SalesReturnSideWidget extends StatelessWidget {
   static final customerController = TextEditingController();
   static final saleInvoiceController = TextEditingController();
 
-  //========== Database Instances ==========
-  static final SalesDatabase salesDB = SalesDatabase.instance;
-  static final SalesItemsDatabase salesItemDB = SalesItemsDatabase.instance;
-  static final ItemMasterDatabase itemDB = ItemMasterDatabase.instance;
-
   @override
   Widget build(BuildContext context) {
     //========== Device Utils ==========
@@ -66,7 +63,6 @@ class SalesReturnSideWidget extends StatelessWidget {
       onWillPop: () async {
         if (selectedProductsNotifier.value.isEmpty) {
           resetSalesReturn();
-          SalesReturnProductSideWidget.itemsNotifier.value.clear();
 
           return true;
         } else {
@@ -78,8 +74,6 @@ class SalesReturnSideWidget extends StatelessWidget {
                   submitAction: () {
                     Navigator.pop(context);
                     resetSalesReturn();
-                    SalesReturnProductSideWidget.itemsNotifier.value.clear();
-
                     Navigator.pop(context);
                   },
                 );
@@ -104,13 +98,13 @@ class SalesReturnSideWidget extends StatelessWidget {
                   Flexible(
                     flex: 9,
                     child: ValueListenableBuilder(
-                        valueListenable: originalSaleIdNotifier,
+                        valueListenable: originalSaleNotifier,
                         builder: (context, _, __) {
                           return TypeAheadField(
                             debounceDuration: const Duration(milliseconds: 500),
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
-                                enabled: originalSaleIdNotifier.value == null,
+                                enabled: originalSaleNotifier.value == null,
                                 controller: customerController,
                                 style: kText_10_12,
                                 decoration: InputDecoration(
@@ -188,11 +182,11 @@ class SalesReturnSideWidget extends StatelessWidget {
                                 ),
                                 onTap: () async {
                                   saleInvoiceController.clear();
-                                  if (originalSaleIdNotifier.value != null) {
-                                    return resetSalesReturn();
+                                  if (originalSaleNotifier.value != null) {
+                                    return resetSalesReturn(notify: true);
                                   }
-                                  originalInvoiceNumberNotifier.value = null;
-                                  originalSaleIdNotifier.value = null;
+                                  originalSaleNotifier.value = null;
+                                  originalSaleNotifier.value = null;
                                 },
                               ),
                             ),
@@ -203,7 +197,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                           )),
                       noItemsFoundBuilder: (context) => SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText_10_12))),
                       suggestionsCallback: (pattern) async {
-                        return await salesDB.getSalesByInvoiceSuggestions(pattern);
+                        return await SalesDatabase.instance.getSalesByInvoiceSuggestions(pattern);
                       },
                       itemBuilder: (context, SalesModel suggestion) {
                         return Padding(
@@ -219,8 +213,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                       onSuggestionSelected: (SalesModel sale) async {
                         resetSalesReturn();
                         saleInvoiceController.text = sale.invoiceNumber!;
-                        originalInvoiceNumberNotifier.value = sale.invoiceNumber!;
-                        originalSaleIdNotifier.value = sale.id;
+                        originalSaleNotifier.value = sale;
 
                         //========== Get Sales Details ==========
                         await getSalesDetails(sale);
@@ -317,110 +310,158 @@ class SalesReturnSideWidget extends StatelessWidget {
                   child: ValueListenableBuilder(
                     valueListenable: selectedProductsNotifier,
                     builder: (context, List<ItemMasterModel> selectedProducts, child) {
-                      return Table(
-                        columnWidths: const {
-                          0: FractionColumnWidth(0.30),
-                          1: FractionColumnWidth(0.23),
-                          2: FractionColumnWidth(0.12),
-                          3: FractionColumnWidth(0.23),
-                          4: FractionColumnWidth(0.12),
-                        },
-                        border: TableBorder.all(color: Colors.grey, width: 0.5),
-                        children: List<TableRow>.generate(
-                          selectedProducts.length,
-                          (index) {
-                            final ItemMasterModel _product = selectedProducts[index];
-                            return TableRow(children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                color: Colors.white,
-                                height: 30,
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  _product.itemName,
-                                  softWrap: true,
-                                  style: kItemsTextStyle,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                color: Colors.white,
-                                height: 30,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  _product.vatMethod == 'Exclusive'
-                                      ? Converter.currency.format(num.parse(_product.sellingPrice))
-                                      : Converter.currency.format(getExclusiveAmount(sellingPrice: _product.sellingPrice, vatRate: _product.vatRate)),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: kItemsTextStyle,
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                color: Colors.white,
-                                height: 30,
-                                alignment: Alignment.topCenter,
-                                child: TextFormField(
-                                  controller: quantityNotifier.value[index],
-                                  keyboardType: TextInputType.number,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    isDense: true,
-                                    contentPadding: EdgeInsets.symmetric(vertical: 10),
-                                  ),
-                                  style: kItemsTextStyle,
-                                  onChanged: (value) {
-                                    onItemQuantityChanged(value, selectedProducts, index);
-                                  },
-                                ),
-                              ),
-                              Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                  color: Colors.white,
-                                  height: 30,
-                                  alignment: Alignment.center,
-                                  child: ValueListenableBuilder(
-                                      valueListenable: subTotalNotifier,
-                                      builder: (context, List<String> subTotal, child) {
-                                        return Text(
-                                          Converter.currency.format(num.tryParse(subTotal[index])),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: kItemsTextStyle,
-                                        );
-                                      })),
-                              Container(
-                                  color: Colors.white,
-                                  height: 30,
-                                  alignment: Alignment.center,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      selectedProducts.removeAt(index);
-                                      subTotalNotifier.value.removeAt(index);
-                                      itemTotalVatNotifier.value.removeAt(index);
-                                      quantityNotifier.value.removeAt(index);
-                                      subTotalNotifier.notifyListeners();
-                                      selectedProductsNotifier.notifyListeners();
-                                      totalItemsNotifier.value -= 1;
-                                      getTotalQuantity();
-                                      getTotalAmount();
-                                      getTotalVAT();
-                                      getTotalPayable();
-                                    },
-                                    icon: const Icon(
-                                      Icons.close,
-                                      size: 16,
+                      return selectedProducts.isNotEmpty
+                          ? Table(
+                              columnWidths: const {
+                                0: FractionColumnWidth(0.30),
+                                1: FractionColumnWidth(0.23),
+                                2: FractionColumnWidth(0.12),
+                                3: FractionColumnWidth(0.23),
+                                4: FractionColumnWidth(0.12),
+                              },
+                              border: TableBorder.all(color: Colors.grey, width: 0.5),
+                              children: List<TableRow>.generate(
+                                selectedProducts.length,
+                                (index) {
+                                  final ItemMasterModel _product = selectedProducts[index];
+                                  return TableRow(children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                      color: Colors.white,
+                                      height: 30,
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        _product.itemName,
+                                        softWrap: true,
+                                        style: kItemsTextStyle,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                      ),
                                     ),
-                                  ))
-                            ]);
-                          },
-                        ),
-                      );
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                      color: Colors.white,
+                                      height: 30,
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        _product.vatMethod == 'Exclusive'
+                                            ? Converter.currency.format(num.parse(_product.sellingPrice))
+                                            : Converter.currency
+                                                .format(getExclusiveAmount(sellingPrice: _product.sellingPrice, vatRate: _product.vatRate)),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: kItemsTextStyle,
+                                      ),
+                                    ),
+                                    Container(
+                                      color: Colors.white,
+                                      height: 30,
+                                      alignment: Alignment.topCenter,
+                                      child: TextFormField(
+                                        controller: quantityNotifier.value[index],
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: Validators.digitsOnly,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 1,
+                                        decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                          isDense: true,
+                                          errorStyle: TextStyle(fontSize: 0.1),
+                                          errorBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.zero,
+                                            borderSide: BorderSide(color: kTextErrorColor, width: 0.8),
+                                          ),
+                                          focusedErrorBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.zero,
+                                            borderSide: BorderSide(color: kTextErrorColor, width: 0.8),
+                                          ),
+                                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
+                                        ),
+                                        style: kItemsTextStyle,
+                                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                                        validator: (value) {
+                                          final num soldQty = num.parse(selectedProductsNotifier.value[index].openingStock);
+
+                                          if (value == null || value.isEmpty || value == '.') {
+                                            return '*';
+                                          } else if (num.parse(value) > soldQty) {
+                                            return '*';
+                                          }
+                                          return null;
+                                        },
+                                        onChanged: (value) {
+                                          if (num.tryParse(value) != null) {
+                                            if (num.parse(value) <= 0) {
+                                              quantityNotifier.value[index].clear();
+                                            } else {
+                                              Debouncer().run(() {
+                                                if (value.isNotEmpty && value != '.') {
+                                                  final num _newQuantity = num.parse(value);
+
+                                                  onItemQuantityChanged(value, selectedProducts, index);
+
+                                                  log('new Quantity == ' + _newQuantity.toString());
+                                                }
+                                              });
+                                            }
+                                          } else {
+                                            if (value.isEmpty) {
+                                              onItemQuantityChanged('0', selectedProducts, index);
+                                            }
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                        color: Colors.white,
+                                        height: 30,
+                                        alignment: Alignment.center,
+                                        child: ValueListenableBuilder(
+                                            valueListenable: subTotalNotifier,
+                                            builder: (context, List<String> subTotal, child) {
+                                              return Text(
+                                                Converter.currency.format(num.tryParse(subTotal[index])),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: kItemsTextStyle,
+                                              );
+                                            })),
+                                    Container(
+                                        color: Colors.white,
+                                        height: 30,
+                                        alignment: Alignment.center,
+                                        child: IconButton(
+                                          onPressed: () {
+                                            selectedProducts.removeAt(index);
+                                            subTotalNotifier.value.removeAt(index);
+                                            itemTotalVatNotifier.value.removeAt(index);
+                                            quantityNotifier.value.removeAt(index);
+                                            subTotalNotifier.notifyListeners();
+                                            selectedProductsNotifier.notifyListeners();
+                                            totalItemsNotifier.value -= 1;
+                                            getTotalQuantity();
+                                            getTotalAmount();
+                                            getTotalVAT();
+                                            getTotalPayable();
+                                          },
+                                          icon: const Icon(
+                                            Icons.close,
+                                            size: 16,
+                                          ),
+                                        ))
+                                  ]);
+                                },
+                              ),
+                            )
+                          : Center(
+                              child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Text(
+                                originalSaleNotifier.value == null ? 'Select any invoice to return sale!' : 'This sale is already returned!',
+                                style: originalSaleNotifier.value == null ? null : kBoldText,
+                              ),
+                            ));
                     },
                   ),
                 ),
@@ -472,7 +513,7 @@ class SalesReturnSideWidget extends StatelessWidget {
     num? _totalQuantiy = 0;
 
     for (var i = 0; i < selectedProductsNotifier.value.length; i++) {
-      _totalQuantiy = _totalQuantiy! + num.tryParse(quantityNotifier.value[i].value.text)!;
+      _totalQuantiy = _totalQuantiy! + num.parse(quantityNotifier.value[i].value.text.isNotEmpty ? quantityNotifier.value[i].value.text : '0');
     }
     await Future.delayed(const Duration(milliseconds: 0));
     totalQuantityNotifier.value = _totalQuantiy!;
@@ -573,68 +614,89 @@ class SalesReturnSideWidget extends StatelessWidget {
     customerIdNotifier.value = sale.customerId;
     customerNameNotifier.value = sale.customerName;
 
-    //==================== Fetch sales items based on Sales Id ====================
-    final List<SalesItemsModel> salesItems = await salesItemDB.getSalesItemBySaleId(sale.id!);
+    //==================== Fetch sold items based on salesId ====================
+    final List<SalesItemsModel> salesItems = await SalesItemsDatabase.instance.getSalesItemBySaleId(sale.id!);
+
+    final List<SalesReturnItemsModel> salesReturnedItems =
+        await SalesReturnItemsDatabase.instance.getSalesReturnItemBySalesId(salesItems.first.saleId);
+    log('==========================================================================================');
 
     //==================== Adding sold items to UI ====================
-    for (var i = 0; i < salesItems.length; i++) {
-      final SalesItemsModel soldItem = salesItems[i];
-      final List<ItemMasterModel> items = await itemDB.getProductById(soldItem.productId);
+    for (var index = 0; index < salesItems.length; index++) {
+      SalesItemsModel soldItem = salesItems[index];
+      final List<ItemMasterModel> items = await ItemMasterDatabase.instance.getProductById(soldItem.productId);
       final ItemMasterModel item = items.first;
 
-      log('item Id == ' '${item.id}');
-      log('item Name == ' + item.itemName);
-      log('Category Id ==  ${soldItem.categoryId}');
-      log('Product Code == ' + soldItem.productCode);
-      log('Cost == ' + soldItem.productCost);
-      log('Unit Price == ' + soldItem.unitPrice);
-      log('Net Unit Price == ' + soldItem.netUnitPrice);
-      log('Quantity == ' + soldItem.quantity);
-      log('Unit Code == ' + soldItem.unitCode);
-      log('Vat Id == ${soldItem.vatId}');
-      log('Vat Rate == ${soldItem.vatRate}');
-      log('Products Vat Method == ' + soldItem.vatMethod);
-      log('Vat Method == ' + soldItem.vatMethod);
-      log('Vat Percentage == ' + soldItem.vatPercentage);
-      log('Vat Total == ' + soldItem.vatTotal);
+      final List<SalesReturnItemsModel> returnedItems =
+          salesReturnedItems.where((returnedItem) => returnedItem.productId == soldItem.productId).toList();
 
-      soldItems.add(ItemMasterModel(
-        id: item.id,
-        productType: soldItem.productType,
-        itemName: soldItem.productName,
-        itemNameArabic: item.itemNameArabic,
-        itemCode: soldItem.productCode,
-        itemCategoryId: soldItem.categoryId,
-        itemSubCategoryId: item.itemSubCategoryId,
-        itemBrandId: item.itemBrandId,
-        itemCost: soldItem.productCost,
-        sellingPrice: soldItem.unitPrice,
-        secondarySellingPrice: item.secondarySellingPrice,
-        vatMethod: item.vatMethod,
-        productVAT: item.productVAT,
-        vatId: soldItem.vatId,
-        vatRate: soldItem.vatRate,
-        unit: soldItem.unitCode,
-        expiryDate: item.expiryDate,
-        openingStock: item.openingStock,
-        alertQuantity: item.alertQuantity,
-        itemImage: item.itemImage,
-      ));
+      log('Returnned Items =+==+= ' + returnedItems.toString());
 
-      quantityNotifier.value.add(TextEditingController(text: soldItem.quantity));
+      //==================== Calculating Returned Items and Quantity from Sold Items ====================
+      for (var i2 = 0; i2 < returnedItems.length; i2++) {
+        final soldQty = num.parse(soldItem.quantity);
+        final num returnedQty = num.parse(returnedItems[i2].quantity);
+        log('sold Qty = $soldQty');
+        log('returned Qty = $returnedQty');
+        soldItem = soldItem.copyWith(quantity: (soldQty - returnedQty).toString());
+      }
 
-      subTotalNotifier.value.add(soldItem.subTotal);
-      itemTotalVatNotifier.value.add(soldItem.vatTotal);
+      // log('item Id == ' '${item.id}');
+      // log('item Name == ' + item.itemName);
+      // log('Category Id ==  ${soldItem.categoryId}');
+      // log('Product Code == ' + soldItem.productCode);
+      // log('Cost == ' + soldItem.productCost);
+      // log('Unit Price == ' + soldItem.unitPrice);
+      // log('Net Unit Price == ' + soldItem.netUnitPrice);
+      // log('Quantity == ' + soldItem.quantity);
+      // log('Unit Code == ' + soldItem.unitCode);
+      // log('Vat Id == ${soldItem.vatId}');
+      // log('Vat Rate == ${soldItem.vatRate}');
+      // log('Products Vat Method == ' + soldItem.vatMethod);
+      // log('Vat Method == ' + soldItem.vatMethod);
+      // log('Vat Percentage == ' + soldItem.vatPercentage);
+      // log('Vat Total == ' + soldItem.vatTotal);
+
+      final finalQty = num.parse(soldItem.quantity);
+
+      if (finalQty > 0) {
+        soldItems.add(ItemMasterModel(
+          id: item.id,
+          productType: item.productType,
+          itemName: item.itemName,
+          itemNameArabic: item.itemNameArabic,
+          itemCode: soldItem.productCode,
+          itemCategoryId: soldItem.categoryId,
+          itemSubCategoryId: item.itemSubCategoryId,
+          itemBrandId: item.itemBrandId,
+          itemCost: soldItem.productCost,
+          sellingPrice: soldItem.unitPrice,
+          secondarySellingPrice: item.secondarySellingPrice,
+          vatMethod: soldItem.vatMethod,
+          productVAT: item.productVAT,
+          vatId: soldItem.vatId,
+          vatRate: soldItem.vatRate,
+          unit: soldItem.unitCode,
+          expiryDate: item.expiryDate,
+          openingStock: soldItem.quantity,
+          alertQuantity: item.alertQuantity,
+          itemImage: item.itemImage,
+        ));
+
+        quantityNotifier.value.add(TextEditingController(text: soldItem.quantity));
+        selectedProductsNotifier.value.add(soldItems[soldItems.length - 1]);
+        subTotalNotifier.value.add(soldItem.unitPrice);
+
+        getSubTotal(soldItems, soldItems.length - 1, num.parse(soldItem.quantity));
+        getItemVat(vatMethod: soldItem.vatMethod, amount: soldItem.unitPrice, vatRate: soldItem.vatRate);
+      }
     }
 
-    selectedProductsNotifier.value = soldItems;
+    totalItemsNotifier.value = num.parse(soldItems.length.toString());
     await getTotalQuantity();
-    log(totalQuantityNotifier.value.toString());
-
-    totalItemsNotifier.value = num.parse(sale.totalItems);
-    totalAmountNotifier.value = num.parse(sale.subTotal);
-    totalVatNotifier.value = num.parse(sale.vatAmount);
-    totalPayableNotifier.value = num.parse(sale.grantTotal);
+    getTotalVAT();
+    getTotalAmount();
+    getTotalPayable();
 
     selectedProductsNotifier.notifyListeners();
     subTotalNotifier.notifyListeners();
@@ -647,8 +709,7 @@ class SalesReturnSideWidget extends StatelessWidget {
     totalPayableNotifier.notifyListeners();
     customerIdNotifier.notifyListeners();
     customerNameNotifier.notifyListeners();
-    originalInvoiceNumberNotifier.notifyListeners();
-    originalSaleIdNotifier.notifyListeners();
+    originalSaleNotifier.notifyListeners();
   }
 
   //==================== Reset All Values ====================
@@ -666,8 +727,7 @@ class SalesReturnSideWidget extends StatelessWidget {
     totalPayableNotifier.value = 0;
     customerIdNotifier.value = null;
     customerNameNotifier.value = null;
-    originalInvoiceNumberNotifier.value = null;
-    originalSaleIdNotifier.value = null;
+    originalSaleNotifier.value = null;
     // SalesReturnProductSideWidget.itemsNotifier.value.clear();
 
     if (notify) {
@@ -682,8 +742,7 @@ class SalesReturnSideWidget extends StatelessWidget {
       totalPayableNotifier.notifyListeners();
       customerIdNotifier.notifyListeners();
       customerNameNotifier.notifyListeners();
-      originalInvoiceNumberNotifier.notifyListeners();
-      originalSaleIdNotifier.notifyListeners();
+      originalSaleNotifier.notifyListeners();
     }
 
     log('========== Sales Return values has been cleared! ==========');

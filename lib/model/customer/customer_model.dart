@@ -47,6 +47,5 @@ class CustomerModel with _$CustomerModel {
     poBox,
   }) = _CustomerModel;
 
-  factory CustomerModel.fromJson(Map<String, dynamic> json) =>
-      _$CustomerModelFromJson(json);
+  factory CustomerModel.fromJson(Map<String, dynamic> json) => _$CustomerModelFromJson(json);
 }

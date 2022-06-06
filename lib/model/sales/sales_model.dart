@@ -8,6 +8,7 @@ class SalesModel with _$SalesModel {
   const factory SalesModel({
     @JsonKey(name: '_id') int? id,
     String? invoiceNumber,
+    String? returnAmount,
     required int customerId,
     required String dateTime,
     required String customerName,
@@ -25,8 +26,7 @@ class SalesModel with _$SalesModel {
     required String paymentStatus,
     required String createdBy,
   }) = _SalesModel;
-  factory SalesModel.fromJson(Map<String, dynamic> json) =>
-      _$SalesModelFromJson(json);
+  factory SalesModel.fromJson(Map<String, dynamic> json) => _$SalesModelFromJson(json);
 }
 
 const String tableSales = 'sales';
@@ -46,6 +46,7 @@ class SalesFields {
   static const grantTotal = 'grantTotal';
   static const paid = 'paid';
   static const balance = 'balance';
+  static const returnAmount = 'returnAmount';
   static const paymentType = 'paymentType';
   static const salesStatus = 'salesStatus';
   static const paymentStatus = 'paymentStatus';

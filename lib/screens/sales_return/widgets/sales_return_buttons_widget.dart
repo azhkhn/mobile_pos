@@ -13,7 +13,6 @@ import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
 import 'package:shop_ez/model/sales_return/sales_return_items_model.dart';
 import 'package:shop_ez/model/sales_return/sales_return_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
-import 'package:shop_ez/screens/sales_return/widgets/sales_return_product_side.dart';
 import 'package:shop_ez/screens/sales_return/widgets/sales_return_side_widget.dart';
 
 import '../../../core/constant/sizes.dart';
@@ -30,18 +29,18 @@ class SalesReturnButtonsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     Size _screenSize = MediaQuery.of(context).size;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      try {
-        log('==============================');
-        await SalesReturnDatabase.instance.getAllSalesReturns();
-        log('==============================');
-        await SalesReturnItemsDatabase.instance.getAllSalesReuturnItems();
-        log('==============================');
-        await TransactionDatabase.instance.getAllTransactions();
-      } catch (e) {
-        log(e.toString());
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   try {
+    //     log('==========================================================================================');
+    //     await SalesReturnDatabase.instance.getAllSalesReturns();
+    //     log('==========================================================================================');
+    //     await SalesReturnItemsDatabase.instance.getAllSalesReuturnItems();
+    //     log('==========================================================================================');
+    //     await TransactionDatabase.instance.getAllTransactions();
+    //   } catch (e) {
+    //     log(e.toString());
+    //   }
+    // });
 
     return Column(
       children: [
@@ -89,7 +88,6 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                     final items = SalesReturnSideWidget.selectedProductsNotifier.value;
                     if (items.isEmpty) {
                       const SalesReturnSideWidget().resetSalesReturn();
-                      SalesReturnProductSideWidget.itemsNotifier.value.clear();
 
                       Navigator.of(context).pop();
                     } else {
@@ -101,7 +99,6 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                               submitAction: () {
                                 Navigator.pop(context);
                                 const SalesReturnSideWidget().resetSalesReturn();
-                                SalesReturnProductSideWidget.itemsNotifier.value.clear();
 
                                 Navigator.pop(context);
                               },
@@ -128,7 +125,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                     final int? customerId = SalesReturnSideWidget.customerIdNotifier.value;
                     final num items = SalesReturnSideWidget.totalItemsNotifier.value;
 
-                    final String? originalInvoiceNumber = SalesReturnSideWidget.originalInvoiceNumberNotifier.value;
+                    final String? originalInvoiceNumber = SalesReturnSideWidget.originalSaleNotifier.value?.invoiceNumber;
 
                     if (originalInvoiceNumber == null) {
                       return kSnackBar(context: context, content: 'Please select Invoice number to return sale');
@@ -139,8 +136,58 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                     if (items == 0) {
                       return kSnackBar(context: context, content: 'Please select any Products to return sale');
                     }
-                    //========== Add Sales Return =========
-                    await addSalesReturn(context);
+
+                    final _quantities = SalesReturnSideWidget.quantityNotifier.value;
+                    final _selectedItems = SalesReturnSideWidget.selectedProductsNotifier.value;
+                    bool isValid = false;
+
+                    for (var i = 0; i < _quantities.length; i++) {
+                      final quantity = _quantities[i].text;
+                      final num soldQty = num.parse(_selectedItems[i].openingStock);
+                      final num? qty = num.tryParse(quantity);
+
+                      if (qty != null && qty > 0 && qty <= soldQty) {
+                        isValid = true;
+                        log('valid = $qty');
+                        continue;
+                      } else {
+                        isValid = false;
+                        log('not valid = $qty');
+                        break;
+                      }
+                    }
+
+                    if (isValid) {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) {
+                          return AlertDialog(
+                            title: const Text(
+                              'Sales Return',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            content: const Text('Do you want to return this sale?'),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(ctx);
+                                  },
+                                  child: const Text('Cancel')),
+                              TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(ctx);
+                                    //========== Add Sales Return =========
+                                    final paymentStatus = SalesReturnSideWidget.originalSaleNotifier.value?.paymentStatus;
+                                    await addSalesReturn(context, argPaymentStatus: paymentStatus);
+                                  },
+                                  child: const Text('Accept')),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      kSnackBar(context: context, content: 'Please enter valid item quantity', error: true);
+                    }
                   },
                   padding: const EdgeInsets.all(5),
                   color: Colors.green[700],
@@ -172,7 +219,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
   }) async {
     int? originalSaleId;
     int salesReturnId, customerId;
-    final String? originalInvoiceNumber;
+    final String originalInvoiceNumber;
     final String dateTime,
         customerName,
         billerName,
@@ -181,7 +228,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         vatAmount,
         subTotal,
         discount,
-        grantTotal,
+        grandTotal,
         paid,
         balance,
         paymentType,
@@ -233,8 +280,8 @@ class SalesReturnButtonsWidget extends StatelessWidget {
     // Save sale in a old date in Database
     // dateTime = DateTime(2022, 4, 22, 17, 45).toIso8601String();
     dateTime = DateTime.now().toIso8601String();
-    originalInvoiceNumber = SalesReturnSideWidget.originalInvoiceNumberNotifier.value!;
-    originalSaleId = SalesReturnSideWidget.originalSaleIdNotifier.value;
+    originalInvoiceNumber = SalesReturnSideWidget.originalSaleNotifier.value!.invoiceNumber!;
+    originalSaleId = SalesReturnSideWidget.originalSaleNotifier.value!.id;
     customerId = SalesReturnSideWidget.customerIdNotifier.value!;
     customerName = SalesReturnSideWidget.customerNameNotifier.value!;
     billerName = _biller;
@@ -243,7 +290,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
     vatAmount = SalesReturnSideWidget.totalVatNotifier.value.toString();
     subTotal = SalesReturnSideWidget.totalAmountNotifier.value.toString();
     discount = '';
-    grantTotal = SalesReturnSideWidget.totalPayableNotifier.value.toString();
+    grandTotal = SalesReturnSideWidget.totalPayableNotifier.value.toString();
     salesStatus = 'Returned';
     createdBy = _user;
 
@@ -259,7 +306,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
       vatAmount: vatAmount,
       subTotal: subTotal,
       discount: discount,
-      grantTotal: grantTotal,
+      grantTotal: grandTotal,
       paid: paid,
       balance: balance,
       paymentType: paymentType,
@@ -356,25 +403,26 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         await itemMasterDB.additionItemQty(itemId: SalesReturnSideWidget.selectedProductsNotifier.value[i].id!, purchasedQty: num.parse(quantity));
       }
 
-      final TransactionsModel _transaction = TransactionsModel(
-        category: 'Sales Return',
-        transactionType: 'Expense',
-        dateTime: dateTime,
-        amount: grantTotal,
-        status: paymentStatus,
-        description: 'Transaction $salesReturnId',
-        salesId: originalSaleId,
-        salesReturnId: salesReturnId,
-      );
+      if (paymentStatus == 'Paid') {
+        final TransactionsModel _transaction = TransactionsModel(
+          category: 'Sales Return',
+          transactionType: 'Expense',
+          dateTime: dateTime,
+          amount: grandTotal,
+          status: paymentStatus,
+          description: 'Transaction $salesReturnId',
+          salesId: originalSaleId,
+          salesReturnId: salesReturnId,
+        );
 
-      //==================== Create Transactions ====================
-      await transactionDB.createTransaction(_transaction);
-
+        //==================== Create Transactions ====================
+        await transactionDB.createTransaction(_transaction);
+      }
       // HomeCardWidget.detailsCardLoaded = false;
-      const SalesReturnSideWidget().resetSalesReturn(notify: true);
-      SalesReturnProductSideWidget.itemsNotifier.value.clear();
 
-      SalesReturnProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
+      const SalesReturnSideWidget().resetSalesReturn(notify: true);
+
+      // SalesReturnProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
 
       kSnackBar(
         context: context,
