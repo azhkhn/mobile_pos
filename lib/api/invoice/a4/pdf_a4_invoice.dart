@@ -61,12 +61,7 @@ class PdfSalesInvoice {
         return [
           buildHeader2(businessProfileModel: businessProfile, arabicFont: arabicFont, logoImage: logoImage),
           pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
-          buildTitle(
-            arabicFont,
-            businessProfile,
-            isReturn,
-            sale,
-          ),
+          buildTitle(arabicFont, businessProfile, isReturn, sale),
           pw.SizedBox(height: .005 * PdfPageFormat.a4.availableHeight),
           buildCustomerInfo(arabicFont, sale, customer, isReturn),
           pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),

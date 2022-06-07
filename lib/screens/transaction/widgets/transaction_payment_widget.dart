@@ -32,6 +32,11 @@ class TransactionPaymentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      amountController.text = totalPayable.toString();
+      amountChanged(totalPayable.toString());
+    });
+
     log('PaymentTypeWidget() => build Called!');
     //========== MediaQuery ScreenSize ==========
     late Size _screenSize = MediaQuery.of(context).size;
@@ -104,6 +109,7 @@ class TransactionPaymentWidget extends StatelessWidget {
                           label: Text('Paying By *', style: TextStyle(color: klabelColorBlack)),
                           border: OutlineInputBorder(),
                         ),
+                        value: types.first,
                         items: types
                             .map((values) => DropdownMenuItem<String>(
                                   value: values,
