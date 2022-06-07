@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 //========== Constant Sizes ==========
 const kNone = SizedBox();
 
+const kWidth2 = SizedBox(width: 2);
 const kWidth5 = SizedBox(width: 5);
 const kWidth10 = SizedBox(width: 10);
 const kWidth20 = SizedBox(width: 20);

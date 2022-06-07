@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
+
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
@@ -60,13 +62,14 @@ class SalesList extends StatelessWidget {
                                               sales: sales,
                                             ),
                                             onTap: () async {
+                                              final bool payable = sales[index].paymentStatus == 'Partial' || sales[index].paymentStatus == 'Credit';
+
                                               showDialog(
                                                 context: context,
                                                 builder: (context) => AlertDialog(
                                                   contentPadding: kPadding0,
                                                   content: SizedBox(
-                                                    height: 100,
-                                                    width: 100,
+                                                    height: payable ? 100 : 50,
                                                     child: Column(
                                                       mainAxisSize: MainAxisSize.min,
                                                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -98,32 +101,34 @@ class SalesList extends StatelessWidget {
                                                             ],
                                                           ),
                                                         )),
-                                                        Expanded(
-                                                          child: MaterialButton(
-                                                              onPressed: () async {
-                                                                Navigator.pop(context);
-                                                                await Navigator.pushNamed(
-                                                                  context,
-                                                                  routeTransaction,
-                                                                  arguments: sales[index],
-                                                                );
-                                                              },
-                                                              color: Colors.teal[400],
-                                                              child: Row(
-                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                children: const [
-                                                                  Icon(
-                                                                    Icons.payment_outlined,
-                                                                    color: kWhite,
-                                                                  ),
-                                                                  kWidth5,
-                                                                  Text(
-                                                                    'Make Payment',
-                                                                    style: TextStyle(fontWeight: FontWeight.bold, color: kWhite),
-                                                                  ),
-                                                                ],
-                                                              )),
-                                                        ),
+                                                        payable
+                                                            ? Expanded(
+                                                                child: MaterialButton(
+                                                                    onPressed: () async {
+                                                                      Navigator.pop(context);
+                                                                      final SalesModel? updatedSale = await Navigator.pushNamed(
+                                                                          context, routeTransaction,
+                                                                          arguments: sales[index]) as SalesModel;
+                                                                      salesNotifier.value[index] = updatedSale!;
+                                                                      salesNotifier.notifyListeners();
+                                                                    },
+                                                                    color: Colors.teal[400],
+                                                                    child: Row(
+                                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                                      children: const [
+                                                                        Icon(
+                                                                          Icons.payment_outlined,
+                                                                          color: kWhite,
+                                                                        ),
+                                                                        kWidth5,
+                                                                        Text(
+                                                                          'Make Payment',
+                                                                          style: TextStyle(fontWeight: FontWeight.bold, color: kWhite),
+                                                                        ),
+                                                                      ],
+                                                                    )),
+                                                              )
+                                                            : kNone,
                                                       ],
                                                     ),
                                                   ),

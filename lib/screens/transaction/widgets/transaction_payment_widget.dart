@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
-import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_details_table_widget.dart';
 import 'package:shop_ez/screens/transaction/widgets/transaction_details_table_widget.dart';
 
 import '../../../../core/constant/colors.dart';
@@ -77,7 +76,7 @@ class TransactionPaymentWidget extends StatelessWidget {
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
                           final _totalPayable = num.parse(Converter.amountRounder(totalPayable));
-                          if (value == null || value.trim().isEmpty) {
+                          if (value == null || value.trim().isEmpty || value == '.') {
                             return 'This field is required*';
                           } else if (num.parse(value) > _totalPayable) {
                             return 'Amount is higher than payable*';
@@ -151,7 +150,7 @@ class TransactionPaymentWidget extends StatelessWidget {
     TransactionDetailsTableWidget.totalPayingNotifier.value = _totalPaying ?? 0;
 
     final num _balance = totalPayable - _totalPaying!;
-    PaymentDetailsTableWidget.balanceNotifier.value = _balance;
+    TransactionDetailsTableWidget.balanceNotifier.value = _balance;
     log('Balance Amount == $_balance');
   }
 }

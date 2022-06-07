@@ -55,7 +55,7 @@ class TransactionDetailsTableWidget extends StatelessWidget {
                 height: 30,
                 alignment: Alignment.center,
                 child: AutoSizeText(
-                  firstRow ? 'Total Payable' : 'Paying',
+                  firstRow ? 'Total Payable' : 'Total Paying',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -73,7 +73,7 @@ class TransactionDetailsTableWidget extends StatelessWidget {
                     valueListenable: totalPayingNotifier,
                     builder: (__, totalPaying, _) {
                       return AutoSizeText(
-                        firstRow ? sale.grantTotal : Converter.currency.format(totalPaying),
+                        firstRow ? sale.balance : Converter.currency.format(totalPaying),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(

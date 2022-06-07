@@ -79,8 +79,8 @@ class SalesDatabase {
     return list;
   }
 
-//========== Update Sales When get Returned ==========
-  Future<void> updateReturnedSale({required final SalesModel sale}) async {
+//========== Update Sales By SalesId ==========
+  Future<void> updateSaleBySalesId({required final SalesModel sale}) async {
     final db = await dbInstance.database;
     await db.update(tableSales, sale.toJson(), where: '${SalesFields.id} = ?', whereArgs: [sale.id]);
     log('Sale Updated Successfully! ${sale.id}');

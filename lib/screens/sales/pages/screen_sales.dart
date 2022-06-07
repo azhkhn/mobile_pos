@@ -175,8 +175,8 @@ class ScreenSales extends StatelessWidget {
                             onPressed: () async {
                               await OrientationMode.toLandscape();
                               await Navigator.pushNamed(context, routeSalesReturn);
-
                               await OrientationMode.toPortrait();
+                              await getSalesDetails(returned: true);
                             },
                             color: Colors.indigo[400],
                             textColor: kWhite,
@@ -232,12 +232,14 @@ class ScreenSales extends StatelessWidget {
     );
   }
 
-  Future<void> getSalesDetails() async {
+  Future<void> getSalesDetails({bool returned = false}) async {
     try {
       final List<SalesModel> salesModel = await SalesDatabase.instance.getAllSales();
 
       // Checking if new Sale added!
-      if (totalSalesNotifier.value == salesModel.length) return;
+      if (!returned) {
+        if (totalSalesNotifier.value == salesModel.length) return;
+      }
 
       totalSalesNotifier.value = salesModel.length;
       totalAmountNotifier.value = 0;

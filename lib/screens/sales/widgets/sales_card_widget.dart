@@ -212,22 +212,35 @@ class SalesCardWidget extends StatelessWidget {
                         maxFontSize: 14,
                       ),
                       Expanded(
-                        child: AutoSizeText(
-                          sales[index].paymentStatus,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: sales[index].paymentStatus == 'Paid'
-                                ? kGreen
-                                : sales[index].paymentStatus == 'Partial'
-                                    ? kOrange
-                                    : kRed,
-                          ),
-                          maxLines: 1,
-                          minFontSize: 10,
-                          maxFontSize: 14,
-                        ),
+                        child: sales[index].paymentStatus != 'Returned'
+                            ? AutoSizeText(
+                                sales[index].paymentStatus,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: sales[index].paymentStatus == 'Paid'
+                                        ? kGreen
+                                        : sales[index].paymentStatus == 'Partial'
+                                            ? kOrange
+                                            : sales[index].paymentStatus == 'Credit'
+                                                ? kRed
+                                                : kRed),
+                                maxLines: 1,
+                                minFontSize: 10,
+                                maxFontSize: 14,
+                              )
+                            : Row(mainAxisAlignment: MainAxisAlignment.start, children: const [
+                                Icon(Icons.restore_outlined, color: kRed, size: 18),
+                                kWidth2,
+                                AutoSizeText(
+                                  'Returned',
+                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: kRed),
+                                  maxLines: 1,
+                                  minFontSize: 10,
+                                  maxFontSize: 14,
+                                ),
+                              ]),
                       ),
                     ],
                   ),
