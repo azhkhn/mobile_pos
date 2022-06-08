@@ -12,6 +12,7 @@ class CustomerFields {
   static const companyArabic = 'companyArabic';
   static const customer = 'customer';
   static const customerArabic = 'customerArabic';
+  static const contactNumber = 'contactNumber';
   static const vatNumber = 'vatNumber';
   static const email = 'email';
   static const address = 'address';
@@ -34,6 +35,7 @@ class CustomerModel with _$CustomerModel {
     companyArabic,
     customer,
     customerArabic,
+    contactNumber,
     final String? vatNumber,
     email,
     address,

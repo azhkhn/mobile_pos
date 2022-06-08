@@ -167,13 +167,9 @@ class ScreenSalesInvoice extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: buildEnglishCompanyInfo(businessProfileModel),
-            ),
+            Expanded(child: buildEnglishCompanyInfo(businessProfileModel)),
             Expanded(child: SizedBox(height: 40, width: 40, child: Image.file(File(businessProfileModel.logo)))),
-            Expanded(
-              child: buildArabicCompanyInfo(businessProfileModel),
-            )
+            Expanded(child: buildArabicCompanyInfo(businessProfileModel))
           ],
         ),
       ],
@@ -589,70 +585,67 @@ class ScreenSalesInvoice extends StatelessWidget {
 
   //==================== Total Section ====================
   static Widget buildTotal(final sale) {
-    return SizedBox(
-        child: Expanded(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            flex: 5,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                buildFooter(),
-              ],
-            ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          flex: 5,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              buildFooter(),
+            ],
           ),
-          kWidth5,
-          Expanded(
-            flex: 5,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildText(
-                  title: ' / Total Amount  المبلغ اإلجمالي ',
-                  value: Converter.currency.format(num.parse(sale.subTotal)).replaceAll("₹", ''),
-                  unite: true,
-                ),
-                buildText(
-                  title: ' / Discount  مقدار الخصم',
-                  value: Converter.currency.format(num.parse(sale.discount.isEmpty ? '0' : sale.discount)).replaceAll("₹", ''),
-                  unite: true,
-                ),
-                buildText(
-                  title: ' / Vat Amount  قيمة الضريبة',
-                  value: Converter.currency.format(num.parse(sale.vatAmount)).replaceAll("₹", ''),
-                  unite: true,
-                ),
-                const Divider(height: 5, thickness: 1),
-                buildText(
-                  title: ' / Grand Total  المجموع الكل',
-                  value: Converter.currency.format(num.parse(sale.grantTotal)).replaceAll("₹", ''),
-                  unite: true,
-                ),
-                buildText(
-                  title: ' / Paid Amount  المبلغ المدفوع',
-                  value: Converter.currency.format(num.parse(sale.paid)).replaceAll("₹", ''),
-                  unite: true,
-                ),
-                buildText(
-                  title: ' / Balance  مقدار وسطي',
-                  value: Converter.currency.format(num.parse(sale.balance)).replaceAll("₹", ''),
-                  unite: true,
-                ),
-                kHeight1,
-                Container(height: 1, color: Colors.grey[400]),
-                kHeight1,
-                Container(height: 1, color: Colors.grey[400]),
-              ],
-            ),
+        ),
+        kWidth5,
+        Expanded(
+          flex: 5,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildText(
+                title: ' / Total Amount  المبلغ اإلجمالي ',
+                value: Converter.currency.format(num.parse(sale.subTotal)).replaceAll("₹", ''),
+                unite: true,
+              ),
+              buildText(
+                title: ' / Discount  مقدار الخصم',
+                value: Converter.currency.format(num.parse(sale.discount.isEmpty ? '0' : sale.discount)).replaceAll("₹", ''),
+                unite: true,
+              ),
+              buildText(
+                title: ' / Vat Amount  قيمة الضريبة',
+                value: Converter.currency.format(num.parse(sale.vatAmount)).replaceAll("₹", ''),
+                unite: true,
+              ),
+              const Divider(height: 5, thickness: 1),
+              buildText(
+                title: ' / Grand Total  المجموع الكل',
+                value: Converter.currency.format(num.parse(sale.grantTotal)).replaceAll("₹", ''),
+                unite: true,
+              ),
+              buildText(
+                title: ' / Paid Amount  المبلغ المدفوع',
+                value: Converter.currency.format(num.parse(sale.paid)).replaceAll("₹", ''),
+                unite: true,
+              ),
+              buildText(
+                title: ' / Balance  مقدار وسطي',
+                value: Converter.currency.format(num.parse(sale.balance)).replaceAll("₹", ''),
+                unite: true,
+              ),
+              kHeight1,
+              Container(height: 1, color: Colors.grey[400]),
+              kHeight1,
+              Container(height: 1, color: Colors.grey[400]),
+            ],
           ),
-        ],
-      ),
-    ));
+        ),
+      ],
+    );
   }
 
   static Widget buildFooter() => Column(

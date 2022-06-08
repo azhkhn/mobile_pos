@@ -52,6 +52,8 @@ class EzDatabase {
     const intNull = 'INTEGER';
     const intType = 'INTEGER NOT NULL';
 
+    await db.execute("ALTER TABLE $tableCustomer ADD COLUMN ${CustomerFields.contactNumber} $textType DEFAULT '919293949596'");
+
     await db.execute("DROP TABLE IF EXISTS $tableSales");
     await db.execute("DROP TABLE IF EXISTS $tableSalesItems");
     await db.execute("DROP TABLE IF EXISTS $tablePurchase");
@@ -544,6 +546,7 @@ class EzDatabase {
       ${CustomerFields.companyArabic} $textType, 
       ${CustomerFields.customer} $textType,
       ${CustomerFields.customerArabic} $textType,
+      ${CustomerFields.contactNumber} $textType,
       ${CustomerFields.vatNumber} $textType,
       ${CustomerFields.email} $textType,
       ${CustomerFields.address} $textType,

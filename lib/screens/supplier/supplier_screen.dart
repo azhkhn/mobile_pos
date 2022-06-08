@@ -184,22 +184,22 @@ class ScreenSupplier extends StatelessWidget {
                   ),
                   kHeight10,
 
-                  //========== State Field ==========
-                  TextFeildWidget(
-                    controller: _stateController,
-                    labelText: 'State',
-                    textInputType: TextInputType.text,
-                  ),
-                  kHeight10,
+                  // //========== State Field ==========
+                  // TextFeildWidget(
+                  //   controller: _stateController,
+                  //   labelText: 'State',
+                  //   textInputType: TextInputType.text,
+                  // ),
+                  // kHeight10,
 
-                  //========== State Arabic Field ==========
-                  TextFeildWidget(
-                    controller: _stateArabicController,
-                    textDirection: TextDirection.rtl,
-                    labelText: 'State Arabic',
-                    textInputType: TextInputType.text,
-                  ),
-                  kHeight10,
+                  // //========== State Arabic Field ==========
+                  // TextFeildWidget(
+                  //   controller: _stateArabicController,
+                  //   textDirection: TextDirection.rtl,
+                  //   labelText: 'State Arabic',
+                  //   textInputType: TextInputType.text,
+                  // ),
+                  // kHeight10,
 
                   //========== Country Field ==========
                   TextFeildWidget(
@@ -272,7 +272,7 @@ class ScreenSupplier extends StatelessWidget {
       addressArabic = _addressArabicController.text;
       city = _cityController.text;
       cityArabic = _cityArabicController.text;
-      state = _stateArabicController.text;
+      state = _stateController.text;
       stateArabic = _stateArabicController.text;
       country = _countryController.text;
       countryArabic = _countryArabicController.text;

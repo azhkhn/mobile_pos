@@ -32,6 +32,7 @@ class AddCustomerScreen extends StatelessWidget {
   final _companyArabicController = TextEditingController();
   final _customerController = TextEditingController();
   final _customerArabicController = TextEditingController();
+  final _contactNumberController = TextEditingController();
   final _vatNumberController = TextEditingController();
   final _emailController = TextEditingController();
   final _addressController = TextEditingController();
@@ -168,6 +169,16 @@ class AddCustomerScreen extends StatelessWidget {
                   ),
                   kHeight10,
 
+                  //========== Contact Number Field ==========
+                  TextFeildWidget(
+                    controller: _contactNumberController,
+                    labelText: 'Contact Number *',
+                    textInputType: TextInputType.phone,
+                    validator: (value) => Validators.phoneValidator(value),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                  ),
+                  kHeight10,
+
                   //========== Company Field ==========
                   TextFeildWidget(
                     controller: _companyController,
@@ -226,24 +237,24 @@ class AddCustomerScreen extends StatelessWidget {
                   ),
                   kHeight10,
 
-                  //========== City Arabic Field ==========
-                  TextFeildWidget(
-                    controller: _cityArabicController,
-                    labelText: 'City Arabic',
-                    textDirection: TextDirection.rtl,
-                    focusNode: cityArabicFocusNode,
-                    textInputType: TextInputType.text,
-                  ),
-                  kHeight10,
+                  // //========== City Arabic Field ==========
+                  // TextFeildWidget(
+                  //   controller: _cityArabicController,
+                  //   labelText: 'City Arabic',
+                  //   textDirection: TextDirection.rtl,
+                  //   focusNode: cityArabicFocusNode,
+                  //   textInputType: TextInputType.text,
+                  // ),
+                  // kHeight10,
 
-                  //========== State Field ==========
-                  TextFeildWidget(
-                    controller: _stateController,
-                    labelText: 'State',
-                    focusNode: stateFocusNode,
-                    textInputType: TextInputType.text,
-                  ),
-                  kHeight10,
+                  // //========== State Field ==========
+                  // TextFeildWidget(
+                  //   controller: _stateController,
+                  //   labelText: 'State',
+                  //   focusNode: stateFocusNode,
+                  //   textInputType: TextInputType.text,
+                  // ),
+                  // kHeight10,
 
                   //========== State Arabic Field ==========
                   TextFeildWidget(
@@ -308,6 +319,7 @@ class AddCustomerScreen extends StatelessWidget {
         companyArabic,
         customer,
         customerArabic,
+        contactNumber,
         vatNumber,
         email,
         address,
@@ -326,6 +338,7 @@ class AddCustomerScreen extends StatelessWidget {
     companyArabic = _companyArabicController.text;
     customer = _customerController.text;
     customerArabic = _customerArabicController.text;
+    contactNumber = _contactNumberController.text;
     vatNumber = _vatNumberController.text;
     email = _emailController.text;
     address = _addressController.text;
@@ -348,6 +361,7 @@ class AddCustomerScreen extends StatelessWidget {
         companyArabic: companyArabic,
         customer: customer,
         customerArabic: customerArabic,
+        contactNumber: contactNumber,
         vatNumber: vatNumber,
         email: email,
         address: address,
