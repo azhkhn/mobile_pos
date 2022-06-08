@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
@@ -50,13 +51,25 @@ class TransactionScreen extends StatelessWidget {
                     onPressed: () async {
                       final _formState = TransactionPaymentWidget.formKey.currentState!;
                       if (_formState.validate()) {
-                        final SalesModel? updatedSale = await addTransaction(context, sale: salesModel);
-                        if (updatedSale != null) {
-                          _formState.reset();
-                          TransactionDetailsTableWidget.balanceNotifier.value = 0;
-                          TransactionDetailsTableWidget.totalPayingNotifier.value = 0;
-                          Navigator.pop(context, updatedSale);
-                        }
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => KAlertDialog(
+                            content: const Text('Are you sure you want to submit this transaction?'),
+                            submitText: const Text(
+                              'Submit',
+                              style: TextStyle(),
+                            ),
+                            submitAction: () async {
+                              final SalesModel? updatedSale = await addTransaction(context, sale: salesModel);
+                              if (updatedSale != null) {
+                                _formState.reset();
+                                TransactionDetailsTableWidget.balanceNotifier.value = 0;
+                                TransactionDetailsTableWidget.totalPayingNotifier.value = 0;
+                                Navigator.pop(context, updatedSale);
+                              }
+                            },
+                          ),
+                        );
                       } else {
                         kSnackBar(context: context, content: 'Please fill the required informations', error: true);
                       }

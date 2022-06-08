@@ -18,7 +18,8 @@ import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/sales_return/sales_return_model.dart';
 
 class PdfSalesInvoice {
-  static Future<List<File>> generate({SalesModel? salesModel, SalesReturnModal? salesReturnModal, bool isReturn = false}) async {
+  // static Future<List<File>> generate({SalesModel? salesModel, SalesReturnModal? salesReturnModal, bool isReturn = false}) async {
+  static Future<File> generate({SalesModel? salesModel, SalesReturnModal? salesReturnModal, bool isReturn = false}) async {
     final pdf = pw.Document();
     final pdfPreview = pw.Document();
     final dynamic sale;
@@ -96,9 +97,9 @@ class PdfSalesInvoice {
     ));
 
     final pdfFile = await PdfAction.saveDocument(name: 'sale_invoice.pdf', pdf: pdf);
-    final pdfPreviewFile = await PdfAction.saveDocument(name: 'sale_invoice_preview.pdf', pdf: pdfPreview);
+    // final pdfPreviewFile = await PdfAction.saveDocument(name: 'sale_invoice_preview.pdf', pdf: pdfPreview);
 
-    return [pdfFile, pdfPreviewFile];
+    return pdfFile;
   }
 
   //==================== Header Section ====================

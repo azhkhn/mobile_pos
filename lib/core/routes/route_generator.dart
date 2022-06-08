@@ -120,7 +120,7 @@ class RouteGenerator {
                       isReturn: args.last,
                     )
                   : ScreenSalesInvoice(
-                      salesModal: args.first,
+                      salesModel: args.first,
                       isReturn: args.last,
                     ));
         } else {
