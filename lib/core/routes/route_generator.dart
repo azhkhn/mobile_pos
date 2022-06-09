@@ -5,7 +5,8 @@ import 'package:shop_ez/screens/barcode/screen_barcode.dart';
 import 'package:shop_ez/screens/customer/screen_customer_list.dart';
 import 'package:shop_ez/screens/invoices/screen_sales_invoice.dart';
 import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
-import 'package:shop_ez/screens/purchase_return/screen_purchase_return.dart';
+import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return.dart';
+import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return_list.dart';
 import 'package:shop_ez/screens/sales/pages/screen_sales_list.dart';
 import 'package:shop_ez/screens/sales_return/pages/screen_sales_return.dart';
 import 'package:shop_ez/screens/sales_return/pages/screen_sales_return_list.dart';
@@ -111,6 +112,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SalesReturnList());
       case routePurchaseReturn:
         return MaterialPageRoute(builder: (_) => const PurchaseReturn());
+      case routePurchaseReturnList:
+        return MaterialPageRoute(builder: (_) => const PurchaseReturnList());
       case routeSalesInvoice:
         if (args is List) {
           return MaterialPageRoute(

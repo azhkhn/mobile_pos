@@ -8,12 +8,11 @@ class PurchaseReturnDatabase {
   PurchaseReturnDatabase._init();
 
 //==================== Create Purchase Return ====================
-  Future<List> createPurchaseReturn(
-      PurchaseReturnModel _purchaseReturnModel) async {
+  Future<List> createPurchaseReturn(PurchaseReturnModel _purchaseReturnModel) async {
     final db = await dbInstance.database;
 
-    final _purchaseReturn = await db.rawQuery(
-        '''select * from $tablePurchaseReturn where ${PurchaseReturnFields.invoiceNumber} = "${_purchaseReturnModel.invoiceNumber}"''');
+    final _purchaseReturn = await db
+        .rawQuery('''select * from $tablePurchaseReturn where ${PurchaseReturnFields.invoiceNumber} = "${_purchaseReturnModel.invoiceNumber}"''');
 
     if (_purchaseReturn.isNotEmpty) {
       throw 'Invoice Number Already Exist!';
@@ -27,16 +26,14 @@ class PurchaseReturnDatabase {
         log('Recent id == $_recentPurchaseId');
 
         final String _invoiceNumber = 'PN-${_recentPurchaseId! + 1}';
-        final _newPurchase =
-            _purchaseReturnModel.copyWith(invoiceNumber: _invoiceNumber);
+        final _newPurchase = _purchaseReturnModel.copyWith(invoiceNumber: _invoiceNumber);
         log('New Invoice Number == $_invoiceNumber');
 
         final id = await db.insert(tablePurchaseReturn, _newPurchase.toJson());
         log('Purchase Returned! ($id)');
         return [id, _invoiceNumber];
       } else {
-        final _newPurchase =
-            _purchaseReturnModel.copyWith(invoiceNumber: 'PN-1');
+        final _newPurchase = _purchaseReturnModel.copyWith(invoiceNumber: 'PN-1');
 
         log('New Invoice Number == ' + _newPurchase.invoiceNumber!);
         final id = await db.insert(tablePurchaseReturn, _newPurchase.toJson());
@@ -61,35 +58,29 @@ class PurchaseReturnDatabase {
   //   }
   // }
 
-  //========== Get All Purchases By Query ==========
-  // Future<List<PurchaseReturnModel>> getPurchasesByInvoiceSuggestions(
-  //     String pattern) async {
-  //   final db = await dbInstance.database;
-  //   final res = await db.rawQuery(
-  //       '''select * from $tablePurchaseReturn where ${PurchaseReturnFields.invoiceNumber} LIKE "%$pattern%"''');
+  // ========== Get All Purchases By Query ==========
+  Future<List<PurchaseReturnModel>> getPurchasesByInvoiceSuggestions(String pattern) async {
+    final db = await dbInstance.database;
+    final res = await db.rawQuery('''select * from $tablePurchaseReturn where ${PurchaseReturnFields.invoiceNumber} LIKE "%$pattern%"''');
 
-  //   List<PurchaseReturnModel> list = res.isNotEmpty
-  //       ? res.map((c) => PurchaseReturnModel.fromJson(c)).toList()
-  //       : [];
+    List<PurchaseReturnModel> list = res.isNotEmpty ? res.map((c) => PurchaseReturnModel.fromJson(c)).toList() : [];
 
-  //   return list;
-  // }
+    return list;
+  }
 
-  //========== Get All Purchases By Query ==========
-  // Future<List<PurchaseReturnModel>> getPurchasesByCustomerId(String id) async {
-  //   final db = await dbInstance.database;
-  //   final res = await db.query(
-  //     tablePurchaseReturn,
-  //     where: '${PurchaseReturnFields.customerId} = ?',
-  //     whereArgs: [id],
-  //   );
+  // ========== Get All Purchases By Query ==========
+  Future<List<PurchaseReturnModel>> getPurchasesBySupplierId(String supplierId) async {
+    final db = await dbInstance.database;
+    final res = await db.query(
+      tablePurchaseReturn,
+      where: '${PurchaseReturnFields.supplierId} = ?',
+      whereArgs: [supplierId],
+    );
 
-  //   List<PurchaseReturnModel> list = res.isNotEmpty
-  //       ? res.map((c) => PurchaseReturnModel.fromJson(c)).toList()
-  //       : [];
+    List<PurchaseReturnModel> list = res.isNotEmpty ? res.map((c) => PurchaseReturnModel.fromJson(c)).toList() : [];
 
-  //   return list;
-  // }
+    return list;
+  }
 
 //========== Get All Purchases ==========
   Future<List<PurchaseReturnModel>> getAllPurchasesReturns() async {
@@ -98,8 +89,7 @@ class PurchaseReturnDatabase {
     // db.delete(tablePurchaseReturnReturn);
     log('Purchases Returns == $_result');
     if (_result.isNotEmpty) {
-      final _purchaseReturn =
-          _result.map((json) => PurchaseReturnModel.fromJson(json)).toList();
+      final _purchaseReturn = _result.map((json) => PurchaseReturnModel.fromJson(json)).toList();
       return _purchaseReturn;
     } else {
       throw 'Purchases Return is Empty!';

@@ -20,7 +20,7 @@ import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
-import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_side_widget.dart';
+import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_side.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_side_widget.dart';
+import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_side.dart';
 
 import '../../../core/utils/device/device.dart';
 import '../../../core/utils/converters/converters.dart';

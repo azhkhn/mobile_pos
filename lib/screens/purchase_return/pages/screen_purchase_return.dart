@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_side_widget.dart';
+import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_side.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 
 class PurchaseReturn extends StatelessWidget {

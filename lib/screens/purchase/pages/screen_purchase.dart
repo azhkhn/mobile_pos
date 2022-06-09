@@ -189,7 +189,9 @@ class ScreenPurchase extends StatelessWidget {
                         Expanded(
                           child: MaterialButton(
                             height: 50,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(context, routePurchaseReturnList);
+                            },
                             color: Colors.blueGrey,
                             textColor: kWhite,
                             child: const Text(

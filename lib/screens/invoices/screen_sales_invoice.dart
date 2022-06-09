@@ -259,7 +259,7 @@ class ScreenSalesInvoice extends StatelessWidget {
                       //     : SizedBox(),
                       isReturn
                           ? const Text(
-                              ' مبيعات مسترده / SALES RETURN  ',
+                              ' مبيعات مسترده  SALES RETURN/',
                               textDirection: TextDirection.rtl,
                               style: TextStyle(
                                 fontSize: 8,
@@ -323,7 +323,7 @@ class ScreenSalesInvoice extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(border: Border.all(color: kGreen)),
           width: double.infinity,
-          height: 110,
+          height: !isReturn ? 110 : 125,
           child: Column(
             children: [
               Row(
@@ -477,7 +477,7 @@ class ScreenSalesInvoice extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(' : رقم فاتورة المبيعات المرتجعة Original Invoice No/',
+                                const Text(' : رقم فاتورة المبيعات المرتجعة /Original Invoice No',
                                     textDirection: TextDirection.rtl, textAlign: TextAlign.right, style: kStyle),
                                 kWidth5,
                                 Expanded(

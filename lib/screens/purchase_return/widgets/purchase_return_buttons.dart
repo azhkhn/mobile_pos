@@ -13,7 +13,7 @@ import 'package:shop_ez/model/purchase_return/purchase_return_items_modal.dart';
 import 'package:shop_ez/model/purchase_return/purchase_return_modal.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
 import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_product_side.dart';
-import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_side_widget.dart';
+import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_side.dart';
 
 import '../../../core/constant/sizes.dart';
 import '../../../core/utils/converters/converters.dart';
