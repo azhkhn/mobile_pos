@@ -235,7 +235,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                         );
                       },
                       onSuggestionSelected: (ItemMasterModel selectedItem) async {
-                        _productController.text = selectedItem.itemName;
+                        _productController.clear();
                         Future<List<dynamic>> future() async => [selectedItem];
                         futureGrid = future();
                         ProductSideWidget.builderModel = null;

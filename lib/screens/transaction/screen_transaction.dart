@@ -1,8 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
@@ -21,62 +24,117 @@ class TransactionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: 'Transaction'),
+      appBar: AppBarWidget(title: 'Add Paymnet'),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              children: [
-                //==================== Payment Type Widget ====================
-                TransactionPaymentWidget(
-                  totalPayable: num.parse(salesModel.balance),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            children: [
+              //==================== Payment Type Widget ====================
+              TransactionPaymentWidget(
+                totalPayable: num.parse(salesModel.balance),
+              ),
+              kHeight10,
+
+              //==================== Transaction Details Table Widget ====================
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                child: Column(
+                  children: [
+                    TransactionDetailsTableWidget(borderTop: 0.5, firstRow: true, sale: salesModel),
+                    TransactionDetailsTableWidget(borderTop: 0, firstRow: false, sale: salesModel),
+                  ],
                 ),
-                kHeight10,
+              ),
 
-                //==================== Transaction Details Table Widget ====================
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                  child: Column(
-                    children: [
-                      TransactionDetailsTableWidget(borderTop: 0.5, firstRow: true, sale: salesModel),
-                      TransactionDetailsTableWidget(borderTop: 0, firstRow: false, sale: salesModel),
-                    ],
-                  ),
-                ),
+              kHeight15,
 
-                kHeight15,
-
-                CustomMaterialBtton(
-                    onPressed: () async {
-                      final _formState = TransactionPaymentWidget.formKey.currentState!;
-                      if (_formState.validate()) {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => KAlertDialog(
-                            content: const Text('Are you sure you want to submit this transaction?'),
-                            submitText: const Text(
-                              'Submit',
-                              style: TextStyle(),
-                            ),
-                            submitAction: () async {
-                              final SalesModel? updatedSale = await addTransaction(context, sale: salesModel);
-                              if (updatedSale != null) {
-                                _formState.reset();
-                                TransactionDetailsTableWidget.balanceNotifier.value = 0;
-                                TransactionDetailsTableWidget.totalPayingNotifier.value = 0;
-                                Navigator.pop(context, updatedSale);
-                              }
-                            },
+              CustomMaterialBtton(
+                  onPressed: () async {
+                    final _formState = TransactionPaymentWidget.formKey.currentState!;
+                    if (_formState.validate()) {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => KAlertDialog(
+                          content: const Text('Are you sure you want to submit this transaction?'),
+                          submitText: const Text(
+                            'Submit',
+                            style: TextStyle(),
                           ),
-                        );
-                      } else {
-                        kSnackBar(context: context, content: 'Please fill the required informations', error: true);
-                      }
-                    },
-                    buttonText: 'Submit')
-              ],
-            ),
+                          submitAction: () async {
+                            Navigator.pop(ctx);
+                            final SalesModel? updatedSale = await addTransaction(context, sale: salesModel);
+                            if (updatedSale != null) {
+                              _formState.reset();
+                              TransactionDetailsTableWidget.balanceNotifier.value = 0;
+                              TransactionDetailsTableWidget.totalPayingNotifier.value = 0;
+                              Navigator.pop(context, updatedSale);
+                            } else {
+                              log('Something went wrong!');
+                            }
+                          },
+                        ),
+                      );
+                    } else {
+                      kSnackBar(context: context, content: 'Please fill the required informations', error: true);
+                    }
+                  },
+                  buttonText: 'Submit'),
+
+              kHeight20,
+
+              FutureBuilder(
+                future: TransactionDatabase.instance.getAllTransactionsBySalesId(salesModel.id!),
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Center(child: CircularProgressIndicator());
+                    case ConnectionState.done:
+
+                    default:
+                      final List<TransactionsModel> _recentPayments = (snapshot.data as List<TransactionsModel>).reversed.toList();
+
+                      return _recentPayments.isNotEmpty
+                          ? Expanded(
+                              child: ListView.builder(
+                                itemCount: _recentPayments.length,
+                                itemBuilder: (ctx, index) {
+                                  final _payment = _recentPayments[index];
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: kTransparentColor,
+                                      child: Text(
+                                        '${index + 1}'.toString(),
+                                        style: const TextStyle(fontSize: 12, color: kTextColor),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      Converter.dateTimeFormatAmPm.format(DateTime.parse(_payment.dateTime)),
+                                      style: kText12Lite,
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          '+' + _payment.amount,
+                                          style: const TextStyle(color: Color(0xFF1B5E20)),
+                                        ),
+                                        kWidth10,
+                                        const Icon(
+                                          Icons.verified_outlined,
+                                          color: kGreen,
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                          : const Center(child: Text('No recent Transactions'));
+                  }
+                },
+              )
+            ],
           ),
         ),
       ),
@@ -108,7 +166,7 @@ class TransactionScreen extends StatelessWidget {
       //-------------------- Create Transactions --------------------
       transactionDatabase.createTransaction(_transaction);
 
-      final updatedSale = sale.copyWith(
+      final SalesModel updatedSale = sale.copyWith(
         paid: _updatedPaid.toString(),
         balance: _updatedBalance.toString(),
         paymentStatus: _updatedBalance == 0 ? 'Paid' : 'Partial',
@@ -122,7 +180,6 @@ class TransactionScreen extends StatelessWidget {
     } catch (e) {
       log(e.toString());
       kSnackBar(context: context, content: 'Something went wrong. Please try again', error: true);
-
       return null;
     }
   }

@@ -106,10 +106,9 @@ class SalesList extends StatelessWidget {
                                                                 child: MaterialButton(
                                                                     onPressed: () async {
                                                                       Navigator.pop(context);
-                                                                      final SalesModel? updatedSale = await Navigator.pushNamed(
-                                                                          context, routeTransaction,
-                                                                          arguments: sales[index]) as SalesModel;
-                                                                      salesNotifier.value[index] = updatedSale!;
+                                                                      final dynamic updatedSale = await Navigator.pushNamed(context, routeTransaction,
+                                                                          arguments: sales[index]);
+                                                                      salesNotifier.value[index] = updatedSale as SalesModel;
                                                                       salesNotifier.notifyListeners();
                                                                     },
                                                                     color: Colors.teal[400],

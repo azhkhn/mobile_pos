@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
@@ -28,22 +29,22 @@ class AddCustomerScreen extends StatelessWidget {
   final customerDB = CustomerDatabase.instance;
 
   //========== TextEditing Controllers ==========
-  final _companyController = TextEditingController();
-  final _companyArabicController = TextEditingController();
-  final _customerController = TextEditingController();
-  final _customerArabicController = TextEditingController();
-  final _contactNumberController = TextEditingController();
-  final _vatNumberController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _addressController = TextEditingController();
-  final _addressArabicController = TextEditingController();
-  final _cityController = TextEditingController();
-  final _cityArabicController = TextEditingController();
-  final _stateController = TextEditingController();
-  final _stateArabicController = TextEditingController();
-  final _countryController = TextEditingController();
-  final _countryArabicController = TextEditingController();
-  final _poBoxController = TextEditingController();
+  final TextEditingController _companyController = TextEditingController();
+  final TextEditingController _companyArabicController = TextEditingController();
+  final TextEditingController _customerController = TextEditingController();
+  final TextEditingController _customerArabicController = TextEditingController();
+  final TextEditingController _contactNumberController = TextEditingController();
+  final TextEditingController _vatNumberController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _addressArabicController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _cityArabicController = TextEditingController();
+  final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _stateArabicController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
+  final TextEditingController _countryArabicController = TextEditingController();
+  final TextEditingController _poBoxController = TextEditingController();
 
   //========== Focus Nodes ==========
   final FocusNode customerTypeFocusNode = FocusNode();
@@ -51,6 +52,7 @@ class AddCustomerScreen extends StatelessWidget {
   final FocusNode customerArabicFocusNode = FocusNode();
   final FocusNode addressFocusNode = FocusNode();
   final FocusNode addressArabicFocusNode = FocusNode();
+  final FocusNode contactNumberFocusNode = FocusNode();
   final FocusNode companyFocusNode = FocusNode();
   final FocusNode companyArabicFocusNode = FocusNode();
   final FocusNode vatNumberFocusNode = FocusNode();
@@ -237,15 +239,15 @@ class AddCustomerScreen extends StatelessWidget {
                   ),
                   kHeight10,
 
-                  // //========== City Arabic Field ==========
-                  // TextFeildWidget(
-                  //   controller: _cityArabicController,
-                  //   labelText: 'City Arabic',
-                  //   textDirection: TextDirection.rtl,
-                  //   focusNode: cityArabicFocusNode,
-                  //   textInputType: TextInputType.text,
-                  // ),
-                  // kHeight10,
+                  //========== City Arabic Field ==========
+                  TextFeildWidget(
+                    controller: _cityArabicController,
+                    labelText: 'City Arabic',
+                    textDirection: TextDirection.rtl,
+                    focusNode: cityArabicFocusNode,
+                    textInputType: TextInputType.text,
+                  ),
+                  kHeight10,
 
                   // //========== State Field ==========
                   // TextFeildWidget(
@@ -256,15 +258,15 @@ class AddCustomerScreen extends StatelessWidget {
                   // ),
                   // kHeight10,
 
-                  //========== State Arabic Field ==========
-                  TextFeildWidget(
-                    controller: _stateArabicController,
-                    labelText: 'State Arabic',
-                    textDirection: TextDirection.rtl,
-                    focusNode: stateArabicFocusNode,
-                    textInputType: TextInputType.text,
-                  ),
-                  kHeight10,
+                  // //========== State Arabic Field ==========
+                  // TextFeildWidget(
+                  //   controller: _stateArabicController,
+                  //   labelText: 'State Arabic',
+                  //   textDirection: TextDirection.rtl,
+                  //   focusNode: stateArabicFocusNode,
+                  //   textInputType: TextInputType.text,
+                  // ),
+                  // kHeight10,
 
                   //========== Country Field ==========
                   TextFeildWidget(
@@ -379,9 +381,10 @@ class AddCustomerScreen extends StatelessWidget {
         _formState.reset();
         log('Customer $customer Added!');
         kSnackBar(context: context, success: true, content: 'Customer "$customer" added successfully!');
-
         if (fromPos) {
           return Navigator.pop(context, id);
+        } else {
+          Navigator.pushReplacementNamed(context, routeManageCustomer);
         }
       } catch (e) {
         if (e == 'Company Already Exist!') {
@@ -412,6 +415,8 @@ class AddCustomerScreen extends StatelessWidget {
         addressFocusNode.requestFocus();
       } else if (addressArabic.isEmpty) {
         addressArabicFocusNode.requestFocus();
+      } else if (contactNumber.isEmpty) {
+        contactNumberFocusNode.requestFocus();
       } else {
         if (customerType == 'Credit Customer') {
           if (vatNumber.isEmpty) {
