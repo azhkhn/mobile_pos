@@ -11,8 +11,7 @@ class PurchaseDatabase {
   Future<int> createPurchase(PurchaseModel _purchaseModel) async {
     final db = await dbInstance.database;
 
-    final _purchase = await db.rawQuery(
-        '''select * from $tablePurchase where ${PurchaseFields.invoiceNumber} = "${_purchaseModel.invoiceNumber}"''');
+    final _purchase = await db.rawQuery('''select * from $tablePurchase where ${PurchaseFields.invoiceNumber} = "${_purchaseModel.invoiceNumber}"''');
 
     if (_purchase.isNotEmpty) {
       throw 'Invoice Number Already Exist!';
@@ -26,8 +25,7 @@ class PurchaseDatabase {
         log('Recent id == $_recentPurchaseId');
 
         final String _invoiceNumber = 'PR-${_recentPurchaseId! + 1}';
-        final _newPurchase =
-            _purchaseModel.copyWith(invoiceNumber: _invoiceNumber);
+        final _newPurchase = _purchaseModel.copyWith(invoiceNumber: _invoiceNumber);
         log('New Invoice Number == $_invoiceNumber');
 
         final id = await db.insert(tablePurchase, _newPurchase.toJson());
@@ -45,15 +43,12 @@ class PurchaseDatabase {
   }
 
   //========== Get All Purchases By Query ==========
-  Future<List<PurchaseModel>> getPurchaseByInvoiceSuggestions(
-      String pattern) async {
+  Future<List<PurchaseModel>> getPurchaseByInvoiceSuggestions(String pattern) async {
     final db = await dbInstance.database;
     final res = await db.rawQuery(
         '''select * from $tablePurchase where ${PurchaseFields.invoiceNumber} LIKE "%$pattern%" OR ${PurchaseFields.referenceNumber} LIKE "%$pattern%"''');
 
-    List<PurchaseModel> list = res.isNotEmpty
-        ? res.map((c) => PurchaseModel.fromJson(c)).toList()
-        : [];
+    List<PurchaseModel> list = res.isNotEmpty ? res.map((c) => PurchaseModel.fromJson(c)).toList() : [];
 
     return list;
   }
@@ -67,11 +62,16 @@ class PurchaseDatabase {
       whereArgs: [id],
     );
 
-    List<PurchaseModel> list = res.isNotEmpty
-        ? res.map((c) => PurchaseModel.fromJson(c)).toList()
-        : [];
+    List<PurchaseModel> list = res.isNotEmpty ? res.map((c) => PurchaseModel.fromJson(c)).toList() : [];
 
     return list;
+  }
+
+  //========== Update Purchase By PurchaseId ==========
+  Future<void> updatePurchaseByPurchaseId({required final PurchaseModel purchase}) async {
+    final db = await dbInstance.database;
+    await db.update(tablePurchase, purchase.toJson(), where: '${PurchaseFields.id} = ?', whereArgs: [purchase.id]);
+    log('Purchase Updated Successfully! ${purchase.id}');
   }
 
 //========== Get All Purchases ==========
@@ -81,8 +81,7 @@ class PurchaseDatabase {
     // db.delete(tablePurchase);
     log('Purchases == $_result');
     if (_result.isNotEmpty) {
-      final _purchases =
-          _result.map((json) => PurchaseModel.fromJson(json)).toList();
+      final _purchases = _result.map((json) => PurchaseModel.fromJson(json)).toList();
       return _purchases;
     } else {
       throw 'Purchases is Empty!';

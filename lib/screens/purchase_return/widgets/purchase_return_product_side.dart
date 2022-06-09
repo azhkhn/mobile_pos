@@ -171,13 +171,13 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                         Flexible(
                           flex: 5,
                           child: ValueListenableBuilder(
-                              valueListenable: PurchaseReturnSideWidget.originalPurchaseIdNotifier,
+                              valueListenable: PurchaseReturnSideWidget.originalPurchaseNotifier,
                               builder: (context, _, __) {
                                 return TypeAheadField(
                                   debounceDuration: const Duration(milliseconds: 500),
                                   hideSuggestionsOnKeyboardHide: true,
                                   textFieldConfiguration: TextFieldConfiguration(
-                                      enabled: PurchaseReturnSideWidget.originalPurchaseIdNotifier.value == null,
+                                      enabled: PurchaseReturnSideWidget.originalPurchaseNotifier.value == null,
                                       controller: PurchaseReturnSideWidget.supplierController,
                                       style: kText_10_12,
                                       decoration: InputDecoration(
@@ -262,12 +262,11 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                                       onTap: () async {
                                         PurchaseReturnSideWidget.purchaseInvoiceController.clear();
 
-                                        if (PurchaseReturnSideWidget.originalPurchaseIdNotifier.value != null) {
+                                        if (PurchaseReturnSideWidget.originalPurchaseNotifier.value != null) {
                                           return const PurchaseReturnSideWidget().resetPurchaseReturn();
                                         }
 
-                                        PurchaseReturnSideWidget.originalInvoiceNumberNotifier.value = null;
-                                        PurchaseReturnSideWidget.originalPurchaseIdNotifier.value = null;
+                                        PurchaseReturnSideWidget.originalPurchaseNotifier.value = null;
                                       },
                                     ),
                                   ),
@@ -295,8 +294,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                             onSuggestionSelected: (PurchaseModel purchase) async {
                               const PurchaseReturnSideWidget().resetPurchaseReturn();
                               PurchaseReturnSideWidget.purchaseInvoiceController.text = purchase.invoiceNumber!;
-                              PurchaseReturnSideWidget.originalInvoiceNumberNotifier.value = purchase.invoiceNumber!;
-                              PurchaseReturnSideWidget.originalPurchaseIdNotifier.value = purchase.id;
+                              PurchaseReturnSideWidget.originalPurchaseNotifier.value = purchase;
                               await const PurchaseReturnSideWidget().getPurchaseDetails(purchase);
 
                               log(purchase.invoiceNumber!);

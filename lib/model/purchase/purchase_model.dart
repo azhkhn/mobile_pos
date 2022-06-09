@@ -21,6 +21,7 @@ class PurchaseFields {
   static const grantTotal = 'grantTotal';
   static const paid = 'paid';
   static const balance = 'balance';
+  static const returnAmount = 'returnAmount';
   static const paymentType = 'paymentType';
   static const purchaseStatus = 'purchaseStatus';
   static const paymentStatus = 'paymentStatus';
@@ -32,6 +33,7 @@ class PurchaseModel with _$PurchaseModel {
   const factory PurchaseModel({
     @JsonKey(name: '_id') int? id,
     String? invoiceNumber,
+    String? returnAmount,
     required String referenceNumber,
     required String dateTime,
     required int supplierId,
@@ -51,6 +53,5 @@ class PurchaseModel with _$PurchaseModel {
     required String createdBy,
   }) = _PurchaseModel;
 
-  factory PurchaseModel.fromJson(Map<String, dynamic> json) =>
-      _$PurchaseModelFromJson(json);
+  factory PurchaseModel.fromJson(Map<String, dynamic> json) => _$PurchaseModelFromJson(json);
 }

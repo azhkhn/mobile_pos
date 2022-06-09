@@ -10,6 +10,7 @@ import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_items_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
+import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
 import 'package:shop_ez/model/purchase/purchase_items_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
@@ -278,6 +279,9 @@ class PurchaseButtonsWidget extends StatelessWidget {
             vatTotal = PurchaseSideWidget.itemTotalVatNotifier.value[i],
             unitCode = PurchaseSideWidget.selectedProductsNotifier.value[i].unit;
 
+        final vat = await VatDatabase.instance.getVatById(vatId);
+        final vatRate = vat.rate;
+
         log(' Purchase Id == $purchaseId');
         log(' Product id == $productId');
         log(' Product Type == $productType');
@@ -309,6 +313,8 @@ class PurchaseButtonsWidget extends StatelessWidget {
             unitCode: unitCode,
             subTotal: subTotal,
             vatId: vatId,
+            vatMethod: vatMethod,
+            vatRate: vatRate,
             vatPercentage: vatPercentage,
             vatTotal: vatTotal);
 

@@ -186,7 +186,6 @@ class SalesReturnSideWidget extends StatelessWidget {
                                     return resetSalesReturn(notify: true);
                                   }
                                   originalSaleNotifier.value = null;
-                                  originalSaleNotifier.value = null;
                                 },
                               ),
                             ),
@@ -608,22 +607,21 @@ class SalesReturnSideWidget extends StatelessWidget {
   //======================================== Get Sales Details ========================================
   //========================================                   ========================================
   Future<void> getSalesDetails(SalesModel sale) async {
-    final List<ItemMasterModel> soldItems = [];
+    final List<ItemMasterModel> remainingsoldItems = [];
 
     customerController.text = sale.customerName;
     customerIdNotifier.value = sale.customerId;
     customerNameNotifier.value = sale.customerName;
 
     //==================== Fetch sold items based on salesId ====================
-    final List<SalesItemsModel> salesItems = await SalesItemsDatabase.instance.getSalesItemBySaleId(sale.id!);
+    final List<SalesItemsModel> soldItems = await SalesItemsDatabase.instance.getSalesItemBySaleId(sale.id!);
 
-    final List<SalesReturnItemsModel> salesReturnedItems =
-        await SalesReturnItemsDatabase.instance.getSalesReturnItemBySalesId(salesItems.first.saleId);
+    final List<SalesReturnItemsModel> salesReturnedItems = await SalesReturnItemsDatabase.instance.getSalesReturnItemBySalesId(sale.id!);
     log('==========================================================================================');
 
     //==================== Adding sold items to UI ====================
-    for (var index = 0; index < salesItems.length; index++) {
-      SalesItemsModel soldItem = salesItems[index];
+    for (var index = 0; index < soldItems.length; index++) {
+      SalesItemsModel soldItem = soldItems[index];
       final List<ItemMasterModel> items = await ItemMasterDatabase.instance.getProductById(soldItem.productId);
       final ItemMasterModel item = items.first;
 
@@ -660,7 +658,7 @@ class SalesReturnSideWidget extends StatelessWidget {
       final finalQty = num.parse(soldItem.quantity);
 
       if (finalQty > 0) {
-        soldItems.add(ItemMasterModel(
+        remainingsoldItems.add(ItemMasterModel(
           id: item.id,
           productType: item.productType,
           itemName: item.itemName,
@@ -684,15 +682,15 @@ class SalesReturnSideWidget extends StatelessWidget {
         ));
 
         quantityNotifier.value.add(TextEditingController(text: soldItem.quantity));
-        selectedProductsNotifier.value.add(soldItems[soldItems.length - 1]);
+        selectedProductsNotifier.value.add(remainingsoldItems[remainingsoldItems.length - 1]);
         subTotalNotifier.value.add(soldItem.unitPrice);
 
-        getSubTotal(soldItems, soldItems.length - 1, num.parse(soldItem.quantity));
+        getSubTotal(remainingsoldItems, remainingsoldItems.length - 1, num.parse(soldItem.quantity));
         getItemVat(vatMethod: soldItem.vatMethod, amount: soldItem.unitPrice, vatRate: soldItem.vatRate);
       }
     }
 
-    totalItemsNotifier.value = num.parse(soldItems.length.toString());
+    totalItemsNotifier.value = num.parse(remainingsoldItems.length.toString());
     await getTotalQuantity();
     getTotalVAT();
     getTotalAmount();

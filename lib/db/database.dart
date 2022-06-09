@@ -40,7 +40,7 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 14, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 16, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -138,6 +138,7 @@ class EzDatabase {
       ${PurchaseFields.grantTotal} $textType,
       ${PurchaseFields.paid} $textType,
       ${PurchaseFields.balance} $textType,
+      ${SalesFields.returnAmount} $textNull,
       ${PurchaseFields.paymentType} $textType,
       ${PurchaseFields.purchaseStatus} $textType,
       ${PurchaseFields.paymentStatus} $textType,
@@ -157,6 +158,8 @@ class EzDatabase {
       ${PurchaseItemsFields.quantity} $textType,
       ${PurchaseItemsFields.subTotal} $textType,
       ${PurchaseItemsFields.vatId} $intType,
+      ${PurchaseItemsFields.vatMethod} $textType,
+      ${PurchaseItemsFields.vatRate} $intType,
       ${PurchaseItemsFields.vatTotal} $textType,
       ${PurchaseItemsFields.unitCode} $textType,
       ${PurchaseItemsFields.netUnitPrice} $textType,
@@ -234,24 +237,24 @@ class EzDatabase {
 
 //========== Table Purchase Return Items ==========
     await db.execute('''CREATE TABLE $tablePurchaseItemsReturn (
-      ${PurchaseItemsReturnFields.id} $idAuto,
-      ${PurchaseItemsReturnFields.purchaseId} $intType,
-      ${PurchaseItemsReturnFields.purchaseReturnId} $intType,
-      ${PurchaseItemsReturnFields.originalInvoiceNumber} $textNull,
-      ${PurchaseItemsReturnFields.productId} $intType,
-      ${PurchaseItemsReturnFields.productType} $textType,
-      ${PurchaseItemsReturnFields.productName} $textType,
-      ${PurchaseItemsReturnFields.categoryId} $intType,
-      ${PurchaseItemsReturnFields.productCode} $textType,
-      ${PurchaseItemsReturnFields.unitPrice} $textType,
-      ${PurchaseItemsReturnFields.productCost} $textType,
-      ${PurchaseItemsReturnFields.quantity} $textType,
-      ${PurchaseItemsReturnFields.subTotal} $textType,
-      ${PurchaseItemsReturnFields.vatId} $intType,
-      ${PurchaseItemsReturnFields.vatTotal} $textType,
-      ${PurchaseItemsReturnFields.unitCode} $textType,
-      ${PurchaseItemsReturnFields.netUnitPrice} $textType,
-      ${PurchaseItemsReturnFields.vatPercentage} $textType)''');
+      ${PurchaseReturnItemsFields.id} $idAuto,
+      ${PurchaseReturnItemsFields.purchaseId} $intType,
+      ${PurchaseReturnItemsFields.purchaseReturnId} $intType,
+      ${PurchaseReturnItemsFields.originalInvoiceNumber} $textNull,
+      ${PurchaseReturnItemsFields.productId} $intType,
+      ${PurchaseReturnItemsFields.productType} $textType,
+      ${PurchaseReturnItemsFields.productName} $textType,
+      ${PurchaseReturnItemsFields.categoryId} $intType,
+      ${PurchaseReturnItemsFields.productCode} $textType,
+      ${PurchaseReturnItemsFields.unitPrice} $textType,
+      ${PurchaseReturnItemsFields.productCost} $textType,
+      ${PurchaseReturnItemsFields.quantity} $textType,
+      ${PurchaseReturnItemsFields.subTotal} $textType,
+      ${PurchaseReturnItemsFields.vatId} $intType,
+      ${PurchaseReturnItemsFields.vatTotal} $textType,
+      ${PurchaseReturnItemsFields.unitCode} $textType,
+      ${PurchaseReturnItemsFields.netUnitPrice} $textType,
+      ${PurchaseReturnItemsFields.vatPercentage} $textType)''');
 
     // final result = await db.query(tableSales, where: '${SalesFields.paymentStatus} = ?', whereArgs: ['Due']);
 
@@ -700,6 +703,7 @@ class EzDatabase {
       ${PurchaseFields.grantTotal} $textType,
       ${PurchaseFields.paid} $textType,
       ${PurchaseFields.balance} $textType,
+      ${SalesFields.returnAmount} $textNull,
       ${PurchaseFields.paymentType} $textType,
       ${PurchaseFields.purchaseStatus} $textType,
       ${PurchaseFields.paymentStatus} $textType,
@@ -711,7 +715,7 @@ class EzDatabase {
       ${PurchaseItemsFields.purchaseId} $intType,
       ${PurchaseItemsFields.productId} $intType,
       ${PurchaseItemsFields.productType} $textType,
-      ${PurchaseItemsFields.productName} $textType, 
+      ${PurchaseItemsFields.productName} $textType,
       ${PurchaseItemsFields.categoryId} $intType,
       ${PurchaseItemsFields.productCode} $textType,
       ${PurchaseItemsFields.unitPrice} $textType,
@@ -719,6 +723,8 @@ class EzDatabase {
       ${PurchaseItemsFields.quantity} $textType,
       ${PurchaseItemsFields.subTotal} $textType,
       ${PurchaseItemsFields.vatId} $intType,
+      ${PurchaseItemsFields.vatMethod} $textType,
+      ${PurchaseItemsFields.vatRate} $intType,
       ${PurchaseItemsFields.vatTotal} $textType,
       ${PurchaseItemsFields.unitCode} $textType,
       ${PurchaseItemsFields.netUnitPrice} $textType,
@@ -796,23 +802,23 @@ class EzDatabase {
 
 //========== Table Purchase Return Items ==========
     await db.execute('''CREATE TABLE $tablePurchaseItemsReturn (
-      ${PurchaseItemsReturnFields.id} $idAuto,
-      ${PurchaseItemsReturnFields.purchaseId} $intType,
-      ${PurchaseItemsReturnFields.purchaseReturnId} $intType,
-      ${PurchaseItemsReturnFields.originalInvoiceNumber} $textNull,
-      ${PurchaseItemsReturnFields.productId} $intType,
-      ${PurchaseItemsReturnFields.productType} $textType,
-      ${PurchaseItemsReturnFields.productName} $textType,
-      ${PurchaseItemsReturnFields.categoryId} $intType,
-      ${PurchaseItemsReturnFields.productCode} $textType,
-      ${PurchaseItemsReturnFields.unitPrice} $textType,
-      ${PurchaseItemsReturnFields.productCost} $textType,
-      ${PurchaseItemsReturnFields.quantity} $textType,
-      ${PurchaseItemsReturnFields.subTotal} $textType,
-      ${PurchaseItemsReturnFields.vatId} $intType,
-      ${PurchaseItemsReturnFields.vatTotal} $textType,
-      ${PurchaseItemsReturnFields.unitCode} $textType,
-      ${PurchaseItemsReturnFields.netUnitPrice} $textType,
-      ${PurchaseItemsReturnFields.vatPercentage} $textType)''');
+      ${PurchaseReturnItemsFields.id} $idAuto,
+      ${PurchaseReturnItemsFields.purchaseId} $intType,
+      ${PurchaseReturnItemsFields.purchaseReturnId} $intType,
+      ${PurchaseReturnItemsFields.originalInvoiceNumber} $textNull,
+      ${PurchaseReturnItemsFields.productId} $intType,
+      ${PurchaseReturnItemsFields.productType} $textType,
+      ${PurchaseReturnItemsFields.productName} $textType,
+      ${PurchaseReturnItemsFields.categoryId} $intType,
+      ${PurchaseReturnItemsFields.productCode} $textType,
+      ${PurchaseReturnItemsFields.unitPrice} $textType,
+      ${PurchaseReturnItemsFields.productCost} $textType,
+      ${PurchaseReturnItemsFields.quantity} $textType,
+      ${PurchaseReturnItemsFields.subTotal} $textType,
+      ${PurchaseReturnItemsFields.vatId} $intType,
+      ${PurchaseReturnItemsFields.vatTotal} $textType,
+      ${PurchaseReturnItemsFields.unitCode} $textType,
+      ${PurchaseReturnItemsFields.netUnitPrice} $textType,
+      ${PurchaseReturnItemsFields.vatPercentage} $textType)''');
   }
 }

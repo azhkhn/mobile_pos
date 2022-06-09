@@ -6,12 +6,16 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
+import 'package:shop_ez/core/utils/debouncer/debouncer.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_items_database.dart';
+import 'package:shop_ez/db/db_functions/purchase_return/purchase_return_items_database.dart';
 import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
+import 'package:shop_ez/model/purchase/purchase_items_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
+import 'package:shop_ez/model/purchase_return/purchase_return_items_modal.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sales_table_header_widget.dart';
@@ -36,8 +40,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
   static final ValueNotifier<List<String>> itemTotalVatNotifier = ValueNotifier([]);
   static final ValueNotifier<List<TextEditingController>> quantityNotifier = ValueNotifier([]);
 
-  static final ValueNotifier<String?> originalInvoiceNumberNotifier = ValueNotifier(null);
-  static final ValueNotifier<int?> originalPurchaseIdNotifier = ValueNotifier(null);
+  static final ValueNotifier<PurchaseModel?> originalPurchaseNotifier = ValueNotifier(null);
 
   static final ValueNotifier<int?> supplierIdNotifier = ValueNotifier(null);
   static final ValueNotifier<String?> supplierNameNotifier = ValueNotifier(null);
@@ -100,13 +103,13 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                   Flexible(
                     flex: 9,
                     child: ValueListenableBuilder(
-                        valueListenable: originalPurchaseIdNotifier,
+                        valueListenable: originalPurchaseNotifier,
                         builder: (context, _, __) {
                           return TypeAheadField(
                             debounceDuration: const Duration(milliseconds: 500),
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
-                                enabled: originalPurchaseIdNotifier.value == null,
+                                enabled: originalPurchaseNotifier.value == null,
                                 controller: supplierController,
                                 style: kText_10_12,
                                 decoration: InputDecoration(
@@ -191,12 +194,11 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                                 onTap: () async {
                                   purchaseInvoiceController.clear();
 
-                                  if (originalPurchaseIdNotifier.value != null) {
+                                  if (originalPurchaseNotifier.value != null) {
                                     return resetPurchaseReturn();
                                   }
 
-                                  originalInvoiceNumberNotifier.value = null;
-                                  originalPurchaseIdNotifier.value = null;
+                                  originalPurchaseNotifier.value = null;
                                 },
                               ),
                             ),
@@ -223,8 +225,8 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                       onSuggestionSelected: (PurchaseModel purchase) async {
                         resetPurchaseReturn();
                         purchaseInvoiceController.text = purchase.invoiceNumber!;
-                        originalInvoiceNumberNotifier.value = purchase.invoiceNumber!;
-                        originalPurchaseIdNotifier.value = purchase.id;
+                        originalPurchaseNotifier.value = purchase;
+
                         await getPurchaseDetails(purchase);
 
                         log(purchase.invoiceNumber!);
@@ -361,7 +363,6 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                 color: Colors.white,
                                 height: 30,
                                 alignment: Alignment.topCenter,
@@ -373,11 +374,49 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                                   decoration: const InputDecoration(
                                     border: InputBorder.none,
                                     isDense: true,
-                                    contentPadding: EdgeInsets.symmetric(vertical: 10),
+                                    errorStyle: TextStyle(fontSize: 0.1),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.zero,
+                                      borderSide: BorderSide(color: kTextErrorColor, width: 0.8),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.zero,
+                                      borderSide: BorderSide(color: kTextErrorColor, width: 0.8),
+                                    ),
+                                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
                                   ),
                                   style: kItemsTextStyle,
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  validator: (value) {
+                                    final num soldQty = num.parse(selectedProductsNotifier.value[index].openingStock);
+
+                                    if (value == null || value.isEmpty || value == '.') {
+                                      return '*';
+                                    } else if (num.parse(value) > soldQty) {
+                                      return '*';
+                                    }
+                                    return null;
+                                  },
                                   onChanged: (value) {
-                                    onItemQuantityChanged(value, selectedProducts, index);
+                                    if (num.tryParse(value) != null) {
+                                      if (num.parse(value) <= 0) {
+                                        quantityNotifier.value[index].clear();
+                                      } else {
+                                        Debouncer().run(() {
+                                          if (value.isNotEmpty && value != '.') {
+                                            final num _newQuantity = num.parse(value);
+
+                                            onItemQuantityChanged(value, selectedProducts, index);
+
+                                            log('new Quantity == ' + _newQuantity.toString());
+                                          }
+                                        });
+                                      }
+                                    } else {
+                                      if (value.isEmpty) {
+                                        onItemQuantityChanged('0', selectedProducts, index);
+                                      }
+                                    }
                                   },
                                 ),
                               ),
@@ -567,71 +606,94 @@ class PurchaseReturnSideWidget extends StatelessWidget {
 
   //==================== Get Purchase Details ====================
   Future<void> getPurchaseDetails(PurchaseModel purchase) async {
-    final List<ItemMasterModel> purchasedItems = [];
+    final List<ItemMasterModel> remainingPurchasedItems = [];
 
     supplierController.text = purchase.supplierName;
     supplierIdNotifier.value = purchase.supplierId;
     supplierNameNotifier.value = purchase.supplierName;
 
-    final purchaseItems = await purchaseItemsDatabase.getPurchaseItemByPurchaseId(purchase.id!);
+    //==================== Fetch sold items based on salesId ====================
+    final List<PurchaseItemsModel> purchasedItems = await PurchaseItemsDatabase.instance.getPurchaseItemByPurchaseId(purchase.id!);
 
-    for (var i = 0; i < purchaseItems.length; i++) {
-      final purchasedItem = purchaseItems[i];
-      final items = await itemDB.getProductById(purchasedItem.productId);
-      final item = items.first;
+    final List<PurchaseItemsReturnModel> purchaseReturnedItems =
+        await PurchaseReturnItemsDatabase.instance.getPurchaseReturnItemByPurchaseId(purchase.id!);
+    log('==========================================================================================');
 
-      log('item Id == ' '${item.id}');
-      log('item Name == ' + item.itemName);
-      log('Category == ${purchasedItem.categoryId}');
-      log('Product Code == ' + purchasedItem.productCode);
-      log('Cost == ' + purchasedItem.productCost);
-      log('Unit Price == ' + purchasedItem.unitPrice);
-      log('Net Unit Price == ' + purchasedItem.netUnitPrice);
-      log('Quantity == ' + purchasedItem.quantity);
-      log('Unit Code == ' + purchasedItem.unitCode);
-      log('Vat Id == ${purchasedItem.vatId}');
-      log('Products Vat Method == ' + item.vatMethod);
-      log('Vat Method == ' + item.vatMethod);
-      log('Vat Percentage == ' + purchasedItem.vatPercentage);
-      log('Vat Total == ' + purchasedItem.vatTotal);
+    //==================== Adding purchased items to UI ====================
+    for (var i = 0; i < purchasedItems.length; i++) {
+      PurchaseItemsModel purchasedItem = purchasedItems[i];
+      final List<ItemMasterModel> items = await itemDB.getProductById(purchasedItem.productId);
+      final ItemMasterModel item = items.first;
 
-      purchasedItems.add(ItemMasterModel(
-        id: item.id,
-        productType: purchasedItem.productType,
-        itemName: purchasedItem.productName,
-        itemNameArabic: item.itemNameArabic,
-        itemCode: purchasedItem.productCode,
-        itemCategoryId: purchasedItem.categoryId,
-        itemSubCategoryId: item.itemSubCategoryId,
-        itemBrandId: item.itemBrandId,
-        itemCost: purchasedItem.productCost,
-        sellingPrice: purchasedItem.unitPrice,
-        secondarySellingPrice: item.secondarySellingPrice,
-        vatMethod: item.vatMethod,
-        productVAT: item.productVAT,
-        vatId: purchasedItem.vatId,
-        vatRate: item.vatRate,
-        unit: purchasedItem.unitCode,
-        expiryDate: item.expiryDate,
-        openingStock: item.openingStock,
-        alertQuantity: item.alertQuantity,
-        itemImage: item.itemImage,
-      ));
+      final List<PurchaseItemsReturnModel> returnedItems =
+          purchaseReturnedItems.where((returnedItem) => returnedItem.productId == purchasedItem.productId).toList();
 
-      quantityNotifier.value.add(TextEditingController(text: purchasedItem.quantity));
+      log('Returnned Items =+==+= ' + returnedItems.toString());
 
-      subTotalNotifier.value.add(purchasedItem.subTotal);
-      itemTotalVatNotifier.value.add(purchasedItem.vatTotal);
+      //==================== Calculating Returned Items and Quantity from Purchased Items ====================
+      for (var i2 = 0; i2 < returnedItems.length; i2++) {
+        final soldQty = num.parse(purchasedItem.quantity);
+        final num returnedQty = num.parse(returnedItems[i2].quantity);
+        log('Purchased Qty = $soldQty');
+        log('Returned Qty = $returnedQty');
+        purchasedItem = purchasedItem.copyWith(quantity: (soldQty - returnedQty).toString());
+      }
+
+      // log('item Id == ' '${item.id}');
+      // log('item Name == ' + item.itemName);
+      // log('Category == ${purchasedItem.categoryId}');
+      // log('Product Code == ' + purchasedItem.productCode);
+      // log('Cost == ' + purchasedItem.productCost);
+      // log('Unit Price == ' + purchasedItem.unitPrice);
+      // log('Net Unit Price == ' + purchasedItem.netUnitPrice);
+      // log('Quantity == ' + purchasedItem.quantity);
+      // log('Unit Code == ' + purchasedItem.unitCode);
+      // log('Vat Id == ${purchasedItem.vatId}');
+      // log('Products Vat Method == ' + item.vatMethod);
+      // log('Vat Method == ' + item.vatMethod);
+      // log('Vat Percentage == ' + purchasedItem.vatPercentage);
+      // log('Vat Total == ' + purchasedItem.vatTotal);
+
+      final finalQty = num.parse(purchasedItem.quantity);
+
+      if (finalQty > 0) {
+        remainingPurchasedItems.add(ItemMasterModel(
+          id: item.id,
+          productType: item.productType,
+          itemName: item.itemName,
+          itemNameArabic: item.itemNameArabic,
+          itemCode: purchasedItem.productCode,
+          itemCategoryId: purchasedItem.categoryId,
+          itemSubCategoryId: item.itemSubCategoryId,
+          itemBrandId: item.itemBrandId,
+          itemCost: purchasedItem.productCost,
+          sellingPrice: purchasedItem.unitPrice,
+          secondarySellingPrice: item.secondarySellingPrice,
+          vatMethod: item.vatMethod,
+          productVAT: item.productVAT,
+          vatId: purchasedItem.vatId,
+          vatRate: item.vatRate,
+          unit: purchasedItem.unitCode,
+          expiryDate: item.expiryDate,
+          openingStock: purchasedItem.quantity,
+          alertQuantity: item.alertQuantity,
+          itemImage: item.itemImage,
+        ));
+
+        quantityNotifier.value.add(TextEditingController(text: purchasedItem.quantity));
+        selectedProductsNotifier.value.add(remainingPurchasedItems[remainingPurchasedItems.length - 1]);
+        subTotalNotifier.value.add(purchasedItem.unitPrice);
+
+        getSubTotal(remainingPurchasedItems, remainingPurchasedItems.length - 1, num.parse(purchasedItem.quantity));
+        getItemVat(vatMethod: purchasedItem.vatMethod, amount: purchasedItem.unitPrice, vatRate: purchasedItem.vatRate);
+      }
     }
 
-    selectedProductsNotifier.value = purchasedItems;
+    totalItemsNotifier.value = num.parse(remainingPurchasedItems.length.toString());
     await getTotalQuantity();
-    log(totalQuantityNotifier.value.toString());
-
-    totalItemsNotifier.value = num.parse(purchase.totalItems);
-    totalAmountNotifier.value = num.parse(purchase.subTotal);
-    totalVatNotifier.value = num.parse(purchase.vatAmount);
-    totalPayableNotifier.value = num.parse(purchase.grantTotal);
+    getTotalVAT();
+    getTotalAmount();
+    getTotalPayable();
 
     selectedProductsNotifier.notifyListeners();
     subTotalNotifier.notifyListeners();
@@ -644,8 +706,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     totalPayableNotifier.notifyListeners();
     supplierIdNotifier.notifyListeners();
     supplierNameNotifier.notifyListeners();
-    originalInvoiceNumberNotifier.notifyListeners();
-    originalPurchaseIdNotifier.notifyListeners();
+    originalPurchaseNotifier.notifyListeners();
   }
 
   //==================== Reset All Values ====================
@@ -663,8 +724,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     totalPayableNotifier.value = 0;
     supplierIdNotifier.value = null;
     supplierNameNotifier.value = null;
-    originalInvoiceNumberNotifier.value = null;
-    originalPurchaseIdNotifier.value = null;
+    originalPurchaseNotifier.value = null;
     // PurchaseReturnProductSideWidget.itemsNotifier.value.clear();
 
     if (notify) {
@@ -679,8 +739,6 @@ class PurchaseReturnSideWidget extends StatelessWidget {
       totalPayableNotifier.notifyListeners();
       supplierIdNotifier.notifyListeners();
       supplierNameNotifier.notifyListeners();
-      originalInvoiceNumberNotifier.notifyListeners();
-      originalPurchaseIdNotifier.notifyListeners();
     }
 
     log('========== Purchase Return values has been cleared! ==========');

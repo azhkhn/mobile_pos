@@ -5,7 +5,7 @@ part 'purchase_return_items_modal.g.dart';
 
 const String tablePurchaseItemsReturn = 'purchase_items_return';
 
-class PurchaseItemsReturnFields {
+class PurchaseReturnItemsFields {
   static const id = '_id';
   static const purchaseId = 'purchaseId';
   static const purchaseReturnId = 'purchaseReturnId';
