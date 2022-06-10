@@ -2,20 +2,20 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/model/purchase/purchase_model.dart';
 import '../../../../core/utils/device/device.dart';
 
-class TransactionDetailsTableWidget extends StatelessWidget {
-  const TransactionDetailsTableWidget({
+class TransactionPurchaseDetailsTable extends StatelessWidget {
+  const TransactionPurchaseDetailsTable({
     Key? key,
-    required this.sale,
+    required this.purchase,
     required this.borderTop,
     this.firstRow = false,
   }) : super(key: key);
 
   final double borderTop;
   final bool firstRow;
-  final SalesModel sale;
+  final PurchaseModel purchase;
 
   static final ValueNotifier<num> totalPayingNotifier = ValueNotifier(0);
   static final ValueNotifier<num> balanceNotifier = ValueNotifier(0);
@@ -24,7 +24,7 @@ class TransactionDetailsTableWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (totalPayingNotifier.value == 0) {
-        balanceNotifier.value = num.parse(sale.balance);
+        balanceNotifier.value = num.parse(purchase.balance);
       }
     });
     return WillPopScope(
@@ -73,7 +73,7 @@ class TransactionDetailsTableWidget extends StatelessWidget {
                     valueListenable: totalPayingNotifier,
                     builder: (__, totalPaying, _) {
                       return AutoSizeText(
-                        firstRow ? sale.balance : Converter.currency.format(totalPaying),
+                        firstRow ? purchase.balance : Converter.currency.format(totalPaying),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -107,7 +107,7 @@ class TransactionDetailsTableWidget extends StatelessWidget {
                     valueListenable: balanceNotifier,
                     builder: (_, balance, __) {
                       return AutoSizeText(
-                        firstRow ? sale.grantTotal : Converter.currency.format(balance),
+                        firstRow ? purchase.grantTotal : Converter.currency.format(balance),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(

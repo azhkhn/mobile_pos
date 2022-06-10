@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/barcode/screen_barcode.dart';
 import 'package:shop_ez/screens/customer/screen_customer_list.dart';
@@ -11,7 +12,8 @@ import 'package:shop_ez/screens/sales/pages/screen_sales_list.dart';
 import 'package:shop_ez/screens/sales_return/pages/screen_sales_return.dart';
 import 'package:shop_ez/screens/sales_return/pages/screen_sales_return_list.dart';
 import 'package:shop_ez/screens/stock/screen_stock.dart';
-import 'package:shop_ez/screens/transaction/screen_transaction.dart';
+import 'package:shop_ez/screens/transaction/purchase_transaction/screen_transaction_purchase.dart';
+import 'package:shop_ez/screens/transaction/sales_transaction/screen_transaction_sale.dart';
 
 import '../../screens/auth/pages/login_screen.dart';
 import '../../screens/auth/pages/signup_screen.dart';
@@ -84,11 +86,19 @@ class RouteGenerator {
                   ));
         }
         return _errorRoute();
-      case routeTransaction:
+      case routeTransactionSale:
         if (args is SalesModel) {
           return MaterialPageRoute(
-              builder: (_) => TransactionScreen(
+              builder: (_) => TransactionScreenSale(
                     salesModel: args,
+                  ));
+        }
+        return _errorRoute();
+      case routeTransactionPurchase:
+        if (args is PurchaseModel) {
+          return MaterialPageRoute(
+              builder: (_) => TransactionScreenPurchase(
+                    purchaseModel: args,
                   ));
         }
         return _errorRoute();

@@ -32,4 +32,13 @@ class TransactionDatabase {
     final _transactions = _result.map((json) => TransactionsModel.fromJson(json)).toList();
     return _transactions;
   }
+
+  //==================== Get All Transactions By PurchaseId ====================
+  Future<List<TransactionsModel>> getAllTransactionsByPurchaseId(int purchaseId) async {
+    final db = await dbInstance.database;
+    final _result = await db.query(tableTransactions, where: '${TransactionsField.purchaseId} = ?', whereArgs: [purchaseId]);
+    log('Transactions by Purchase Id ($purchaseId) == $_result');
+    final _transactions = _result.map((json) => TransactionsModel.fromJson(json)).toList();
+    return _transactions;
+  }
 }

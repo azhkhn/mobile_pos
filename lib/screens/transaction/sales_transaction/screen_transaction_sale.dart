@@ -11,13 +11,13 @@ import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
-import 'package:shop_ez/screens/transaction/widgets/transaction_details_table_widget.dart';
-import 'package:shop_ez/screens/transaction/widgets/transaction_payment_widget.dart';
+import 'package:shop_ez/screens/transaction/sales_transaction/widgets/transaction_sale_details_table.dart';
+import 'package:shop_ez/screens/transaction/sales_transaction/widgets/transaction_sale_payment_widget.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 
-class TransactionScreen extends StatelessWidget {
-  const TransactionScreen({Key? key, required this.salesModel}) : super(key: key);
+class TransactionScreenSale extends StatelessWidget {
+  const TransactionScreenSale({Key? key, required this.salesModel}) : super(key: key);
 
   final SalesModel salesModel;
 
@@ -31,7 +31,7 @@ class TransactionScreen extends StatelessWidget {
           child: Column(
             children: [
               //==================== Payment Type Widget ====================
-              TransactionPaymentWidget(
+              TransactionSalePayment(
                 totalPayable: num.parse(salesModel.balance),
               ),
               kHeight10,
@@ -41,8 +41,8 @@ class TransactionScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 0.0),
                 child: Column(
                   children: [
-                    TransactionDetailsTableWidget(borderTop: 0.5, firstRow: true, sale: salesModel),
-                    TransactionDetailsTableWidget(borderTop: 0, firstRow: false, sale: salesModel),
+                    TransactionSaleDetailsTable(borderTop: 0.5, firstRow: true, sale: salesModel),
+                    TransactionSaleDetailsTable(borderTop: 0, firstRow: false, sale: salesModel),
                   ],
                 ),
               ),
@@ -51,7 +51,7 @@ class TransactionScreen extends StatelessWidget {
 
               CustomMaterialBtton(
                   onPressed: () async {
-                    final _formState = TransactionPaymentWidget.formKey.currentState!;
+                    final _formState = TransactionSalePayment.formKey.currentState!;
                     if (_formState.validate()) {
                       showDialog(
                         context: context,
@@ -66,8 +66,8 @@ class TransactionScreen extends StatelessWidget {
                             final SalesModel? updatedSale = await addTransaction(context, sale: salesModel);
                             if (updatedSale != null) {
                               _formState.reset();
-                              TransactionDetailsTableWidget.balanceNotifier.value = 0;
-                              TransactionDetailsTableWidget.totalPayingNotifier.value = 0;
+                              TransactionSaleDetailsTable.balanceNotifier.value = 0;
+                              TransactionSaleDetailsTable.totalPayingNotifier.value = 0;
                               Navigator.pop(context, updatedSale);
                             } else {
                               log('Something went wrong!');
@@ -116,14 +116,14 @@ class TransactionScreen extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
-                                          '+' + _payment.amount,
-                                          style: const TextStyle(color: Color(0xFF1B5E20)),
+                                          _payment.transactionType == 'Income'
+                                              ? '+${Converter.currency.format(num.parse(_payment.amount))}'
+                                              : '-${Converter.currency.format(num.parse(_payment.amount))}',
+                                          style: TextStyle(
+                                              color: _payment.transactionType == 'Income' ? const Color(0xFF1B5E20) : const Color(0xFFB71C1C)),
                                         ),
                                         kWidth10,
-                                        const Icon(
-                                          Icons.verified_outlined,
-                                          color: kGreen,
-                                        ),
+                                        Icon(Icons.verified_outlined, color: _payment.transactionType == 'Income' ? kGreen : Colors.red),
                                       ],
                                     ),
                                   );
@@ -149,7 +149,7 @@ class TransactionScreen extends StatelessWidget {
 
       final num _payable = num.parse(sale.balance);
       final num _paid = num.parse(sale.paid);
-      final num _paying = num.parse(TransactionPaymentWidget.amountController.text.trim());
+      final num _paying = num.parse(TransactionSalePayment.amountController.text.trim());
       final num _updatedPaid = _paid + _paying;
       final num _updatedBalance = _payable - _paying;
 

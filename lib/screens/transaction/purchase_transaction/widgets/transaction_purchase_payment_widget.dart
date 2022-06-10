@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
-import 'package:shop_ez/screens/transaction/widgets/transaction_details_table_widget.dart';
+import 'package:shop_ez/screens/transaction/purchase_transaction/widgets/transaction_purchase_details_table.dart';
 
 import '../../../../core/constant/colors.dart';
 import '../../../../core/constant/sizes.dart';
@@ -12,8 +12,8 @@ import '../../../../widgets/text_field_widgets/text_field_widgets.dart';
 //========== DropDown Items ==========
 const List types = ['Cash', 'Card'];
 
-class TransactionPaymentWidget extends StatelessWidget {
-  const TransactionPaymentWidget({
+class TransactionPurchasePayment extends StatelessWidget {
+  const TransactionPurchasePayment({
     required this.totalPayable,
     Key? key,
   }) : super(key: key);
@@ -153,10 +153,10 @@ class TransactionPaymentWidget extends StatelessWidget {
   //========== On Amount Changed ==========
   amountChanged(String amount) {
     final num? _totalPaying = num.tryParse(amount);
-    TransactionDetailsTableWidget.totalPayingNotifier.value = _totalPaying ?? 0;
+    TransactionPurchaseDetailsTable.totalPayingNotifier.value = _totalPaying ?? 0;
 
     final num _balance = totalPayable - _totalPaying!;
-    TransactionDetailsTableWidget.balanceNotifier.value = _balance;
+    TransactionPurchaseDetailsTable.balanceNotifier.value = _balance;
     log('Balance Amount == $_balance');
   }
 }
