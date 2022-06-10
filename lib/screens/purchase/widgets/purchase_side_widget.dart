@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
+import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/debouncer/debouncer.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';

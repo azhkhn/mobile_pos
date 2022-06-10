@@ -21,17 +21,14 @@ class CustomerCardWidget extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Flex(
-              mainAxisAlignment: MainAxisAlignment.start,
-              direction: Axis.horizontal,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
                         children: [
                           const Text(
                             'No.  ',
@@ -49,97 +46,49 @@ class CustomerCardWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-                      kHeight5,
-
-                      // Row(
-                      //   children: [
-                      //     const Text(
-                      //       'Date:  ',
-                      //       overflow: TextOverflow.ellipsis,
-                      //       style: kTextSalesCard,
-                      //       maxLines: 1,
-                      //       minFontSize: 10,
-                      //       maxFontSize: 14,
-                      //     ),
-                      //     Expanded(
-                      //       child: Text(
-                      //         Converter.dateFormat.format(DateTime.parse(customer[index].dateTime)),
-                      //         overflow: TextOverflow.ellipsis,
-                      //         style: kTextSalesCard,
-                      //         maxLines: 1,
-                      //         minFontSize: 10,
-                      //         maxFontSize: 14,
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
-                      // kHeight5,
-                      Row(
+                    ),
+                    kWidth5,
+                    Expanded(
+                      child: Row(
                         children: [
                           const Text(
-                            'Customer:  ',
+                            'Contact :  ',
                             overflow: TextOverflow.ellipsis,
                             style: kTextSalesCard,
                             maxLines: 1,
                           ),
                           Expanded(
                             child: Text(
-                              customer[index].customer,
+                              customer[index].contactNumber,
                               overflow: TextOverflow.ellipsis,
-                              style: kBoldTextSalesCard,
+                              style: kTextSalesCard,
                               maxLines: 1,
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                kWidth5,
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Text(
-                            'Customer Id:  ',
-                            overflow: TextOverflow.ellipsis,
-                            style: kTextSalesCard,
-                            maxLines: 1,
-                          ),
-                          Expanded(
-                            child: Text(
-                              customer[index].id.toString(),
-                              overflow: TextOverflow.ellipsis,
-                              style: kTextSalesCard,
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
+                kHeight5,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Customer:  ',
+                      overflow: TextOverflow.ellipsis,
+                      style: kTextSalesCard,
+                      maxLines: 1,
+                    ),
+                    Expanded(
+                      child: Text(
+                        customer[index].customer,
+                        overflow: TextOverflow.ellipsis,
+                        style: kBoldTextSalesCard,
+                        maxLines: 1,
                       ),
-                      kHeight5,
-                      Row(
-                        children: [
-                          const Text(
-                            'Email:  ',
-                            overflow: TextOverflow.ellipsis,
-                            style: kTextSalesCard,
-                            maxLines: 1,
-                          ),
-                          Expanded(
-                            child: Text(
-                              customer[index].email,
-                              overflow: TextOverflow.ellipsis,
-                              style: kTextSalesCard,
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),

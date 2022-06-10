@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
+import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/debouncer/debouncer.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
@@ -276,7 +276,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                   //         onPressed: () async {
                   //           // OrientationMode.isLandscape = false;
                   //           // await OrientationMode.toPortrait();
-                  //           final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: true);
+                  //           final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: {'fromPos':true});
 
                   //           if (id != null) {
                   //             final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);

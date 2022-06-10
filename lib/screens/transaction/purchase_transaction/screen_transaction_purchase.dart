@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
+import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
@@ -101,32 +101,31 @@ class TransactionScreenPurchase extends StatelessWidget {
                                 itemBuilder: (ctx, index) {
                                   final _payment = _recentPayments[index];
                                   return ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundColor: kTransparentColor,
-                                      child: Text(
-                                        '${index + 1}'.toString(),
-                                        style: const TextStyle(fontSize: 12, color: kTextColor),
-                                      ),
-                                    ),
-                                    title: Text(
-                                      Converter.dateTimeFormatAmPm.format(DateTime.parse(_payment.dateTime)),
-                                      style: kText12Lite,
-                                    ),
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          _payment.transactionType == 'Income'
-                                              ? '+${Converter.currency.format(num.parse(_payment.amount))}'
-                                              : '-${Converter.currency.format(num.parse(_payment.amount))}',
-                                          style: TextStyle(
-                                              color: _payment.transactionType == 'Income' ? const Color(0xFF1B5E20) : const Color(0xFFB71C1C)),
+                                      leading: CircleAvatar(
+                                        backgroundColor: kTransparentColor,
+                                        child: Text(
+                                          '${index + 1}'.toString(),
+                                          style: const TextStyle(fontSize: 12, color: kTextColor),
                                         ),
-                                        kWidth10,
-                                        Icon(Icons.verified_outlined, color: _payment.transactionType == 'Income' ? kGreen : Colors.red),
-                                      ],
-                                    ),
-                                  );
+                                      ),
+                                      title: Text(
+                                        Converter.dateTimeFormatAmPm.format(DateTime.parse(_payment.dateTime)),
+                                        style: kText12Lite,
+                                      ),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            _payment.transactionType == 'Income'
+                                                ? Converter.currency.format(num.parse(_payment.amount))
+                                                : Converter.currency.format(num.parse(_payment.amount)),
+                                            style: TextStyle(
+                                                color: _payment.transactionType == 'Income' ? const Color(0xFF1B5E20) : const Color(0xFFB71C1C)),
+                                          ),
+                                          kWidth10,
+                                          Icon(Icons.verified_outlined, color: _payment.transactionType == 'Income' ? kGreen : Colors.red),
+                                        ],
+                                      ));
                                 },
                               ),
                             )

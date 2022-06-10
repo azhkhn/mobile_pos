@@ -3,7 +3,7 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
+import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';

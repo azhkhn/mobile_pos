@@ -61,7 +61,14 @@ class RouteGenerator {
       case routeBrand:
         return MaterialPageRoute(builder: (_) => BrandScreen());
       case routeAddCustomer:
-        return MaterialPageRoute(builder: (_) => AddCustomerScreen(fromPos: args == true));
+        if (args is Map) {
+          return MaterialPageRoute(
+              builder: (_) => AddCustomerScreen(
+                    fromPos: args.containsKey('fromPos'),
+                    customerModel: args.containsKey('customer') ? args['customer'] : null,
+                  ));
+        }
+        return _errorRoute();
       case routeManageCustomer:
         return MaterialPageRoute(builder: (_) => CustomerList());
       case routeUnit:

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
+import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
@@ -117,8 +117,8 @@ class TransactionScreenSale extends StatelessWidget {
                                       children: [
                                         Text(
                                           _payment.transactionType == 'Income'
-                                              ? '+${Converter.currency.format(num.parse(_payment.amount))}'
-                                              : '-${Converter.currency.format(num.parse(_payment.amount))}',
+                                              ? Converter.currency.format(num.parse(_payment.amount))
+                                              : Converter.currency.format(num.parse(_payment.amount)),
                                           style: TextStyle(
                                               color: _payment.transactionType == 'Income' ? const Color(0xFF1B5E20) : const Color(0xFFB71C1C)),
                                         ),

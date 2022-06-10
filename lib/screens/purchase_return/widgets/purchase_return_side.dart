@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/alertdialog/custom_alert.dart';
+import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/debouncer/debouncer.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
@@ -321,147 +321,158 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                   child: ValueListenableBuilder(
                     valueListenable: selectedProductsNotifier,
                     builder: (context, List<ItemMasterModel> selectedProducts, child) {
-                      return Table(
-                        columnWidths: const {
-                          0: FractionColumnWidth(0.30),
-                          1: FractionColumnWidth(0.23),
-                          2: FractionColumnWidth(0.12),
-                          3: FractionColumnWidth(0.23),
-                          4: FractionColumnWidth(0.12),
-                        },
-                        border: TableBorder.all(color: Colors.grey, width: 0.5),
-                        children: List<TableRow>.generate(
-                          selectedProducts.length,
-                          (index) {
-                            final ItemMasterModel _product = selectedProducts[index];
-                            return TableRow(children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                color: Colors.white,
-                                height: 30,
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  _product.itemName,
-                                  softWrap: true,
-                                  style: kItemsTextStyle,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                color: Colors.white,
-                                height: 30,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  _product.vatMethod == 'Exclusive'
-                                      ? Converter.currency.format(num.parse(_product.itemCost))
-                                      : Converter.currency.format(getExclusiveAmount(itemCost: _product.itemCost, vatRate: _product.vatRate)),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: kItemsTextStyle,
-                                ),
-                              ),
-                              Container(
-                                color: Colors.white,
-                                height: 30,
-                                alignment: Alignment.topCenter,
-                                child: TextFormField(
-                                  controller: quantityNotifier.value[index],
-                                  keyboardType: TextInputType.number,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    isDense: true,
-                                    errorStyle: TextStyle(fontSize: 0.1),
-                                    errorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.zero,
-                                      borderSide: BorderSide(color: kTextErrorColor, width: 0.8),
+                      return selectedProducts.isNotEmpty
+                          ? Table(
+                              columnWidths: const {
+                                0: FractionColumnWidth(0.30),
+                                1: FractionColumnWidth(0.23),
+                                2: FractionColumnWidth(0.12),
+                                3: FractionColumnWidth(0.23),
+                                4: FractionColumnWidth(0.12),
+                              },
+                              border: TableBorder.all(color: Colors.grey, width: 0.5),
+                              children: List<TableRow>.generate(
+                                selectedProducts.length,
+                                (index) {
+                                  final ItemMasterModel _product = selectedProducts[index];
+                                  return TableRow(children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                      color: Colors.white,
+                                      height: 30,
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        _product.itemName,
+                                        softWrap: true,
+                                        style: kItemsTextStyle,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                      ),
                                     ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.zero,
-                                      borderSide: BorderSide(color: kTextErrorColor, width: 0.8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                      color: Colors.white,
+                                      height: 30,
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        _product.vatMethod == 'Exclusive'
+                                            ? Converter.currency.format(num.parse(_product.itemCost))
+                                            : Converter.currency.format(getExclusiveAmount(itemCost: _product.itemCost, vatRate: _product.vatRate)),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: kItemsTextStyle,
+                                      ),
                                     ),
-                                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
-                                  ),
-                                  style: kItemsTextStyle,
-                                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                                  validator: (value) {
-                                    final num soldQty = num.parse(selectedProductsNotifier.value[index].openingStock);
+                                    Container(
+                                      color: Colors.white,
+                                      height: 30,
+                                      alignment: Alignment.topCenter,
+                                      child: TextFormField(
+                                        controller: quantityNotifier.value[index],
+                                        keyboardType: TextInputType.number,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 1,
+                                        decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                          isDense: true,
+                                          errorStyle: TextStyle(fontSize: 0.1),
+                                          errorBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.zero,
+                                            borderSide: BorderSide(color: kTextErrorColor, width: 0.8),
+                                          ),
+                                          focusedErrorBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.zero,
+                                            borderSide: BorderSide(color: kTextErrorColor, width: 0.8),
+                                          ),
+                                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
+                                        ),
+                                        style: kItemsTextStyle,
+                                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                                        validator: (value) {
+                                          final num soldQty = num.parse(selectedProductsNotifier.value[index].openingStock);
 
-                                    if (value == null || value.isEmpty || value == '.') {
-                                      return '*';
-                                    } else if (num.parse(value) > soldQty) {
-                                      return '*';
-                                    }
-                                    return null;
-                                  },
-                                  onChanged: (value) {
-                                    if (num.tryParse(value) != null) {
-                                      if (num.parse(value) <= 0) {
-                                        quantityNotifier.value[index].clear();
-                                      } else {
-                                        Debouncer().run(() {
-                                          if (value.isNotEmpty && value != '.') {
-                                            final num _newQuantity = num.parse(value);
-
-                                            onItemQuantityChanged(value, selectedProducts, index);
-
-                                            log('new Quantity == ' + _newQuantity.toString());
+                                          if (value == null || value.isEmpty || value == '.') {
+                                            return '*';
+                                          } else if (num.parse(value) > soldQty) {
+                                            return '*';
                                           }
-                                        });
-                                      }
-                                    } else {
-                                      if (value.isEmpty) {
-                                        onItemQuantityChanged('0', selectedProducts, index);
-                                      }
-                                    }
-                                  },
-                                ),
-                              ),
-                              Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                  color: Colors.white,
-                                  height: 30,
-                                  alignment: Alignment.center,
-                                  child: ValueListenableBuilder(
-                                      valueListenable: subTotalNotifier,
-                                      builder: (context, List<String> subTotal, child) {
-                                        return Text(
-                                          Converter.currency.format(num.tryParse(subTotal[index])),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: kItemsTextStyle,
-                                        );
-                                      })),
-                              Container(
-                                  color: Colors.white,
-                                  height: 30,
-                                  alignment: Alignment.center,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      selectedProducts.removeAt(index);
-                                      subTotalNotifier.value.removeAt(index);
-                                      itemTotalVatNotifier.value.removeAt(index);
-                                      quantityNotifier.value.removeAt(index);
-                                      subTotalNotifier.notifyListeners();
-                                      selectedProductsNotifier.notifyListeners();
-                                      totalItemsNotifier.value -= 1;
-                                      getTotalQuantity();
-                                      getTotalAmount();
-                                      getTotalVAT();
-                                      getTotalPayable();
-                                    },
-                                    icon: const Icon(
-                                      Icons.close,
-                                      size: 16,
+                                          return null;
+                                        },
+                                        onChanged: (value) {
+                                          if (num.tryParse(value) != null) {
+                                            if (num.parse(value) <= 0) {
+                                              quantityNotifier.value[index].clear();
+                                            } else {
+                                              Debouncer().run(() {
+                                                if (value.isNotEmpty && value != '.') {
+                                                  final num _newQuantity = num.parse(value);
+
+                                                  onItemQuantityChanged(value, selectedProducts, index);
+
+                                                  log('new Quantity == ' + _newQuantity.toString());
+                                                }
+                                              });
+                                            }
+                                          } else {
+                                            if (value.isEmpty) {
+                                              onItemQuantityChanged('0', selectedProducts, index);
+                                            }
+                                          }
+                                        },
+                                      ),
                                     ),
-                                  ))
-                            ]);
-                          },
-                        ),
-                      );
+                                    Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                        color: Colors.white,
+                                        height: 30,
+                                        alignment: Alignment.center,
+                                        child: ValueListenableBuilder(
+                                            valueListenable: subTotalNotifier,
+                                            builder: (context, List<String> subTotal, child) {
+                                              return Text(
+                                                Converter.currency.format(num.tryParse(subTotal[index])),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: kItemsTextStyle,
+                                              );
+                                            })),
+                                    Container(
+                                        color: Colors.white,
+                                        height: 30,
+                                        alignment: Alignment.center,
+                                        child: IconButton(
+                                          onPressed: () {
+                                            selectedProducts.removeAt(index);
+                                            subTotalNotifier.value.removeAt(index);
+                                            itemTotalVatNotifier.value.removeAt(index);
+                                            quantityNotifier.value.removeAt(index);
+                                            subTotalNotifier.notifyListeners();
+                                            selectedProductsNotifier.notifyListeners();
+                                            totalItemsNotifier.value -= 1;
+                                            getTotalQuantity();
+                                            getTotalAmount();
+                                            getTotalVAT();
+                                            getTotalPayable();
+                                          },
+                                          icon: const Icon(
+                                            Icons.close,
+                                            size: 16,
+                                          ),
+                                        ))
+                                  ]);
+                                },
+                              ),
+                            )
+                          : Center(
+                              child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Text(
+                                originalPurchaseNotifier.value == null
+                                    ? 'Select any invoice to return purchase!'
+                                    : 'This purchase is already returned!',
+                                style: originalPurchaseNotifier.value == null ? null : kBoldText,
+                              ),
+                            ));
                     },
                   ),
                 ),

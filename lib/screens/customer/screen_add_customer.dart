@@ -17,10 +17,12 @@ import '../../core/utils/snackbar/snackbar.dart';
 // static const items = ['Cash Customer', 'Credit Customer'];
 
 class AddCustomerScreen extends StatelessWidget {
-  AddCustomerScreen({Key? key, this.fromPos = false}) : super(key: key);
+  AddCustomerScreen({Key? key, this.fromPos = false, this.customerModel}) : super(key: key);
 
   //========== Bool ==========
   final bool fromPos;
+
+  final CustomerModel? customerModel;
 
   //========== Global Keys ==========
   final _formKey = GlobalKey<FormState>();

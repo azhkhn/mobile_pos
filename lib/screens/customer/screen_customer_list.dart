@@ -11,6 +11,7 @@ import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/screens/customer/widgets/customer_card_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
+import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
 
@@ -143,7 +144,7 @@ class CustomerList extends StatelessWidget {
                           maxHeight: 30,
                         ),
                         onPressed: () async {
-                          final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: true);
+                          final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: {'fromPos': true});
 
                           if (id != null) {
                             final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
@@ -167,7 +168,7 @@ class CustomerList extends StatelessWidget {
 
               kHeight10,
 
-              //========== List Sales ==========
+              //========== List Customers ==========
               Expanded(
                 child: FutureBuilder(
                     future: CustomerDatabase.instance.getAllCustomers(),
@@ -196,14 +197,39 @@ class CustomerList extends StatelessWidget {
                                               customer: customer,
                                             ),
                                             onTap: () async {
-                                              showModalBottomSheet(
+                                              showDialog(
                                                   context: context,
-                                                  isScrollControlled: true,
-                                                  backgroundColor: kTransparentColor,
-                                                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                                                  builder: (context) => DismissibleWidget(
-                                                        context: context,
-                                                        child: CustomBottomSheetWidget(id: customer[index].id),
+                                                  builder: (ctx) => CustomPopupOptions(
+                                                        options: [
+                                                          {
+                                                            'title': 'View Customer',
+                                                            'color': Colors.blueGrey[400],
+                                                            'icon': Icons.person_search_outlined,
+                                                            'action': () {
+                                                              return showModalBottomSheet(
+                                                                  context: context,
+                                                                  isScrollControlled: true,
+                                                                  backgroundColor: kTransparentColor,
+                                                                  shape: const RoundedRectangleBorder(
+                                                                      borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                                                                  builder: (context) => DismissibleWidget(
+                                                                        context: context,
+                                                                        child: CustomBottomSheetWidget(id: customer[index].id),
+                                                                      ));
+                                                            },
+                                                          },
+                                                          {
+                                                            'title': 'Edit Customer',
+                                                            'color': Colors.teal[400],
+                                                            'icon': Icons.personal_injury,
+                                                            // 'action': () {
+                                                            //   return Navigator.pushNamed(context, routeAddCustomer, arguments: {
+                                                            //     'customer': customer[index],
+                                                            //     'fromPos': true,
+                                                            //   });
+                                                            // }
+                                                          },
+                                                        ],
                                                       ));
                                             },
                                           );
