@@ -325,18 +325,20 @@ class PurchaseButtonsWidget extends StatelessWidget {
         await _itemMasterDB.updateItemCostAndQty(itemMaster: PurchaseSideWidget.selectedProductsNotifier.value[i], purchasedQty: num.parse(quantity));
       }
 
-      final TransactionsModel _transaction = TransactionsModel(
-        category: 'Purchase',
-        transactionType: 'Expense',
-        dateTime: dateTime,
-        amount: grantTotal,
-        status: paymentStatus,
-        description: 'Transaction Completed Successfully!',
-        purchaseId: purchaseId,
-      );
+      if (paymentStatus != 'Credit') {
+        final TransactionsModel _transaction = TransactionsModel(
+          category: 'Purchase',
+          transactionType: 'Expense',
+          dateTime: dateTime,
+          amount: paid,
+          status: paymentStatus,
+          description: 'Transaction Completed Successfully!',
+          purchaseId: purchaseId,
+        );
 
-      //==================== Create Transactions ====================
-      await _transactionDB.createTransaction(_transaction);
+        //==================== Create Transactions ====================
+        await _transactionDB.createTransaction(_transaction);
+      }
 
       kSnackBar(
         context: context,

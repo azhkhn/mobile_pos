@@ -129,8 +129,55 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
                     } else if (items == 0) {
                       return kSnackBar(context: context, content: 'Please select any Products to return purchase!');
                     } else {
-                      final purchase = PurchaseReturnSideWidget.originalPurchaseNotifier.value!;
-                      await addPurchaseReturn(context, purchase);
+                      final _quantities = PurchaseReturnSideWidget.quantityNotifier.value;
+                      final _selectedItems = PurchaseReturnSideWidget.selectedProductsNotifier.value;
+                      bool isValid = false;
+
+                      for (var i = 0; i < _quantities.length; i++) {
+                        final quantity = _quantities[i].text;
+                        final num soldQty = num.parse(_selectedItems[i].openingStock);
+                        final num? qty = num.tryParse(quantity);
+
+                        if (qty != null && qty > 0 && qty <= soldQty) {
+                          isValid = true;
+                          log('valid = $qty');
+                          continue;
+                        } else {
+                          isValid = false;
+                          log('not valid = $qty');
+                          break;
+                        }
+                      }
+
+                      if (isValid) {
+                        showDialog(
+                            context: context,
+                            builder: (ctx) {
+                              return AlertDialog(
+                                  title: const Text(
+                                    'Sales Return',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  ),
+                                  content: const Text('Do you want to return this sale?'),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(ctx);
+                                        },
+                                        child: const Text('Cancel')),
+                                    TextButton(
+                                        onPressed: () async {
+                                          Navigator.pop(ctx);
+                                          final purchase = PurchaseReturnSideWidget.originalPurchaseNotifier.value!;
+                                          //========== Add Purchase Return =========
+                                          await addPurchaseReturn(context, purchase);
+                                        },
+                                        child: const Text('Accept')),
+                                  ]);
+                            });
+                      } else {
+                        kSnackBar(context: context, content: 'Please enter valid item quantity', error: true);
+                      }
                     }
                   },
                   padding: const EdgeInsets.all(5),
@@ -185,8 +232,6 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
     // final PurchaseDatabase purchaseDatabase = PurchaseDatabase.instance;
     final PurchaseReturnDatabase purchaseReturnDB = PurchaseReturnDatabase.instance;
     final PurchaseReturnItemsDatabase purchaseReturnItemsDB = PurchaseReturnItemsDatabase.instance;
-    final TransactionDatabase transactionDB = TransactionDatabase.instance;
-
     final ItemMasterDatabase itemMasterDB = ItemMasterDatabase.instance;
 
     final _loggedUser = await UserUtils.instance.loggedUser;
@@ -287,24 +332,24 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
             vatTotal = PurchaseReturnSideWidget.itemTotalVatNotifier.value[i],
             unitCode = PurchaseReturnSideWidget.selectedProductsNotifier.value[i].unit;
 
-        log(' Purchase Return Id == $purchaseReturnId');
-        log(' Purchase Id == $originalPurchaseId');
-        log(' Original Invoice Number == $originalInvoiceNumber');
-        log(' Product id == $productId');
-        log(' Product Type == $productType');
-        log(' Product Code == $productCode');
-        log(' Product Name == $productName');
-        log(' Product Category == $categoryId');
-        log(' Product Cost == $productCost');
-        log(' Net Unit Price == $netUnitPrice');
-        log(' Unit Price == $unitPrice');
-        log(' Product quantity == $quantity');
-        log(' Unit Code == $unitCode');
-        log(' Product subTotal == $subTotal');
-        log(' VAT id == $vatId');
-        log(' VAT Percentage == $vatPercentage');
-        log(' VAT Total == $vatTotal');
-        log('\n==============================================\n');
+        // log(' Purchase Return Id == $purchaseReturnId');
+        // log(' Purchase Id == $originalPurchaseId');
+        // log(' Original Invoice Number == $originalInvoiceNumber');
+        // log(' Product id == $productId');
+        // log(' Product Type == $productType');
+        // log(' Product Code == $productCode');
+        // log(' Product Name == $productName');
+        // log(' Product Category == $categoryId');
+        // log(' Product Cost == $productCost');
+        // log(' Net Unit Price == $netUnitPrice');
+        // log(' Unit Price == $unitPrice');
+        // log(' Product quantity == $quantity');
+        // log(' Unit Code == $unitCode');
+        // log(' Product subTotal == $subTotal');
+        // log(' VAT id == $vatId');
+        // log(' VAT Percentage == $vatPercentage');
+        // log(' VAT Total == $vatTotal');
+        // log('\n==============================================\n');
 
         final PurchaseItemsReturnModel _purchaseReturnItemsModel = PurchaseItemsReturnModel(
           originalInvoiceNumber: originalInvoiceNumber,
@@ -332,20 +377,6 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         //==================== Decreasing Item Quantity ====================
         await itemMasterDB.subtractItemQty(itemId: PurchaseReturnSideWidget.selectedProductsNotifier.value[i].id!, soldQty: num.parse(quantity));
       }
-
-      final TransactionsModel _transaction = TransactionsModel(
-        category: 'Purchase Return',
-        transactionType: 'Expense',
-        dateTime: dateTime,
-        amount: returnAmount,
-        status: paymentStatus,
-        description: 'Transaction $purchaseReturnId',
-        purchaseId: originalPurchaseId,
-        purchaseReturnId: purchaseReturnId,
-      );
-
-      //==================== Create Transactions ====================
-      await transactionDB.createTransaction(_transaction);
 
       //==================== Create Transaction based on Payment Status ====================
       await createTransaction(dateTime: dateTime, returnAmount: returnAmount, purchase: purchase, purchaseReturnId: purchaseReturnId);
@@ -386,7 +417,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
     final num _paidAmount = num.parse(purchase.paid);
     final num _alreadyReturnedAmount = num.parse(purchase.returnAmount ?? '0');
     final num _returningAmount = num.parse(returnAmount);
-    final num _updatedReturnAmount = _alreadyReturnedAmount + _returningAmount;
+    final num _updatedReturnAmount = Converter.amountRounder(_alreadyReturnedAmount + _returningAmount);
 
     log('Total Amount == $_totalAmount');
     log('Paid Amount == $_paidAmount');
@@ -396,8 +427,8 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
 
     //____________________ Payment Status == Paid ____________________
     if (purchase.paymentStatus == 'Paid') {
-      final num _updatedPaidAmount = _totalAmount - _updatedReturnAmount;
-      final num _updatedBalance = _totalAmount - _updatedReturnAmount;
+      final num _updatedPaidAmount = Converter.amountRounder(_totalAmount - _updatedReturnAmount);
+      final num _updatedBalance = Converter.amountRounder(_totalAmount - _updatedReturnAmount);
 
       log('Updated Paid Amount == $_updatedPaidAmount');
       log('Updated Balance == $_updatedBalance');
@@ -427,9 +458,18 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
 
     //____________________ Payment Status == Partial ____________________
     else if (purchase.paymentStatus == 'Partial') {
-      final num _updatedBalance = _totalAmount - _updatedReturnAmount - _paidAmount;
+      final num _updatedPaidAmount = Converter.amountRounder(_totalAmount - _updatedReturnAmount);
+      num paidAmount = 0;
+      if (_paidAmount > _updatedPaidAmount) {
+        paidAmount = _updatedPaidAmount;
+        log('Updated Paid Amount == $_updatedPaidAmount');
+      } else {
+        paidAmount = _paidAmount;
+      }
+      final num _updatedBalance = Converter.amountRounder(_totalAmount - _updatedReturnAmount - paidAmount);
       log('Updated Balance == $_updatedBalance');
-      final TransactionsModel _transactionForSale = TransactionsModel(
+
+      final TransactionsModel _transactionForPurchase = TransactionsModel(
         category: 'Purchase',
         transactionType: 'Expense',
         dateTime: dateTime,
@@ -440,22 +480,39 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         purchaseReturnId: purchaseReturnId,
       );
 
-      final TransactionsModel _transactionForSalesReturn = TransactionsModel(
+      final TransactionsModel _transactionForPurchasesReturn = TransactionsModel(
         category: 'Purchase Return',
         transactionType: 'Income',
         dateTime: dateTime,
         amount: returnAmount,
         status: purchase.paymentStatus,
         description: 'Transaction $purchaseReturnId',
-        salesId: purchase.id,
-        salesReturnId: purchaseReturnId,
+        purchaseId: purchase.id,
+        purchaseReturnId: purchaseReturnId,
       );
 
-      //-------------------- Create Transactions --------------------
-      await transactionDatabase.createTransaction(_transactionForSale);
-      await transactionDatabase.createTransaction(_transactionForSalesReturn);
+      if (_paidAmount > _updatedPaidAmount) {
+        final String _refundAmount = Converter.amountRounderString(_paidAmount - _updatedPaidAmount);
+        log('Refund Amount == $_refundAmount');
+        final TransactionsModel _transactionForPR = TransactionsModel(
+          category: 'Purchase Return',
+          transactionType: 'Income',
+          dateTime: dateTime,
+          amount: _refundAmount,
+          status: purchase.paymentStatus,
+          description: 'Transaction $purchaseReturnId',
+          purchaseId: purchase.id,
+          purchaseReturnId: purchaseReturnId,
+        );
 
-      // ---------- When fully sale is fully returned ----------
+        await transactionDatabase.createTransaction(_transactionForPR);
+      }
+
+      //-------------------- Create Transactions --------------------
+      await transactionDatabase.createTransaction(_transactionForPurchase);
+      await transactionDatabase.createTransaction(_transactionForPurchasesReturn);
+
+      // ---------- When purchase is fully returned ----------
       if (_updatedReturnAmount == _totalAmount) {
         final TransactionsModel _transactionSR = TransactionsModel(
             category: 'Purchase Return',
@@ -464,34 +521,35 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
             amount: _paidAmount.toString(),
             status: purchase.paymentStatus,
             description: 'Transaction $purchaseReturnId',
-            salesId: purchase.id,
-            salesReturnId: purchaseReturnId);
+            purchaseId: purchase.id,
+            purchaseReturnId: purchaseReturnId);
 
         //-------------------- Create Transactions --------------------
         await transactionDatabase.createTransaction(_transactionSR);
 
-        final updatedSale = purchase.copyWith(
+        final updatedPurchase = purchase.copyWith(
           returnAmount: _updatedReturnAmount.toString(),
           balance: '0',
           paymentStatus: 'Returned',
           paid: '0',
         );
-        //-------------------- Update Sale with Purchase Return --------------------
-        await purchaseDatabase.updatePurchaseByPurchaseId(purchase: updatedSale);
+        //-------------------- Update Purchase with Purchase Return --------------------
+        await purchaseDatabase.updatePurchaseByPurchaseId(purchase: updatedPurchase);
       } else {
-        final updatedSale = purchase.copyWith(
+        final updatedPurchase = purchase.copyWith(
           returnAmount: _updatedReturnAmount.toString(),
           balance: _updatedBalance.toString(),
+          paid: paidAmount.toString(),
           paymentStatus: _updatedBalance <= 0 ? 'Paid' : 'Partial',
         );
 
-        //-------------------- Update Sale with Purchase Return --------------------
-        await purchaseDatabase.updatePurchaseByPurchaseId(purchase: updatedSale);
+        //-------------------- Update Purchase with Purchase Return --------------------
+        await purchaseDatabase.updatePurchaseByPurchaseId(purchase: updatedPurchase);
       }
     }
     //____________________ Payment Status == Credit ____________________
     else {
-      final num _updatedBalance = _totalAmount - _updatedReturnAmount;
+      final num _updatedBalance = Converter.amountRounder(_totalAmount - _updatedReturnAmount);
       log('Updated Balance == $_updatedBalance');
 
       final TransactionsModel _transactionS = TransactionsModel(
@@ -501,8 +559,8 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         amount: returnAmount,
         status: purchase.paymentStatus,
         description: 'Transaction $purchaseReturnId',
-        salesId: purchase.id,
-        salesReturnId: purchaseReturnId,
+        purchaseId: purchase.id,
+        purchaseReturnId: purchaseReturnId,
       );
 
       final TransactionsModel _transactionSR = TransactionsModel(
@@ -512,22 +570,22 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         amount: returnAmount,
         status: purchase.paymentStatus,
         description: 'Transaction $purchaseReturnId',
-        salesId: purchase.id,
-        salesReturnId: purchaseReturnId,
+        purchaseId: purchase.id,
+        purchaseReturnId: purchaseReturnId,
       );
 
       //-------------------- Create Transactions --------------------
       await transactionDatabase.createTransaction(_transactionSR);
       await transactionDatabase.createTransaction(_transactionS);
 
-      final updatedSale = purchase.copyWith(
+      final updatedPurchase = purchase.copyWith(
         returnAmount: _updatedReturnAmount.toString(),
         balance: _updatedBalance.toString(),
         paymentStatus: _totalAmount == _updatedReturnAmount ? 'Returned' : 'Credit',
       );
 
-      //-------------------- Update Sale with Purchase Return --------------------
-      await purchaseDatabase.updatePurchaseByPurchaseId(purchase: updatedSale);
+      //-------------------- Update Purchase with Purchase Return --------------------
+      await purchaseDatabase.updatePurchaseByPurchaseId(purchase: updatedPurchase);
     }
   }
 }

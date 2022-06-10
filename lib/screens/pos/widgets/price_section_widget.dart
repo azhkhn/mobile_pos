@@ -69,7 +69,7 @@ class PriceSectionWidget extends StatelessWidget {
                                       return Flexible(
                                         child: FittedBox(
                                           child: Text(
-                                            '(${Converter.amountRounder(totalQuantity)})',
+                                            '(${Converter.amountRounderString(totalQuantity)})',
                                             softWrap: false,
                                             overflow: TextOverflow.ellipsis,
                                             style: kItemsPriceStyleBold,

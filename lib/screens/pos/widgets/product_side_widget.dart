@@ -728,8 +728,8 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
     ProductSideWidget.notifyStock(itemId: itemList[index].id!);
 
     final String unitPrice = vatMethod == 'Inclusive'
-        ? Converter.amountRounder(const SaleSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: _vat.rate))
-        : Converter.amountRounder(num.tryParse(itemList[index].sellingPrice)!);
+        ? Converter.amountRounderString(const SaleSideWidget().getExclusiveAmount(sellingPrice: itemList[index].sellingPrice, vatRate: _vat.rate))
+        : Converter.amountRounderString(num.tryParse(itemList[index].sellingPrice)!);
 
     SaleSideWidget.unitPriceNotifier.value.add(TextEditingController(text: unitPrice));
 

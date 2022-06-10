@@ -41,8 +41,8 @@ class QuickCashWidget extends StatelessWidget {
                         child: CustomMaterialBtton(
                           onPressed: () {
                             // PaymentTypeWidget.amountController.text = '$totalPayable';
-                            PaymentTypeWidget.amountController.text = Converter.amountRounder(totalPayable);
-                            log('total payable == ' + Converter.amountRounder(totalPayable));
+                            PaymentTypeWidget.amountController.text = Converter.amountRounderString(totalPayable);
+                            log('total payable == ' + Converter.amountRounderString(totalPayable));
 
                             return PaymentTypeWidget(
                               totalPayable: totalPayable,
@@ -186,8 +186,8 @@ class QuickCashWidget extends StatelessWidget {
                     child: CustomMaterialBtton(
                       onPressed: () {
                         // PaymentTypeWidget.amountController.text = '$totalPayable';
-                        PaymentTypeWidget.amountController.text = Converter.amountRounder(totalPayable);
-                        log('total payable == ' + Converter.amountRounder(totalPayable));
+                        PaymentTypeWidget.amountController.text = Converter.amountRounderString(totalPayable);
+                        log('total payable == ' + Converter.amountRounderString(totalPayable));
                         return PaymentTypeWidget(
                           totalPayable: totalPayable,
                         ).amountChanged('$totalPayable');

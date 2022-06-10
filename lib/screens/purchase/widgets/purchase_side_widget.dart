@@ -514,7 +514,7 @@ class PurchaseSideWidget extends StatelessWidget {
 
         _totalAmount = _totalAmount! + subTotal!;
       }
-      totalAmountNotifier.value = _totalAmount!;
+      totalAmountNotifier.value = Converter.amountRounder(_totalAmount!);
       log('Total Amount ==  $_totalAmount');
     }
   }
@@ -557,7 +557,7 @@ class PurchaseSideWidget extends StatelessWidget {
         _totalVAT += _subTotal * _vatRate / 100;
       }
       log('Total VAT == $_totalVAT');
-      totalVatNotifier.value = _totalVAT;
+      totalVatNotifier.value = Converter.amountRounder(_totalVAT);
     }
   }
 
@@ -580,7 +580,8 @@ class PurchaseSideWidget extends StatelessWidget {
 //==================== Get Total VAT ====================
   void getTotalPayable() {
     final num _totalPayable = totalAmountNotifier.value + totalVatNotifier.value;
-    totalPayableNotifier.value = _totalPayable;
+
+    totalPayableNotifier.value = Converter.amountRounder(_totalPayable);
     log('Total Payable == $_totalPayable');
   }
 

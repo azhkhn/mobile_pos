@@ -5,9 +5,15 @@ class Converter {
   static final NumberFormat currency = NumberFormat.currency(symbol: '', locale: 'en_US');
 
   //==================== Round Number ====================
-  static String amountRounder(num amount) {
+  static String amountRounderString(num amount) {
     final roundedAmount = num.parse(amount.toStringAsFixed(2));
     return roundedAmount.toString();
+  }
+
+  //==================== Round Number ====================
+  static num amountRounder(num amount) {
+    final roundedAmount = num.parse(amount.toStringAsFixed(2));
+    return roundedAmount;
   }
 
   // static final NumberFormat roundNumber = NumberFormat("###.0#", "en_US");

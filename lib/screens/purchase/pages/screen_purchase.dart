@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
+import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
+import 'package:shop_ez/model/transactions/transactions_model.dart';
 
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
@@ -30,6 +32,23 @@ class ScreenPurchase extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await getPurchasesDetails();
+      final List<TransactionsModel> _transaction = await TransactionDatabase.instance.getAllTransactions();
+
+      num totalExpense = 0;
+      num totalIncome = 0;
+
+      for (var transaction in _transaction) {
+        if (transaction.transactionType == 'Income') {
+          totalIncome += num.parse(transaction.amount);
+        } else {
+          totalExpense += num.parse(transaction.amount);
+        }
+      }
+
+      log('Total Income == $totalIncome');
+      log('Total Expense == $totalExpense');
+
+      log('In the Money == ${totalIncome - totalExpense}');
     });
     return Scaffold(
       appBar: AppBarWidget(

@@ -40,7 +40,7 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 16, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 12, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -52,7 +52,7 @@ class EzDatabase {
     const intNull = 'INTEGER';
     const intType = 'INTEGER NOT NULL';
 
-    await db.execute("ALTER TABLE $tableCustomer ADD COLUMN ${CustomerFields.contactNumber} $textType DEFAULT '919293949596'");
+    // await db.execute("ALTER TABLE $tableCustomer ADD COLUMN ${CustomerFields.contactNumber} $textType DEFAULT '919293949596'");
 
     await db.execute("DROP TABLE IF EXISTS $tableSales");
     await db.execute("DROP TABLE IF EXISTS $tableSalesItems");

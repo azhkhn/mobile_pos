@@ -344,24 +344,24 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         final vat = await VatDatabase.instance.getVatById(vatId);
         final vatRate = vat.rate;
 
-        log(' Sales Return Id == $salesReturnId');
-        log(' Sales Id == $originalSaleId');
-        log(' Original Invoice Number == $originalInvoiceNumber');
-        log(' Product id == $productId');
-        log(' Product Type == $productType');
-        log(' Product Code == $productCode');
-        log(' Product Name == $productName');
-        log(' Product Category == $categoryId');
-        log(' Product Cost == $productCost');
-        log(' Net Unit Price == $netUnitPrice');
-        log(' Unit Price == $unitPrice');
-        log(' Product quantity == $quantity');
-        log(' Unit Code == $unitCode');
-        log(' Product subTotal == $subTotal');
-        log(' VAT id == $vatId');
-        log(' VAT Percentage == $vatPercentage');
-        log(' VAT Total == $vatTotal');
-        log('\n==============================================\n');
+        // log(' Sales Return Id == $salesReturnId');
+        // log(' Sales Id == $originalSaleId');
+        // log(' Original Invoice Number == $originalInvoiceNumber');
+        // log(' Product id == $productId');
+        // log(' Product Type == $productType');
+        // log(' Product Code == $productCode');
+        // log(' Product Name == $productName');
+        // log(' Product Category == $categoryId');
+        // log(' Product Cost == $productCost');
+        // log(' Net Unit Price == $netUnitPrice');
+        // log(' Unit Price == $unitPrice');
+        // log(' Product quantity == $quantity');
+        // log(' Unit Code == $unitCode');
+        // log(' Product subTotal == $subTotal');
+        // log(' VAT id == $vatId');
+        // log(' VAT Percentage == $vatPercentage');
+        // log(' VAT Total == $vatTotal');
+        // log('\n==============================================\n');
 
         final SalesReturnItemsModel _salesReturnItemsModel = SalesReturnItemsModel(
           originalInvoiceNumber: originalInvoiceNumber,
@@ -471,8 +471,17 @@ class SalesReturnButtonsWidget extends StatelessWidget {
 
     //____________________ Payment Status == Partial ____________________
     else if (sale.paymentStatus == 'Partial') {
-      final num _updatedBalance = _totalAmount - _updatedReturnAmount - _paidAmount;
+      final num _updatedPaidAmount = Converter.amountRounder(_totalAmount - _updatedReturnAmount);
+      num paidAmount = 0;
+      if (_paidAmount > _updatedPaidAmount) {
+        paidAmount = _updatedPaidAmount;
+        log('Updated Paid Amount == $_updatedPaidAmount');
+      } else {
+        paidAmount = _paidAmount;
+      }
+      final num _updatedBalance = Converter.amountRounder(_totalAmount - _updatedReturnAmount - paidAmount);
       log('Updated Balance == $_updatedBalance');
+
       final TransactionsModel _transactionForSale = TransactionsModel(
         category: 'Sales',
         transactionType: 'Income',
@@ -495,11 +504,28 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         salesReturnId: salesReturnId,
       );
 
+      if (_paidAmount > _updatedPaidAmount) {
+        final String _refundAmount = Converter.amountRounderString(_paidAmount - _updatedPaidAmount);
+        log('Refund Amount == $_refundAmount');
+        final TransactionsModel _transactionForPR = TransactionsModel(
+          category: 'Sale Return',
+          transactionType: 'Expense',
+          dateTime: dateTime,
+          amount: _refundAmount,
+          status: sale.paymentStatus,
+          description: 'Transaction $salesReturnId',
+          purchaseId: sale.id,
+          purchaseReturnId: salesReturnId,
+        );
+
+        await transactionDatabase.createTransaction(_transactionForPR);
+      }
+
       //-------------------- Create Transactions --------------------
       await transactionDatabase.createTransaction(_transactionForSale);
       await transactionDatabase.createTransaction(_transactionForSalesReturn);
 
-      // ---------- When fully sale is fully returned ----------
+      // ---------- When Sale is fully returned ----------
       if (_updatedReturnAmount == _totalAmount) {
         final TransactionsModel _transactionSR = TransactionsModel(
             category: 'Sales Return',
@@ -526,6 +552,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         final updatedSale = sale.copyWith(
           returnAmount: _updatedReturnAmount.toString(),
           balance: _updatedBalance.toString(),
+          paid: paidAmount.toString(),
           paymentStatus: _updatedBalance <= 0 ? 'Paid' : 'Partial',
         );
 

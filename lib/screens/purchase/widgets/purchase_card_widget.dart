@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 
 import '../../../core/constant/sizes.dart';
 import '../../../core/constant/text.dart';
@@ -211,22 +212,35 @@ class PurchaseCardWidget extends StatelessWidget {
                         maxFontSize: 14,
                       ),
                       Expanded(
-                        child: AutoSizeText(
-                          purchases[index].paymentStatus,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: purchases[index].paymentStatus == 'Paid'
-                                ? Colors.green
-                                : purchases[index].paymentStatus == 'Partial'
-                                    ? Colors.orange
-                                    : Colors.red,
-                          ),
-                          maxLines: 1,
-                          minFontSize: 10,
-                          maxFontSize: 14,
-                        ),
+                        child: purchases[index].paymentStatus != 'Returned'
+                            ? AutoSizeText(
+                                purchases[index].paymentStatus,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: purchases[index].paymentStatus == 'Paid'
+                                        ? kGreen
+                                        : purchases[index].paymentStatus == 'Partial'
+                                            ? kOrange
+                                            : purchases[index].paymentStatus == 'Credit'
+                                                ? kRed
+                                                : kRed),
+                                maxLines: 1,
+                                minFontSize: 10,
+                                maxFontSize: 14,
+                              )
+                            : Row(mainAxisAlignment: MainAxisAlignment.start, children: const [
+                                Icon(Icons.restore_outlined, color: kRed, size: 18),
+                                kWidth2,
+                                AutoSizeText(
+                                  'Returned',
+                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: kRed),
+                                  maxLines: 1,
+                                  minFontSize: 10,
+                                  maxFontSize: 14,
+                                ),
+                              ]),
                       ),
                     ],
                   ),

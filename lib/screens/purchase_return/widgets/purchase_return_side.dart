@@ -513,7 +513,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     num? _totalQuantiy = 0;
 
     for (var i = 0; i < selectedProductsNotifier.value.length; i++) {
-      _totalQuantiy = _totalQuantiy! + num.tryParse(quantityNotifier.value[i].value.text)!;
+      _totalQuantiy = _totalQuantiy! + num.parse(quantityNotifier.value[i].value.text.isNotEmpty ? quantityNotifier.value[i].value.text : '0');
     }
     await Future.delayed(const Duration(milliseconds: 0));
     totalQuantityNotifier.value = _totalQuantiy!;

@@ -615,8 +615,8 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
     PurchaseSideWidget.vatRateNotifier.value.add(_vat.rate);
 
     final String _itemCost = vatMethod == 'Inclusive'
-        ? Converter.amountRounder(const PurchaseSideWidget().getExclusiveAmount(itemCost: itemList[index].itemCost, vatRate: _vat.rate))
-        : Converter.amountRounder(num.tryParse(itemList[index].itemCost)!);
+        ? Converter.amountRounderString(const PurchaseSideWidget().getExclusiveAmount(itemCost: itemList[index].itemCost, vatRate: _vat.rate))
+        : Converter.amountRounderString(num.tryParse(itemList[index].itemCost)!);
 
     PurchaseSideWidget.costNotifier.value.add(TextEditingController(text: _itemCost));
 
