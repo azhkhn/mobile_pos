@@ -42,8 +42,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
 
   static final ValueNotifier<PurchaseModel?> originalPurchaseNotifier = ValueNotifier(null);
 
-  static final ValueNotifier<int?> supplierIdNotifier = ValueNotifier(null);
-  static final ValueNotifier<String?> supplierNameNotifier = ValueNotifier(null);
+  static final ValueNotifier<SupplierModel?> supplierNotifier = ValueNotifier(null);
   static final ValueNotifier<num> totalItemsNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalQuantityNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalAmountNotifier = ValueNotifier(0);
@@ -125,7 +124,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                                     child: InkWell(
                                       child: const Icon(Icons.clear, size: 15),
                                       onTap: () {
-                                        supplierIdNotifier.value = null;
+                                        supplierNotifier.value = null;
                                         supplierController.clear();
                                       },
                                     ),
@@ -158,8 +157,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                             },
                             onSuggestionSelected: (SupplierModel suggestion) {
                               supplierController.text = suggestion.contactName;
-                              supplierNameNotifier.value = suggestion.contactName;
-                              supplierIdNotifier.value = suggestion.id;
+                              supplierNotifier.value = suggestion;
                               log(suggestion.supplierName);
                             },
                           );
@@ -247,8 +245,8 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                             maxHeight: 30,
                           ),
                           onPressed: () {
-                            if (supplierIdNotifier.value != null) {
-                              log('${supplierIdNotifier.value}');
+                            if (supplierNotifier.value != null) {
+                              log('${supplierNotifier.value}');
 
                               showModalBottomSheet(
                                   context: context,
@@ -258,7 +256,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                                   builder: (context) => DismissibleWidget(
                                         context: context,
                                         child: CustomBottomSheetWidget(
-                                          id: supplierIdNotifier.value,
+                                          model: supplierNotifier.value,
                                           supplier: true,
                                         ),
                                       ));
@@ -620,8 +618,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     final List<ItemMasterModel> remainingPurchasedItems = [];
 
     supplierController.text = purchase.supplierName;
-    supplierIdNotifier.value = purchase.supplierId;
-    supplierNameNotifier.value = purchase.supplierName;
+    supplierNotifier.value = await SupplierDatabase.instance.getSupplierById(purchase.id!);
 
     //==================== Fetch sold items based on salesId ====================
     final List<PurchaseItemsModel> purchasedItems = await PurchaseItemsDatabase.instance.getPurchaseItemByPurchaseId(purchase.id!);
@@ -715,8 +712,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     totalAmountNotifier.notifyListeners();
     totalVatNotifier.notifyListeners();
     totalPayableNotifier.notifyListeners();
-    supplierIdNotifier.notifyListeners();
-    supplierNameNotifier.notifyListeners();
+    supplierNotifier.notifyListeners();
     originalPurchaseNotifier.notifyListeners();
   }
 
@@ -733,8 +729,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     totalAmountNotifier.value = 0;
     totalVatNotifier.value = 0;
     totalPayableNotifier.value = 0;
-    supplierIdNotifier.value = null;
-    supplierNameNotifier.value = null;
+    supplierNotifier.value = null;
     originalPurchaseNotifier.value = null;
     // PurchaseReturnProductSideWidget.itemsNotifier.value.clear();
 
@@ -748,8 +743,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
       totalAmountNotifier.notifyListeners();
       totalVatNotifier.notifyListeners();
       totalPayableNotifier.notifyListeners();
-      supplierIdNotifier.notifyListeners();
-      supplierNameNotifier.notifyListeners();
+      supplierNotifier.notifyListeners();
     }
 
     log('========== Purchase Return values has been cleared! ==========');

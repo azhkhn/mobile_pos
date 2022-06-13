@@ -43,8 +43,7 @@ class SalesReturnSideWidget extends StatelessWidget {
 
   static final ValueNotifier<SalesModel?> originalSaleNotifier = ValueNotifier(null);
 
-  static final ValueNotifier<int?> customerIdNotifier = ValueNotifier(null);
-  static final ValueNotifier<String?> customerNameNotifier = ValueNotifier(null);
+  static final ValueNotifier<CustomerModel?> customerNotifier = ValueNotifier(null);
   static final ValueNotifier<num> totalItemsNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalQuantityNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalAmountNotifier = ValueNotifier(0);
@@ -120,7 +119,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                                     child: InkWell(
                                       child: const Icon(Icons.clear, size: 15),
                                       onTap: () {
-                                        customerIdNotifier.value = null;
+                                        customerNotifier.value = null;
                                         customerController.clear();
                                       },
                                     ),
@@ -147,8 +146,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                             },
                             onSuggestionSelected: (CustomerModel suggestion) {
                               customerController.text = suggestion.customer;
-                              customerNameNotifier.value = suggestion.customer;
-                              customerIdNotifier.value = suggestion.id;
+                              customerNotifier.value = suggestion;
                               log(suggestion.company);
                             },
                           );
@@ -235,8 +233,8 @@ class SalesReturnSideWidget extends StatelessWidget {
                             maxHeight: 30,
                           ),
                           onPressed: () {
-                            if (customerIdNotifier.value != null) {
-                              log('${customerIdNotifier.value}');
+                            if (customerNotifier.value != null) {
+                              log('${customerNotifier.value}');
 
                               showModalBottomSheet(
                                   context: context,
@@ -246,7 +244,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                                   builder: (context) => DismissibleWidget(
                                         context: context,
                                         child: CustomBottomSheetWidget(
-                                          id: customerIdNotifier.value,
+                                          model: customerNotifier.value,
                                           supplier: false,
                                         ),
                                       ));
@@ -276,10 +274,11 @@ class SalesReturnSideWidget extends StatelessWidget {
                   //         onPressed: () async {
                   //           // OrientationMode.isLandscape = false;
                   //           // await OrientationMode.toPortrait();
-                  //           final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: {'fromPos':true});
+                  // final CustomerModel? addedCustomer =
+                  //                   await Navigator.pushNamed(context, routeAddCustomer, arguments: {'fromPos': true}) as CustomerModel;
 
-                  //           if (id != null) {
-                  //             final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
+                  //               if (addedCustomer != null) {
+                  //                 // final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
 
                   //             customerController.text = addedCustomer.customer;
                   //             customerNameNotifier.value = addedCustomer.customer;
@@ -610,8 +609,7 @@ class SalesReturnSideWidget extends StatelessWidget {
     final List<ItemMasterModel> remainingsoldItems = [];
 
     customerController.text = sale.customerName;
-    customerIdNotifier.value = sale.customerId;
-    customerNameNotifier.value = sale.customerName;
+    customerNotifier.value = await CustomerDatabase.instance.getCustomerById(sale.id!);
 
     //==================== Fetch sold items based on salesId ====================
     final List<SalesItemsModel> soldItems = await SalesItemsDatabase.instance.getSalesItemBySaleId(sale.id!);
@@ -705,8 +703,7 @@ class SalesReturnSideWidget extends StatelessWidget {
     totalAmountNotifier.notifyListeners();
     totalVatNotifier.notifyListeners();
     totalPayableNotifier.notifyListeners();
-    customerIdNotifier.notifyListeners();
-    customerNameNotifier.notifyListeners();
+    customerNotifier.notifyListeners();
     originalSaleNotifier.notifyListeners();
   }
 
@@ -723,8 +720,7 @@ class SalesReturnSideWidget extends StatelessWidget {
     totalAmountNotifier.value = 0;
     totalVatNotifier.value = 0;
     totalPayableNotifier.value = 0;
-    customerIdNotifier.value = null;
-    customerNameNotifier.value = null;
+    customerNotifier.value = null;
     originalSaleNotifier.value = null;
     // SalesReturnProductSideWidget.itemsNotifier.value.clear();
 
@@ -738,8 +734,7 @@ class SalesReturnSideWidget extends StatelessWidget {
       totalAmountNotifier.notifyListeners();
       totalVatNotifier.notifyListeners();
       totalPayableNotifier.notifyListeners();
-      customerIdNotifier.notifyListeners();
-      customerNameNotifier.notifyListeners();
+      customerNotifier.notifyListeners();
       originalSaleNotifier.notifyListeners();
     }
 

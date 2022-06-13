@@ -292,7 +292,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                     child: InkWell(
                                       child: const Icon(Icons.clear, size: 15),
                                       onTap: () {
-                                        SaleSideWidget.customerIdNotifier.value = null;
+                                        SaleSideWidget.customerNotifier.value = null;
                                         SaleSideWidget.customerController.clear();
                                       },
                                     ),
@@ -318,8 +318,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                             },
                             onSuggestionSelected: (CustomerModel suggestion) {
                               SaleSideWidget.customerController.text = suggestion.customer;
-                              SaleSideWidget.customerNameNotifier.value = suggestion.customer;
-                              SaleSideWidget.customerIdNotifier.value = suggestion.id;
+                              SaleSideWidget.customerNotifier.value = suggestion;
                               log(suggestion.company);
                             },
                           ),
@@ -338,8 +337,8 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                   maxHeight: 30,
                                 ),
                                 onPressed: () {
-                                  if (SaleSideWidget.customerIdNotifier.value != null) {
-                                    log('Customer Id == ${SaleSideWidget.customerIdNotifier.value}');
+                                  if (SaleSideWidget.customerNotifier.value != null) {
+                                    log('Customer Id == ${SaleSideWidget.customerNotifier.value}');
 
                                     showModalBottomSheet(
                                         context: context,
@@ -348,7 +347,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                                         builder: (context) => DismissibleWidget(
                                               context: context,
-                                              child: CustomBottomSheetWidget(id: SaleSideWidget.customerIdNotifier.value),
+                                              child: CustomBottomSheetWidget(model: SaleSideWidget.customerNotifier.value),
                                             ));
                                   } else {
                                     kSnackBar(context: context, content: 'Please select any Customer to show details!');
@@ -376,14 +375,14 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                               onPressed: () async {
                                 // OrientationMode.isLandscape = false;
                                 // await OrientationMode.toPortrait();
-                                final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: {'fromPos': true});
+                                final CustomerModel? addedCustomer =
+                                    await Navigator.pushNamed(context, routeAddCustomer, arguments: {'fromPos': true}) as CustomerModel;
 
-                                if (id != null) {
-                                  final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
+                                if (addedCustomer != null) {
+                                  // final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
 
                                   SaleSideWidget.customerController.text = addedCustomer.customer;
-                                  SaleSideWidget.customerNameNotifier.value = addedCustomer.customer;
-                                  SaleSideWidget.customerIdNotifier.value = addedCustomer.id;
+                                  SaleSideWidget.customerNotifier.value = addedCustomer;
                                   log(addedCustomer.company);
                                 }
 

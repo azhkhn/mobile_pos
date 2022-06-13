@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member, must_be_immutable
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -21,19 +23,19 @@ class CustomerList extends StatelessWidget {
   //==================== TextEditing Controllers ====================
   final customerController = TextEditingController();
 
-//==================== Value Notifiers ====================
+  //==================== Value Notifiers ====================
   final ValueNotifier<int?> customerIdNotifier = ValueNotifier(null);
-  static final ValueNotifier<String?> customerNameNotifier = ValueNotifier(null);
+  final ValueNotifier<List<CustomerModel>> customerNotifer = ValueNotifier([]);
 
-  //========== Value Notifier ==========
-  static final ValueNotifier<List<CustomerModel>> customerNotifer = ValueNotifier([]);
+  //==================== List Customers ====================
+  List<CustomerModel> customersList = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBarWidget(title: 'Customer Manage'),
         body: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
               //==================== Search & Filter ====================
@@ -61,9 +63,15 @@ class CustomerList extends StatelessWidget {
                               padding: kClearTextIconPadding,
                               child: InkWell(
                                 child: const Icon(Icons.clear, size: 15),
-                                onTap: () {
+                                onTap: () async {
                                   customerIdNotifier.value = null;
                                   customerController.clear();
+
+                                  if (customersList.isNotEmpty) {
+                                    customerNotifer.value = customersList;
+                                  } else {
+                                    customerNotifer.value = await CustomerDatabase.instance.getAllCustomers();
+                                  }
                                 },
                               ),
                             ),
@@ -87,8 +95,8 @@ class CustomerList extends StatelessWidget {
                         );
                       },
                       onSuggestionSelected: (CustomerModel suggestion) {
+                        customerNotifer.value = [suggestion];
                         customerController.text = suggestion.customer;
-                        customerNameNotifier.value = suggestion.customer;
                         customerIdNotifier.value = suggestion.id;
                         log(suggestion.company);
                       },
@@ -118,7 +126,7 @@ class CustomerList extends StatelessWidget {
                                   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                                   builder: (context) => DismissibleWidget(
                                         context: context,
-                                        child: CustomBottomSheetWidget(id: customerIdNotifier.value),
+                                        child: CustomBottomSheetWidget(model: customerNotifer.value.first),
                                       ));
                             } else {
                               kSnackBar(context: context, content: 'Please select any Customer to show details!');
@@ -144,15 +152,15 @@ class CustomerList extends StatelessWidget {
                           maxHeight: 30,
                         ),
                         onPressed: () async {
-                          final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: {'fromPos': true});
+                          final CustomerModel? addedCustomer =
+                              await Navigator.pushNamed(context, routeAddCustomer, arguments: {'fromPos': true}) as CustomerModel;
 
-                          if (id != null) {
-                            final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
-
+                          if (addedCustomer != null) {
+                            customerNotifer.value.add(addedCustomer);
+                            customerNotifer.notifyListeners();
+                            // customersList.add(addedCustomer);
                             customerController.text = addedCustomer.customer;
-                            customerNameNotifier.value = addedCustomer.customer;
                             customerIdNotifier.value = addedCustomer.id;
-                            log(addedCustomer.company);
                           }
                         },
                         icon: const Icon(
@@ -183,6 +191,10 @@ class CustomerList extends StatelessWidget {
                             return const Center(child: Text('Customers is Empty!'));
                           }
                           customerNotifer.value = snapshot.data!;
+
+                          if (customersList.isEmpty) {
+                            customersList = snapshot.data!;
+                          }
                           return ValueListenableBuilder(
                               valueListenable: customerNotifer,
                               builder: (context, List<CustomerModel> customer, _) {
@@ -214,7 +226,7 @@ class CustomerList extends StatelessWidget {
                                                                       borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                                                                   builder: (context) => DismissibleWidget(
                                                                         context: context,
-                                                                        child: CustomBottomSheetWidget(id: customer[index].id),
+                                                                        child: CustomBottomSheetWidget(model: customer[index]),
                                                                       ));
                                                             },
                                                           },
@@ -222,12 +234,21 @@ class CustomerList extends StatelessWidget {
                                                             'title': 'Edit Customer',
                                                             'color': Colors.teal[400],
                                                             'icon': Icons.personal_injury,
-                                                            // 'action': () {
-                                                            //   return Navigator.pushNamed(context, routeAddCustomer, arguments: {
-                                                            //     'customer': customer[index],
-                                                            //     'fromPos': true,
-                                                            //   });
-                                                            // }
+                                                            'action': () async {
+                                                              final editedCustomer = await Navigator.pushNamed(context, routeAddCustomer, arguments: {
+                                                                'customer': customer[index],
+                                                                'fromPos': true,
+                                                              });
+
+                                                              if (editedCustomer != null && editedCustomer is CustomerModel) {
+                                                                final int stableIndex =
+                                                                    customersList.indexWhere((customer) => customer.id == editedCustomer.id);
+                                                                log('stable Index == $stableIndex');
+                                                                customerNotifer.value[index] = editedCustomer;
+                                                                customersList[stableIndex] = editedCustomer;
+                                                                customerNotifer.notifyListeners();
+                                                              }
+                                                            }
                                                           },
                                                         ],
                                                       ));

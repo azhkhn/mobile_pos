@@ -124,7 +124,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () async {
-                    final int? customerId = SalesReturnSideWidget.customerIdNotifier.value;
+                    final int? customerId = SalesReturnSideWidget.customerNotifier.value!.id;
                     final num items = SalesReturnSideWidget.totalItemsNotifier.value;
 
                     final String? originalInvoiceNumber = SalesReturnSideWidget.originalSaleNotifier.value?.invoiceNumber;
@@ -282,8 +282,8 @@ class SalesReturnButtonsWidget extends StatelessWidget {
     dateTime = DateTime.now().toIso8601String();
     originalInvoiceNumber = SalesReturnSideWidget.originalSaleNotifier.value!.invoiceNumber!;
     originalSaleId = SalesReturnSideWidget.originalSaleNotifier.value!.id;
-    customerId = SalesReturnSideWidget.customerIdNotifier.value!;
-    customerName = SalesReturnSideWidget.customerNameNotifier.value!;
+    customerId = SalesReturnSideWidget.customerNotifier.value!.id!;
+    customerName = SalesReturnSideWidget.customerNotifier.value!.customer;
     billerName = _biller;
     salesNote = argSalesNote ?? '';
     totalItems = SalesReturnSideWidget.totalItemsNotifier.value.toString();

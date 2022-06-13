@@ -38,8 +38,7 @@ class PurchaseSideWidget extends StatelessWidget {
   static final ValueNotifier<List<TextEditingController>> costNotifier = ValueNotifier([]);
   static final ValueNotifier<List<int>> vatRateNotifier = ValueNotifier([]);
 
-  static final ValueNotifier<int?> supplierIdNotifier = ValueNotifier(null);
-  static final ValueNotifier<String?> supplierNameNotifier = ValueNotifier(null);
+  static final ValueNotifier<SupplierModel?> supplierNotifier = ValueNotifier(null);
   static final ValueNotifier<num> totalItemsNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalQuantityNotifier = ValueNotifier(0);
   static final ValueNotifier<num> totalAmountNotifier = ValueNotifier(0);
@@ -106,7 +105,7 @@ class PurchaseSideWidget extends StatelessWidget {
                                     child: InkWell(
                                       child: const Icon(Icons.clear, size: 15),
                                       onTap: () {
-                                        supplierIdNotifier.value = null;
+                                        supplierNotifier.value = null;
                                         supplierController.clear();
                                       },
                                     ),
@@ -132,8 +131,7 @@ class PurchaseSideWidget extends StatelessWidget {
                             },
                             onSuggestionSelected: (SupplierModel suggestion) {
                               supplierController.text = suggestion.contactName;
-                              supplierNameNotifier.value = suggestion.contactName;
-                              supplierIdNotifier.value = suggestion.id;
+                              supplierNotifier.value = suggestion;
                               log(suggestion.supplierName);
                             },
                           ),
@@ -184,8 +182,8 @@ class PurchaseSideWidget extends StatelessWidget {
                                   maxHeight: 30,
                                 ),
                                 onPressed: () {
-                                  if (supplierIdNotifier.value != null) {
-                                    log('$supplierIdNotifier');
+                                  if (supplierNotifier.value != null) {
+                                    log('$supplierNotifier');
 
                                     showModalBottomSheet(
                                         context: context,
@@ -195,7 +193,7 @@ class PurchaseSideWidget extends StatelessWidget {
                                         builder: (context) => DismissibleWidget(
                                               context: context,
                                               child: CustomBottomSheetWidget(
-                                                id: supplierIdNotifier.value,
+                                                model: supplierNotifier.value,
                                                 supplier: true,
                                               ),
                                             ));
@@ -231,8 +229,7 @@ class PurchaseSideWidget extends StatelessWidget {
                                     final addedSupplier = await SupplierDatabase.instance.getSupplierById(id as int);
 
                                     supplierController.text = addedSupplier.contactName;
-                                    supplierNameNotifier.value = addedSupplier.contactName;
-                                    supplierIdNotifier.value = addedSupplier.id;
+                                    supplierNotifier.value = addedSupplier;
                                     log(addedSupplier.supplierName);
                                   }
 
@@ -600,8 +597,7 @@ class PurchaseSideWidget extends StatelessWidget {
     totalAmountNotifier.value = 0;
     totalVatNotifier.value = 0;
     totalPayableNotifier.value = 0;
-    supplierIdNotifier.value = null;
-    supplierNameNotifier.value = null;
+    supplierNotifier.value = null;
     PurchaseProductSideWidget.itemsNotifier.value.clear();
 
     if (notify) {
@@ -616,8 +612,7 @@ class PurchaseSideWidget extends StatelessWidget {
       totalAmountNotifier.notifyListeners();
       totalVatNotifier.notifyListeners();
       totalPayableNotifier.notifyListeners();
-      supplierIdNotifier.notifyListeners();
-      supplierNameNotifier.notifyListeners();
+      supplierNotifier.notifyListeners();
     }
   }
 }

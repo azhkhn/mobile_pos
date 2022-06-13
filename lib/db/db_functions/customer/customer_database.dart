@@ -8,7 +8,7 @@ class CustomerDatabase {
   CustomerDatabase._init();
 
 //========== Create Customer ==========
-  Future<int> createCustomer(CustomerModel _customerModel) async {
+  Future<CustomerModel> createCustomer(CustomerModel _customerModel) async {
     final db = await dbInstance.database;
 
     // final _company = await db.rawQuery(
@@ -21,20 +21,32 @@ class CustomerDatabase {
         throw 'VAT Number already exist!';
       } else {
         final id = await db.insert(tableCustomer, _customerModel.toJson());
-        log('Customer id = $id');
-        return id;
+        log('Customer ${_customerModel.customer} Added!');
+        return _customerModel.copyWith(id: id);
       }
     } else {
       final id = await db.insert(tableCustomer, _customerModel.toJson());
-      log('Customer id = $id');
-      return id;
+      log('Customer ${_customerModel.customer} Added!');
+      return _customerModel.copyWith(id: id);
     }
+  }
+
+  //========== Update Customer ==========
+  Future<CustomerModel> updateCustomer(CustomerModel customerModel) async {
+    final db = await dbInstance.database;
+    final _result = await db.update(
+      tableCustomer,
+      customerModel.toJson(),
+      where: '${CustomerFields.id} = ?',
+      whereArgs: [customerModel.id],
+    );
+    log('Customer ($_result) updated successfully');
+    return customerModel;
   }
 
   //========== Get All Customers ==========
   Future<List<CustomerModel>> getAllCustomers() async {
     final db = await dbInstance.database;
-    // await db.delete(tableCustomer, where: '${CustomerFields.id} != ? ', whereArgs: [1]);
     final _result = await db.query(tableCustomer);
     log('Customers === $_result');
     final _customers = _result.map((json) => CustomerModel.fromJson(json)).toList();
@@ -52,10 +64,6 @@ class CustomerDatabase {
     );
     log('Customer === $_result');
     final _customers = _result.map((json) => CustomerModel.fromJson(json)).toList();
-
-    // await db.update(tableCustomer,
-    //     _customers.first.copyWith(vatNumber: '437596584523654').toJson(),
-    //     where: '${CustomerFields.id} = ? ', whereArgs: [customerId]);
     return _customers.first;
   }
 

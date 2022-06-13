@@ -93,7 +93,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    final int? customerId = SaleSideWidget.customerIdNotifier.value;
+                    final int? customerId = SaleSideWidget.customerNotifier.value!.id;
                     final num items = SaleSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {
@@ -184,7 +184,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    final int? customerId = SaleSideWidget.customerIdNotifier.value;
+                    final int? customerId = SaleSideWidget.customerNotifier.value!.id;
                     final num items = SaleSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {
@@ -302,7 +302,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () async {
-                    final int? customerId = SaleSideWidget.customerIdNotifier.value;
+                    final int? customerId = SaleSideWidget.customerNotifier.value!.id;
                     final num items = SaleSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {
@@ -445,8 +445,8 @@ class PaymentButtonsWidget extends StatelessWidget {
     // Save sale in a old date in Database
     // dateTime = DateTime(2022, 4, 22, 17, 45).toIso8601String();
     dateTime = DateTime.now().toIso8601String();
-    customerId = SaleSideWidget.customerIdNotifier.value!;
-    customerName = SaleSideWidget.customerNameNotifier.value!;
+    customerId = SaleSideWidget.customerNotifier.value!.id!;
+    customerName = SaleSideWidget.customerNotifier.value!.customer;
     billerName = _biller;
     salesNote = argSalesNote ?? '';
     totalItems = SaleSideWidget.totalItemsNotifier.value.toString();

@@ -120,7 +120,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () async {
-                    final int? customerId = PurchaseSideWidget.supplierIdNotifier.value;
+                    final int? customerId = PurchaseSideWidget.supplierNotifier.value!.id;
                     final num items = PurchaseSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {
@@ -219,8 +219,8 @@ class PurchaseButtonsWidget extends StatelessWidget {
 
     referenceNumber = PurchaseSideWidget.referenceNumberController.text;
     dateTime = DateTime.now().toIso8601String();
-    supplierId = PurchaseSideWidget.supplierIdNotifier.value!;
-    supplierName = PurchaseSideWidget.supplierNameNotifier.value!;
+    supplierId = PurchaseSideWidget.supplierNotifier.value!.id!;
+    supplierName = PurchaseSideWidget.supplierNotifier.value!.supplierName;
     billerName = _biller;
     purchaseNote = argPurchaseNote ?? '';
     totalItems = PurchaseSideWidget.totalItemsNotifier.value.toString();

@@ -193,7 +193,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                     child: InkWell(
                                       child: const Icon(Icons.clear, size: 15),
                                       onTap: () {
-                                        PurchaseSideWidget.supplierIdNotifier.value = null;
+                                        PurchaseSideWidget.supplierNotifier.value = null;
                                         PurchaseSideWidget.supplierController.clear();
                                       },
                                     ),
@@ -219,8 +219,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                             },
                             onSuggestionSelected: (SupplierModel suggestion) {
                               PurchaseSideWidget.supplierController.text = suggestion.contactName;
-                              PurchaseSideWidget.supplierNameNotifier.value = suggestion.contactName;
-                              PurchaseSideWidget.supplierIdNotifier.value = suggestion.id;
+                              PurchaseSideWidget.supplierNotifier.value = suggestion;
                               log(suggestion.supplierName);
                             },
                           ),
@@ -271,8 +270,8 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                   maxHeight: 30,
                                 ),
                                 onPressed: () {
-                                  if (PurchaseSideWidget.supplierIdNotifier.value != null) {
-                                    log('${PurchaseSideWidget.supplierIdNotifier}');
+                                  if (PurchaseSideWidget.supplierNotifier.value != null) {
+                                    log('${PurchaseSideWidget.supplierNotifier}');
 
                                     showModalBottomSheet(
                                         context: context,
@@ -282,7 +281,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                         builder: (context) => DismissibleWidget(
                                               context: context,
                                               child: CustomBottomSheetWidget(
-                                                id: PurchaseSideWidget.supplierIdNotifier.value,
+                                                model: PurchaseSideWidget.supplierNotifier.value,
                                                 supplier: true,
                                               ),
                                             ));
@@ -318,8 +317,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                     final addedSupplier = await SupplierDatabase.instance.getSupplierById(id as int);
 
                                     PurchaseSideWidget.supplierController.text = addedSupplier.contactName;
-                                    PurchaseSideWidget.supplierNameNotifier.value = addedSupplier.contactName;
-                                    PurchaseSideWidget.supplierIdNotifier.value = addedSupplier.id;
+                                    PurchaseSideWidget.supplierNotifier.value = addedSupplier;
                                     log(addedSupplier.supplierName);
                                   }
 

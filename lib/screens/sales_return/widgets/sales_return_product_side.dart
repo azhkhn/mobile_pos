@@ -196,7 +196,7 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                                           child: InkWell(
                                             child: const Icon(Icons.clear, size: 15),
                                             onTap: () {
-                                              SalesReturnSideWidget.customerIdNotifier.value = null;
+                                              SalesReturnSideWidget.customerNotifier.value = null;
                                               SalesReturnSideWidget.customerController.clear();
                                             },
                                           ),
@@ -223,8 +223,7 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                                   },
                                   onSuggestionSelected: (CustomerModel suggestion) {
                                     SalesReturnSideWidget.customerController.text = suggestion.customer;
-                                    SalesReturnSideWidget.customerNameNotifier.value = suggestion.customer;
-                                    SalesReturnSideWidget.customerIdNotifier.value = suggestion.id;
+                                    SalesReturnSideWidget.customerNotifier.value = suggestion;
                                     log(suggestion.company);
                                   },
                                 );
@@ -311,8 +310,8 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                                   maxHeight: 30,
                                 ),
                                 onPressed: () {
-                                  if (SalesReturnSideWidget.customerIdNotifier.value != null) {
-                                    log('${SalesReturnSideWidget.customerIdNotifier.value}');
+                                  if (SalesReturnSideWidget.customerNotifier.value != null) {
+                                    log('${SalesReturnSideWidget.customerNotifier.value}');
 
                                     showModalBottomSheet(
                                         context: context,
@@ -322,7 +321,7 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                                         builder: (context) => DismissibleWidget(
                                               context: context,
                                               child: CustomBottomSheetWidget(
-                                                id: SalesReturnSideWidget.customerIdNotifier.value,
+                                                model: SalesReturnSideWidget.customerNotifier.value,
                                                 supplier: false,
                                               ),
                                             ));
@@ -352,14 +351,14 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                                 onPressed: () async {
                                   // OrientationMode.isLandscape = false;
                                   // await OrientationMode.toPortrait();
-                                  final id = await Navigator.pushNamed(context, routeAddCustomer, arguments: {'fromPos': true});
+                                  final CustomerModel? addedCustomer =
+                                      await Navigator.pushNamed(context, routeAddCustomer, arguments: {'fromPos': true}) as CustomerModel;
 
-                                  if (id != null) {
-                                    final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
+                                  if (addedCustomer != null) {
+                                    // final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
 
                                     SalesReturnSideWidget.customerController.text = addedCustomer.customer;
-                                    SalesReturnSideWidget.customerNameNotifier.value = addedCustomer.customer;
-                                    SalesReturnSideWidget.customerIdNotifier.value = addedCustomer.id;
+                                    SalesReturnSideWidget.customerNotifier.value = addedCustomer;
                                     log(addedCustomer.company);
                                   }
 

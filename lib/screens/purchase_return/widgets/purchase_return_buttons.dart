@@ -121,7 +121,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () async {
-                    final int? customerId = PurchaseReturnSideWidget.supplierIdNotifier.value;
+                    final int? customerId = PurchaseReturnSideWidget.supplierNotifier.value!.id;
                     final num items = PurchaseReturnSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {
@@ -272,8 +272,8 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
     dateTime = DateTime.now().toIso8601String();
     originalInvoiceNumber = PurchaseReturnSideWidget.originalPurchaseNotifier.value!.invoiceNumber;
     originalPurchaseId = PurchaseReturnSideWidget.originalPurchaseNotifier.value!.id;
-    supplierId = PurchaseReturnSideWidget.supplierIdNotifier.value!;
-    supplierName = PurchaseReturnSideWidget.supplierNameNotifier.value!;
+    supplierId = PurchaseReturnSideWidget.supplierNotifier.value!.id!;
+    supplierName = PurchaseReturnSideWidget.supplierNotifier.value!.supplierName;
     billerName = _biller;
     purchaseNote = argPurchaseNote ?? '';
     totalItems = PurchaseReturnSideWidget.totalItemsNotifier.value.toString();

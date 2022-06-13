@@ -68,7 +68,11 @@ class AddCustomerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await customerDB.getAllCustomers();
+      // await customerDB.getAllCustomers();
+
+      if (customerModel != null) {
+        getCustomer(customerModel!);
+      }
     });
     return Scaffold(
       appBar: AppBarWidget(
@@ -303,7 +307,8 @@ class AddCustomerScreen extends StatelessWidget {
                     child: CustomMaterialBtton(
                         buttonText: 'Submit',
                         onPressed: () {
-                          addCustomer(context: context);
+                          if (customerModel == null) return addCustomer(context);
+                          addCustomer(context, isUpdate: true);
                         }),
                   ),
                   kHeight10
@@ -316,8 +321,8 @@ class AddCustomerScreen extends StatelessWidget {
     );
   }
 
-  //========== Add Supplier ==========
-  Future<void> addCustomer({context}) async {
+  //========== Add Customer ==========
+  Future<void> addCustomer(BuildContext context, {final bool isUpdate = false}) async {
     final String customerType,
         company,
         companyArabic,
@@ -354,12 +359,12 @@ class AddCustomerScreen extends StatelessWidget {
     country = _countryController.text;
     countryArabic = _countryArabicController.text;
     poBox = _poBoxController.text;
-    log(state);
-    log(stateArabic);
+
     final _formState = _formKey.currentState!;
 
     if (_formState.validate()) {
       final _customerModel = CustomerModel(
+        id: customerModel?.id,
         customerType: customerType,
         company: company,
         companyArabic: companyArabic,
@@ -379,12 +384,18 @@ class AddCustomerScreen extends StatelessWidget {
         poBox: poBox,
       );
       try {
-        final id = await customerDB.createCustomer(_customerModel);
+        final CustomerModel? _customer;
+        if (!isUpdate) {
+          _customer = await customerDB.createCustomer(_customerModel);
+          kSnackBar(context: context, success: true, content: 'Customer added successfully!');
+        } else {
+          _customer = await customerDB.updateCustomer(_customerModel);
+          kSnackBar(context: context, update: true, content: 'Customer updated successfully!');
+        }
         _formState.reset();
-        log('Customer $customer Added!');
-        kSnackBar(context: context, success: true, content: 'Customer "$customer" added successfully!');
+
         if (fromPos) {
-          return Navigator.pop(context, id);
+          return Navigator.pop(context, _customer);
         } else {
           Navigator.pushReplacementNamed(context, routeManageCustomer);
         }
@@ -443,5 +454,30 @@ class AddCustomerScreen extends StatelessWidget {
         }
       }
     }
+  }
+
+  //========== Fetch Customer ==========
+  Future<void> updateCustomer() async {}
+
+  //========== Fetch Customer ==========
+  void getCustomer(CustomerModel customer) {
+    //retieving values from Database to TextFields
+    // const String customerType = 'General Customer';
+    _companyController.text = customer.company;
+    _companyArabicController.text = customer.companyArabic;
+    _customerController.text = customer.customer;
+    _customerArabicController.text = customer.customerArabic;
+    _contactNumberController.text = customer.contactNumber;
+    _vatNumberController.text = customer.vatNumber ?? '';
+    _emailController.text = customer.email;
+    _addressController.text = customer.address;
+    _addressArabicController.text = customer.addressArabic;
+    _cityController.text = customer.city;
+    _cityArabicController.text = customer.cityArabic;
+    _stateController.text = customer.state;
+    _stateArabicController.text = customer.stateArabic;
+    _countryController.text = customer.country;
+    _countryArabicController.text = customer.countryArabic;
+    _poBoxController.text = customer.poBox;
   }
 }

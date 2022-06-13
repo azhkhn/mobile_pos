@@ -193,7 +193,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                                           child: InkWell(
                                             child: const Icon(Icons.clear, size: 15),
                                             onTap: () {
-                                              PurchaseReturnSideWidget.supplierIdNotifier.value = null;
+                                              PurchaseReturnSideWidget.supplierNotifier.value = null;
                                               PurchaseReturnSideWidget.supplierController.clear();
                                             },
                                           ),
@@ -226,8 +226,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                                   },
                                   onSuggestionSelected: (SupplierModel suggestion) {
                                     PurchaseReturnSideWidget.supplierController.text = suggestion.contactName;
-                                    PurchaseReturnSideWidget.supplierNameNotifier.value = suggestion.contactName;
-                                    PurchaseReturnSideWidget.supplierIdNotifier.value = suggestion.id;
+                                    PurchaseReturnSideWidget.supplierNotifier.value = suggestion;
                                     log(suggestion.supplierName);
                                   },
                                 );
@@ -315,8 +314,8 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                                   maxHeight: 30,
                                 ),
                                 onPressed: () {
-                                  if (PurchaseReturnSideWidget.supplierIdNotifier.value != null) {
-                                    log('${PurchaseReturnSideWidget.supplierIdNotifier.value}');
+                                  if (PurchaseReturnSideWidget.supplierNotifier.value != null) {
+                                    log('${PurchaseReturnSideWidget.supplierNotifier.value}');
 
                                     showModalBottomSheet(
                                         context: context,
@@ -326,7 +325,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                                         builder: (context) => DismissibleWidget(
                                               context: context,
                                               child: CustomBottomSheetWidget(
-                                                id: PurchaseReturnSideWidget.supplierIdNotifier.value,
+                                                model: PurchaseReturnSideWidget.supplierNotifier.value,
                                                 supplier: true,
                                               ),
                                             ));
@@ -362,8 +361,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                                     final addedSupplier = await SupplierDatabase.instance.getSupplierById(id as int);
 
                                     PurchaseReturnSideWidget.supplierController.text = addedSupplier.contactName;
-                                    PurchaseReturnSideWidget.supplierNameNotifier.value = addedSupplier.contactName;
-                                    PurchaseReturnSideWidget.supplierIdNotifier.value = addedSupplier.id;
+                                    PurchaseReturnSideWidget.supplierNotifier.value = addedSupplier;
                                     log(addedSupplier.supplierName);
                                   }
 
