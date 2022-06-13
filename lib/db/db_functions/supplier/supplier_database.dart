@@ -9,7 +9,7 @@ class SupplierDatabase {
   SupplierDatabase._init();
 
 //========== Create Supplier ==========
-  Future<int> createSupplier(SupplierModel _supplierModel) async {
+  Future<SupplierModel> createSupplier(SupplierModel _supplierModel) async {
     final db = await dbInstance.database;
     final supplier = await db.rawQuery('''SELECT * FROM $tableSupplier WHERE ${SupplierFields.supplierName} = "${_supplierModel.supplierName}"''');
     if (supplier.isNotEmpty) {
@@ -18,9 +18,23 @@ class SupplierDatabase {
     } else {
       log('Supplier Created!');
       final id = await db.insert(tableSupplier, _supplierModel.toJson());
-      log('Supplier id == $id');
-      return id;
+      log('Supplier ($id) updated successfully');
+
+      return _supplierModel.copyWith(id: id);
     }
+  }
+
+  //========== Update Supplier ==========
+  Future<SupplierModel> updateSupplier(SupplierModel supplierModel) async {
+    final db = await dbInstance.database;
+    final _result = await db.update(
+      tableSupplier,
+      supplierModel.toJson(),
+      where: '${SupplierFields.id} = ?',
+      whereArgs: [supplierModel.id],
+    );
+    log('Supplier ($_result) updated successfully');
+    return supplierModel;
   }
 
 //========== Get All Suppliers ==========
@@ -33,16 +47,16 @@ class SupplierDatabase {
   }
 
   //========== Get Supplier By Id ==========
-  Future<SupplierModel> getSupplierById(int customerId) async {
+  Future<SupplierModel> getSupplierById(int supplierId) async {
     final db = await dbInstance.database;
     final _result = await db.query(
       tableSupplier,
       where: '${SupplierFields.id} = ?',
-      whereArgs: [customerId],
+      whereArgs: [supplierId],
     );
     log('Supplier === $_result');
-    final _customers = _result.map((json) => SupplierModel.fromJson(json)).toList();
-    return _customers.first;
+    final _suppliers = _result.map((json) => SupplierModel.fromJson(json)).toList();
+    return _suppliers.first;
   }
 
   //========== Get All Supplier By Query ==========

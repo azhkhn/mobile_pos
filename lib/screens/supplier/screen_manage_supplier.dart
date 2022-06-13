@@ -9,31 +9,31 @@ import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
-import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
-import 'package:shop_ez/model/customer/customer_model.dart';
-import 'package:shop_ez/screens/customer/widgets/customer_card_widget.dart';
+import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
+import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
+import 'package:shop_ez/screens/supplier/widgets/supplier_card_widget.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
 
-class CustomerList extends StatelessWidget {
-  CustomerList({Key? key}) : super(key: key);
+class SupplierManageScreen extends StatelessWidget {
+  SupplierManageScreen({Key? key}) : super(key: key);
 
   //==================== TextEditing Controllers ====================
-  final customerController = TextEditingController();
+  final supplierController = TextEditingController();
 
   //==================== Value Notifiers ====================
-  final ValueNotifier<int?> customerIdNotifier = ValueNotifier(null);
-  final ValueNotifier<List<CustomerModel>> customerNotifer = ValueNotifier([]);
+  final ValueNotifier<int?> supplierIdNotifier = ValueNotifier(null);
+  final ValueNotifier<List<SupplierModel>> supplierNotifer = ValueNotifier([]);
 
-  //==================== List Customers ====================
-  List<CustomerModel> customersList = [];
+  //==================== List Suppliers ====================
+  List<SupplierModel> suppliersList = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBarWidget(title: 'Customer Manage'),
+        appBar: AppBarWidget(title: 'Supplier Manage'),
         body: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
@@ -42,14 +42,14 @@ class CustomerList extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  //========== Get All Customers Search Field ==========
+                  //========== Get All Suppliers Search Field ==========
                   Flexible(
                     flex: 8,
                     child: TypeAheadField(
                       debounceDuration: const Duration(milliseconds: 500),
                       hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(
-                          controller: customerController,
+                          controller: supplierController,
                           style: const TextStyle(fontSize: 12),
                           decoration: InputDecoration(
                             fillColor: Colors.white,
@@ -64,47 +64,46 @@ class CustomerList extends StatelessWidget {
                               child: InkWell(
                                 child: const Icon(Icons.clear, size: 15),
                                 onTap: () async {
-                                  customerIdNotifier.value = null;
-                                  customerController.clear();
+                                  supplierIdNotifier.value = null;
+                                  supplierController.clear();
 
-                                  if (customersList.isNotEmpty) {
-                                    customerNotifer.value = customersList;
+                                  if (suppliersList.isNotEmpty) {
+                                    supplierNotifer.value = suppliersList;
                                   } else {
-                                    customerNotifer.value = await CustomerDatabase.instance.getAllCustomers();
+                                    supplierNotifer.value = await SupplierDatabase.instance.getAllSuppliers();
                                   }
                                 },
                               ),
                             ),
                             contentPadding: const EdgeInsets.all(10),
-                            hintText: 'Customer',
+                            hintText: 'Supplier',
                             hintStyle: const TextStyle(fontSize: 12),
                             border: const OutlineInputBorder(),
                           )),
-                      noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Customer Found!'))),
+                      noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Supplier Found!'))),
                       suggestionsCallback: (pattern) async {
-                        return CustomerDatabase.instance.getCustomerSuggestions(pattern);
+                        return SupplierDatabase.instance.getSupplierSuggestions(pattern);
                       },
-                      itemBuilder: (context, CustomerModel suggestion) {
+                      itemBuilder: (context, SupplierModel suggestion) {
                         return ListTile(
                           title: Text(
-                            suggestion.customer,
+                            suggestion.supplierName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: kText_10_12,
                           ),
                         );
                       },
-                      onSuggestionSelected: (CustomerModel suggestion) {
-                        customerNotifer.value = [suggestion];
-                        customerController.text = suggestion.customer;
-                        customerIdNotifier.value = suggestion.id;
-                        log(suggestion.company);
+                      onSuggestionSelected: (SupplierModel suggestion) {
+                        supplierNotifer.value = [suggestion];
+                        supplierController.text = suggestion.supplierName;
+                        supplierIdNotifier.value = suggestion.id;
                       },
                     ),
                   ),
                   kWidth5,
 
-                  //========== View Customer Button ==========
+                  //========== View Supplier Button ==========
                   Flexible(
                     flex: 1,
                     child: FittedBox(
@@ -116,8 +115,8 @@ class CustomerList extends StatelessWidget {
                             maxHeight: 30,
                           ),
                           onPressed: () {
-                            if (customerIdNotifier.value != null) {
-                              log(' Customer Id == ${customerIdNotifier.value}');
+                            if (supplierIdNotifier.value != null) {
+                              log('Supplier Id == ${supplierIdNotifier.value}');
 
                               showModalBottomSheet(
                                   context: context,
@@ -126,10 +125,10 @@ class CustomerList extends StatelessWidget {
                                   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                                   builder: (context) => DismissibleWidget(
                                         context: context,
-                                        child: CustomBottomSheetWidget(model: customerNotifer.value.first),
+                                        child: CustomBottomSheetWidget(supplier: true, model: supplierNotifer.value.first),
                                       ));
                             } else {
-                              kSnackBar(context: context, content: 'Please select any Customer to show details!');
+                              kSnackBar(context: context, content: 'Please select any Supplier to show details!');
                             }
                           },
                           icon: const Icon(
@@ -140,7 +139,7 @@ class CustomerList extends StatelessWidget {
                     ),
                   ),
 
-                  //========== Add Customer Button ==========
+                  //========== Add Supplier Button ==========
                   Flexible(
                     flex: 1,
                     child: FittedBox(
@@ -152,15 +151,15 @@ class CustomerList extends StatelessWidget {
                           maxHeight: 30,
                         ),
                         onPressed: () async {
-                          final CustomerModel? addedCustomer =
-                              await Navigator.pushNamed(context, routeAddCustomer, arguments: {'fromPos': true}) as CustomerModel;
+                          final SupplierModel? addedSupplier =
+                              await Navigator.pushNamed(context, routeAddSupplier, arguments: {'from': true}) as SupplierModel;
 
-                          if (addedCustomer != null) {
-                            customerNotifer.value.add(addedCustomer);
-                            customerNotifer.notifyListeners();
-                            // customersList.add(addedCustomer);
-                            customerController.text = addedCustomer.customer;
-                            customerIdNotifier.value = addedCustomer.id;
+                          if (addedSupplier != null) {
+                            supplierNotifer.value.add(addedSupplier);
+                            supplierNotifer.notifyListeners();
+                            // suppliersList.add(addedSupplier);
+                            supplierController.text = addedSupplier.supplierName;
+                            supplierIdNotifier.value = addedSupplier.id;
                           }
                         },
                         icon: const Icon(
@@ -176,11 +175,11 @@ class CustomerList extends StatelessWidget {
 
               kHeight10,
 
-              //========== List Customers ==========
+              //========== List Suppliers ==========
               Expanded(
                 child: FutureBuilder(
-                    future: CustomerDatabase.instance.getAllCustomers(),
-                    builder: (context, AsyncSnapshot<List<CustomerModel>> snapshot) {
+                    future: SupplierDatabase.instance.getAllSuppliers(),
+                    builder: (context, AsyncSnapshot<List<SupplierModel>> snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
                           return const Center(child: CircularProgressIndicator());
@@ -188,25 +187,25 @@ class CustomerList extends StatelessWidget {
 
                         default:
                           if (!snapshot.hasData) {
-                            return const Center(child: Text('Customers is Empty!'));
+                            return const Center(child: Text('Suppliers is Empty!'));
                           }
-                          customerNotifer.value = snapshot.data!;
+                          supplierNotifer.value = snapshot.data!;
 
-                          if (customersList.isEmpty) {
-                            customersList = snapshot.data!;
+                          if (suppliersList.isEmpty) {
+                            suppliersList = snapshot.data!;
                           }
                           return ValueListenableBuilder(
-                              valueListenable: customerNotifer,
-                              builder: (context, List<CustomerModel> customer, _) {
-                                return customer.isNotEmpty
+                              valueListenable: supplierNotifer,
+                              builder: (context, List<SupplierModel> supplier, _) {
+                                return supplier.isNotEmpty
                                     ? ListView.separated(
-                                        itemCount: customer.length,
+                                        itemCount: supplier.length,
                                         separatorBuilder: (BuildContext context, int index) => kHeight5,
                                         itemBuilder: (BuildContext context, int index) {
                                           return InkWell(
-                                            child: CustomerCardWidget(
+                                            child: SupplierCardWidget(
                                               index: index,
-                                              customer: customer,
+                                              supplier: supplier,
                                             ),
                                             onTap: () async {
                                               showDialog(
@@ -214,7 +213,7 @@ class CustomerList extends StatelessWidget {
                                                   builder: (ctx) => CustomPopupOptions(
                                                         options: [
                                                           {
-                                                            'title': 'View Customer',
+                                                            'title': 'View Supplier',
                                                             'color': Colors.blueGrey[400],
                                                             'icon': Icons.person_search_outlined,
                                                             'action': () {
@@ -226,27 +225,27 @@ class CustomerList extends StatelessWidget {
                                                                       borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                                                                   builder: (context) => DismissibleWidget(
                                                                         context: context,
-                                                                        child: CustomBottomSheetWidget(model: customer[index]),
+                                                                        child: CustomBottomSheetWidget(model: supplier[index], supplier: true),
                                                                       ));
                                                             },
                                                           },
                                                           {
-                                                            'title': 'Edit Customer',
+                                                            'title': 'Edit Supplier',
                                                             'color': Colors.teal[400],
                                                             'icon': Icons.personal_injury,
                                                             'action': () async {
-                                                              final editedCustomer = await Navigator.pushNamed(context, routeAddCustomer, arguments: {
-                                                                'customer': customer[index],
-                                                                'fromPos': true,
+                                                              final editedSupplier = await Navigator.pushNamed(context, routeAddSupplier, arguments: {
+                                                                'supplier': supplier[index],
+                                                                'from': true,
                                                               });
 
-                                                              if (editedCustomer != null && editedCustomer is CustomerModel) {
+                                                              if (editedSupplier != null && editedSupplier is SupplierModel) {
                                                                 final int stableIndex =
-                                                                    customersList.indexWhere((customer) => customer.id == editedCustomer.id);
+                                                                    suppliersList.indexWhere((_supplier) => _supplier.id == editedSupplier.id);
                                                                 log('stable Index == $stableIndex');
-                                                                customerNotifer.value[index] = editedCustomer;
-                                                                customersList[stableIndex] = editedCustomer;
-                                                                customerNotifer.notifyListeners();
+                                                                supplierNotifer.value[index] = editedSupplier;
+                                                                suppliersList[stableIndex] = editedSupplier;
+                                                                supplierNotifer.notifyListeners();
                                                               }
                                                             }
                                                           },
@@ -256,7 +255,7 @@ class CustomerList extends StatelessWidget {
                                           );
                                         },
                                       )
-                                    : const Center(child: Text('Customer is Empty!'));
+                                    : const Center(child: Text('Supplier is Empty!'));
                               });
                       }
                     }),

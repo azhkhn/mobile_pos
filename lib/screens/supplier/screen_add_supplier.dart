@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
@@ -13,41 +14,49 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';
 
-class ScreenSupplier extends StatelessWidget {
-  ScreenSupplier({
+class SupplierAddScreen extends StatelessWidget {
+  SupplierAddScreen({
     Key? key,
-    this.purchase = false,
+    this.from = false,
+    this.supplierModel,
   }) : super(key: key);
 
-  final bool purchase;
+  //========== Bool ==========
+  final bool from;
 
-  static late Size _screenSize;
-  final _formKey = GlobalKey<FormState>();
-  final _supplierNameController = TextEditingController();
-  final _supplierNameArabicController = TextEditingController();
-  final _contactNameController = TextEditingController();
-  final _contactNumberController = TextEditingController();
-  final _vatNumberController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _addressController = TextEditingController();
-  final _addressArabicController = TextEditingController();
-  final _cityController = TextEditingController();
-  final _cityArabicController = TextEditingController();
-  final _stateController = TextEditingController();
-  final _stateArabicController = TextEditingController();
-  final _countryController = TextEditingController();
-  final _countryArabicController = TextEditingController();
-  final _poBoxController = TextEditingController();
+  //========== Model Class ==========
+  final SupplierModel? supplierModel;
 
-  static final supplierDB = SupplierDatabase.instance;
-  getSupplier() async {
-    await supplierDB.getAllSuppliers();
-  }
+  //========== Global Keys ==========
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  //========== TextEditing Controllers ==========
+  final TextEditingController _supplierNameController = TextEditingController();
+  final TextEditingController _supplierNameArabicController = TextEditingController();
+  final TextEditingController _contactNameController = TextEditingController();
+  final TextEditingController _contactNumberController = TextEditingController();
+  final TextEditingController _vatNumberController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _addressArabicController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _cityArabicController = TextEditingController();
+  final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _stateArabicController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
+  final TextEditingController _countryArabicController = TextEditingController();
+  final TextEditingController _poBoxController = TextEditingController();
+
+  final SupplierDatabase supplierDB = SupplierDatabase.instance;
 
   @override
   Widget build(BuildContext context) {
-    getSupplier();
-    _screenSize = MediaQuery.of(context).size;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (supplierModel != null) {
+        getSupplierDetails(supplierModel!);
+      }
+    });
+
     return Scaffold(
       appBar: AppBarWidget(
         title: 'Supplier',
@@ -227,10 +236,15 @@ class ScreenSupplier extends StatelessWidget {
                   kHeight20,
 
                   //========== Submit Button ==========
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: _screenSize.width / 10),
-                    child: CustomMaterialBtton(buttonText: 'Submit', onPressed: () => addSuppler(context: context)),
-                  ),
+                  FractionallySizedBox(
+                      widthFactor: .8,
+                      child: CustomMaterialBtton(
+                        buttonText: 'Submit',
+                        onPressed: () {
+                          if (supplierModel == null) return addSuppler(context);
+                          addSuppler(context, isUpdate: true);
+                        },
+                      )),
                   kHeight10
                 ],
               ),
@@ -242,7 +256,7 @@ class ScreenSupplier extends StatelessWidget {
   }
 
   //========== Add Supplier ==========
-  Future<void> addSuppler({context}) async {
+  Future<void> addSuppler(BuildContext context, {final bool isUpdate = false}) async {
     final String supplierName,
         supplierNameArabic,
         contactName,
@@ -279,6 +293,7 @@ class ScreenSupplier extends StatelessWidget {
       poBox = _poBoxController.text;
 
       final _supplierModel = SupplierModel(
+        id: supplierModel?.id,
         supplierName: supplierName,
         supplierNameArabic: supplierNameArabic,
         contactName: contactName,
@@ -296,18 +311,46 @@ class ScreenSupplier extends StatelessWidget {
         poBox: poBox,
       );
       try {
-        final id = await supplierDB.createSupplier(_supplierModel);
+        final SupplierModel? _supplier;
+        if (!isUpdate) {
+          _supplier = await supplierDB.createSupplier(_supplierModel);
+          kSnackBar(context: context, success: true, content: 'Supplier added successfully!');
+        } else {
+          _supplier = await supplierDB.updateSupplier(_supplierModel);
+          kSnackBar(context: context, update: true, content: 'Supplier added successfully!');
+        }
         resetSupplier();
-        log('Supplier $supplierName Added!');
-        kSnackBar(context: context, success: true, content: 'Supplier "$supplierName" added successfully!');
-        if (purchase) {
-          Navigator.pop(context, id);
+        if (from) {
+          Navigator.pop(context, _supplier);
+        } else {
+          Navigator.pushReplacementNamed(context, routeManageSupplier);
         }
       } catch (e) {
         log('Supplier $supplierName Already Exist!');
         kSnackBar(context: context, error: true, content: 'Supplier "$supplierName" already exist!');
       }
     }
+  }
+
+  //========== Fetch Supplier Details ==========
+  void getSupplierDetails(SupplierModel supplier) {
+    //retieving values from Database to TextFields
+    _supplierNameController.text = supplier.supplierName;
+    _supplierNameArabicController.text = supplier.supplierNameArabic;
+    _contactNameController.text = supplier.contactName;
+    _contactNumberController.text = supplier.contactNumber;
+    _contactNumberController.text = supplier.contactNumber;
+    _vatNumberController.text = supplier.vatNumber ?? '';
+    _emailController.text = supplier.email ?? '';
+    _addressController.text = supplier.address ?? '';
+    _addressArabicController.text = supplier.addressArabic ?? '';
+    _cityController.text = supplier.city ?? '';
+    _cityArabicController.text = supplier.cityArabic ?? '';
+    _stateController.text = supplier.state ?? '';
+    _stateArabicController.text = supplier.stateArabic ?? '';
+    _countryController.text = supplier.country ?? '';
+    _countryArabicController.text = supplier.countryArabic ?? '';
+    _poBoxController.text = supplier.poBox ?? '';
   }
 
   //========== Reset Supplier Fields ==========

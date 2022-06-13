@@ -3,7 +3,7 @@ import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/barcode/screen_barcode.dart';
-import 'package:shop_ez/screens/customer/screen_customer_list.dart';
+import 'package:shop_ez/screens/customer/screen_manage_customer.dart';
 import 'package:shop_ez/screens/invoices/screen_sales_invoice.dart';
 import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return.dart';
@@ -12,6 +12,7 @@ import 'package:shop_ez/screens/sales/pages/screen_sales_list.dart';
 import 'package:shop_ez/screens/sales_return/pages/screen_sales_return.dart';
 import 'package:shop_ez/screens/sales_return/pages/screen_sales_return_list.dart';
 import 'package:shop_ez/screens/stock/screen_stock.dart';
+import 'package:shop_ez/screens/supplier/screen_manage_supplier.dart';
 import 'package:shop_ez/screens/transaction/purchase_transaction/screen_transaction_purchase.dart';
 import 'package:shop_ez/screens/transaction/sales_transaction/screen_transaction_sale.dart';
 
@@ -32,7 +33,7 @@ import '../../screens/purchase/pages/screen_purchase.dart';
 import '../../screens/sales/pages/screen_sales.dart';
 import '../../screens/splash/splash_screen.dart';
 import '../../screens/sub-category/screen_sub_category.dart';
-import '../../screens/supplier/supplier_screen.dart';
+import '../../screens/supplier/screen_add_supplier.dart';
 import '../../screens/unit/screen_unit.dart';
 import '../../screens/vat/vat_screen.dart';
 
@@ -53,7 +54,17 @@ class RouteGenerator {
       case routeItemMaster:
         return MaterialPageRoute(builder: (_) => ScreenItemMaster());
       case routeAddSupplier:
-        return MaterialPageRoute(builder: (_) => ScreenSupplier(purchase: args == true));
+        if (args is Map) {
+          return MaterialPageRoute(
+              builder: (_) => SupplierAddScreen(
+                    from: args.containsKey('from'),
+                    supplierModel: args.containsKey('supplier') ? args['supplier'] : null,
+                  ));
+        } else {
+          return MaterialPageRoute(builder: (_) => SupplierAddScreen());
+        }
+      case routeManageSupplier:
+        return MaterialPageRoute(builder: (_) => SupplierManageScreen());
       case routeCategory:
         return MaterialPageRoute(builder: (_) => CategoryScreen());
       case routeSubCategory:
@@ -63,14 +74,15 @@ class RouteGenerator {
       case routeAddCustomer:
         if (args is Map) {
           return MaterialPageRoute(
-              builder: (_) => AddCustomerScreen(
-                    fromPos: args.containsKey('fromPos'),
+              builder: (_) => CustomerAddScreen(
+                    from: args.containsKey('from'),
                     customerModel: args.containsKey('customer') ? args['customer'] : null,
                   ));
+        } else {
+          return MaterialPageRoute(builder: (_) => CustomerAddScreen());
         }
-        return _errorRoute();
       case routeManageCustomer:
-        return MaterialPageRoute(builder: (_) => CustomerList());
+        return MaterialPageRoute(builder: (_) => CustomerManageScreen());
       case routeUnit:
         return MaterialPageRoute(builder: (_) => UnitScreen());
       case routeExpense:

@@ -28,7 +28,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     supplier
-                        ? const SizedBox()
+                        ? kNone
                         : Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -78,7 +78,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                         Expanded(
                           flex: 7,
                           child: AutoSizeText(
-                            supplier ? model.supplierName : model.customer,
+                            supplier ? model.supplierName : model.supplier,
                             textAlign: TextAlign.end,
                             maxFontSize: 20,
                             style: const TextStyle(fontSize: 12),

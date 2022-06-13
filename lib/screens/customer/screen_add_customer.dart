@@ -16,12 +16,13 @@ import '../../core/utils/snackbar/snackbar.dart';
 
 // static const items = ['Cash Customer', 'Credit Customer'];
 
-class AddCustomerScreen extends StatelessWidget {
-  AddCustomerScreen({Key? key, this.fromPos = false, this.customerModel}) : super(key: key);
+class CustomerAddScreen extends StatelessWidget {
+  CustomerAddScreen({Key? key, this.from = false, this.customerModel}) : super(key: key);
 
   //========== Bool ==========
-  final bool fromPos;
+  final bool from;
 
+  //========== Model Class ==========
   final CustomerModel? customerModel;
 
   //========== Global Keys ==========
@@ -71,7 +72,7 @@ class AddCustomerScreen extends StatelessWidget {
       // await customerDB.getAllCustomers();
 
       if (customerModel != null) {
-        getCustomer(customerModel!);
+        getCustomerDetails(customerModel!);
       }
     });
     return Scaffold(
@@ -394,7 +395,7 @@ class AddCustomerScreen extends StatelessWidget {
         }
         _formState.reset();
 
-        if (fromPos) {
+        if (from) {
           return Navigator.pop(context, _customer);
         } else {
           Navigator.pushReplacementNamed(context, routeManageCustomer);
@@ -456,11 +457,8 @@ class AddCustomerScreen extends StatelessWidget {
     }
   }
 
-  //========== Fetch Customer ==========
-  Future<void> updateCustomer() async {}
-
-  //========== Fetch Customer ==========
-  void getCustomer(CustomerModel customer) {
+  //========== Fetch Customer Details ==========
+  void getCustomerDetails(CustomerModel customer) {
     //retieving values from Database to TextFields
     // const String customerType = 'General Customer';
     _companyController.text = customer.company;
