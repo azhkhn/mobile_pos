@@ -627,6 +627,13 @@ class ScreenSalesInvoice extends StatelessWidget {
                 value: Converter.currency.format(num.parse(sale.grantTotal)).replaceAll("₹", ''),
                 unite: true,
               ),
+              sale.returnAmount != null
+                  ? buildText(
+                      title: ' / Return Amount  مبلغ الإرجاع',
+                      value: Converter.currency.format(num.parse(sale.returnAmount)).replaceAll("₹", ''),
+                      unite: true,
+                    )
+                  : kNone,
               buildText(
                 title: ' / Paid Amount  المبلغ المدفوع',
                 value: Converter.currency.format(num.parse(sale.paid)).replaceAll("₹", ''),

@@ -31,7 +31,7 @@ class ScreenSales extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await getSalesDetails();
+      await getSalesDetails(sale: true);
       final List<TransactionsModel> _transaction = await TransactionDatabase.instance.getAllTransactions();
 
       num totalExpense = 0;
@@ -158,7 +158,7 @@ class ScreenSales extends StatelessWidget {
                               await OrientationMode.toLandscape();
                               await Navigator.pushNamed(context, routePos);
                               await OrientationMode.toPortrait();
-                              await getSalesDetails();
+                              await getSalesDetails(sale: true);
                             },
                             color: Colors.green,
                             textColor: kWhite,
@@ -176,7 +176,7 @@ class ScreenSales extends StatelessWidget {
                               await OrientationMode.toLandscape();
                               await Navigator.pushNamed(context, routeSalesReturn);
                               await OrientationMode.toPortrait();
-                              await getSalesDetails(returned: true);
+                              await getSalesDetails();
                             },
                             color: Colors.indigo[400],
                             textColor: kWhite,
@@ -196,7 +196,10 @@ class ScreenSales extends StatelessWidget {
                         Expanded(
                           child: MaterialButton(
                             height: 50,
-                            onPressed: () => Navigator.pushNamed(context, routeSalesList),
+                            onPressed: () async {
+                              await Navigator.pushNamed(context, routeSalesList);
+                              await getSalesDetails();
+                            },
                             color: Colors.deepOrange,
                             textColor: kWhite,
                             child: const Text(
@@ -232,12 +235,12 @@ class ScreenSales extends StatelessWidget {
     );
   }
 
-  Future<void> getSalesDetails({bool returned = false}) async {
+  Future<void> getSalesDetails({bool sale = false}) async {
     try {
       final List<SalesModel> salesModel = await SalesDatabase.instance.getAllSales();
 
       // Checking if new Sale added!
-      if (!returned) {
+      if (sale) {
         if (totalSalesNotifier.value == salesModel.length) return;
       }
 

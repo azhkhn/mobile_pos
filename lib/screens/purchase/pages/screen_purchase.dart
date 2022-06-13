@@ -31,7 +31,7 @@ class ScreenPurchase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await getPurchasesDetails();
+      await getPurchaseDetails();
       final List<TransactionsModel> _transaction = await TransactionDatabase.instance.getAllTransactions();
 
       num totalExpense = 0;
@@ -157,7 +157,7 @@ class ScreenPurchase extends StatelessWidget {
                               await OrientationMode.toLandscape();
                               await Navigator.pushNamed(context, routeAddPurchase);
                               await OrientationMode.toPortrait();
-                              await getPurchasesDetails();
+                              await getPurchaseDetails(purchase: true);
                             },
                             color: Colors.green,
                             textColor: kWhite,
@@ -195,7 +195,10 @@ class ScreenPurchase extends StatelessWidget {
                         Expanded(
                           child: MaterialButton(
                             height: 50,
-                            onPressed: () => Navigator.pushNamed(context, routeListPurchase),
+                            onPressed: () async {
+                              await Navigator.pushNamed(context, routeListPurchase);
+                              await getPurchaseDetails();
+                            },
                             color: Colors.deepOrange,
                             textColor: kWhite,
                             child: const Text(
@@ -231,38 +234,14 @@ class ScreenPurchase extends StatelessWidget {
     );
   }
 
-  Future<void> getPurchasesDetails() async {
+  Future<void> getPurchaseDetails({final bool purchase = false}) async {
     try {
       final List<PurchaseModel> purchaseModel = await PurchaseDatabase.instance.getAllPurchases();
 
       // Checking if new Purchase added!
-      if (totalPurchasesNotifier.value == purchaseModel.length) return;
-
-      totalPurchasesNotifier.value = purchaseModel.length;
-      totalAmountNotifier.value = 0;
-      paidAmountNotifier.value = 0;
-      balanceAmountNotifier.value = 0;
-      taxAmountNotifier.value = 0;
-      overDueAmountNotifier.value = 0;
-
-      for (var i = 0; i < purchaseModel.length; i++) {
-        totalAmountNotifier.value += num.parse(purchaseModel[i].grantTotal);
-        paidAmountNotifier.value += num.parse(purchaseModel[i].paid);
-        balanceAmountNotifier.value += num.parse(purchaseModel[i].balance);
-        taxAmountNotifier.value += num.parse(purchaseModel[i].vatAmount);
-        overDueAmountNotifier.value += num.parse(purchaseModel[i].balance);
+      if (purchase) {
+        if (totalPurchasesNotifier.value == purchaseModel.length) return;
       }
-    } catch (e) {
-      log(e.toString());
-    }
-  }
-
-  Future<void> getPurchaseDetails() async {
-    try {
-      final List<PurchaseModel> purchaseModel = await PurchaseDatabase.instance.getAllPurchases();
-
-      // Checking if new Purchase added!
-      if (totalPurchasesNotifier.value == purchaseModel.length) return;
 
       totalPurchasesNotifier.value = purchaseModel.length;
       totalAmountNotifier.value = 0;

@@ -615,6 +615,14 @@ class PdfSalesInvoice {
                   unite: true,
                   arabicFont: arabicFont,
                 ),
+                sale.returnAmount != null
+                    ? buildText(
+                        title: ' / Return Amount  مبلغ الإرجاع',
+                        value: Converter.currency.format(num.parse(sale.returnAmount)).replaceAll("₹", ''),
+                        unite: true,
+                        arabicFont: arabicFont,
+                      )
+                    : pw.SizedBox(),
                 buildText(
                   title: ' / Paid Amount  المبلغ المدفوع',
                   value: Converter.currency.format(num.parse(sale.paid)).replaceAll("₹", ''),
