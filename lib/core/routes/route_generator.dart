@@ -4,6 +4,7 @@ import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/barcode/screen_barcode.dart';
 import 'package:shop_ez/screens/customer/screen_manage_customer.dart';
+import 'package:shop_ez/screens/database/screen_database.dart';
 import 'package:shop_ez/screens/invoices/screen_sales_invoice.dart';
 import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return.dart';
@@ -147,17 +148,12 @@ class RouteGenerator {
         if (args is List) {
           return MaterialPageRoute(
               builder: (_) => args.last
-                  ? ScreenSalesInvoice(
-                      salesReturnModal: args.first,
-                      isReturn: args.last,
-                    )
-                  : ScreenSalesInvoice(
-                      salesModel: args.first,
-                      isReturn: args.last,
-                    ));
-        } else {
-          return _errorRoute();
+                  ? ScreenSalesInvoice(salesReturnModal: args.first, isReturn: args.last)
+                  : ScreenSalesInvoice(salesModel: args.first, isReturn: args.last));
         }
+        return _errorRoute();
+      case routeDatabase:
+        return MaterialPageRoute(builder: (_) => const ScreenDatabase());
 
       default:
         return _errorRoute();

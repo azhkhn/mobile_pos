@@ -23,4 +23,6 @@ class Converter {
   static final DateFormat dateFormatReverse = DateFormat('yyyy-MM-dd');
   static final DateFormat dateTimeFormatAmPm = DateFormat('dd-MM-yyyy, h:mm a');
   static final DateFormat dateTimeFormat = DateFormat('dd-MM-yyyy, h:mm');
+
+  static final DateFormat dateTimeForFileName = DateFormat('dd-MM-yyyy-h~mma');
 }

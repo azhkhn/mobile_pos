@@ -391,7 +391,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
 
 //========== Image PopUp ==========
   void imagePopUp(BuildContext context) async {
-    return showModalBottomSheet(
+    return await showModalBottomSheet(
       context: context,
       builder: (ctx) {
         return Column(

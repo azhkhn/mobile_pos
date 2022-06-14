@@ -8,12 +8,15 @@ class KAlertDialog extends StatelessWidget {
     this.actions,
     this.submitText,
     this.submitAction,
+    this.submitColor,
     Key? key,
   }) : super(key: key);
 
-  final Widget? title, content, submitText;
+  final Widget? title, content;
+  final String? submitText;
   final List<Widget>? actions;
   final Function()? submitAction;
+  final Color? submitColor;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +32,7 @@ class KAlertDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: submitAction,
-          child: submitText ?? const Text('Yes', style: TextStyle(color: ContstantTexts.kColorDeleteText, fontWeight: FontWeight.bold)),
+          child: Text(submitText ?? 'Yes', style: TextStyle(color: submitColor ?? ContstantTexts.kColorDeleteText, fontWeight: FontWeight.bold)),
         ),
       ],
     );

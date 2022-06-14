@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
 
 class CustomMaterialBtton extends StatelessWidget {
   const CustomMaterialBtton({
     required this.onPressed,
     required this.buttonText,
+    this.icon,
     this.fontSize = 14,
     this.textColor,
     this.buttonColor,
@@ -14,6 +16,7 @@ class CustomMaterialBtton extends StatelessWidget {
     Key? key,
   }) : super(key: key);
   final String buttonText;
+  final Widget? icon;
   final double fontSize;
   final Color? textColor;
   final Color? buttonColor;
@@ -33,9 +36,16 @@ class CustomMaterialBtton extends StatelessWidget {
                   style: TextStyle(
                     color: textColor ?? kButtonTextWhite,
                   )))
-          : Text(
-              buttonText,
-              style: TextStyle(color: textColor ?? kButtonTextWhite, fontSize: fontSize),
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  buttonText,
+                  style: TextStyle(color: textColor ?? kButtonTextWhite, fontSize: fontSize),
+                ),
+                icon != null ? kWidth10 : kNone,
+                icon != null ? icon! : kNone,
+              ],
             ),
       color: buttonColor ?? kButtonColor,
     );

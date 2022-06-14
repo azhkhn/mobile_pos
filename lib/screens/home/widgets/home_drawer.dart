@@ -165,6 +165,9 @@ class DrawerItemsWidget extends StatelessWidget {
           case 8:
             Navigator.pushNamed(context, routeBrand);
             break;
+          case 10:
+            Navigator.pushNamed(context, routeDatabase);
+            break;
           default:
         }
       },

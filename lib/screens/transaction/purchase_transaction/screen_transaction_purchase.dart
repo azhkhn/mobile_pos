@@ -57,10 +57,8 @@ class TransactionScreenPurchase extends StatelessWidget {
                         context: context,
                         builder: (ctx) => KAlertDialog(
                           content: const Text('Are you sure you want to submit this transaction?'),
-                          submitText: const Text(
-                            'Submit',
-                            style: TextStyle(),
-                          ),
+                          submitColor: ContstantTexts.kColorEditText,
+                          submitText: 'Submit',
                           submitAction: () async {
                             Navigator.pop(ctx);
                             final PurchaseModel? updatedPurchase = await addTransaction(context, purchase: purchaseModel);

@@ -19,27 +19,29 @@ void kSnackBar({
       content: Row(
         children: [
           icon ?? const Text(''),
-          error == true
-              ? const Icon(
-                  Icons.error_outline,
-                  color: kSnackBarIconColor,
-                )
-              : success == true
+          icon == null
+              ? error == true
                   ? const Icon(
-                      Icons.done,
+                      Icons.error_outline,
                       color: kSnackBarIconColor,
                     )
-                  : delete == true
+                  : success == true
                       ? const Icon(
-                          Icons.delete,
+                          Icons.done,
                           color: kSnackBarIconColor,
                         )
-                      : update == true
+                      : delete == true
                           ? const Icon(
-                              Icons.update,
+                              Icons.delete,
                               color: kSnackBarIconColor,
                             )
-                          : const SizedBox(),
+                          : update == true
+                              ? const Icon(
+                                  Icons.update,
+                                  color: kSnackBarIconColor,
+                                )
+                              : kNone
+              : kNone,
           kWidth5,
           Flexible(
             child: Text(

@@ -33,3 +33,4 @@ const routeSalesReturnList = '/sales_return_list';
 const routeSalesInvoice = '/sales_invoice';
 const routeTransactionSale = '/transaction_sale';
 const routeTransactionPurchase = '/transaction_purchase';
+const routeDatabase = '/database';
