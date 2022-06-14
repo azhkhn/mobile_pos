@@ -93,7 +93,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    final int? customerId = SaleSideWidget.customerNotifier.value!.id;
+                    final int? customerId = SaleSideWidget.customerNotifier.value?.id;
                     final num items = SaleSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {
@@ -184,7 +184,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    final int? customerId = SaleSideWidget.customerNotifier.value!.id;
+                    final int? customerId = SaleSideWidget.customerNotifier.value?.id;
                     final num items = SaleSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {
@@ -302,7 +302,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () async {
-                    final int? customerId = SaleSideWidget.customerNotifier.value!.id;
+                    final int? customerId = SaleSideWidget.customerNotifier.value?.id;
                     final num items = SaleSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {

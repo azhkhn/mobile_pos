@@ -120,7 +120,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () async {
-                    final int? customerId = PurchaseSideWidget.supplierNotifier.value!.id;
+                    final int? customerId = PurchaseSideWidget.supplierNotifier.value?.id;
                     final num items = PurchaseSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {

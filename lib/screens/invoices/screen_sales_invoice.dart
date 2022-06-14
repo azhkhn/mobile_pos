@@ -142,7 +142,7 @@ class ScreenSalesInvoice extends StatelessWidget {
                                 kHeight5,
                                 buildInvoice(items),
                                 const Divider(),
-                                buildTotal(sale),
+                                buildTotal(sale, isReturn),
                               ],
                             );
                         }
@@ -584,7 +584,7 @@ class ScreenSalesInvoice extends StatelessWidget {
   }
 
   //==================== Total Section ====================
-  static Widget buildTotal(final sale) {
+  static Widget buildTotal(final sale, final bool isReturn) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -627,12 +627,14 @@ class ScreenSalesInvoice extends StatelessWidget {
                 value: Converter.currency.format(num.parse(sale.grantTotal)).replaceAll("₹", ''),
                 unite: true,
               ),
-              sale.returnAmount != null
-                  ? buildText(
-                      title: ' / Return Amount  مبلغ الإرجاع',
-                      value: Converter.currency.format(num.parse(sale.returnAmount)).replaceAll("₹", ''),
-                      unite: true,
-                    )
+              !isReturn
+                  ? sale.returnAmount != null
+                      ? buildText(
+                          title: ' / Return Amount  مبلغ الإرجاع',
+                          value: Converter.currency.format(num.parse(sale.returnAmount)).replaceAll("₹", ''),
+                          unite: true,
+                        )
+                      : kNone
                   : kNone,
               buildText(
                 title: ' / Paid Amount  المبلغ المدفوع',

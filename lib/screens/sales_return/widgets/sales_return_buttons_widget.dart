@@ -124,7 +124,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () async {
-                    final int? customerId = SalesReturnSideWidget.customerNotifier.value!.id;
+                    final int? customerId = SalesReturnSideWidget.customerNotifier.value?.id;
                     final num items = SalesReturnSideWidget.totalItemsNotifier.value;
 
                     final String? originalInvoiceNumber = SalesReturnSideWidget.originalSaleNotifier.value?.invoiceNumber;

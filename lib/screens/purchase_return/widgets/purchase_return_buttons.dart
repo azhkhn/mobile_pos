@@ -121,7 +121,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
                 height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () async {
-                    final int? customerId = PurchaseReturnSideWidget.supplierNotifier.value!.id;
+                    final int? customerId = PurchaseReturnSideWidget.supplierNotifier.value?.id;
                     final num items = PurchaseReturnSideWidget.totalItemsNotifier.value;
 
                     if (customerId == null) {

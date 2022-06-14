@@ -37,7 +37,7 @@ const List drawerListItem = [
   'Manage Category',
   'Manage Brands',
   'Settings',
-  'DB Backup',
+  'DB Manage',
   'Reports',
   'About Software',
   'Terms and Conditions',
