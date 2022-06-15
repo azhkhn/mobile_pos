@@ -13,6 +13,7 @@ void kSnackBar({
   bool? success = false,
   bool? delete = false,
   bool? update = false,
+  SnackBarAction? action,
 }) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -63,6 +64,7 @@ void kSnackBar({
                       : color,
       duration: const Duration(seconds: 2),
       behavior: SnackBarBehavior.floating,
+      action: action,
     ),
   );
 }

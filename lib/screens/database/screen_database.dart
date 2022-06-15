@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shop_ez/core/constant/colors.dart';
@@ -31,7 +32,18 @@ class ScreenDatabase extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (ctx) => KAlertDialog(
-                      content: const Text('Are you sure you want to backup database?'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text('Are you sure you want to backup database?'),
+                          kHeight5,
+                          Text(
+                            'location : "storage/emulated/0/MobilePOS"',
+                            style: kText12Lite,
+                          )
+                        ],
+                      ),
                       submitColor: ContstantTexts.kColorEditText,
                       submitAction: () async {
                         Navigator.pop(ctx);
@@ -73,33 +85,50 @@ class ScreenDatabase extends StatelessWidget {
 
 //==================== Backup Database ====================
   Future<void> backupDatabase(BuildContext context) async {
-    final dbFolder = await getDatabasesPath();
-    const String dbName = 'user.db';
-    final String dbPath = join(dbFolder, dbName);
-    File dbFile = File(dbPath);
+    final String dbFolder = await getDatabasesPath();
+    final String dbPath = join(dbFolder, 'user.db');
+    final File dbFile = File(dbPath);
 
-    Directory copyTo = Directory("storage/emulated/0/MobilePOS");
-    if ((await copyTo.exists())) {
-      log("Directory Exist");
-      var status = await Permission.storage.status;
-      if (!status.isGranted) {
-        await Permission.storage.request();
-      }
-    } else {
-      log("Directory not found!");
-      if (await Permission.manageExternalStorage.request().isGranted) {
-        // Either the permission was already granted before or the user just granted it.
-        await copyTo.create();
-      }
-    }
+    // final Directory documentDirectory = await getApplicationDocumentsDirectory();
+    // final String backupFolderPath = join(documentDirectory.path, 'db_backup');
+    // final Directory backupDirectory = Directory(backupPath);
+    Directory backupDirectory = Directory("storage/emulated/0/MobilePOS");
 
     final String dbBackupName = 'DB-' + Converter.dateTimeForFileName.format(DateTime.now()).trim() + '.db';
     log('Database backup name == $dbBackupName');
 
-    final String dbBackupPath = join(copyTo.path, dbBackupName);
+    final String dbBackupPath = join(backupDirectory.path, dbBackupName);
     log('Database backup path == $dbBackupPath');
 
-    await dbFile.copy(dbBackupPath);
+    // Checking if Directory already exist..
+    if ((await backupDirectory.exists())) {
+      log("Directory exist!");
+
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.manageExternalStorage,
+        Permission.storage,
+      ].request();
+
+      if (statuses[Permission.manageExternalStorage]!.isDenied) {
+        log("manageExternalStorage permission is denied.");
+      } else if (statuses[Permission.storage]!.isDenied) {
+        log("storage permission is denied.");
+      } else if (statuses[Permission.storage]!.isPermanentlyDenied) {
+        openAppSettings();
+      }
+    } else {
+      log("Directory do not exist.. creating directory!");
+      if (await Permission.storage.request().isGranted) {
+        // Either the permission was already granted before or the user just granted it.
+        await backupDirectory.create();
+      }
+    }
+
+    try {
+      await dbFile.copy(dbBackupPath);
+    } on FileSystemException catch (_) {
+      return kSnackBar(context: context, error: true, content: 'Please allow required permissions to backup');
+    }
 
     log('Database backed up successfully');
     kSnackBar(context: context, success: true, content: 'Database backed up successfully');
@@ -110,39 +139,43 @@ class ScreenDatabase extends StatelessWidget {
     var databasesPath = await getDatabasesPath();
     var dbPath = join(databasesPath, 'user.db');
 
-    FilePickerResult? _result = await FilePicker.platform.pickFiles(dialogTitle: 'Select Database');
-    if (_result == null) return;
+    try {
+      FilePickerResult? _result = await FilePicker.platform.pickFiles(dialogTitle: 'Select Database');
+      if (_result == null) return;
 
-    final PlatformFile selectedDB = _result.files.first;
+      final PlatformFile selectedDB = _result.files.first;
 
-    if (selectedDB.extension == 'db' || selectedDB.extension == 'DB') {
-      showDialog(
-        context: context,
-        builder: (ctx) => KAlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              Text('Are you sure you want to restore the database?'),
-              kHeight5,
-              Text(
-                'NB: Your current database will be replaced with the one you restore. Make sure you backup your current one before restore.',
-                style: kText12Lite,
-              )
-            ],
+      if (selectedDB.extension == 'db' || selectedDB.extension == 'DB') {
+        showDialog(
+          context: context,
+          builder: (ctx) => KAlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Text('Are you sure you want to restore the database?'),
+                kHeight5,
+                Text(
+                  'NB: Your current database will be replaced with the one you restore. Make sure you backup your current one before restore.',
+                  style: kText12Lite,
+                )
+              ],
+            ),
+            submitText: 'Restore',
+            submitAction: () async {
+              Navigator.pop(ctx);
+              File source = File(selectedDB.path!);
+              await source.copy(dbPath);
+
+              log('Database restored successfully');
+              kSnackBar(context: context, update: true, content: 'Database restored successfully');
+            },
           ),
-          submitText: 'Restore',
-          submitAction: () async {
-            Navigator.pop(ctx);
-            File source = File(selectedDB.path!);
-            await source.copy(dbPath);
-
-            log('Database restored successfully');
-            kSnackBar(context: context, update: true, content: 'Database restored successfully');
-          },
-        ),
-      );
-    } else {
-      kSnackBar(context: context, error: true, content: 'Please make sure you select only .db file');
+        );
+      } else {
+        kSnackBar(context: context, error: true, content: 'Please make sure you select only .db file');
+      }
+    } on PlatformException catch (_) {
+      return kSnackBar(context: context, error: true, content: 'Please allow required permissions to restore');
     }
   }
 }
