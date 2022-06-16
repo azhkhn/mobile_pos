@@ -59,6 +59,9 @@ class HomeGrid extends StatelessWidget {
                 case 2:
                   Navigator.pushNamed(context, routeItemMaster);
                   break;
+                case 3:
+                  Navigator.pushNamed(context, routeUserModule);
+                  break;
                 case 4:
                   Navigator.pushNamed(context, routePurchase);
                   break;

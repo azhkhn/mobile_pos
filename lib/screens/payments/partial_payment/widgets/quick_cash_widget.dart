@@ -50,7 +50,7 @@ class QuickCashWidget extends StatelessWidget {
                           },
                           buttonText: Converter.currency.format(totalPayable),
                           fittedText: true,
-                          buttonColor: Colors.indigo[400],
+                          color: Colors.indigo[400],
                         ),
                       ),
                       kWidth5,
@@ -63,7 +63,7 @@ class QuickCashWidget extends StatelessWidget {
                             ).amountChanged(totalPayable > 10 ? '10' : '$totalPayable');
                           },
                           buttonText: '10',
-                          buttonColor: mainColor,
+                          color: mainColor,
                           fittedText: true,
                         ),
                       ),
@@ -77,7 +77,7 @@ class QuickCashWidget extends StatelessWidget {
                             ).amountChanged(totalPayable > 20 ? '20' : '$totalPayable');
                           },
                           buttonText: '20',
-                          buttonColor: mainColor,
+                          color: mainColor,
                           fittedText: true,
                         ),
                       ),
@@ -91,7 +91,7 @@ class QuickCashWidget extends StatelessWidget {
                             ).amountChanged(totalPayable > 50 ? '50' : '$totalPayable');
                           },
                           buttonText: '50',
-                          buttonColor: mainColor,
+                          color: mainColor,
                           fittedText: true,
                         ),
                       ),
@@ -110,7 +110,7 @@ class QuickCashWidget extends StatelessWidget {
                             ).amountChanged(totalPayable > 100 ? '100' : '$totalPayable');
                           },
                           buttonText: '100',
-                          buttonColor: mainColor,
+                          color: mainColor,
                           fittedText: true,
                         ),
                       ),
@@ -125,7 +125,7 @@ class QuickCashWidget extends StatelessWidget {
                             ).amountChanged(totalPayable > 500 ? '500' : '$totalPayable');
                           },
                           buttonText: '500',
-                          buttonColor: mainColor,
+                          color: mainColor,
                           fittedText: true,
                         ),
                       ),
@@ -140,7 +140,7 @@ class QuickCashWidget extends StatelessWidget {
                             ).amountChanged(totalPayable > 1000 ? '1000' : '$totalPayable');
                           },
                           buttonText: '1000',
-                          buttonColor: mainColor,
+                          color: mainColor,
                           fittedText: true,
                         ),
                       ),
@@ -155,7 +155,7 @@ class QuickCashWidget extends StatelessWidget {
                             ).amountChanged(totalPayable > 5000 ? '5000' : '$totalPayable');
                           },
                           buttonText: '5000',
-                          buttonColor: mainColor,
+                          color: mainColor,
                           fittedText: true,
                         ),
                       ),
@@ -171,7 +171,7 @@ class QuickCashWidget extends StatelessWidget {
                           },
                           buttonText: 'CLEAR',
                           fittedText: true,
-                          buttonColor: Colors.red[300],
+                          color: Colors.red[300],
                         ),
                       ),
                     ],
@@ -194,7 +194,7 @@ class QuickCashWidget extends StatelessWidget {
                       },
                       buttonText: Converter.currency.format(totalPayable),
                       fittedText: true,
-                      buttonColor: Colors.indigo[400],
+                      color: Colors.indigo[400],
                     ),
                   ),
                   kWidth5,
@@ -208,7 +208,7 @@ class QuickCashWidget extends StatelessWidget {
                         ).amountChanged(totalPayable > 10 ? '10' : '$totalPayable');
                       },
                       buttonText: '10',
-                      buttonColor: mainColor,
+                      color: mainColor,
                       fittedText: true,
                     ),
                   ),
@@ -223,7 +223,7 @@ class QuickCashWidget extends StatelessWidget {
                         ).amountChanged(totalPayable > 20 ? '20' : '$totalPayable');
                       },
                       buttonText: '20',
-                      buttonColor: mainColor,
+                      color: mainColor,
                       fittedText: true,
                     ),
                   ),
@@ -238,7 +238,7 @@ class QuickCashWidget extends StatelessWidget {
                         ).amountChanged(totalPayable > 50 ? '50' : '$totalPayable');
                       },
                       buttonText: '50',
-                      buttonColor: mainColor,
+                      color: mainColor,
                       fittedText: true,
                     ),
                   ),
@@ -253,7 +253,7 @@ class QuickCashWidget extends StatelessWidget {
                         ).amountChanged(totalPayable > 100 ? '100' : '$totalPayable');
                       },
                       buttonText: '100',
-                      buttonColor: mainColor,
+                      color: mainColor,
                       fittedText: true,
                     ),
                   ),
@@ -268,7 +268,7 @@ class QuickCashWidget extends StatelessWidget {
                         ).amountChanged(totalPayable > 500 ? '500' : '$totalPayable');
                       },
                       buttonText: '500',
-                      buttonColor: mainColor,
+                      color: mainColor,
                       fittedText: true,
                     ),
                   ),
@@ -283,7 +283,7 @@ class QuickCashWidget extends StatelessWidget {
                         ).amountChanged(totalPayable > 1000 ? '1000' : '$totalPayable');
                       },
                       buttonText: '1000',
-                      buttonColor: mainColor,
+                      color: mainColor,
                       fittedText: true,
                     ),
                   ),
@@ -298,7 +298,7 @@ class QuickCashWidget extends StatelessWidget {
                         ).amountChanged(totalPayable > 5000 ? '5000' : '$totalPayable');
                       },
                       buttonText: '5000',
-                      buttonColor: mainColor,
+                      color: mainColor,
                       fittedText: true,
                     ),
                   ),
@@ -314,7 +314,7 @@ class QuickCashWidget extends StatelessWidget {
                       },
                       buttonText: 'CLEAR',
                       fittedText: true,
-                      buttonColor: Colors.red[300],
+                      color: Colors.red[300],
                     ),
                   ),
                 ],

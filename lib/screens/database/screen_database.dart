@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -47,7 +48,7 @@ class ScreenDatabase extends StatelessWidget {
                       submitColor: ContstantTexts.kColorEditText,
                       submitAction: () async {
                         Navigator.pop(ctx);
-                        return await backupDatabase(context);
+                        return await requestPermission(context, action: 'backup');
                       },
                     ),
                   );
@@ -66,7 +67,7 @@ class ScreenDatabase extends StatelessWidget {
                       submitText: 'Select',
                       submitAction: () async {
                         Navigator.pop(ctx);
-                        return await restoreDatabase(context);
+                        return await requestPermission(context, action: 'restore');
                       },
                     ),
                   );
@@ -100,28 +101,10 @@ class ScreenDatabase extends StatelessWidget {
     final String dbBackupPath = join(backupDirectory.path, dbBackupName);
     log('Database backup path == $dbBackupPath');
 
-    // Checking if Directory already exist..
-    if ((await backupDirectory.exists())) {
-      log("Directory exist!");
-
-      Map<Permission, PermissionStatus> statuses = await [
-        Permission.manageExternalStorage,
-        Permission.storage,
-      ].request();
-
-      if (statuses[Permission.manageExternalStorage]!.isDenied) {
-        log("manageExternalStorage permission is denied.");
-      } else if (statuses[Permission.storage]!.isDenied) {
-        log("storage permission is denied.");
-      } else if (statuses[Permission.storage]!.isPermanentlyDenied) {
-        openAppSettings();
-      }
-    } else {
-      log("Directory do not exist.. creating directory!");
-      if (await Permission.storage.request().isGranted) {
-        // Either the permission was already granted before or the user just granted it.
-        await backupDirectory.create();
-      }
+    //Checking if backup directory already exist or not
+    if ((await backupDirectory.exists() != true)) {
+      //Creating backup directory
+      await backupDirectory.create();
     }
 
     try {
@@ -176,6 +159,51 @@ class ScreenDatabase extends StatelessWidget {
       }
     } on PlatformException catch (_) {
       return kSnackBar(context: context, error: true, content: 'Please allow required permissions to restore');
+    } on FileSystemException catch (_) {
+      return kSnackBar(context: context, error: true, content: 'Please allow required permissions to restore');
+    }
+  }
+
+  Future<void> requestPermission(BuildContext context, {required final String action}) async {
+    final AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
+    final num osVersion = num.parse(androidInfo.version.release!);
+    log('Android OS Version = $osVersion');
+
+    if (action == 'backup') {
+      if (osVersion > 10) {
+        log('OS version is > 10 ');
+        final PermissionStatus _permissionStatus = await Permission.manageExternalStorage.request();
+        if (_permissionStatus.isDenied) {
+          log("ManageExternalStorage permission is denied.");
+          return kSnackBar(context: context, error: true, content: 'Please allow required permissions to $action');
+        }
+      }
+    }
+
+    final PermissionStatus _permissionStatus = await Permission.storage.request();
+    final bool check = await Permission.storage.shouldShowRequestRationale;
+
+    log('Permission Status == $_permissionStatus');
+    log('shouldShowRequestRationale == $check');
+    if (_permissionStatus.isDenied) {
+      log("Storage permission is denied.");
+      return kSnackBar(context: context, error: true, content: 'Please allow required permissions to $action');
+    }
+    if (_permissionStatus.isPermanentlyDenied) {
+      log("Storage permission is permanently denied.");
+      return kSnackBar(
+          context: context,
+          duration: 4,
+          error: true,
+          content: 'Please allow permissions manually from settings to $action',
+          action: SnackBarAction(label: 'Open', textColor: kWhite, onPressed: () => openAppSettings()));
+    }
+
+//Call backup or restore fucntion
+    if (action == 'backup') {
+      backupDatabase(context);
+    } else {
+      restoreDatabase(context);
     }
   }
 }

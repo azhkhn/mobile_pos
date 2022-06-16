@@ -5,49 +5,57 @@ import 'package:shop_ez/core/constant/sizes.dart';
 class CustomMaterialBtton extends StatelessWidget {
   const CustomMaterialBtton({
     required this.onPressed,
-    required this.buttonText,
+    this.buttonText,
+    this.textStyle,
+    this.child,
     this.icon,
+    this.height,
     this.fontSize = 14,
     this.textColor,
-    this.buttonColor,
+    this.color,
     this.fittedText = false,
     this.minWidth = double.infinity,
     this.padding,
     Key? key,
   }) : super(key: key);
-  final String buttonText;
+  final Widget? child;
+  final String? buttonText;
   final Widget? icon;
   final double fontSize;
   final Color? textColor;
-  final Color? buttonColor;
-  final double minWidth;
+  final Color? color;
+  final double? minWidth;
+  final double? height;
   final Function() onPressed;
   final bool fittedText;
   final EdgeInsetsGeometry? padding;
+  final TextStyle? textStyle;
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
+      height: height,
       padding: padding,
       minWidth: minWidth,
       onPressed: onPressed,
-      child: fittedText
-          ? FittedBox(
-              child: Text(buttonText,
-                  style: TextStyle(
-                    color: textColor ?? kButtonTextWhite,
-                  )))
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  buttonText,
-                  style: TextStyle(color: textColor ?? kButtonTextWhite, fontSize: fontSize),
-                ),
-                icon != null ? kWidth10 : kNone,
-                icon != null ? icon! : kNone,
-              ],
-            ),
-      color: buttonColor ?? kButtonColor,
+      child: child ??
+          (fittedText
+              ? FittedBox(
+                  child: Text(buttonText!,
+                      style: TextStyle(
+                        color: textColor ?? kButtonTextWhite,
+                      )))
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      buttonText!,
+                      style: textStyle ?? TextStyle(color: textColor ?? kButtonTextWhite, fontSize: fontSize),
+                    ),
+                    icon != null ? kWidth10 : kNone,
+                    icon != null ? icon! : kNone,
+                  ],
+                )),
+      color: color ?? kButtonColor,
     );
   }
 }

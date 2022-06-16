@@ -7,8 +7,10 @@ import '../../constant/sizes.dart';
 void kSnackBar({
   required BuildContext context,
   required String content,
+  double? height,
   Color? color,
   Widget? icon,
+  int? duration,
   bool? error = false,
   bool? success = false,
   bool? delete = false,
@@ -17,41 +19,45 @@ void kSnackBar({
 }) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Row(
-        children: [
-          icon ?? const Text(''),
-          icon == null
-              ? error == true
-                  ? const Icon(
-                      Icons.error_outline,
-                      color: kSnackBarIconColor,
-                    )
-                  : success == true
-                      ? const Icon(
-                          Icons.done,
-                          color: kSnackBarIconColor,
-                        )
-                      : delete == true
-                          ? const Icon(
-                              Icons.delete,
-                              color: kSnackBarIconColor,
-                            )
-                          : update == true
-                              ? const Icon(
-                                  Icons.update,
-                                  color: kSnackBarIconColor,
-                                )
-                              : kNone
-              : kNone,
-          kWidth5,
-          Flexible(
-            child: Text(
-              content,
-              softWrap: false,
-              overflow: TextOverflow.ellipsis,
+      content: SizedBox(
+        height: height,
+        child: Row(
+          children: [
+            icon ?? const Text(''),
+            icon == null
+                ? error == true
+                    ? const Icon(
+                        Icons.error_outline,
+                        color: kSnackBarIconColor,
+                      )
+                    : success == true
+                        ? const Icon(
+                            Icons.done,
+                            color: kSnackBarIconColor,
+                          )
+                        : delete == true
+                            ? const Icon(
+                                Icons.delete,
+                                color: kSnackBarIconColor,
+                              )
+                            : update == true
+                                ? const Icon(
+                                    Icons.update,
+                                    color: kSnackBarIconColor,
+                                  )
+                                : kNone
+                : kNone,
+            kWidth5,
+            Flexible(
+              child: Text(
+                content,
+                softWrap: false,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       backgroundColor: error == true
           ? kSnackBarDeleteColor
@@ -62,7 +68,7 @@ void kSnackBar({
                   : update == true
                       ? kSnackBarUpdateColor
                       : color,
-      duration: const Duration(seconds: 2),
+      duration: Duration(seconds: duration ?? 2),
       behavior: SnackBarBehavior.floating,
       action: action,
     ),

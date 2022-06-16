@@ -347,7 +347,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                   Expanded(
                     flex: 4,
                     child: CustomMaterialBtton(
-                        buttonColor: Colors.blue,
+                        color: Colors.blue,
                         onPressed: () async {
                           _builderModel = 0;
 
@@ -381,7 +381,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                         },
                         padding: kPadding0,
                         fontSize: 12,
-                        buttonColor: Colors.orange,
+                        color: Colors.orange,
                         buttonText: 'Sub Categories'),
                   ),
                   kWidth5,
@@ -398,7 +398,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                         }
                       },
                       padding: kPadding0,
-                      buttonColor: Colors.indigo,
+                      color: Colors.indigo,
                       fontSize: 12,
                       buttonText: 'Brands',
                     ),
