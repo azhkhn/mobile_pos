@@ -9,21 +9,30 @@ class UserDatabase {
   UserDatabase._init();
 
 //========== SignUp ==========
-  Future<UserModel> createUser(UserModel userModel, String username) async {
+  Future<UserModel> createUser(UserModel userModel) async {
     final db = await dbInstance.database;
     final user = await db.rawQuery(
-        '''select * from $tableUser where ${UserFields.mobileNumber} = "$username"''');
+        '''select * from $tableUser where ${UserFields.mobileNumber} = "${userModel.mobileNumber}" or ${UserFields.username} = "${userModel.username}" or ${UserFields.email} = "${userModel.email}"''');
     if (user.isNotEmpty) {
+      final _user = UserModel.fromJson(user.first);
+
+      if (_user.username == userModel.username) {
+        throw 'Username number already exist';
+      } else if (_user.mobileNumber == userModel.mobileNumber) {
+        throw 'Mobile number already exist';
+      } else if (_user.email == userModel.email) {
+        throw 'Email number already exist';
+      }
+
       log('User already exist!');
       throw Exception('User Already Exist!');
     } else {
       log('User registered!');
       final id = await db.insert(tableUser, userModel.toJson());
-      final newUser = await db.rawQuery(
-          '''select * from $tableUser where ${UserFields.mobileNumber} = "$username"''');
-      final userCred = UserModel.fromJson(newUser.first);
-      db.insert(tableLogin, userCred.toJson());
-      return userModel.copy(id: id);
+      // final newUser = await db.rawQuery('''select * from $tableUser where ${UserFields.mobileNumber} = "${userModel.username}"''');
+      // final UserModel userCred = UserModel.fromJson(newUser.first);
+      db.insert(tableLogin, userModel.copyWith(id: id).toJson());
+      return userModel.copyWith(id: id);
     }
   }
 
@@ -31,7 +40,7 @@ class UserDatabase {
   Future<UserModel?> loginUser(String username, String password) async {
     final db = await dbInstance.database;
     final response = await db.rawQuery(
-        '''select * from $tableUser where ${UserFields.mobileNumber} = "$username" and ${UserFields.password} = "$password" or  ${UserFields.email} = "$username" and ${UserFields.password} = "$password"''');
+        '''select * from $tableUser where ${UserFields.username} = "$username" and ${UserFields.password} = "$password" or ${UserFields.mobileNumber} = "$username" and ${UserFields.password} = "$password" or  ${UserFields.email} = "$username" and ${UserFields.password} = "$password"''');
     if (response.isNotEmpty) {
       final user = UserModel.fromJson(response.first);
       log('user == $user');

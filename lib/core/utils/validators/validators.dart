@@ -1,6 +1,14 @@
 import 'package:flutter/services.dart' show FilteringTextInputFormatter;
 
 class Validators {
+  //========== Null Validator ==========
+  static String? nullValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field is required*';
+    }
+    return null;
+  }
+
   //========== Number Validator ==========
   String? numberValidator(String? value) {
     if (value == null) {
@@ -10,6 +18,18 @@ class Validators {
     if (n == null) {
       return '"$value" is not a valid number';
     }
+    return null;
+  }
+
+  //========== Number Validator ==========
+  static String? passwordValidator(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'This field is required*';
+    }
+    if (value.trim().length < 8) {
+      return 'Password must be at least 8 characters';
+    }
+    // Return null if the entered password is valid
     return null;
   }
 

@@ -40,7 +40,7 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 2, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 3, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -51,8 +51,42 @@ class EzDatabase {
     const textNull = 'TEXT';
     const intNull = 'INTEGER';
     const intType = 'INTEGER NOT NULL';
+    const idLogin = 'INTEGER NOT NULL';
 
-    // await db.execute("ALTER TABLE $tableCustomer ADD COLUMN ${CustomerFields.contactNumber} $textType DEFAULT '919293949596'");
+    await db.execute("DROP TABLE IF EXISTS $tableUser");
+    await db.execute("DROP TABLE IF EXISTS $tableLogin");
+
+    //========== Table Users ==========
+    await db.execute('''CREATE TABLE $tableUser (
+      ${UserFields.id} $idAuto,
+      ${UserFields.userGroup} $textType,
+      ${UserFields.shopName} $textType,
+      ${UserFields.countryName} $textType,
+      ${UserFields.shopCategory} $textType,
+      ${UserFields.name} $textNull,
+      ${UserFields.nameArabic} $textNull,
+      ${UserFields.address} $textNull,
+      ${UserFields.mobileNumber} $textType,
+      ${UserFields.email} $textNull,
+      ${UserFields.username} $textType,
+      ${UserFields.password} $textType,
+      ${UserFields.document} $textNull)''');
+
+//========== Table Login ==========
+    await db.execute('''CREATE TABLE $tableLogin (
+      ${UserFields.id} $idLogin,
+      ${UserFields.userGroup} $textType,
+      ${UserFields.shopName} $textType,
+      ${UserFields.countryName} $textType,
+      ${UserFields.shopCategory} $textType,
+      ${UserFields.name} $textNull,
+      ${UserFields.nameArabic} $textNull,
+      ${UserFields.address} $textNull,
+      ${UserFields.mobileNumber} $textType,
+      ${UserFields.email} $textNull,
+      ${UserFields.username} $textType,
+      ${UserFields.password} $textType,
+      ${UserFields.document} $textNull)''');
 
     await db.execute("DROP TABLE IF EXISTS $tableSales");
     await db.execute("DROP TABLE IF EXISTS $tableSalesItems");
@@ -483,22 +517,34 @@ class EzDatabase {
 //========== Table Users ==========
     await db.execute('''CREATE TABLE $tableUser (
       ${UserFields.id} $idAuto,
+      ${UserFields.userGroup} $textType,
       ${UserFields.shopName} $textType,
       ${UserFields.countryName} $textType,
       ${UserFields.shopCategory} $textType,
+      ${UserFields.name} $textNull,
+      ${UserFields.nameArabic} $textNull,
+      ${UserFields.address} $textNull,
       ${UserFields.mobileNumber} $textType,
-      ${UserFields.email} $textType,
-      ${UserFields.password} $textType)''');
+      ${UserFields.email} $textNull,
+      ${UserFields.username} $textType,
+      ${UserFields.password} $textType,
+      ${UserFields.document} $textNull)''');
 
 //========== Table Login ==========
     await db.execute('''CREATE TABLE $tableLogin (
       ${UserFields.id} $idLogin,
+      ${UserFields.userGroup} $textType,
       ${UserFields.shopName} $textType,
       ${UserFields.countryName} $textType,
       ${UserFields.shopCategory} $textType,
+      ${UserFields.name} $textNull,
+      ${UserFields.nameArabic} $textNull,
+      ${UserFields.address} $textNull,
       ${UserFields.mobileNumber} $textType,
-      ${UserFields.email} $textType,
-      ${UserFields.password} $textType)''');
+      ${UserFields.email} $textNull,
+      ${UserFields.username} $textType,
+      ${UserFields.password} $textType,
+      ${UserFields.document} $textNull)''');
 
 //========== Table Category ==========
     await db.execute('''CREATE TABLE $tableCategory (

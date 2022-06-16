@@ -317,7 +317,7 @@ class SupplierAddScreen extends StatelessWidget {
           kSnackBar(context: context, success: true, content: 'Supplier added successfully!');
         } else {
           _supplier = await supplierDB.updateSupplier(_supplierModel);
-          kSnackBar(context: context, update: true, content: 'Supplier added successfully!');
+          kSnackBar(context: context, update: true, content: 'Supplier updated successfully!');
         }
         resetSupplier();
         if (from) {
@@ -338,7 +338,6 @@ class SupplierAddScreen extends StatelessWidget {
     _supplierNameController.text = supplier.supplierName;
     _supplierNameArabicController.text = supplier.supplierNameArabic;
     _contactNameController.text = supplier.contactName;
-    _contactNumberController.text = supplier.contactNumber;
     _contactNumberController.text = supplier.contactNumber;
     _vatNumberController.text = supplier.vatNumber ?? '';
     _emailController.text = supplier.email ?? '';

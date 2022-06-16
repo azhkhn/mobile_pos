@@ -90,7 +90,7 @@ class SignInFields extends StatelessWidget {
                 TextFeildWidget(
                   controller: usernameController.value,
                   labelText: 'Username',
-                  hintText: 'Phone number or email',
+                  hintText: 'Phone number or username or email',
                   prefixIcon: const Icon(
                     Icons.person,
                     color: Colors.black,

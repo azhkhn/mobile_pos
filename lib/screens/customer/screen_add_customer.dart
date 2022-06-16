@@ -14,7 +14,7 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';
 
-// static const items = ['Cash Customer', 'Credit Customer'];
+// const items = ['Cash Customer', 'Credit Customer'];
 
 class CustomerAddScreen extends StatelessWidget {
   CustomerAddScreen({Key? key, this.from = false, this.customerModel}) : super(key: key);

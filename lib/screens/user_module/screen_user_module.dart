@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
+import 'package:shop_ez/core/routes/router.dart';
 
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
-
-import '../../../core/constant/sizes.dart';
 
 class ScreenUserModule extends StatelessWidget {
   const ScreenUserModule({
@@ -37,7 +37,7 @@ class ScreenUserModule extends StatelessWidget {
                         Expanded(
                           child: CustomMaterialBtton(
                             height: 50,
-                            onPressed: () async {},
+                            onPressed: () => Navigator.pushNamed(context, routeAddUser),
                             color: Colors.indigo[400],
                             textColor: kWhite,
                             buttonText: 'Add User',

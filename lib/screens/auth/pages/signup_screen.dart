@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/screens/auth/widgets/login_signup_buttons.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import 'package:shop_ez/widgets/wave_clip.dart';
@@ -83,11 +84,13 @@ class SignUpFields extends StatefulWidget {
   static final _formStateKey = GlobalKey<FormState>();
   static final TextEditingController shopNameController = TextEditingController();
   static final TextEditingController emailController = TextEditingController();
+  static final TextEditingController usernameController = TextEditingController();
   static final TextEditingController passwordController = TextEditingController();
   static final TextEditingController mobileNumberController = TextEditingController();
   static final TextEditingController countryNameController = TextEditingController();
   static String shopCategoryController = 'null';
   static bool obscureState = false;
+  static bool obscureState2 = false;
   @override
   State<SignUpFields> createState() => _SignUpFieldsState();
 }
@@ -230,6 +233,18 @@ class _SignUpFieldsState extends State<SignUpFields> {
                 },
               ),
 
+              //========== Username Field ==========
+              TextFeildWidget(
+                controller: SignUpFields.usernameController,
+                labelText: 'Username *',
+                textInputType: TextInputType.text,
+                prefixIcon: const Icon(
+                  Icons.person,
+                  color: Colors.black,
+                ),
+                validator: (value) => Validators.nullValidator(value),
+              ),
+
               //========== Password Field ==========
               TextFeildWidget(
                 controller: SignUpFields.passwordController,
@@ -256,15 +271,40 @@ class _SignUpFieldsState extends State<SignUpFields> {
                   icon: SignUpFields.obscureState == false ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) => Validators.passwordValidator(value),
+              ),
+
+              //========== Password Field ==========
+              TextFeildWidget(
+                labelText: 'Confirm Password *',
+                textInputType: TextInputType.text,
+                obscureText: !SignUpFields.obscureState2,
+                prefixIcon: const Icon(
+                  Icons.security,
+                  color: Colors.black,
+                ),
+                suffixIcon: IconButton(
+                  color: Colors.black,
+                  onPressed: () {
+                    if (SignUpFields.obscureState2) {
+                      setState(() {
+                        SignUpFields.obscureState2 = false;
+                      });
+                    } else {
+                      setState(() {
+                        SignUpFields.obscureState2 = true;
+                      });
+                    }
+                  },
+                  icon: SignUpFields.obscureState2 == false ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
+                ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'This field is required*';
+                  if (SignUpFields.passwordController.text == value) {
+                    return null;
+                  } else {
+                    return "Password do not match";
                   }
-                  if (value.trim().length < 8) {
-                    return 'Password must be at least 8 characters';
-                  }
-                  // Return null if the entered password is valid
-                  return null;
                 },
               ),
               kHeight20,
@@ -277,6 +317,7 @@ class _SignUpFieldsState extends State<SignUpFields> {
                 shopCategory: SignUpFields.shopCategoryController.trim(),
                 mobileNumber: SignUpFields.mobileNumberController.text.trim(),
                 email: SignUpFields.emailController.text.trim(),
+                username: SignUpFields.usernameController.text.trim(),
                 password: SignUpFields.passwordController.text.trim(),
                 formKey: SignUpFields._formStateKey,
                 callback: widget.callback,

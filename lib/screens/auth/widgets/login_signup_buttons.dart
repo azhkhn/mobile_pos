@@ -26,13 +26,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
   }) : super(key: key);
 
   final int type;
-  final String? username,
-      password,
-      mobileNumber,
-      email,
-      shopName,
-      countryName,
-      shopCategory;
+  final String? username, password, mobileNumber, email, shopName, countryName, shopCategory;
   final Function? callback;
 
   final GlobalKey<FormState> formKey;
@@ -110,6 +104,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
         log('User Signed Successfully!');
         SignInFields.usernameController.value.clear();
         SignInFields.passwordController.value.clear();
+        kSnackBar(context: context, success: true, content: 'User Logged In Successfully!');
         Navigator.pushReplacementNamed(context, routeHome);
       } catch (e) {
         log(e.toString());
@@ -125,30 +120,23 @@ class LoginAndSignUpButtons extends StatelessWidget {
 
 //========== SignUp and Verification ==========
   Future<void> onSignUp(BuildContext context) async {
-    final String _shopName = shopName!,
-        _countryName = countryName!,
-        _shopCategory = shopCategory!,
-        _mobileNumber = mobileNumber!,
-        _password = password!;
-    final String? _email = email;
-
     final isFormValid = formKey.currentState!;
 
     if (isFormValid.validate()) {
-      log(
-        'shopName = $_shopName, countryName = $_countryName, shopCategory = $_shopCategory, phoneNumber = $_mobileNumber, email = $_email, password = $_password',
-      );
+      log('shopName = $shopName, countryName = $countryName, shopCategory = $shopCategory, phoneNumber = $mobileNumber, email = $email, username = $username, password = $password');
 
       final _user = UserModel(
-        shopName: _shopName,
-        countryName: _countryName,
-        shopCategory: _shopCategory,
-        mobileNumber: _mobileNumber,
-        email: _email,
-        password: _password,
+        userGroup: 'owner',
+        shopName: shopName!,
+        countryName: countryName!,
+        shopCategory: shopCategory!,
+        mobileNumber: mobileNumber!,
+        email: email,
+        username: username!,
+        password: password!,
       );
       try {
-        await UserDatabase.instance.createUser(_user, _mobileNumber);
+        await UserDatabase.instance.createUser(_user);
         kSnackBar(
           context: context,
           success: true,
@@ -157,11 +145,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
         Navigator.pushReplacementNamed(context, routeHome);
         return;
       } catch (e) {
-        kSnackBar(
-          context: context,
-          error: true,
-          content: "Username Already Exist!",
-        );
+        kSnackBar(context: context, error: true, content: e.toString());
         return;
       }
     }

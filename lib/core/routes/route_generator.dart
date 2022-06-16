@@ -16,6 +16,7 @@ import 'package:shop_ez/screens/stock/screen_stock.dart';
 import 'package:shop_ez/screens/supplier/screen_manage_supplier.dart';
 import 'package:shop_ez/screens/transaction/purchase_transaction/screen_transaction_purchase.dart';
 import 'package:shop_ez/screens/transaction/sales_transaction/screen_transaction_sale.dart';
+import 'package:shop_ez/screens/user_module/pages/screen_add_user.dart';
 import 'package:shop_ez/screens/user_module/screen_user_module.dart';
 
 import '../../screens/auth/pages/login_screen.dart';
@@ -157,6 +158,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ScreenDatabase());
       case routeUserModule:
         return MaterialPageRoute(builder: (_) => const ScreenUserModule());
+      case routeAddUser:
+        return MaterialPageRoute(builder: (_) => ScreenAddUser());
 
       default:
         return _errorRoute();
