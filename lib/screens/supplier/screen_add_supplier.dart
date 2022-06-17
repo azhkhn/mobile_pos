@@ -240,9 +240,9 @@ class SupplierAddScreen extends StatelessWidget {
                       widthFactor: .8,
                       child: CustomMaterialBtton(
                         buttonText: 'Submit',
-                        onPressed: () {
-                          if (supplierModel == null) return addSuppler(context);
-                          addSuppler(context, isUpdate: true);
+                        onPressed: () async {
+                          if (supplierModel == null) return await addSuppler(context);
+                          await addSuppler(context, isUpdate: true);
                         },
                       )),
                   kHeight10
@@ -292,7 +292,7 @@ class SupplierAddScreen extends StatelessWidget {
       countryArabic = _countryArabicController.text;
       poBox = _poBoxController.text;
 
-      final _supplierModel = SupplierModel(
+      final SupplierModel _supplierModel = SupplierModel(
         id: supplierModel?.id,
         supplierName: supplierName,
         supplierNameArabic: supplierNameArabic,

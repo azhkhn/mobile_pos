@@ -10,10 +10,12 @@ const Color kButtonColor = Color(0xFF0A99AB);
 const kTransparentColor = Colors.transparent;
 const kWhite = Colors.white;
 const kBlack = Colors.black;
+const kBlue = Colors.blue;
 const kRed = Colors.red;
 const kGreen = Colors.green;
 const kOrange = Colors.orange;
 const kGrey = Colors.grey;
+const kBlueGrey = Colors.blueGrey;
 
 //=================== Const Colors for Widgets ====================
 const kButtonTextWhite = Colors.white;

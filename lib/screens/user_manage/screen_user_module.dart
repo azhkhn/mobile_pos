@@ -9,8 +9,8 @@ import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
-class ScreenUserModule extends StatelessWidget {
-  const ScreenUserModule({
+class ScreenUserManage extends StatelessWidget {
+  const ScreenUserManage({
     Key? key,
   }) : super(key: key);
 
@@ -20,7 +20,7 @@ class ScreenUserModule extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBarWidget(
-        title: 'User Module',
+        title: 'User Manage',
       ),
       body: BackgroundContainerWidget(
         child: ItemScreenPaddingWidget(
@@ -66,12 +66,12 @@ class ScreenUserModule extends StatelessWidget {
                         Expanded(
                           child: CustomMaterialBtton(
                             height: 50,
-                            onPressed: () async {},
+                            onPressed: () => Navigator.pushNamed(context, routeUserList),
                             color: Colors.deepOrange,
                             textColor: kWhite,
-                            buttonText: 'Manage Users',
+                            buttonText: 'List Users',
                             textStyle: kTextBoldWhite,
-                            icon: const Icon(Icons.manage_accounts, color: kWhite),
+                            icon: const Icon(Icons.group, color: kWhite),
                           ),
                         ),
                         kWidth10,
@@ -81,7 +81,7 @@ class ScreenUserModule extends StatelessWidget {
                             onPressed: () {},
                             color: Colors.blueGrey,
                             textColor: kWhite,
-                            buttonText: 'Manage Group',
+                            buttonText: 'List Group',
                             textStyle: kTextBoldWhite,
                             icon: const Icon(Icons.security, color: kWhite),
                           ),

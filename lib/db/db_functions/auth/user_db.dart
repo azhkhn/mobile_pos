@@ -36,6 +36,19 @@ class UserDatabase {
     }
   }
 
+  //========== Update User ==========
+  Future<UserModel> updateUser(UserModel userModel) async {
+    final db = await dbInstance.database;
+    final _id = await db.update(
+      tableUser,
+      userModel.toJson(),
+      where: '${UserFields.id} = ?',
+      whereArgs: [userModel.id],
+    );
+    log('User ($_id) updated successfully');
+    return userModel;
+  }
+
 //========== Login ==========
   Future<UserModel?> loginUser(String username, String password) async {
     final db = await dbInstance.database;
@@ -74,11 +87,13 @@ class UserDatabase {
   }
 
 //========== Get All User Details ==========
-  Future getAllUsers() async {
+  Future<List<UserModel>> getAllUsers() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableUser);
     log('results === $_result');
+
     // db.delete(tableUser);
-    return _result.map((json) => UserModel.fromJson(json)).toList();
+    final List<UserModel> users = _result.map((json) => UserModel.fromJson(json)).toList();
+    return users;
   }
 }

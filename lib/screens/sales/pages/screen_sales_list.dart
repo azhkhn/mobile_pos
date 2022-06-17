@@ -59,7 +59,7 @@ class SalesList extends StatelessWidget {
                                           return InkWell(
                                             child: SalesCardWidget(
                                               index: index,
-                                              sales: sales,
+                                              sales: sales[index],
                                             ),
                                             onTap: () async {
                                               final bool payable = sales[index].paymentStatus == 'Partial' || sales[index].paymentStatus == 'Credit';

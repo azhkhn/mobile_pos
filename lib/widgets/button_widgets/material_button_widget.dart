@@ -47,12 +47,12 @@ class CustomMaterialBtton extends StatelessWidget {
               : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    icon != null ? icon! : kNone,
+                    icon != null ? kWidth10 : kNone,
                     Text(
                       buttonText!,
                       style: textStyle ?? TextStyle(color: textColor ?? kButtonTextWhite, fontSize: fontSize),
                     ),
-                    icon != null ? kWidth10 : kNone,
-                    icon != null ? icon! : kNone,
                   ],
                 )),
       color: color ?? kButtonColor,

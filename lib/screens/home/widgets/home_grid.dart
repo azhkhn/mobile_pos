@@ -21,7 +21,7 @@ const List homeGridName = [
   'POS',
   'SALES',
   'ITEM MASTER',
-  'USER MODULE',
+  'MANAGE USER',
   'PURCHASE',
   'EXPENSE',
   'STOCK',
@@ -60,7 +60,7 @@ class HomeGrid extends StatelessWidget {
                   Navigator.pushNamed(context, routeItemMaster);
                   break;
                 case 3:
-                  Navigator.pushNamed(context, routeUserModule);
+                  Navigator.pushNamed(context, routeUserManage);
                   break;
                 case 4:
                   Navigator.pushNamed(context, routePurchase);

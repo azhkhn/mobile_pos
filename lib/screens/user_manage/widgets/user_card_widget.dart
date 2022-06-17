@@ -1,20 +1,18 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/constant/text.dart';
+import 'package:shop_ez/model/auth/user_model.dart';
 
-import '../../../core/constant/sizes.dart';
-import '../../../core/constant/text.dart';
-import '../../../core/utils/converters/converters.dart';
-import '../../../model/sales/sales_model.dart';
-
-class SalesCardWidget extends StatelessWidget {
-  const SalesCardWidget({
+class UserCardwidget extends StatelessWidget {
+  const UserCardwidget({
     required this.index,
-    required this.sales,
+    required this.user,
     Key? key,
   }) : super(key: key);
   final int index;
-  final SalesModel sales;
+  final UserModel user;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +22,7 @@ class SalesCardWidget extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Flex(
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           direction: Axis.horizontal,
           children: [
             Expanded(
@@ -58,7 +57,7 @@ class SalesCardWidget extends StatelessWidget {
                   Row(
                     children: [
                       const AutoSizeText(
-                        'Invoice:  ',
+                        'Group:  ',
                         overflow: TextOverflow.ellipsis,
                         style: kTextSalesCard,
                         maxLines: 1,
@@ -67,9 +66,16 @@ class SalesCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          sales.invoiceNumber!,
+                          user.userGroup,
                           overflow: TextOverflow.ellipsis,
-                          style: kTextSalesCard,
+                          style: TextStyle(
+                              color: user.userGroup == 'Owner'
+                                  ? kGreen
+                                  : user.userGroup == 'Admin'
+                                      ? kRed
+                                      : kBlueGrey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12),
                           maxLines: 1,
                           minFontSize: 10,
                           maxFontSize: 14,
@@ -81,7 +87,7 @@ class SalesCardWidget extends StatelessWidget {
                   Row(
                     children: [
                       const AutoSizeText(
-                        'Date:  ',
+                        'Name:  ',
                         overflow: TextOverflow.ellipsis,
                         style: kTextSalesCard,
                         maxLines: 1,
@@ -90,30 +96,7 @@ class SalesCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.dateFormat.format(DateTime.parse(sales.dateTime)),
-                          overflow: TextOverflow.ellipsis,
-                          style: kTextSalesCard,
-                          maxLines: 1,
-                          minFontSize: 10,
-                          maxFontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                  kHeight5,
-                  Row(
-                    children: [
-                      const AutoSizeText(
-                        'Customer:  ',
-                        overflow: TextOverflow.ellipsis,
-                        style: kTextSalesCard,
-                        maxLines: 1,
-                        minFontSize: 10,
-                        maxFontSize: 14,
-                      ),
-                      Expanded(
-                        child: AutoSizeText(
-                          sales.customerName,
+                          user.name ?? user.shopName,
                           overflow: TextOverflow.ellipsis,
                           style: kBoldTextSalesCard,
                           maxLines: 1,
@@ -131,11 +114,12 @@ class SalesCardWidget extends StatelessWidget {
               flex: 1,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       const AutoSizeText(
-                        'Amount:  ',
+                        'Username:  ',
                         overflow: TextOverflow.ellipsis,
                         style: kTextSalesCard,
                         maxLines: 1,
@@ -144,7 +128,7 @@ class SalesCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.currency.format(num.parse(sales.grantTotal)),
+                          user.username,
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -158,7 +142,7 @@ class SalesCardWidget extends StatelessWidget {
                   Row(
                     children: [
                       const AutoSizeText(
-                        'Paid:  ',
+                        'Contact:  ',
                         overflow: TextOverflow.ellipsis,
                         style: kTextSalesCard,
                         maxLines: 1,
@@ -167,7 +151,7 @@ class SalesCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.currency.format(num.parse(sales.paid)),
+                          user.mobileNumber,
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -178,72 +162,29 @@ class SalesCardWidget extends StatelessWidget {
                     ],
                   ),
                   kHeight5,
-                  Row(
-                    children: [
-                      const AutoSizeText(
-                        'Balance:  ',
-                        overflow: TextOverflow.ellipsis,
-                        style: kTextSalesCard,
-                        maxLines: 1,
-                        minFontSize: 10,
-                        maxFontSize: 14,
-                      ),
-                      Expanded(
-                        child: AutoSizeText(
-                          Converter.currency.format(num.parse(sales.balance)),
+                  if (user.email != null)
+                    Row(
+                      children: [
+                        const AutoSizeText(
+                          'Email:  ',
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
                           minFontSize: 10,
                           maxFontSize: 14,
                         ),
-                      ),
-                    ],
-                  ),
-                  kHeight5,
-                  Row(
-                    children: [
-                      const AutoSizeText(
-                        'Status:  ',
-                        overflow: TextOverflow.ellipsis,
-                        style: kTextSalesCard,
-                        maxLines: 1,
-                        minFontSize: 10,
-                        maxFontSize: 14,
-                      ),
-                      Expanded(
-                        child: sales.paymentStatus != 'Returned'
-                            ? AutoSizeText(
-                                sales.paymentStatus,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: sales.paymentStatus == 'Paid'
-                                        ? kGreen
-                                        : sales.paymentStatus == 'Partial'
-                                            ? kOrange
-                                            : sales.paymentStatus == 'Credit'
-                                                ? kRed
-                                                : kRed),
-                                maxLines: 1,
-                                minFontSize: 10,
-                                maxFontSize: 14,
-                              )
-                            : Row(mainAxisAlignment: MainAxisAlignment.start, children: const [
-                                Icon(Icons.restore_outlined, color: kRed, size: 18),
-                                kWidth2,
-                                AutoSizeText(
-                                  'Returned',
-                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: kRed),
-                                  maxLines: 1,
-                                  minFontSize: 10,
-                                  maxFontSize: 14,
-                                ),
-                              ]),
-                      ),
-                    ],
-                  ),
+                        Expanded(
+                          child: AutoSizeText(
+                            user.email ?? '',
+                            overflow: TextOverflow.ellipsis,
+                            style: kTextSalesCard,
+                            maxLines: 1,
+                            minFontSize: 10,
+                            maxFontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),

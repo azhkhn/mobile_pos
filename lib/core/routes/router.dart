@@ -34,5 +34,6 @@ const String routeSalesInvoice = '/sales_invoice';
 const String routeTransactionSale = '/transaction_sale';
 const String routeTransactionPurchase = '/transaction_purchase';
 const String routeDatabase = '/database';
-const String routeUserModule = '/user_module';
+const String routeUserManage = '/user_manage';
 const String routeAddUser = '/add_user';
+const String routeUserList = '/user_list';
