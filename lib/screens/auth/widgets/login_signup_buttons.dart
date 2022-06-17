@@ -108,10 +108,11 @@ class LoginAndSignUpButtons extends StatelessWidget {
         Navigator.pushReplacementNamed(context, routeHome);
       } catch (e) {
         log(e.toString());
+
         kSnackBar(
           context: context,
           error: true,
-          content: 'Incorrect username or password!',
+          content: e.toString(),
         );
         return;
       }
@@ -134,6 +135,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
         email: email,
         username: username!,
         password: password!,
+        status: 1,
       );
       try {
         await UserDatabase.instance.createUser(_user);

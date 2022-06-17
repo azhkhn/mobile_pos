@@ -7,15 +7,22 @@ const Color appBarColor = Color(0xFF05A0B0);
 const Color kButtonColor = Color(0xFF0A99AB);
 
 //=================== Const Colors ====================
-const kTransparentColor = Colors.transparent;
-const kWhite = Colors.white;
-const kBlack = Colors.black;
-const kBlue = Colors.blue;
-const kRed = Colors.red;
-const kGreen = Colors.green;
-const kOrange = Colors.orange;
-const kGrey = Colors.grey;
-const kBlueGrey = Colors.blueGrey;
+const Color kTransparentColor = Colors.transparent;
+const Color kWhite = Colors.white;
+const Color kBlack = Colors.black;
+const Color kBlue = Colors.blue;
+const Color kRed = Colors.red;
+const Color kGreen = Colors.green;
+const Color kOrange = Colors.orange;
+const Color kGrey = Colors.grey;
+const Color kBlueGrey = Colors.blueGrey;
+
+//=================== Const Colors ====================
+const Color kGreen300 = Color(0xFF81C784);
+const Color kGreen400 = Color(0xFF66BB6A);
+
+const Color kRed300 = Color(0xFFE57373);
+const Color kRed400 = Color(0xFFEF5350);
 
 //=================== Const Colors for Widgets ====================
 const kButtonTextWhite = Colors.white;

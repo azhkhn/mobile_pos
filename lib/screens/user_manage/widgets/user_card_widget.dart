@@ -166,7 +166,7 @@ class UserCardwidget extends StatelessWidget {
                     Row(
                       children: [
                         const AutoSizeText(
-                          'Email:  ',
+                          'Status:  ',
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -174,13 +174,22 @@ class UserCardwidget extends StatelessWidget {
                           maxFontSize: 14,
                         ),
                         Expanded(
-                          child: AutoSizeText(
-                            user.email ?? '',
-                            overflow: TextOverflow.ellipsis,
-                            style: kTextSalesCard,
-                            maxLines: 1,
-                            minFontSize: 10,
-                            maxFontSize: 14,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(user.status == 1 ? Icons.person : Icons.person_off, color: user.status == 1 ? kGreen300 : kRed300, size: 14),
+                              kWidth2,
+                              Expanded(
+                                child: AutoSizeText(
+                                  user.status == 1 ? 'Active' : 'Inactive',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(color: user.status == 1 ? kGreen300 : kRed300, fontWeight: FontWeight.bold, fontSize: 12),
+                                  maxLines: 1,
+                                  minFontSize: 10,
+                                  maxFontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],

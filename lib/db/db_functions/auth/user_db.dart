@@ -57,10 +57,15 @@ class UserDatabase {
     if (response.isNotEmpty) {
       final user = UserModel.fromJson(response.first);
       log('user == $user');
-      await db.insert(tableLogin, user.toJson());
-      return user;
+      if (user.status == 1) {
+        await db.insert(tableLogin, user.toJson());
+        return user;
+      } else {
+        throw 'Your account is temporarily disabled';
+      }
     } else {
-      throw Exception('User Not Found!');
+      log('User Not Found!');
+      throw 'Incorrect username or password!';
     }
   }
 

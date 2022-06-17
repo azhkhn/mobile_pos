@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/db/db_functions/auth/user_db.dart';
 import 'package:shop_ez/screens/auth/widgets/login_signup_buttons.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
@@ -90,7 +91,8 @@ class SignInFields extends StatelessWidget {
                 TextFeildWidget(
                   controller: usernameController.value,
                   labelText: 'Username',
-                  hintText: 'Phone number or username or email',
+                  hintText: 'Phone number, username, or email',
+                  hintStyle: kText12,
                   prefixIcon: const Icon(
                     Icons.person,
                     color: Colors.black,

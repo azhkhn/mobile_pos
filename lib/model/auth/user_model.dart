@@ -20,6 +20,7 @@ class UserFields {
   static const String username = 'username';
   static const String password = 'password';
   static const String document = 'document';
+  static const String status = 'status';
 }
 
 @freezed
@@ -33,6 +34,7 @@ class UserModel with _$UserModel {
     required String mobileNumber,
     required String username,
     required String password,
+    required int status,
     String? email,
     String? name,
     String? nameArabic,

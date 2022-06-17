@@ -322,6 +322,7 @@ class ScreenAddUser extends StatelessWidget {
         email: email,
         username: username,
         password: password,
+        status: 1,
       );
       try {
         if (!isUpdate) {
