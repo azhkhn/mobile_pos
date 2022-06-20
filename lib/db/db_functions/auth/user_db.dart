@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/database.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
 
@@ -88,7 +89,8 @@ class UserDatabase {
 //========== Logout ==========
   Future logout() async {
     final db = await dbInstance.database;
-    db.delete(tableLogin);
+    await db.delete(tableLogin);
+    UserUtils.instance.userModel = null;
   }
 
 //========== Get All User Details ==========

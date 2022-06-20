@@ -61,45 +61,46 @@ class ScreenAddUser extends StatelessWidget {
             key: _formKey,
             child: Column(
               children: [
-                //========== User Group Field ==========
-                ValueListenableBuilder(
-                    valueListenable: _groupNotifier,
-                    builder: (context, group, _) {
-                      return DropdownButtonFormField(
-                        decoration: const InputDecoration(
-                          label: Text(
-                            'User Group *',
-                            style: TextStyle(color: klabelColorGrey),
+                //==================== User Group Field ====================
+                if (userModel?.userGroup != 'Owner')
+                  ValueListenableBuilder(
+                      valueListenable: _groupNotifier,
+                      builder: (context, group, _) {
+                        return DropdownButtonFormField(
+                          decoration: const InputDecoration(
+                            label: Text(
+                              'User Group *',
+                              style: TextStyle(color: klabelColorGrey),
+                            ),
+                            hintText: 'Select User Group',
+                            labelStyle: kText12,
+                            hintStyle: kText12,
+                            isDense: true,
+                            border: OutlineInputBorder(),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            contentPadding: EdgeInsets.all(10),
                           ),
-                          hintText: 'Select User Group',
-                          labelStyle: kText12,
-                          hintStyle: kText12,
-                          isDense: true,
-                          border: OutlineInputBorder(),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          contentPadding: EdgeInsets.all(10),
-                        ),
-                        isExpanded: true,
-                        style: kText12,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        value: group,
-                        items: items
-                            .map(
-                              (values) => DropdownMenuItem(value: values, child: Text(values)),
-                            )
-                            .toList(),
-                        onChanged: (value) {
-                          _userGroupController.text = value.toString();
-                          log('User Type = ${_userGroupController.text}');
-                        },
-                        validator: (value) {
-                          if (value == null || _userGroupController.text.isEmpty) {
-                            return 'This field is required*';
-                          }
-                          return null;
-                        },
-                      );
-                    }),
+                          isExpanded: true,
+                          style: kText12Black,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          value: group,
+                          items: items
+                              .map(
+                                (values) => DropdownMenuItem(value: values, child: Text(values)),
+                              )
+                              .toList(),
+                          onChanged: (value) {
+                            _userGroupController.text = value.toString();
+                            log('User Type = ${_userGroupController.text}');
+                          },
+                          validator: (value) {
+                            if (value == null || _userGroupController.text.isEmpty) {
+                              return 'This field is required*';
+                            }
+                            return null;
+                          },
+                        );
+                      }),
 
                 kHeight10,
 

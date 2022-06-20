@@ -167,7 +167,7 @@ class RouteGenerator {
                 ));
 
       case routeUserList:
-        return MaterialPageRoute(builder: (_) => ScreenUserList());
+        return MaterialPageRoute(builder: (_) => const ScreenUserList());
 
       default:
         return _errorRoute();
