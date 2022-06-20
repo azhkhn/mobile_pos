@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/group/group_database.dart';
 import 'package:shop_ez/model/group/group_model.dart';
+import 'package:shop_ez/screens/user_manage/widgets/permission_table_header_widget.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
@@ -24,6 +27,37 @@ class ScreenAddGroup extends StatelessWidget {
   //========== TextEditing Controllers ==========
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+
+  //==================== Value Notifiers ====================
+  // final ValueNotifier<List<List<bool>>> permValueNotifier = ValueNotifier(
+  //   [
+  //     [false, false, false, false, false],
+  //     [false, false, false, false, false],
+  //     [false, false, false, false, false],
+  //     [false, false, false, false, false],
+  //   ],
+  // );
+
+  final ValueNotifier<List<Map>> permValueNotifier = ValueNotifier(
+    [
+      {
+        'name': 'Sales',
+        'perms': [false, false, false, false, false]
+      },
+      {
+        'name': 'Purchase',
+        'perms': [false, false, false, false, false]
+      },
+      {
+        'name': 'Products',
+        'perms': [false, false, false, false, false]
+      },
+      {
+        'name': 'Customer',
+        'perms': [false, false, false, false, false]
+      },
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +104,172 @@ class ScreenAddGroup extends StatelessWidget {
                     validator: (value) => Validators.nullValidator(value),
                   ),
 
-                  kHeight5,
+                  kHeight10,
+
+                  Column(
+                    children: [
+                      const Text('Group Permission',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 16,
+                            decoration: TextDecoration.underline,
+                          )),
+                      kHeight10,
+
+                      //==================== Table Header ====================
+                      const PermissionTableHeaderWidget(),
+
+                      //==================== Product Items Table ====================
+                      SingleChildScrollView(
+                        child: ValueListenableBuilder(
+                          valueListenable: permValueNotifier,
+                          builder: (context, List<Map> selectedPermissions, child) {
+                            return Table(
+                              columnWidths: const {
+                                0: FractionColumnWidth(0.25),
+                                1: FractionColumnWidth(0.15),
+                                2: FractionColumnWidth(0.15),
+                                3: FractionColumnWidth(0.15),
+                                4: FractionColumnWidth(0.15),
+                                5: FractionColumnWidth(0.15),
+                              },
+                              border: TableBorder.all(color: Colors.grey, width: 0.5),
+                              children: List<TableRow>.generate(
+                                4,
+                                (index) {
+                                  Map _perms = selectedPermissions[index];
+
+                                  return TableRow(children: [
+                                    //==================== Module Name ====================
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                      color: Colors.white,
+                                      height: 30,
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        _perms['name'],
+                                        softWrap: true,
+                                        style: kText10Lite,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                      ),
+                                    ),
+
+                                    //==================== View Box ====================
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                      color: Colors.white,
+                                      height: 30,
+                                      alignment: Alignment.centerLeft,
+                                      child: Checkbox(
+                                        value: _perms['perms'][0],
+                                        onChanged: (value) {
+                                          _perms.update('perms', (value) {
+                                            value[0] = !_perms['perms'][0];
+                                            return value;
+                                          });
+
+                                          permValueNotifier.value[index] = _perms;
+                                          log('permissions == ' + permValueNotifier.value[index].toString());
+                                          permValueNotifier.notifyListeners();
+                                        },
+                                      ),
+                                    ),
+                                    //==================== Add Box ====================
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                      color: Colors.white,
+                                      height: 30,
+                                      alignment: Alignment.centerLeft,
+                                      child: Checkbox(
+                                        value: _perms['perms'][1],
+                                        onChanged: (value) {
+                                          _perms.update('perms', (value) {
+                                            value[1] = !_perms['perms'][1];
+                                            return value;
+                                          });
+
+                                          permValueNotifier.value[index] = _perms;
+                                          log('permissions == ' + permValueNotifier.value[index].toString());
+                                          permValueNotifier.notifyListeners();
+                                        },
+                                      ),
+                                    ),
+                                    //==================== Edit Box ====================
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                      color: Colors.white,
+                                      height: 30,
+                                      alignment: Alignment.centerLeft,
+                                      child: Checkbox(
+                                        value: _perms['perms'][2],
+                                        onChanged: (value) {
+                                          _perms.update('perms', (value) {
+                                            value[2] = !_perms['perms'][2];
+                                            return value;
+                                          });
+
+                                          permValueNotifier.value[index] = _perms;
+                                          log('permissions == ' + permValueNotifier.value[index].toString());
+                                          permValueNotifier.notifyListeners();
+                                        },
+                                      ),
+                                    ),
+                                    //==================== Delete Box ====================
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                      color: Colors.white,
+                                      height: 30,
+                                      alignment: Alignment.centerLeft,
+                                      child: Checkbox(
+                                        value: _perms['perms'][3],
+                                        onChanged: (value) {
+                                          _perms.update('perms', (value) {
+                                            value[3] = !_perms['perms'][3];
+                                            return value;
+                                          });
+
+                                          permValueNotifier.value[index] = _perms;
+                                          log('permissions == ' + permValueNotifier.value[index].toString());
+                                          permValueNotifier.notifyListeners();
+                                        },
+                                      ),
+                                    ),
+                                    //==================== All Box ====================
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                      color: Colors.white,
+                                      height: 30,
+                                      alignment: Alignment.centerLeft,
+                                      child: Checkbox(
+                                        value: _perms['perms'][4],
+                                        onChanged: (value) {
+                                          _perms.update('perms', (val) {
+                                            final bool action = !_perms['perms'][4];
+                                            List<bool> perms = [action, action, action, action, action];
+
+                                            return perms;
+                                          });
+
+                                          permValueNotifier.value[index] = _perms;
+                                          log('permissions == ' + permValueNotifier.value[index].toString());
+                                          permValueNotifier.notifyListeners();
+                                        },
+                                      ),
+                                    ),
+                                  ]);
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      kHeight5,
+                    ],
+                  ),
+
+                  kHeight10,
 
                   //========== Submit Button ==========
                   FractionallySizedBox(
