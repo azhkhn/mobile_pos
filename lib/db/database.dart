@@ -6,6 +6,7 @@ import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/expense/expense_category_model.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
+import 'package:shop_ez/model/group/group_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/model/purchase/purchase_items_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
@@ -40,21 +41,27 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 5, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 7, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
 
-    // const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    // const textType = 'TEXT NOT NULL';
+    const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const textType = 'TEXT NOT NULL';
     // const textNull = 'TEXT';
     // const intNull = 'INTEGER';
     // const idLogin = 'INTEGER NOT NULL';
-    const intType = 'INTEGER NOT NULL';
+    // const intType = 'INTEGER NOT NULL';
 
-    await db.execute("ALTER TABLE $tableUser ADD COLUMN status $intType DEFAULT 1");
-    await db.execute("ALTER TABLE $tableLogin ADD COLUMN status $intType DEFAULT 1");
+//========== Table Category ==========
+    await db.execute('''CREATE TABLE $tableGroup (
+      ${GroupFields.id} $idAuto,
+      ${GroupFields.name} $textType,
+      ${GroupFields.description} $textType)''');
+
+    // await db.execute("ALTER TABLE $tableUser ADD COLUMN status $intType DEFAULT 1");
+    // await db.execute("ALTER TABLE $tableLogin ADD COLUMN status $intType DEFAULT 1");
 
     // final result = await db.query(tableSales, where: '${SalesFields.paymentStatus} = ?', whereArgs: ['Due']);
 
@@ -313,6 +320,12 @@ class EzDatabase {
       ${UserFields.password} $textType,
       ${UserFields.status} $intType,
       ${UserFields.document} $textNull)''');
+
+//========== Table Group ==========
+    await db.execute('''CREATE TABLE $tableGroup (
+      ${GroupFields.id} $idAuto,
+      ${GroupFields.name} $textType,
+      ${GroupFields.description} $textType)''');
 
 //========== Table Category ==========
     await db.execute('''CREATE TABLE $tableCategory (

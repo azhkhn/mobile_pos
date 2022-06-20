@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
+import 'package:shop_ez/model/group/group_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/barcode/screen_barcode.dart';
@@ -17,8 +18,11 @@ import 'package:shop_ez/screens/stock/screen_stock.dart';
 import 'package:shop_ez/screens/supplier/screen_manage_supplier.dart';
 import 'package:shop_ez/screens/transaction/purchase_transaction/screen_transaction_purchase.dart';
 import 'package:shop_ez/screens/transaction/sales_transaction/screen_transaction_sale.dart';
-import 'package:shop_ez/screens/user_manage/pages/screen_add_user.dart';
-import 'package:shop_ez/screens/user_manage/pages/screen_list_users.dart';
+import 'package:shop_ez/screens/user_manage/pages/group/screen_add_group.dart';
+import 'package:shop_ez/screens/user_manage/pages/group/screen_list_groups.dart';
+import 'package:shop_ez/screens/user_manage/pages/user/screen_add_user.dart';
+import 'package:shop_ez/screens/user_manage/pages/user/screen_list_users.dart';
+
 import 'package:shop_ez/screens/user_manage/screen_user_module.dart';
 
 import '../../screens/auth/pages/login_screen.dart';
@@ -166,8 +170,15 @@ class RouteGenerator {
                   userModel: args is UserModel ? args : null,
                 ));
 
-      case routeUserList:
+      case routeListUser:
         return MaterialPageRoute(builder: (_) => const ScreenUserList());
+      case routeAddGroup:
+        return MaterialPageRoute(
+            builder: (_) => ScreenAddGroup(
+                  groupModel: args is GroupModel ? args : null,
+                ));
+      case routeListGroup:
+        return MaterialPageRoute(builder: (_) => const ScreenGroupList());
 
       default:
         return _errorRoute();

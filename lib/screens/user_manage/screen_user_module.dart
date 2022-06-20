@@ -49,7 +49,7 @@ class ScreenUserManage extends StatelessWidget {
                         Expanded(
                           child: CustomMaterialBtton(
                             height: 50,
-                            onPressed: () async {},
+                            onPressed: () => Navigator.pushNamed(context, routeAddGroup),
                             color: kGreen,
                             textColor: kWhite,
                             buttonText: 'Add Group',
@@ -66,7 +66,7 @@ class ScreenUserManage extends StatelessWidget {
                         Expanded(
                           child: CustomMaterialBtton(
                             height: 50,
-                            onPressed: () => Navigator.pushNamed(context, routeUserList),
+                            onPressed: () => Navigator.pushNamed(context, routeListUser),
                             color: Colors.deepOrange,
                             textColor: kWhite,
                             buttonText: 'List Users',
@@ -78,7 +78,7 @@ class ScreenUserManage extends StatelessWidget {
                         Expanded(
                           child: CustomMaterialBtton(
                             height: 50,
-                            onPressed: () {},
+                            onPressed: () => Navigator.pushNamed(context, routeListGroup),
                             color: Colors.blueGrey,
                             textColor: kWhite,
                             buttonText: 'List Group',

@@ -36,4 +36,6 @@ const String routeTransactionPurchase = '/transaction_purchase';
 const String routeDatabase = '/database';
 const String routeUserManage = '/user_manage';
 const String routeAddUser = '/add_user';
-const String routeUserList = '/user_list';
+const String routeListUser = '/list_user';
+const String routeAddGroup = '/add_group';
+const String routeListGroup = '/list_group';

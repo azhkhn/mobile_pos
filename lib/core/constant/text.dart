@@ -15,6 +15,7 @@ const kTextBoldWhite = TextStyle(fontWeight: FontWeight.bold, color: kWhite);
 const kText12 = TextStyle(fontSize: 12);
 const kText12Black = TextStyle(fontSize: 12, color: kBlack);
 const kText12Lite = TextStyle(color: kTextColor, fontSize: 12);
+const kText10Lite = TextStyle(color: kTextColor, fontSize: 10);
 const kText12Bold = TextStyle(fontSize: 12, fontWeight: FontWeight.bold);
 const kText16 = TextStyle(fontSize: 16);
 final kText_10_12 = TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10);
