@@ -9,23 +9,32 @@ class PermissionDatabase {
   PermissionDatabase._init();
 
 //========== Create Permission ==========
-  Future<void> createPermission(PermissionModel _permModel) async {
+  Future<void> createPermission(PermissionModel _permissionModel) async {
     final db = await dbInstance.database;
-    final id = await db.insert(tablePermission, _permModel.toJson());
+    final id = await db.insert(tablePermission, _permissionModel.toJson());
     log('Permission ($id) Created!');
   }
 
 //========== Update Permission ==========
-  Future<PermissionModel> updatePermission(PermissionModel _permModel) async {
+  Future<PermissionModel> updatePermissionByGroupId(PermissionModel _permModel) async {
     final db = await dbInstance.database;
     final _id = await db.update(
       tablePermission,
       _permModel.toJson(),
-      where: '${PermissionFields.id} = ?',
-      whereArgs: [_permModel.id],
+      where: '${PermissionFields.groupId} = ?',
+      whereArgs: [_permModel.groupId],
     );
     log('Permission ($_id) updated successfully');
     return _permModel;
+  }
+
+//========== Get Permission By GroupId ==========
+  Future<PermissionModel> getPermissionByGroupId(int groupId) async {
+    final db = await dbInstance.database;
+    final _result = await db.query(tablePermission, where: '${PermissionFields.groupId} = ?', whereArgs: [groupId]);
+    log('Permission by GroupId = $_result');
+    final _permission = PermissionModel.fromJson(_result.first);
+    return _permission;
   }
 
 //========== Get All Permissions ==========

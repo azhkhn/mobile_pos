@@ -4,15 +4,18 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
+import 'package:shop_ez/model/group/group_model.dart';
 
 class UserCardwidget extends StatelessWidget {
   const UserCardwidget({
     required this.index,
     required this.user,
+    required this.group,
     Key? key,
   }) : super(key: key);
   final int index;
   final UserModel user;
+  final GroupModel group;
 
   @override
   Widget build(BuildContext context) {
@@ -66,16 +69,9 @@ class UserCardwidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          user.userGroup,
+                          group.name,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: user.userGroup == 'Owner'
-                                  ? kGreen
-                                  : user.userGroup == 'Admin'
-                                      ? kRed
-                                      : kBlueGrey,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12),
+                          style: TextStyle(color: user.groupId == 1 ? kGreen : kBlueGrey, fontWeight: FontWeight.bold, fontSize: 12),
                           maxLines: 1,
                           minFontSize: 10,
                           maxFontSize: 14,

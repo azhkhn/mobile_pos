@@ -8,7 +8,7 @@ const String tableLogin = 'login';
 
 class UserFields {
   static const String id = '_id';
-  static const String userGroup = 'userGroup';
+  static const String groupId = 'groupId';
   static const String shopName = 'shopName';
   static const String countryName = 'countryName';
   static const String shopCategory = 'shopCategory';
@@ -27,7 +27,7 @@ class UserFields {
 class UserModel with _$UserModel {
   const factory UserModel({
     @JsonKey(name: '_id') int? id,
-    required String userGroup,
+    required int groupId,
     required String shopName,
     required String countryName,
     required String shopCategory,

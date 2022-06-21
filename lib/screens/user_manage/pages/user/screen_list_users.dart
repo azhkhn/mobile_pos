@@ -8,7 +8,9 @@ import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/auth/user_db.dart';
+import 'package:shop_ez/db/db_functions/group/group_database.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
+import 'package:shop_ez/model/group/group_model.dart';
 import 'package:shop_ez/screens/user_manage/widgets/user_card_widget.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -16,22 +18,24 @@ import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
 class ScreenUserList extends StatelessWidget {
-  const ScreenUserList({
+  ScreenUserList({
     Key? key,
   }) : super(key: key);
 
   //========== Value Notifier ==========
-  static final ValueNotifier<List<UserModel>> usersNotifier = ValueNotifier([]);
+  final ValueNotifier<List<UserModel>> usersNotifier = ValueNotifier([]);
+  List<GroupModel> groups = [];
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final List<UserModel> _users = await UserDatabase.instance.getAllUsers();
       UserModel userModel = await UserUtils.instance.loggedUser;
+      groups = await GroupDatabase.instance.getAllGroups();
 
-      log('userGroup == ${userModel.userGroup}');
+      log('groupId == ${userModel.groupId}');
 
-      if (userModel.userGroup == 'Owner') {
+      if (userModel.groupId == 1) {
         log('Owner - Online');
         usersNotifier.value = _users;
       } else {
@@ -40,7 +44,7 @@ class ScreenUserList extends StatelessWidget {
         final List<UserModel> users = [];
 
         for (var user in _users) {
-          if (user.userGroup != 'Owner') {
+          if (user.groupId != 1) {
             users.add(user);
           }
         }
@@ -72,6 +76,7 @@ class ScreenUserList extends StatelessWidget {
                                   child: UserCardwidget(
                                     index: index,
                                     user: _user,
+                                    group: groups.where((group) => group.id == _user.groupId).toList().first,
                                   ),
                                   onTap: () async {
                                     showDialog(
@@ -97,7 +102,7 @@ class ScreenUserList extends StatelessWidget {
                                                   },
                                                 },
                                                 //========== Delete User ==========
-                                                if (_user.userGroup != 'Owner')
+                                                if (_user.groupId != 1)
                                                   {
                                                     'title': _user.status == 1 ? 'Disable User' : 'Enable User',
                                                     'color': _user.status == 1 ? kRed400 : kGreen400,

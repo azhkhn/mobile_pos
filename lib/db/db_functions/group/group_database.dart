@@ -9,7 +9,7 @@ class GroupDatabase {
   GroupDatabase._init();
 
 //========== Create Group ==========
-  Future<void> createGroup(GroupModel _groupModel) async {
+  Future<int> createGroup(GroupModel _groupModel) async {
     final db = await dbInstance.database;
     final group = await db.rawQuery('''select * from $tableGroup where ${GroupFields.name} = "${_groupModel.name}" COLLATE NOCASE''');
 
@@ -17,10 +17,9 @@ class GroupDatabase {
       log('Group already exist!');
       throw 'Group name already exist!';
     } else {
-      log('Group Created!');
       final id = await db.insert(tableGroup, _groupModel.toJson());
-
-      log('Group Id == $id');
+      log('Group ($id) Created!');
+      return id;
     }
   }
 
@@ -35,6 +34,16 @@ class GroupDatabase {
     );
     log('Group ($_id) updated successfully');
     return groupModel;
+  }
+
+  //========== Get Group By Id ==========
+  Future<GroupModel> getGroupById(int id) async {
+    final db = await dbInstance.database;
+    final _result = await db.query(tableGroup, where: '${GroupFields.id} = ?', whereArgs: [id]);
+    log('Group === $_result');
+    final GroupModel _groups = GroupModel.fromJson(_result.first);
+    // db.delete(tableGroup);
+    return _groups;
   }
 
   //========== Get All Groups ==========

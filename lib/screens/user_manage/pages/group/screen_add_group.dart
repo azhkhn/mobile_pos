@@ -3,12 +3,15 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/group/group_database.dart';
+import 'package:shop_ez/db/db_functions/permission/permission_database.dart';
 import 'package:shop_ez/model/group/group_model.dart';
+import 'package:shop_ez/model/permission/permission_model.dart';
 import 'package:shop_ez/screens/user_manage/widgets/permission_table_header_widget.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
@@ -28,17 +31,15 @@ class ScreenAddGroup extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  //==================== Value Notifiers ====================
-  // final ValueNotifier<List<List<bool>>> permValueNotifier = ValueNotifier(
-  //   [
-  //     [false, false, false, false, false],
-  //     [false, false, false, false, false],
-  //     [false, false, false, false, false],
-  //     [false, false, false, false, false],
-  //   ],
-  // );
+  final ValueNotifier<List<String>> permValueNotifier = ValueNotifier([
+    '0',
+    '0',
+    '0',
+    '0',
+    '0',
+  ]);
 
-  final ValueNotifier<List<Map>> permValueNotifier = ValueNotifier(
+  final ValueNotifier<List<Map>> permissionsNotifier = ValueNotifier(
     [
       {
         'name': 'Sales',
@@ -56,13 +57,19 @@ class ScreenAddGroup extends StatelessWidget {
         'name': 'Customer',
         'perms': [false, false, false, false, false]
       },
+      {
+        'name': 'Supplier',
+        'perms': [false, false, false, false, false]
+      },
     ],
   );
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (groupModel != null) getUserDetails(groupModel!);
+      if (groupModel != null) {
+        await getGroupDetails(groupModel!);
+      }
     });
 
     return Scaffold(
@@ -123,7 +130,7 @@ class ScreenAddGroup extends StatelessWidget {
                       //==================== Product Items Table ====================
                       SingleChildScrollView(
                         child: ValueListenableBuilder(
-                          valueListenable: permValueNotifier,
+                          valueListenable: permissionsNotifier,
                           builder: (context, List<Map> selectedPermissions, child) {
                             return Table(
                               columnWidths: const {
@@ -136,9 +143,26 @@ class ScreenAddGroup extends StatelessWidget {
                               },
                               border: TableBorder.all(color: Colors.grey, width: 0.5),
                               children: List<TableRow>.generate(
-                                4,
+                                permissionsNotifier.value.length,
                                 (index) {
                                   Map _perms = selectedPermissions[index];
+                                  List<bool> _permList = _perms['perms'];
+                                  final String _permValue = permValueNotifier.value[index];
+
+                                  bool allPerm = true;
+                                  for (var i = 0; i < _permList.length - 1; i++) {
+                                    final bool value = _permList[i];
+
+                                    if (!value) {
+                                      allPerm = false;
+                                    }
+                                    continue;
+                                  }
+
+                                  _perms.update('perms', (val) {
+                                    val[4] = allPerm;
+                                    return val;
+                                  });
 
                                   return TableRow(children: [
                                     //==================== Module Name ====================
@@ -163,16 +187,23 @@ class ScreenAddGroup extends StatelessWidget {
                                       height: 30,
                                       alignment: Alignment.centerLeft,
                                       child: Checkbox(
-                                        value: _perms['perms'][0],
-                                        onChanged: (value) {
-                                          _perms.update('perms', (value) {
-                                            value[0] = !_perms['perms'][0];
-                                            return value;
+                                        value: _permList[0],
+                                        activeColor: kGreen300,
+                                        onChanged: (state) {
+                                          _perms.update('perms', (val) {
+                                            val[0] = state;
+                                            return val;
                                           });
 
-                                          permValueNotifier.value[index] = _perms;
-                                          log('permissions == ' + permValueNotifier.value[index].toString());
-                                          permValueNotifier.notifyListeners();
+                                          if (state!) {
+                                            permValueNotifier.value[index] = _permValue.replaceAll('0', '') + '1';
+                                          } else {
+                                            permValueNotifier.value[index] = _permValue.replaceAll('1', '');
+                                          }
+
+                                          permissionsNotifier.value[index] = _perms;
+                                          log('permissions == ' + permissionsNotifier.value[index].toString());
+                                          permissionsNotifier.notifyListeners();
                                         },
                                       ),
                                     ),
@@ -183,16 +214,23 @@ class ScreenAddGroup extends StatelessWidget {
                                       height: 30,
                                       alignment: Alignment.centerLeft,
                                       child: Checkbox(
-                                        value: _perms['perms'][1],
-                                        onChanged: (value) {
-                                          _perms.update('perms', (value) {
-                                            value[1] = !_perms['perms'][1];
-                                            return value;
+                                        value: _permList[1],
+                                        activeColor: kGreen300,
+                                        onChanged: (state) {
+                                          _perms.update('perms', (val) {
+                                            val[1] = state;
+                                            return val;
                                           });
 
-                                          permValueNotifier.value[index] = _perms;
-                                          log('permissions == ' + permValueNotifier.value[index].toString());
-                                          permValueNotifier.notifyListeners();
+                                          if (state!) {
+                                            permValueNotifier.value[index] = _permValue.replaceAll('0', '') + '2';
+                                          } else {
+                                            permValueNotifier.value[index] = _permValue.replaceAll('2', '');
+                                          }
+
+                                          permissionsNotifier.value[index] = _perms;
+                                          log('permissions == ' + permissionsNotifier.value[index].toString());
+                                          permissionsNotifier.notifyListeners();
                                         },
                                       ),
                                     ),
@@ -203,16 +241,23 @@ class ScreenAddGroup extends StatelessWidget {
                                       height: 30,
                                       alignment: Alignment.centerLeft,
                                       child: Checkbox(
-                                        value: _perms['perms'][2],
-                                        onChanged: (value) {
-                                          _perms.update('perms', (value) {
-                                            value[2] = !_perms['perms'][2];
-                                            return value;
+                                        value: _permList[2],
+                                        activeColor: kGreen300,
+                                        onChanged: (state) {
+                                          _perms.update('perms', (val) {
+                                            val[2] = state;
+                                            return val;
                                           });
 
-                                          permValueNotifier.value[index] = _perms;
-                                          log('permissions == ' + permValueNotifier.value[index].toString());
-                                          permValueNotifier.notifyListeners();
+                                          if (state!) {
+                                            permValueNotifier.value[index] = _permValue.replaceAll('0', '') + '3';
+                                          } else {
+                                            permValueNotifier.value[index] = _permValue.replaceAll('3', '');
+                                          }
+
+                                          permissionsNotifier.value[index] = _perms;
+                                          log('permissions == ' + permissionsNotifier.value[index].toString());
+                                          permissionsNotifier.notifyListeners();
                                         },
                                       ),
                                     ),
@@ -223,16 +268,23 @@ class ScreenAddGroup extends StatelessWidget {
                                       height: 30,
                                       alignment: Alignment.centerLeft,
                                       child: Checkbox(
-                                        value: _perms['perms'][3],
-                                        onChanged: (value) {
-                                          _perms.update('perms', (value) {
-                                            value[3] = !_perms['perms'][3];
-                                            return value;
+                                        value: _permList[3],
+                                        activeColor: kGreen300,
+                                        onChanged: (state) {
+                                          _perms.update('perms', (val) {
+                                            val[3] = state;
+                                            return val;
                                           });
 
-                                          permValueNotifier.value[index] = _perms;
-                                          log('permissions == ' + permValueNotifier.value[index].toString());
-                                          permValueNotifier.notifyListeners();
+                                          if (state!) {
+                                            permValueNotifier.value[index] = _permValue.replaceAll('0', '') + '4';
+                                          } else {
+                                            permValueNotifier.value[index] = _permValue.replaceAll('4', '');
+                                          }
+
+                                          permissionsNotifier.value[index] = _perms;
+                                          log('permissions == ' + permissionsNotifier.value[index].toString());
+                                          permissionsNotifier.notifyListeners();
                                         },
                                       ),
                                     ),
@@ -243,18 +295,23 @@ class ScreenAddGroup extends StatelessWidget {
                                       height: 30,
                                       alignment: Alignment.centerLeft,
                                       child: Checkbox(
-                                        value: _perms['perms'][4],
-                                        onChanged: (value) {
+                                        value: _permList[4],
+                                        activeColor: kGreen300,
+                                        onChanged: (state) {
                                           _perms.update('perms', (val) {
-                                            final bool action = !_perms['perms'][4];
-                                            List<bool> perms = [action, action, action, action, action];
-
+                                            List<bool> perms = [state!, state, state, state, state];
                                             return perms;
                                           });
 
-                                          permValueNotifier.value[index] = _perms;
-                                          log('permissions == ' + permValueNotifier.value[index].toString());
-                                          permValueNotifier.notifyListeners();
+                                          if (state!) {
+                                            permValueNotifier.value[index] = '1234';
+                                          } else {
+                                            permValueNotifier.value[index] = '0';
+                                          }
+
+                                          permissionsNotifier.value[index] = _perms;
+                                          log('permissions == ' + permissionsNotifier.value[index].toString());
+                                          permissionsNotifier.notifyListeners();
                                         },
                                       ),
                                     ),
@@ -296,25 +353,39 @@ class ScreenAddGroup extends StatelessWidget {
 
   //========== Add Group ==========
   Future<void> addGroup(BuildContext context, {final bool isUpdate = false}) async {
+    //Retrieving data from TextFields
     final String name = _nameController.text, description = _descriptionController.text;
+    //Retrieving data from CheckBoxes
+    final String sale = permValueNotifier.value[0].isEmpty ? '0' : permValueNotifier.value[0],
+        purchase = permValueNotifier.value[1].isEmpty ? '0' : permValueNotifier.value[1],
+        products = permValueNotifier.value[2].isEmpty ? '0' : permValueNotifier.value[2],
+        customer = permValueNotifier.value[3].isEmpty ? '0' : permValueNotifier.value[3],
+        supplier = permValueNotifier.value[4].isEmpty ? '0' : permValueNotifier.value[4];
 
     final isFormValid = _formKey.currentState!;
 
     if (isFormValid.validate()) {
       log('Name = $name, Description = $description');
+      log('sale = $sale, purchase = $purchase, products = $products, customer = $customer, supplier = $supplier');
 
       final GroupModel _groupModel = GroupModel(
         id: groupModel?.id,
         name: name,
         description: description,
       );
+
+      final PermissionModel _permissionModel = PermissionModel(
+          id: groupModel?.id, groupId: groupModel?.id, sale: sale, purchase: purchase, products: products, customer: customer, supplier: supplier);
+
       try {
         if (!isUpdate) {
-          await GroupDatabase.instance.createGroup(_groupModel);
+          final int groupId = await GroupDatabase.instance.createGroup(_groupModel);
+          await PermissionDatabase.instance.createPermission(_permissionModel.copyWith(groupId: groupId));
           kSnackBar(context: context, success: true, content: "Group Created Successfully!");
           return Navigator.pop(context);
         } else {
           await GroupDatabase.instance.updateGroup(_groupModel);
+          await PermissionDatabase.instance.updatePermissionByGroupId(_permissionModel);
           kSnackBar(context: context, update: true, content: "Group Updated Successfully!");
           return Navigator.pop(context, _groupModel);
         }
@@ -326,9 +397,63 @@ class ScreenAddGroup extends StatelessWidget {
   }
 
   //========== Fetch Group Details ==========
-  void getUserDetails(GroupModel group) {
-    //retieving values from Database to TextFields
+  Future<void> getGroupDetails(GroupModel group) async {
     _nameController.text = group.name;
     _descriptionController.text = group.description;
+
+    final PermissionModel _permission = await PermissionDatabase.instance.getPermissionByGroupId(group.id!);
+
+    final sale = permissionsNotifier.value[0];
+    final purchase = permissionsNotifier.value[1];
+    final products = permissionsNotifier.value[2];
+    final customer = permissionsNotifier.value[3];
+    final supplier = permissionsNotifier.value[4];
+
+    sale.update('perms', (value) {
+      value[0] = _permission.sale.contains('1');
+      value[1] = _permission.sale.contains('2');
+      value[2] = _permission.sale.contains('3');
+      value[3] = _permission.sale.contains('4');
+      value[4] = _permission.sale.contains('1234');
+      return value;
+    });
+    purchase.update('perms', (value) {
+      value[0] = _permission.purchase.contains('1');
+      value[1] = _permission.purchase.contains('2');
+      value[2] = _permission.purchase.contains('3');
+      value[3] = _permission.purchase.contains('4');
+      value[4] = _permission.purchase.contains('1234');
+      return value;
+    });
+    products.update('perms', (value) {
+      value[0] = _permission.products.contains('1');
+      value[1] = _permission.products.contains('2');
+      value[2] = _permission.products.contains('3');
+      value[3] = _permission.products.contains('4');
+      value[4] = _permission.products.contains('1234');
+      return value;
+    });
+    customer.update('perms', (value) {
+      value[0] = _permission.customer.contains('1');
+      value[1] = _permission.customer.contains('2');
+      value[2] = _permission.customer.contains('3');
+      value[3] = _permission.customer.contains('4');
+      value[4] = _permission.customer.contains('1234');
+      return value;
+    });
+    supplier.update('perms', (value) {
+      value[0] = _permission.supplier.contains('1');
+      value[1] = _permission.supplier.contains('2');
+      value[2] = _permission.supplier.contains('3');
+      value[3] = _permission.supplier.contains('4');
+      value[4] = _permission.supplier.contains('1234');
+      return value;
+    });
+
+    permissionsNotifier.value = [sale, purchase, products, customer, supplier];
+    permValueNotifier.value = [_permission.sale, _permission.purchase, _permission.products, _permission.customer, _permission.supplier];
+
+    permissionsNotifier.notifyListeners();
+    permValueNotifier.notifyListeners();
   }
 }

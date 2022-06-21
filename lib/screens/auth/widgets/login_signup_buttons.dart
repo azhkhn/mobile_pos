@@ -5,7 +5,11 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/db_functions/auth/user_db.dart';
+import 'package:shop_ez/db/db_functions/group/group_database.dart';
+import 'package:shop_ez/db/db_functions/permission/permission_database.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
+import 'package:shop_ez/model/group/group_model.dart';
+import 'package:shop_ez/model/permission/permission_model.dart';
 import 'package:shop_ez/screens/auth/pages/login_screen.dart';
 
 import '../../../core/utils/snackbar/snackbar.dart';
@@ -126,8 +130,11 @@ class LoginAndSignUpButtons extends StatelessWidget {
     if (isFormValid.validate()) {
       log('shopName = $shopName, countryName = $countryName, shopCategory = $shopCategory, phoneNumber = $mobileNumber, email = $email, username = $username, password = $password');
 
+      // Create group and permission for Owner if not exist
+      await createGroupOwner();
+
       final _user = UserModel(
-        userGroup: 'owner',
+        groupId: 1,
         shopName: shopName!,
         countryName: countryName!,
         shopCategory: shopCategory!,
@@ -137,6 +144,7 @@ class LoginAndSignUpButtons extends StatelessWidget {
         password: password!,
         status: 1,
       );
+
       try {
         await UserDatabase.instance.createUser(_user);
         kSnackBar(
@@ -150,6 +158,29 @@ class LoginAndSignUpButtons extends StatelessWidget {
         kSnackBar(context: context, error: true, content: e.toString());
         return;
       }
+    }
+  }
+
+  Future<void> createGroupOwner() async {
+    const GroupModel _groupModel = GroupModel(
+      id: 1,
+      name: 'Owner',
+      description: 'Owner of the Business. Owner have full controll over the application',
+    );
+    const PermissionModel _permissionModel = PermissionModel(
+      groupId: 1,
+      sale: '1234',
+      purchase: '1234',
+      products: '1234',
+      customer: '1234',
+      supplier: '1234',
+    );
+
+    try {
+      await GroupDatabase.instance.createGroup(_groupModel);
+      await PermissionDatabase.instance.createPermission(_permissionModel);
+    } catch (e) {
+      log(e.toString());
     }
   }
 }

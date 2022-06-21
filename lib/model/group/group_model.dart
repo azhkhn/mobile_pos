@@ -13,6 +13,7 @@ class GroupFields {
 
 @freezed
 class GroupModel with _$GroupModel {
+  const GroupModel._();
   const factory GroupModel({
     @JsonKey(name: '_id') int? id,
     required String name,
@@ -20,4 +21,6 @@ class GroupModel with _$GroupModel {
   }) = _GroupModel;
 
   factory GroupModel.fromJson(Map<String, dynamic> json) => _$GroupModelFromJson(json);
+
+  String get() => name;
 }

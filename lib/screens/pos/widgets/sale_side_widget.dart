@@ -214,7 +214,6 @@ class SaleSideWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-
               kHeight5,
               //==================== Table Header ====================
               const SalesTableHeaderWidget(),

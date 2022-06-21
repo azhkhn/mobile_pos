@@ -9,6 +9,10 @@ class CustomDropDownField extends StatelessWidget {
     required this.labelText,
     required this.snapshot,
     required this.onChanged,
+    this.style,
+    this.hintText,
+    this.labelStyle,
+    this.hintStyle,
     this.border = false,
     this.isDesne = false,
     this.errorStyle = false,
@@ -21,6 +25,10 @@ class CustomDropDownField extends StatelessWidget {
   }) : super(key: key);
 
   final String labelText;
+  final TextStyle? style;
+  final String? hintText;
+  final TextStyle? labelStyle;
+  final TextStyle? hintStyle;
   final Icon? prefixIcon;
   final AsyncSnapshot<List<dynamic>>? snapshot;
   final String? Function(String?)? validator;
@@ -40,8 +48,11 @@ class CustomDropDownField extends StatelessWidget {
       decoration: InputDecoration(
         label: Text(
           labelText,
-          style: const TextStyle(color: klabelColorGrey),
+          style: labelStyle ?? const TextStyle(color: klabelColorGrey),
         ),
+        hintText: hintText,
+        hintStyle: hintStyle,
+        labelStyle: labelStyle,
         prefixIcon: prefixIcon,
         border: border ? const OutlineInputBorder() : null,
         isDense: isDesne,
@@ -50,6 +61,7 @@ class CustomDropDownField extends StatelessWidget {
         contentPadding: contentPadding ?? const EdgeInsets.all(10),
         floatingLabelBehavior: floatingLabelBehavior,
       ),
+      style: style,
       isExpanded: true,
       items: snapshot!.hasData
           ? snapshot!.data!.map((item) {

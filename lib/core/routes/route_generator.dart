@@ -171,7 +171,7 @@ class RouteGenerator {
                 ));
 
       case routeListUser:
-        return MaterialPageRoute(builder: (_) => const ScreenUserList());
+        return MaterialPageRoute(builder: (_) => ScreenUserList());
       case routeAddGroup:
         return MaterialPageRoute(
             builder: (_) => ScreenAddGroup(

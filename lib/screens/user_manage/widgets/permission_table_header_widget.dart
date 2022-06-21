@@ -23,11 +23,11 @@ class PermissionTableHeaderWidget extends StatelessWidget {
         4: FractionColumnWidth(0.15),
         5: FractionColumnWidth(0.15),
       },
-      border: TableBorder.all(width: 0.5),
+      border: TableBorder.all(width: 0.5, color: kWhite),
       children: [
         TableRow(children: [
           Container(
-            color: Colors.blue,
+            color: kGreen,
             height: 30,
             alignment: Alignment.center,
             child: AutoSizeText(
@@ -40,7 +40,7 @@ class PermissionTableHeaderWidget extends StatelessWidget {
             ),
           ),
           Container(
-            color: Colors.blue,
+            color: kGreen,
             height: 30,
             alignment: Alignment.center,
             child: AutoSizeText(
@@ -53,7 +53,7 @@ class PermissionTableHeaderWidget extends StatelessWidget {
             ),
           ),
           Container(
-            color: Colors.blue,
+            color: kGreen,
             height: 30,
             alignment: Alignment.center,
             child: AutoSizeText(
@@ -66,7 +66,7 @@ class PermissionTableHeaderWidget extends StatelessWidget {
             ),
           ),
           Container(
-            color: Colors.blue,
+            color: kGreen,
             height: 30,
             alignment: Alignment.center,
             child: AutoSizeText(
@@ -79,7 +79,7 @@ class PermissionTableHeaderWidget extends StatelessWidget {
             ),
           ),
           Container(
-            color: Colors.blue,
+            color: kGreen,
             height: 30,
             alignment: Alignment.center,
             child: AutoSizeText(
@@ -92,7 +92,7 @@ class PermissionTableHeaderWidget extends StatelessWidget {
             ),
           ),
           Container(
-            color: Colors.blue,
+            color: kGreen,
             height: 30,
             alignment: Alignment.center,
             child: AutoSizeText(
