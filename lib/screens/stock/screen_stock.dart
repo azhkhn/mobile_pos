@@ -276,7 +276,7 @@ class ScreenStock extends StatelessWidget {
                               default:
                                 if (snapshot.hasError) {
                                   return const Center(
-                                    child: Text('No Item Found!'),
+                                    child: Text('Error Occured!'),
                                   );
                                 }
                                 if (snapshot.hasData) {
@@ -340,13 +340,6 @@ class ScreenStock extends StatelessWidget {
                                                                         child: Center(
                                                                           child: Text(
                                                                             itemList[index].itemName,
-                                                                            // index == 0
-                                                                            //     ? 'Alienware 21x'
-                                                                            //     : index == 1
-                                                                            //         ? 'ALIENWARE Core i9 10th Gen'
-                                                                            //         : index == 2
-                                                                            //             ? 'Fried Chicken 6pc'
-                                                                            //             : 'Samsung Galaxy S9 Plus - 8GB Ram, 64gb Storage',
                                                                             textAlign: TextAlign.center,
                                                                             softWrap: true,
                                                                             style: isVertical ? kItemsTextStyle : kItemsTextStyleStock,

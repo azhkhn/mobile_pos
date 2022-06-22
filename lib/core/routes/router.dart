@@ -4,6 +4,7 @@ const String routeLogin = '/login';
 const String routeSignUp = '/signup';
 const String routeManageUsers = '/manage_users';
 const String routeItemMaster = '/item_master';
+const String routeManageItemMaster = '/manage_item_master';
 const String routeAddSupplier = '/add_supplier';
 const String routeManageSupplier = '/manage_supplier';
 const String routeCategory = '/category';

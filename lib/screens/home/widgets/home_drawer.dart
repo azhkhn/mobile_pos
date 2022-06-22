@@ -30,7 +30,7 @@ const List drawerListItem = [
   'POS',
   'Purchase',
   'Manage Expense',
-  'Item Master',
+  'Manage Products',
   'Manage Customer',
   'Manage Supplier',
   'Manage Category',
@@ -150,7 +150,7 @@ class DrawerItemsWidget extends StatelessWidget {
             Navigator.pushNamed(context, routeExpense);
             break;
           case 4:
-            Navigator.pushNamed(context, routeItemMaster);
+            Navigator.pushNamed(context, routeManageItemMaster);
             break;
           case 5:
             Navigator.pushNamed(context, routeManageCustomer);

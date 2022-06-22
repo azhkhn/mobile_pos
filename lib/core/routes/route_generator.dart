@@ -11,6 +11,7 @@ import 'package:shop_ez/screens/barcode/screen_barcode.dart';
 import 'package:shop_ez/screens/customer/screen_manage_customer.dart';
 import 'package:shop_ez/screens/database/screen_database.dart';
 import 'package:shop_ez/screens/invoices/screen_sales_invoice.dart';
+import 'package:shop_ez/screens/item_master/screen_manage_item_master.dart';
 import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return.dart';
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return_list.dart';
@@ -67,6 +68,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ScreenSignUp());
       case routeItemMaster:
         if (permission!.products.contains('2')) return MaterialPageRoute(builder: (_) => ScreenItemMaster());
+        return _errorPermission();
+      case routeManageItemMaster:
+        if (permission!.products.contains('1')) return MaterialPageRoute(builder: (_) => ScreenItemMasterManage());
         return _errorPermission();
       case routeAddSupplier:
         if (args is Map) {
