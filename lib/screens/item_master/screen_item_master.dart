@@ -185,25 +185,32 @@ class ScreenItemMaster extends StatelessWidget {
                   FutureBuilder(
                     future: categoryDB.getAllCategories(),
                     builder: (context, dynamic snapshot) {
-                      return CustomDropDownField(
-                        labelText: 'Item Category *',
-                        snapshot: snapshot,
-                        contentPadding: const EdgeInsets.all(10),
-                        onChanged: (value) {
-                          _dropdownKey.currentState!.reset();
-                          final CategoryModel category = CategoryModel.fromJson(jsonDecode(value!));
-                          log('Category Id == ' + category.id.toString());
-                          log('Category == ' + category.category);
-                          _itemCategoryId = category.id;
-                          itemCategoryNotifier.value = category.id!;
-                        },
-                        validator: (value) {
-                          if (value == null || _itemCategoryId == null) {
-                            return 'This field is required*';
-                          }
-                          return null;
-                        },
-                      );
+                      final snap = snapshot as AsyncSnapshot;
+                      switch (snap.connectionState) {
+                        case ConnectionState.waiting:
+                          return const CircularProgressIndicator();
+                        case ConnectionState.done:
+                        default:
+                          return CustomDropDownField(
+                            labelText: 'Item Category *',
+                            snapshot: snapshot.data,
+                            contentPadding: const EdgeInsets.all(10),
+                            onChanged: (value) {
+                              _dropdownKey.currentState!.reset();
+                              final CategoryModel category = CategoryModel.fromJson(jsonDecode(value!));
+                              log('Category Id == ' + category.id.toString());
+                              log('Category == ' + category.category);
+                              _itemCategoryId = category.id;
+                              itemCategoryNotifier.value = category.id!;
+                            },
+                            validator: (value) {
+                              if (value == null || _itemCategoryId == null) {
+                                return 'This field is required*';
+                              }
+                              return null;
+                            },
+                          );
+                      }
                     },
                   ),
                   kHeight10,
@@ -215,18 +222,25 @@ class ScreenItemMaster extends StatelessWidget {
                         return FutureBuilder(
                           future: subCategoryDB.getSubCategoryByCategoryId(categoryId: categoryId),
                           builder: (context, dynamic snapshot) {
-                            return CustomDropDownField(
-                              dropdownKey: _dropdownKey,
-                              labelText: 'Item Sub-Category',
-                              snapshot: snapshot,
-                              contentPadding: const EdgeInsets.all(10),
-                              onChanged: (value) {
-                                final SubCategoryModel subCategory = SubCategoryModel.fromJson(jsonDecode(value!));
-                                log('Sub Category Id == ' + subCategory.id.toString());
-                                log('Sub Category == ' + subCategory.subCategory);
-                                _itemSubCategoryId = subCategory.id;
-                              },
-                            );
+                            final snap = snapshot as AsyncSnapshot;
+                            switch (snap.connectionState) {
+                              case ConnectionState.waiting:
+                                return const CircularProgressIndicator();
+                              case ConnectionState.done:
+                              default:
+                                return CustomDropDownField(
+                                  dropdownKey: _dropdownKey,
+                                  labelText: 'Item Sub-Category',
+                                  snapshot: snapshot.data,
+                                  contentPadding: const EdgeInsets.all(10),
+                                  onChanged: (value) {
+                                    final SubCategoryModel subCategory = SubCategoryModel.fromJson(jsonDecode(value!));
+                                    log('Sub Category Id == ' + subCategory.id.toString());
+                                    log('Sub Category == ' + subCategory.subCategory);
+                                    _itemSubCategoryId = subCategory.id;
+                                  },
+                                );
+                            }
                           },
                         );
                       }),
@@ -236,17 +250,24 @@ class ScreenItemMaster extends StatelessWidget {
                   FutureBuilder(
                     future: brandDB.getAllBrands(),
                     builder: (context, dynamic snapshot) {
-                      return CustomDropDownField(
-                        labelText: 'Item Brand',
-                        snapshot: snapshot,
-                        contentPadding: const EdgeInsets.all(10),
-                        onChanged: (value) {
-                          final BrandModel brand = BrandModel.fromJson(jsonDecode(value!));
-                          log('Brand Is == ' + brand.id.toString());
-                          log('Brand == ' + brand.brand);
-                          _itemBrandId = brand.id;
-                        },
-                      );
+                      final snap = snapshot as AsyncSnapshot;
+                      switch (snap.connectionState) {
+                        case ConnectionState.waiting:
+                          return const CircularProgressIndicator();
+                        case ConnectionState.done:
+                        default:
+                          return CustomDropDownField(
+                            labelText: 'Item Brand',
+                            snapshot: snapshot.data,
+                            contentPadding: const EdgeInsets.all(10),
+                            onChanged: (value) {
+                              final BrandModel brand = BrandModel.fromJson(jsonDecode(value!));
+                              log('Brand Is == ' + brand.id.toString());
+                              log('Brand == ' + brand.brand);
+                              _itemBrandId = brand.id;
+                            },
+                          );
+                      }
                     },
                   ),
                   kHeight10,
@@ -296,25 +317,32 @@ class ScreenItemMaster extends StatelessWidget {
                   FutureBuilder(
                     future: vatDB.getAllVats(),
                     builder: (context, dynamic snapshot) {
-                      return CustomDropDownField(
-                        labelText: 'Product VAT *',
-                        snapshot: snapshot,
-                        contentPadding: const EdgeInsets.all(10),
-                        onChanged: (value) async {
-                          _productVatController = value.toString();
-                          final _vat = VatModel.fromJson(jsonDecode(value!));
-                          _vatId = _vat.id;
-                          _vatRate = _vat.rate;
+                      final snap = snapshot as AsyncSnapshot;
+                      switch (snap.connectionState) {
+                        case ConnectionState.waiting:
+                          return const CircularProgressIndicator();
+                        case ConnectionState.done:
+                        default:
+                          return CustomDropDownField(
+                            labelText: 'Product VAT *',
+                            snapshot: snapshot.data,
+                            contentPadding: const EdgeInsets.all(10),
+                            onChanged: (value) async {
+                              _productVatController = value.toString();
+                              final _vat = VatModel.fromJson(jsonDecode(value!));
+                              _vatId = _vat.id;
+                              _vatRate = _vat.rate;
 
-                          log('VAT id = $_vatId');
-                        },
-                        validator: (value) {
-                          if (value == null || _productVatController == null) {
-                            return 'This field is required*';
-                          }
-                          return null;
-                        },
-                      );
+                              log('VAT id = $_vatId');
+                            },
+                            validator: (value) {
+                              if (value == null || _productVatController == null) {
+                                return 'This field is required*';
+                              }
+                              return null;
+                            },
+                          );
+                      }
                     },
                   ),
                   kHeight10,
@@ -351,20 +379,27 @@ class ScreenItemMaster extends StatelessWidget {
                   FutureBuilder(
                     future: unitDB.getAllUnits(),
                     builder: (context, dynamic snapshot) {
-                      return CustomDropDownField(
-                        labelText: 'Unit *',
-                        snapshot: snapshot,
-                        contentPadding: const EdgeInsets.all(10),
-                        onChanged: (value) {
-                          _unitController = value.toString();
-                        },
-                        validator: (value) {
-                          if (value == null || _unitController == null) {
-                            return 'This field is required*';
-                          }
-                          return null;
-                        },
-                      );
+                      final snap = snapshot as AsyncSnapshot;
+                      switch (snap.connectionState) {
+                        case ConnectionState.waiting:
+                          return const CircularProgressIndicator();
+                        case ConnectionState.done:
+                        default:
+                          return CustomDropDownField(
+                            labelText: 'Unit *',
+                            snapshot: snapshot.data,
+                            contentPadding: const EdgeInsets.all(10),
+                            onChanged: (value) {
+                              _unitController = value.toString();
+                            },
+                            validator: (value) {
+                              if (value == null || _unitController == null) {
+                                return 'This field is required*';
+                              }
+                              return null;
+                            },
+                          );
+                      }
                     },
                   ),
                   kHeight10,

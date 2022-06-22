@@ -53,24 +53,31 @@ class SubCategoryScreen extends StatelessWidget {
                 FutureBuilder(
                   future: categoryDB.getAllCategories(),
                   builder: (context, dynamic snapshot) {
-                    return CustomDropDownField(
-                      labelText: 'Choose Category *',
-                      snapshot: snapshot,
-                      onChanged: (value) {
-                        final CategoryModel category = CategoryModel.fromJson(jsonDecode(value!));
-                        log(category.category);
-                        log(category.id.toString());
+                    final snap = snapshot as AsyncSnapshot;
+                    switch (snap.connectionState) {
+                      case ConnectionState.waiting:
+                        return const CircularProgressIndicator();
+                      case ConnectionState.done:
+                      default:
+                        return CustomDropDownField(
+                          labelText: 'Choose Category *',
+                          snapshot: snapshot.data,
+                          onChanged: (value) {
+                            final CategoryModel category = CategoryModel.fromJson(jsonDecode(value!));
+                            log(category.category);
+                            log(category.id.toString());
 
-                        _categoryController = category.category;
-                        _categoryIdController = category.id;
-                      },
-                      validator: (value) {
-                        if (value == null || _categoryController == null) {
-                          return 'This field is required*';
-                        }
-                        return null;
-                      },
-                    );
+                            _categoryController = category.category;
+                            _categoryIdController = category.id;
+                          },
+                          validator: (value) {
+                            if (value == null || _categoryController == null) {
+                              return 'This field is required*';
+                            }
+                            return null;
+                          },
+                        );
+                    }
                   },
                 ),
                 kHeight10,

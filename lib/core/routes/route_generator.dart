@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
 import 'package:shop_ez/model/group/group_model.dart';
+import 'package:shop_ez/model/permission/permission_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/barcode/screen_barcode.dart';
@@ -51,6 +54,8 @@ class RouteGenerator {
     //get arguments passed in while calling Navigator.pushNamed
     final args = settings.arguments;
 
+    final PermissionModel? permission = UserUtils.instance.permissionModel;
+
     switch (settings.name) {
       case routeRoot:
         return MaterialPageRoute(builder: (_) => ScreenSplash());
@@ -61,19 +66,26 @@ class RouteGenerator {
       case routeSignUp:
         return MaterialPageRoute(builder: (_) => ScreenSignUp());
       case routeItemMaster:
-        return MaterialPageRoute(builder: (_) => ScreenItemMaster());
+        if (permission!.products.contains('2')) return MaterialPageRoute(builder: (_) => ScreenItemMaster());
+        return _errorPermission();
       case routeAddSupplier:
         if (args is Map) {
-          return MaterialPageRoute(
-              builder: (_) => SupplierAddScreen(
-                    from: args.containsKey('from'),
-                    supplierModel: args.containsKey('supplier') ? args['supplier'] : null,
-                  ));
+          if (permission!.supplier.contains('3')) {
+            return MaterialPageRoute(
+                builder: (_) => SupplierAddScreen(
+                      from: args.containsKey('from'),
+                      supplierModel: args.containsKey('supplier') ? args['supplier'] : null,
+                    ));
+          }
+          return _errorPermission();
         } else {
-          return MaterialPageRoute(builder: (_) => SupplierAddScreen());
+          if (permission!.supplier.contains('2')) return MaterialPageRoute(builder: (_) => SupplierAddScreen(from: args is bool));
+          return _errorPermission();
         }
+
       case routeManageSupplier:
-        return MaterialPageRoute(builder: (_) => SupplierManageScreen());
+        if (permission!.supplier.contains('1')) return MaterialPageRoute(builder: (_) => SupplierManageScreen());
+        return _errorPermission();
       case routeCategory:
         return MaterialPageRoute(builder: (_) => CategoryScreen());
       case routeSubCategory:
@@ -82,16 +94,21 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => BrandScreen());
       case routeAddCustomer:
         if (args is Map) {
-          return MaterialPageRoute(
-              builder: (_) => CustomerAddScreen(
-                    from: args.containsKey('from'),
-                    customerModel: args.containsKey('customer') ? args['customer'] : null,
-                  ));
+          if (permission!.customer.contains('3')) {
+            return MaterialPageRoute(
+                builder: (_) => CustomerAddScreen(
+                      from: args.containsKey('from'),
+                      customerModel: args.containsKey('customer') ? args['customer'] : null,
+                    ));
+          }
+          return _errorPermission();
         } else {
-          return MaterialPageRoute(builder: (_) => CustomerAddScreen());
+          if (permission!.customer.contains('2')) return MaterialPageRoute(builder: (_) => CustomerAddScreen(from: args is bool));
+          return _errorPermission();
         }
       case routeManageCustomer:
-        return MaterialPageRoute(builder: (_) => CustomerManageScreen());
+        if (permission!.customer.contains('1')) return MaterialPageRoute(builder: (_) => CustomerManageScreen());
+        return _errorPermission();
       case routeUnit:
         return MaterialPageRoute(builder: (_) => UnitScreen());
       case routeExpense:
@@ -103,7 +120,8 @@ class RouteGenerator {
       case routeExpenseCategory:
         return MaterialPageRoute(builder: (_) => const ExpenseCategory());
       case routePos:
-        return MaterialPageRoute(builder: (_) => const PosScreen());
+        if (permission!.sale.contains('2')) return MaterialPageRoute(builder: (_) => const PosScreen());
+        return _errorPermission();
       case routePartialPayment:
         if (args is Map) {
           return MaterialPageRoute(
@@ -133,13 +151,17 @@ class RouteGenerator {
       case routeSales:
         return MaterialPageRoute(builder: (_) => ScreenSales());
       case routeSalesList:
-        return MaterialPageRoute(builder: (_) => const SalesList());
+        if (permission!.sale.contains('1')) return MaterialPageRoute(builder: (_) => const SalesList());
+        return _errorPermission();
       case routePurchase:
         return MaterialPageRoute(builder: (_) => ScreenPurchase());
+
       case routeAddPurchase:
-        return MaterialPageRoute(builder: (_) => const Purchase());
+        if (permission!.purchase.contains('2')) return MaterialPageRoute(builder: (_) => const Purchase());
+        return _errorPermission();
       case routeListPurchase:
-        return MaterialPageRoute(builder: (_) => const PurchasesList());
+        if (permission!.purchase.contains('1')) return MaterialPageRoute(builder: (_) => const PurchasesList());
+        return _errorPermission();
       case routeStock:
         return MaterialPageRoute(builder: (_) => ScreenStock());
       case routeBarcode:
@@ -197,6 +219,26 @@ class RouteGenerator {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
+      ),
+    );
+  }
+
+  static Route<dynamic> _errorPermission() {
+    return PageRouteBuilder(
+      opaque: false,
+      barrierColor: kColorDim,
+      pageBuilder: (context, __, ___) => AlertDialog(
+        content: const Text("You don't have enough permission to access this feature."),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                'Okay',
+                style: TextStyle(color: kBlack, fontWeight: FontWeight.bold),
+              )),
+        ],
       ),
     );
   }

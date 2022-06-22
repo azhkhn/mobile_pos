@@ -7,6 +7,7 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
+import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/group/group_database.dart';
 import 'package:shop_ez/db/db_functions/permission/permission_database.dart';
@@ -382,13 +383,15 @@ class ScreenAddGroup extends StatelessWidget {
           final int groupId = await GroupDatabase.instance.createGroup(_groupModel);
           await PermissionDatabase.instance.createPermission(_permissionModel.copyWith(groupId: groupId));
           kSnackBar(context: context, success: true, content: "Group Created Successfully!");
-          return Navigator.pop(context);
+          Navigator.pop(context);
         } else {
           await GroupDatabase.instance.updateGroup(_groupModel);
           await PermissionDatabase.instance.updatePermissionByGroupId(_permissionModel);
           kSnackBar(context: context, update: true, content: "Group Updated Successfully!");
-          return Navigator.pop(context, _groupModel);
+          Navigator.pop(context, _groupModel);
         }
+        //Update fetched Group details from User-Utils
+        await UserUtils.instance.updateGroupAndPermission;
       } catch (e) {
         kSnackBar(context: context, error: true, content: e.toString());
         return;

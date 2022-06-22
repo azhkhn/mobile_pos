@@ -1,7 +1,7 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
 
-import 'dart:convert';
-import 'dart:developer';
+import 'dart:convert' show jsonDecode, jsonEncode;
+import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
@@ -67,7 +67,6 @@ class ScreenAddUser extends StatelessWidget {
                     future: GroupDatabase.instance.getAllGroups(),
                     builder: (context, dynamic snapshot) {
                       final snap = snapshot as AsyncSnapshot;
-
                       switch (snap.connectionState) {
                         case ConnectionState.waiting:
                           return const CircularProgressIndicator();

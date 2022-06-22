@@ -18,6 +18,8 @@ const Color kGrey = Colors.grey;
 const Color kBlueGrey = Colors.blueGrey;
 
 //=================== Const Colors ====================
+const Color kColorDim = Color(0x50000000);
+
 const Color kGreen300 = Color(0xFF81C784);
 const Color kGreen400 = Color(0xFF66BB6A);
 

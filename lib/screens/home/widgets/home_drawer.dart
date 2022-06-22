@@ -5,7 +5,6 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/db/db_functions/busiess_profile/business_profile_database.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 
 const List drawerListItemImage = [
@@ -47,57 +46,57 @@ const List drawerListItem = [
 class HomeDrawer extends StatelessWidget {
   const HomeDrawer({
     Key? key,
+    this.businessProfile,
   }) : super(key: key);
+
+  final BusinessProfileModel? businessProfile;
 
   @override
   Widget build(BuildContext context) {
     final _screenSize = MediaQuery.of(context).size;
     return Column(
       children: [
-        FutureBuilder(
-          future: BusinessProfileDatabase.instance.getBusinessProfile(),
-          builder: (context, AsyncSnapshot<BusinessProfileModel?> snapshot) => InkWell(
-              child: UserAccountsDrawerHeader(
-                currentAccountPicture: snapshot.hasData && snapshot.data!.logo != ''
-                    ? CircleAvatar(backgroundImage: FileImage(File(snapshot.data!.logo)))
-                    : FittedBox(
-                        child: Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: CircleAvatar(
-                                radius: _screenSize.width / 10,
-                                backgroundColor: Colors.black.withOpacity(0.5),
-                                child: Icon(
-                                  Icons.business,
-                                  size: _screenSize.width / 10,
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              top: 3,
-                              right: 0,
+        InkWell(
+            child: UserAccountsDrawerHeader(
+              currentAccountPicture: businessProfile != null && businessProfile?.logo != ''
+                  ? CircleAvatar(backgroundImage: FileImage(File(businessProfile!.logo)))
+                  : FittedBox(
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: CircleAvatar(
+                              radius: _screenSize.width / 10,
+                              backgroundColor: Colors.black.withOpacity(0.5),
                               child: Icon(
-                                Icons.edit,
-                                color: kWhite,
-                                size: _screenSize.width / 20,
+                                Icons.business,
+                                size: _screenSize.width / 10,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                          Positioned(
+                            top: 3,
+                            right: 0,
+                            child: Icon(
+                              Icons.edit,
+                              color: kWhite,
+                              size: _screenSize.width / 20,
+                            ),
+                          ),
+                        ],
                       ),
-                decoration: const BoxDecoration(color: mainColor),
-                accountName: Text(snapshot.hasData ? snapshot.data!.business : 'Business Name'),
-                accountEmail: Text(
-                  snapshot.hasData ? snapshot.data!.vatNumber : 'Vat Number',
-                  style: kText12,
-                ),
+                    ),
+              decoration: const BoxDecoration(color: mainColor),
+              accountName: Text(businessProfile?.business ?? 'Business Name'),
+              accountEmail: Text(
+                businessProfile?.vatNumber ?? 'Vat Number',
+                style: kText12,
               ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, routeBusinessProfile);
-              }),
-        ),
+            ),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, routeBusinessProfile);
+            }),
         Expanded(
           child: SingleChildScrollView(
             child: Column(

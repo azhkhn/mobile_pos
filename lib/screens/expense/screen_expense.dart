@@ -88,19 +88,26 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                       FutureBuilder(
                         future: expenseCategoryDB.getAllExpenseCategories(),
                         builder: (context, dynamic snapshot) {
-                          return CustomDropDownField(
-                            labelText: 'Choose Expense *',
-                            snapshot: snapshot.data,
-                            onChanged: (value) {
-                              _expenseCategoryController = value.toString();
-                            },
-                            validator: (value) {
-                              if (value == null || _expenseCategoryController == 'null') {
-                                return 'This field is required*';
-                              }
-                              return null;
-                            },
-                          );
+                          final snap = snapshot as AsyncSnapshot;
+                          switch (snap.connectionState) {
+                            case ConnectionState.waiting:
+                              return const CircularProgressIndicator();
+                            case ConnectionState.done:
+                            default:
+                              return CustomDropDownField(
+                                labelText: 'Choose Expense *',
+                                snapshot: snapshot.data,
+                                onChanged: (value) {
+                                  _expenseCategoryController = value.toString();
+                                },
+                                validator: (value) {
+                                  if (value == null || _expenseCategoryController == 'null') {
+                                    return 'This field is required*';
+                                  }
+                                  return null;
+                                },
+                              );
+                          }
                         },
                       ),
                       kHeight10,

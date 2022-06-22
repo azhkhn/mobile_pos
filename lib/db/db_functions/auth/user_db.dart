@@ -90,7 +90,7 @@ class UserDatabase {
   Future logout() async {
     final db = await dbInstance.database;
     await db.delete(tableLogin);
-    UserUtils.instance.userModel = null;
+    UserUtils().cleanUserDetails();
   }
 
 //========== Get All User Details ==========

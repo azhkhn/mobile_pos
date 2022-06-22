@@ -61,23 +61,30 @@ class StockFilterBottomSheet extends StatelessWidget {
                     child: FutureBuilder(
                       future: categoryDB.getAllCategories(),
                       builder: (context, dynamic snapshot) {
-                        return CustomDropDownField(
-                          labelText: 'Category',
-                          dropdownKey: _categorykey,
-                          border: true,
-                          isDesne: true,
-                          errorStyle: true,
-                          constraints: const BoxConstraints(maxHeight: 45),
-                          contentPadding: const EdgeInsets.all(10),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          snapshot: snapshot,
-                          onChanged: (value) {
-                            final CategoryModel category = CategoryModel.fromJson(jsonDecode(value!));
-                            _categoryId = category.id;
-                            _brandId = null;
-                            _brandKey.currentState!.reset();
-                          },
-                        );
+                        final snap = snapshot as AsyncSnapshot;
+                        switch (snap.connectionState) {
+                          case ConnectionState.waiting:
+                            return const CircularProgressIndicator();
+                          case ConnectionState.done:
+                          default:
+                            return CustomDropDownField(
+                              labelText: 'Category',
+                              snapshot: snapshot.data,
+                              dropdownKey: _categorykey,
+                              border: true,
+                              isDesne: true,
+                              errorStyle: true,
+                              constraints: const BoxConstraints(maxHeight: 45),
+                              contentPadding: const EdgeInsets.all(10),
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              onChanged: (value) {
+                                final CategoryModel category = CategoryModel.fromJson(jsonDecode(value!));
+                                _categoryId = category.id;
+                                _brandId = null;
+                                _brandKey.currentState!.reset();
+                              },
+                            );
+                        }
                       },
                     ),
                   ),
@@ -89,23 +96,30 @@ class StockFilterBottomSheet extends StatelessWidget {
                     child: FutureBuilder(
                       future: brandDB.getAllBrands(),
                       builder: (context, dynamic snapshot) {
-                        return CustomDropDownField(
-                          labelText: 'Brand',
-                          dropdownKey: _brandKey,
-                          border: true,
-                          isDesne: true,
-                          errorStyle: true,
-                          constraints: const BoxConstraints(maxHeight: 45),
-                          contentPadding: const EdgeInsets.all(10),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          snapshot: snapshot,
-                          onChanged: (value) {
-                            final BrandModel brand = BrandModel.fromJson(jsonDecode(value!));
-                            _brandId = brand.id;
-                            _categoryId = null;
-                            _categorykey.currentState!.reset();
-                          },
-                        );
+                        final snap = snapshot as AsyncSnapshot;
+                        switch (snap.connectionState) {
+                          case ConnectionState.waiting:
+                            return const CircularProgressIndicator();
+                          case ConnectionState.done:
+                          default:
+                            return CustomDropDownField(
+                              labelText: 'Brand',
+                              dropdownKey: _brandKey,
+                              border: true,
+                              isDesne: true,
+                              errorStyle: true,
+                              constraints: const BoxConstraints(maxHeight: 45),
+                              contentPadding: const EdgeInsets.all(10),
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              snapshot: snapshot.data,
+                              onChanged: (value) {
+                                final BrandModel brand = BrandModel.fromJson(jsonDecode(value!));
+                                _brandId = brand.id;
+                                _categoryId = null;
+                                _categorykey.currentState!.reset();
+                              },
+                            );
+                        }
                       },
                     ),
                   ),

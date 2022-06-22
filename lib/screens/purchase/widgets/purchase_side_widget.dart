@@ -223,11 +223,9 @@ class PurchaseSideWidget extends StatelessWidget {
                                 onPressed: () async {
                                   // OrientationMode.isLandscape = false;
                                   // await OrientationMode.toPortrait();
-                                  final id = await Navigator.pushNamed(context, routeAddSupplier, arguments: true);
+                                  final addedSupplier = await Navigator.pushNamed(context, routeAddSupplier, arguments: true);
 
-                                  if (id != null) {
-                                    final addedSupplier = await SupplierDatabase.instance.getSupplierById(id as int);
-
+                                  if (addedSupplier is SupplierModel) {
                                     supplierController.text = addedSupplier.contactName;
                                     supplierNotifier.value = addedSupplier;
                                     log(addedSupplier.supplierName);

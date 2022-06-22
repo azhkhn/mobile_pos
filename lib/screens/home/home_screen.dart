@@ -1,6 +1,7 @@
 import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/utils/vat/vat.dart';
+import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 
 import '../../core/constant/colors.dart';
 import '../../core/routes/router.dart';
@@ -16,9 +17,9 @@ import 'widgets/home_grid.dart';
 class ScreenHome extends StatelessWidget {
   ScreenHome({this.initialEntry, Key? key}) : super(key: key);
   final int? initialEntry;
-  static late Size _screenSize;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final isDialOpen = ValueNotifier(false);
+  final ValueNotifier<BusinessProfileModel?> businessNotifier = ValueNotifier(null);
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +27,8 @@ class ScreenHome extends StatelessWidget {
       // await SystemChrome.setPreferredOrientations(
       //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
       try {
-        UserUtils.instance.userModel ??= await UserUtils.instance.loggedUser;
-        UserUtils.instance.businessProfileModel ??= await UserUtils.instance.businessProfile;
+        await UserUtils.instance.fetchUserDetails();
+        businessNotifier.value = await UserUtils.instance.businessProfile;
         if (VatUtils.instance.vats.isEmpty) await VatUtils.instance.getVats();
       } catch (e) {
         log(e.toString());
@@ -39,7 +40,7 @@ class ScreenHome extends StatelessWidget {
     } else {
       log("You're Using a Phone!");
     }
-    _screenSize = MediaQuery.of(context).size;
+    final Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         if (isDialOpen.value) {
@@ -53,9 +54,15 @@ class ScreenHome extends StatelessWidget {
         key: _scaffoldKey,
 
         //========== Drawer Widget ==========
-        drawer: const Drawer(
-          child: HomeDrawer(),
-        ),
+        drawer: ValueListenableBuilder(
+            valueListenable: businessNotifier,
+            builder: (context, BusinessProfileModel? business, _) {
+              return Drawer(
+                child: HomeDrawer(
+                  businessProfile: business,
+                ),
+              );
+            }),
 
         //========== AppBar Widget ==========
         appBar: AppBar(
