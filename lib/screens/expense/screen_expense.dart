@@ -90,7 +90,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                         builder: (context, dynamic snapshot) {
                           return CustomDropDownField(
                             labelText: 'Choose Expense *',
-                            snapshot: snapshot,
+                            snapshot: snapshot.data,
                             onChanged: (value) {
                               _expenseCategoryController = value.toString();
                             },

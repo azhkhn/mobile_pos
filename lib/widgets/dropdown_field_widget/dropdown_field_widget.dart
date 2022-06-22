@@ -9,6 +9,7 @@ class CustomDropDownField extends StatelessWidget {
     required this.labelText,
     required this.snapshot,
     required this.onChanged,
+    this.value,
     this.style,
     this.hintText,
     this.labelStyle,
@@ -24,15 +25,16 @@ class CustomDropDownField extends StatelessWidget {
     this.floatingLabelBehavior,
   }) : super(key: key);
 
+  final Object? value;
   final String labelText;
   final TextStyle? style;
   final String? hintText;
   final TextStyle? labelStyle;
   final TextStyle? hintStyle;
   final Icon? prefixIcon;
-  final AsyncSnapshot<List<dynamic>>? snapshot;
-  final String? Function(String?)? validator;
-  final void Function(String?)? onChanged;
+  final List<dynamic> snapshot;
+  final String? Function(dynamic)? validator;
+  final void Function(dynamic)? onChanged;
   final GlobalKey? dropdownKey;
   final bool border;
   final bool isDesne;
@@ -63,8 +65,9 @@ class CustomDropDownField extends StatelessWidget {
       ),
       style: style,
       isExpanded: true,
-      items: snapshot!.hasData
-          ? snapshot!.data!.map((item) {
+      value: value,
+      items: snapshot.isNotEmpty
+          ? snapshot.map((item) {
               return DropdownMenuItem<String>(
                 value: jsonToString(item),
                 child: Text(item.get()),

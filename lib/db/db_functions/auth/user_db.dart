@@ -97,7 +97,7 @@ class UserDatabase {
   Future<List<UserModel>> getAllUsers() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableUser);
-    log('results === $_result');
+    log('Users === $_result');
 
     // db.delete(tableUser);
     final List<UserModel> users = _result.map((json) => UserModel.fromJson(json)).toList();

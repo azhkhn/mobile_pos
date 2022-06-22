@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
+
 import 'dart:convert';
 import 'dart:developer';
 
@@ -34,8 +36,6 @@ class ScreenAddUser extends StatelessWidget {
   //========== Global Keys ==========
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final List<String> items = ['Admin', 'Sales'];
-
   //========== TextEditing Controllers ==========
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _nameArabicController = TextEditingController();
@@ -63,86 +63,46 @@ class ScreenAddUser extends StatelessWidget {
               child: Column(
                 children: [
                   //==================== User Group Field ====================
-                  // if (userModel?.groupId != 1)
-                  //   ValueListenableBuilder(
-                  //       valueListenable: _groupNotifier,
-                  //       builder: (context, group, _) {
-                  //         return DropdownButtonFormField(
-                  //           decoration: const InputDecoration(
-                  //             label: Text(
-                  //               'User Group *',
-                  //               style: TextStyle(color: klabelColorGrey),
-                  //             ),
-                  //             hintText: 'Select User Group',
-                  //             labelStyle: kText12,
-                  //             hintStyle: kText12,
-                  //             isDense: true,
-                  //             border: OutlineInputBorder(),
-                  //             floatingLabelBehavior: FloatingLabelBehavior.always,
-                  //             contentPadding: EdgeInsets.all(10),
-                  //           ),
-                  //           isExpanded: true,
-                  //           style: kText12Black,
-                  //           autovalidateMode: AutovalidateMode.onUserInteraction,
-                  //           value: group,
-                  //           items: items
-                  //               .map(
-                  //                 (values) => DropdownMenuItem(value: values, child: Text(values)),
-                  //               )
-                  //               .toList(),
-                  //           onChanged: (value) {
-                  //             // _groupNotifier.value = value.toString();
-                  //             // log('User Type = ${_groupIdController.text}');
-
-                  //             final GroupModel _group = GroupModel.fromJson(jsonDecode(value!));
-                  //             log(_group.name);
-                  //             log(_group.id.toString());
-
-                  //             _groupNotifier.value = _group.id;
-                  //             _categoryIdController = _group.id;
-                  //           },
-                  //           validator: (value) {
-                  //             if (value == null || _groupIdController.text.isEmpty) {
-                  //               return 'This field is required*';
-                  //             }
-                  //             return null;
-                  //           },
-                  //         );
-                  //       }),
-
-                  // kHeight10,
-
                   FutureBuilder(
                     future: GroupDatabase.instance.getAllGroups(),
                     builder: (context, dynamic snapshot) {
-                      return ValueListenableBuilder(
-                          valueListenable: _groupNotifier,
-                          builder: (context, group, _) {
-                            return CustomDropDownField(
-                              labelText: 'User Group *',
-                              hintText: 'Select User Group',
-                              labelStyle: kText12,
-                              hintStyle: kText12,
-                              style: kText12Black,
-                              snapshot: snapshot,
-                              border: true,
-                              floatingLabelBehavior: FloatingLabelBehavior.always,
-                              isDesne: true,
-                              onChanged: (value) {
-                                final GroupModel _group = GroupModel.fromJson(jsonDecode(value!));
-                                log(_group.name);
-                                log(_group.id.toString());
+                      final snap = snapshot as AsyncSnapshot;
 
-                                _groupNotifier.value = _group;
-                              },
-                              validator: (value) {
-                                if (value == null || _groupNotifier.value == null) {
-                                  return 'This field is required*';
-                                }
-                                return null;
-                              },
-                            );
-                          });
+                      switch (snap.connectionState) {
+                        case ConnectionState.waiting:
+                          return const CircularProgressIndicator();
+                        case ConnectionState.done:
+                        default:
+                          return ValueListenableBuilder(
+                              valueListenable: _groupNotifier,
+                              builder: (context, GroupModel? group, _) {
+                                return CustomDropDownField(
+                                  labelText: 'User Group *',
+                                  hintText: 'Select User Group',
+                                  labelStyle: kText12,
+                                  hintStyle: kText12,
+                                  style: kText12Black,
+                                  snapshot: snapshot.data,
+                                  border: true,
+                                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                                  isDesne: true,
+                                  value: group != null ? jsonEncode(group.toJson()) : null,
+                                  onChanged: (value) {
+                                    final GroupModel _group = GroupModel.fromJson(jsonDecode(value));
+                                    log(_group.name);
+                                    log(_group.id.toString());
+
+                                    _groupNotifier.value = _group;
+                                  },
+                                  validator: (value) {
+                                    if (value == null || _groupNotifier.value == null) {
+                                      return 'This field is required*';
+                                    }
+                                    return null;
+                                  },
+                                );
+                              });
+                      }
                     },
                   ),
                   kHeight10,
@@ -340,6 +300,7 @@ class ScreenAddUser extends StatelessWidget {
     final UserModel user = await UserUtils.instance.loggedUser;
 
     final int groupId = _groupNotifier.value!.id!;
+    log('group Id = $groupId');
 
     final String shopName = user.shopName,
         countryName = user.countryName,
@@ -357,7 +318,7 @@ class ScreenAddUser extends StatelessWidget {
 
       final UserModel _userModel = UserModel(
         id: userModel?.id,
-        groupId: 1,
+        groupId: groupId,
         shopName: shopName,
         countryName: countryName,
         shopCategory: shopCategory,
@@ -391,9 +352,8 @@ class ScreenAddUser extends StatelessWidget {
   void getUserDetails(UserModel user) async {
     //retieving values from Database to TextFields
 
-    final GroupModel _group = await GroupDatabase.instance.getGroupById(user.groupId);
-
-    _groupNotifier.value = _group;
+    log('User == $user');
+    _groupNotifier.value = await GroupDatabase.instance.getGroupById(user.groupId);
     _nameController.text = user.name ?? '';
     _nameArabicController.text = user.nameArabic ?? '';
     _addressController.text = user.address ?? '';
@@ -401,5 +361,6 @@ class ScreenAddUser extends StatelessWidget {
     _emailController.text = user.email ?? '';
     _usernameController.text = user.username;
     _passwordController.text = user.password;
+    _groupNotifier.notifyListeners();
   }
 }
