@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
+import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/brand/brand_database.dart';
 import 'package:shop_ez/db/db_functions/category/category_db.dart';
@@ -22,6 +23,7 @@ import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/model/sub-category/sub_category_model.dart';
+import 'package:shop_ez/model/unit/unit_model.dart';
 import 'package:shop_ez/model/vat/vat_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
@@ -30,28 +32,35 @@ import 'package:shop_ez/widgets/dropdown_field_widget/dropdown_field_widget.dart
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
-import '../../core/utils/snackbar/snackbar.dart';
+class ScreenItemMaster extends StatefulWidget {
+  const ScreenItemMaster({Key? key, this.from = false, this.itemMasterModel}) : super(key: key);
 
-const vatMethodList = ['Exclusive', 'Inclusive'];
-const productTypeList = ['Standard', 'Service'];
+  //========== Bool ==========
+  final bool from;
 
-class ScreenItemMaster extends StatelessWidget {
-  ScreenItemMaster({Key? key}) : super(key: key);
+  //========== Model Calsses ==========
+  final ItemMasterModel? itemMasterModel;
 
-  //========== MediaQuery Screen Size ==========
-  late Size _screenSize;
+  @override
+  State<ScreenItemMaster> createState() => _ScreenItemMasterState();
+}
 
+class _ScreenItemMasterState extends State<ScreenItemMaster> {
   //========== Global Keys ==========
   final _dropdownKey = GlobalKey<FormFieldState>();
   final _formKey = GlobalKey<FormState>();
 
+  //========== Lists ==========
+  final List<String> vatMethodList = ['Exclusive', 'Inclusive'];
+  final List<String> productTypeList = ['Standard', 'Service'];
+
   //========== Database Instances ==========
-  final itemMasterDB = ItemMasterDatabase.instance;
-  final categoryDB = CategoryDatabase.instance;
-  final subCategoryDB = SubCategoryDatabase.instance;
-  final brandDB = BrandDatabase.instance;
-  final unitDB = UnitDatabase.instance;
-  final vatDB = VatDatabase.instance;
+  final ItemMasterDatabase itemMasterDB = ItemMasterDatabase.instance;
+  final CategoryDatabase categoryDB = CategoryDatabase.instance;
+  final SubCategoryDatabase subCategoryDB = SubCategoryDatabase.instance;
+  final BrandDatabase brandDB = BrandDatabase.instance;
+  final UnitDatabase unitDB = UnitDatabase.instance;
+  final VatDatabase vatDB = VatDatabase.instance;
 
   //========== Text Editing Controllers ==========
   final _itemNameController = TextEditingController();
@@ -68,22 +77,22 @@ class ScreenItemMaster extends StatelessWidget {
   String? _selectedDate;
 
   //========== Dropdown Field ==========
-  String? _productTypeController;
   int? _itemCategoryId;
   int? _itemSubCategoryId;
   int? _itemBrandId;
+  int? _itemVatId;
+  int? _itemVatRate;
   String? _productVatController;
-  int? _vatId;
-  int? _vatRate;
-  String? _unitController;
-  String? _vatMethodController;
+  String? _itemUnit;
 
   //========== Image File Path ==========
   File? image;
 
   //========== Value Notifiers ==========
-  ValueNotifier<File?> selectedImageNotifier = ValueNotifier(null);
-  ValueNotifier<int> itemCategoryNotifier = ValueNotifier(0);
+  final ValueNotifier<File?> selectedImageNotifier = ValueNotifier(null);
+  final ValueNotifier<int> itemCategoryNotifier = ValueNotifier(0);
+  final ValueNotifier<String?> productTypeNotifier = ValueNotifier(null);
+  final ValueNotifier<String?> vatMethodNotifier = ValueNotifier(null);
 
   //========== Focus Node for TextFields ==========
   FocusNode itemNameFocusNode = FocusNode();
@@ -92,13 +101,31 @@ class ScreenItemMaster extends StatelessWidget {
   FocusNode itemCostFocusNode = FocusNode();
   FocusNode sellingPriceFocusNode = FocusNode();
 
+  //========== Futures ==========
+  Future<dynamic>? futureCategory;
+  Future<dynamic>? futureSubCategory;
+  Future<dynamic>? futureBrand;
+  Future<dynamic>? futureVat;
+  Future<dynamic>? futureUnit;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.itemMasterModel != null) getProductDetails(widget.itemMasterModel!);
+
+    futureCategory = categoryDB.getAllCategories();
+    futureSubCategory = subCategoryDB.getSubCategoryByCategoryId(categoryId: itemCategoryNotifier.value);
+    futureBrand = brandDB.getAllBrands();
+    futureVat = vatDB.getAllVats();
+    futureUnit = unitDB.getAllUnits();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // itemMasterDB.getAllItems();
-    _screenSize = MediaQuery.of(context).size;
+    final Size _screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBarWidget(
-        title: 'Item Master',
+        title: widget.itemMasterModel == null ? 'Item Master' : 'Edit Product',
       ),
       body: BackgroundContainerWidget(
         child: ItemScreenPaddingWidget(
@@ -108,31 +135,36 @@ class ScreenItemMaster extends StatelessWidget {
               child: Column(
                 children: [
                   //========== Product Type Dropdown ==========
-                  DropdownButtonFormField(
-                    decoration: const InputDecoration(
-                      label: Text(
-                        'Product Type *',
-                        style: TextStyle(color: klabelColorGrey),
-                      ),
-                      contentPadding: EdgeInsets.all(10),
-                    ),
-                    isExpanded: true,
-                    items: productTypeList.map((String item) {
-                      return DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(item),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      _productTypeController = value.toString();
-                    },
-                    validator: (value) {
-                      if (value == null || _productTypeController == null) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
-                  ),
+                  ValueListenableBuilder(
+                      valueListenable: productTypeNotifier,
+                      builder: (context, productType, _) {
+                        return DropdownButtonFormField(
+                          decoration: const InputDecoration(
+                            label: Text(
+                              'Product Type *',
+                              style: TextStyle(color: klabelColorGrey),
+                            ),
+                            contentPadding: EdgeInsets.all(10),
+                          ),
+                          isExpanded: true,
+                          value: productType,
+                          items: productTypeList.map((String item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            productTypeNotifier.value = value.toString();
+                          },
+                          validator: (value) {
+                            if (value == null || productTypeNotifier.value == null) {
+                              return 'This field is required*';
+                            }
+                            return null;
+                          },
+                        );
+                      }),
                   kHeight10,
 
                   //========== Item Name ==========
@@ -183,7 +215,7 @@ class ScreenItemMaster extends StatelessWidget {
 
                   //========== Item Category Dropdown ==========
                   FutureBuilder(
-                    future: categoryDB.getAllCategories(),
+                    future: futureCategory,
                     builder: (context, dynamic snapshot) {
                       final snap = snapshot as AsyncSnapshot;
                       switch (snap.connectionState) {
@@ -191,9 +223,11 @@ class ScreenItemMaster extends StatelessWidget {
                           return const CircularProgressIndicator();
                         case ConnectionState.done:
                         default:
+                          final List<CategoryModel> _categories = snap.data;
                           return CustomDropDownField(
                             labelText: 'Item Category *',
                             snapshot: snapshot.data,
+                            value: _itemCategoryId != null ? jsonEncode(_categories.where((cat) => cat.id == _itemCategoryId).toList().first) : null,
                             contentPadding: const EdgeInsets.all(10),
                             onChanged: (value) {
                               _dropdownKey.currentState!.reset();
@@ -220,7 +254,7 @@ class ScreenItemMaster extends StatelessWidget {
                       valueListenable: itemCategoryNotifier,
                       builder: (context, int categoryId, _) {
                         return FutureBuilder(
-                          future: subCategoryDB.getSubCategoryByCategoryId(categoryId: categoryId),
+                          future: futureSubCategory,
                           builder: (context, dynamic snapshot) {
                             final snap = snapshot as AsyncSnapshot;
                             switch (snap.connectionState) {
@@ -228,10 +262,14 @@ class ScreenItemMaster extends StatelessWidget {
                                 return const CircularProgressIndicator();
                               case ConnectionState.done:
                               default:
+                                final List<SubCategoryModel> _subCategories = snap.data;
                                 return CustomDropDownField(
                                   dropdownKey: _dropdownKey,
                                   labelText: 'Item Sub-Category',
                                   snapshot: snapshot.data,
+                                  value: _itemSubCategoryId != null
+                                      ? jsonEncode(_subCategories.where((subCat) => subCat.id == _itemSubCategoryId).toList().first)
+                                      : null,
                                   contentPadding: const EdgeInsets.all(10),
                                   onChanged: (value) {
                                     final SubCategoryModel subCategory = SubCategoryModel.fromJson(jsonDecode(value!));
@@ -248,7 +286,7 @@ class ScreenItemMaster extends StatelessWidget {
 
                   //========== Item Brand Dropdown ==========
                   FutureBuilder(
-                    future: brandDB.getAllBrands(),
+                    future: futureBrand,
                     builder: (context, dynamic snapshot) {
                       final snap = snapshot as AsyncSnapshot;
                       switch (snap.connectionState) {
@@ -256,9 +294,12 @@ class ScreenItemMaster extends StatelessWidget {
                           return const CircularProgressIndicator();
                         case ConnectionState.done:
                         default:
+                          final List<BrandModel> _brands = snap.data;
+
                           return CustomDropDownField(
                             labelText: 'Item Brand',
                             snapshot: snapshot.data,
+                            value: _itemBrandId != null ? jsonEncode(_brands.where((brand) => brand.id == _itemBrandId).toList().first) : null,
                             contentPadding: const EdgeInsets.all(10),
                             onChanged: (value) {
                               final BrandModel brand = BrandModel.fromJson(jsonDecode(value!));
@@ -315,7 +356,7 @@ class ScreenItemMaster extends StatelessWidget {
 
                   //========== Product VAT Dropdown ==========
                   FutureBuilder(
-                    future: vatDB.getAllVats(),
+                    future: futureVat,
                     builder: (context, dynamic snapshot) {
                       final snap = snapshot as AsyncSnapshot;
                       switch (snap.connectionState) {
@@ -323,17 +364,19 @@ class ScreenItemMaster extends StatelessWidget {
                           return const CircularProgressIndicator();
                         case ConnectionState.done:
                         default:
+                          final List<VatModel> _vats = snap.data;
                           return CustomDropDownField(
                             labelText: 'Product VAT *',
                             snapshot: snapshot.data,
+                            value: _itemVatId != null ? jsonEncode(_vats.where((vat) => vat.id == _itemVatId).toList().first) : null,
                             contentPadding: const EdgeInsets.all(10),
                             onChanged: (value) async {
                               _productVatController = value.toString();
                               final _vat = VatModel.fromJson(jsonDecode(value!));
-                              _vatId = _vat.id;
-                              _vatRate = _vat.rate;
+                              _itemVatId = _vat.id;
+                              _itemVatRate = _vat.rate;
 
-                              log('VAT id = $_vatId');
+                              log('VAT id = $_itemVatId');
                             },
                             validator: (value) {
                               if (value == null || _productVatController == null) {
@@ -348,36 +391,41 @@ class ScreenItemMaster extends StatelessWidget {
                   kHeight10,
 
                   //========== VAT Method Dropdown ==========
-                  DropdownButtonFormField(
-                    decoration: const InputDecoration(
-                      label: Text(
-                        'VAT Method *',
-                        style: TextStyle(color: klabelColorGrey),
-                      ),
-                      contentPadding: EdgeInsets.all(10),
-                    ),
-                    isExpanded: true,
-                    items: vatMethodList.map((String item) {
-                      return DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(item),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      _vatMethodController = value.toString();
-                    },
-                    validator: (value) {
-                      if (value == null || _vatMethodController == null) {
-                        return 'This field is required*';
-                      }
-                      return null;
-                    },
-                  ),
+                  ValueListenableBuilder(
+                      valueListenable: vatMethodNotifier,
+                      builder: (context, _vatMethod, _) {
+                        return DropdownButtonFormField(
+                          decoration: const InputDecoration(
+                            label: Text(
+                              'VAT Method *',
+                              style: TextStyle(color: klabelColorGrey),
+                            ),
+                            contentPadding: EdgeInsets.all(10),
+                          ),
+                          isExpanded: true,
+                          value: _vatMethod,
+                          items: vatMethodList.map((String item) {
+                            return DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(item),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            vatMethodNotifier.value = value.toString();
+                          },
+                          validator: (value) {
+                            if (value == null || vatMethodNotifier.value == null) {
+                              return 'This field is required*';
+                            }
+                            return null;
+                          },
+                        );
+                      }),
                   kHeight10,
 
                   //========== Unit Dropdown ==========
                   FutureBuilder(
-                    future: unitDB.getAllUnits(),
+                    future: futureUnit,
                     builder: (context, dynamic snapshot) {
                       final snap = snapshot as AsyncSnapshot;
                       switch (snap.connectionState) {
@@ -388,12 +436,16 @@ class ScreenItemMaster extends StatelessWidget {
                           return CustomDropDownField(
                             labelText: 'Unit *',
                             snapshot: snapshot.data,
+                            value: _itemUnit,
                             contentPadding: const EdgeInsets.all(10),
                             onChanged: (value) {
-                              _unitController = value.toString();
+                              final UnitModel unit = UnitModel.fromJson(jsonDecode(value!));
+                              log('Unit Id == ' + unit.id.toString());
+                              log('Unit == ' + unit.unit);
+                              _itemUnit = value.toString();
                             },
                             validator: (value) {
-                              if (value == null || _unitController == null) {
+                              if (value == null || _itemUnit == null) {
                                 return 'This field is required*';
                               }
                               return null;
@@ -427,8 +479,7 @@ class ScreenItemMaster extends StatelessWidget {
                         log('selected date == $_selectedDate');
                         log('back to time == ${DateTime.parse(_selectedDate!)}');
 
-                        final parseDate = Converter.dateFormat.format(_date);
-                        _dateController.text = parseDate.toString();
+                        _dateController.text = Converter.dateFormat.format(_date);
                       }
                     },
                   ),
@@ -489,8 +540,14 @@ class ScreenItemMaster extends StatelessWidget {
                   //========== Submit Button ==========
                   kHeight20,
                   CustomMaterialBtton(
-                    buttonText: 'Submit',
-                    onPressed: () => addItem(context: context),
+                    buttonText: widget.itemMasterModel == null ? 'Add Product' : 'Update Product',
+                    onPressed: () async {
+                      if (widget.itemMasterModel == null) {
+                        return await addItem(context);
+                      } else {
+                        return await addItem(context, isUpdate: true);
+                      }
+                    },
                   ),
                   kHeight10,
                 ],
@@ -561,7 +618,7 @@ class ScreenItemMaster extends StatelessWidget {
   }
 
   //========== Add Item ==========
-  Future<void> addItem({context}) async {
+  Future<void> addItem(BuildContext context, {final bool isUpdate = false}) async {
     final int itemCategoryId, vatRate, vatId;
     final int? itemSubCategoryId, itemBrandId;
     final String productType,
@@ -572,10 +629,10 @@ class ScreenItemMaster extends StatelessWidget {
         sellingPrice,
         secondarySellingPrice,
         productVAT,
-        unit,
         expiryDate,
         openingStock,
         vatMethod,
+        unit,
         alertQuantity,
         itemImage;
 
@@ -584,7 +641,7 @@ class ScreenItemMaster extends StatelessWidget {
 
     if (_formState.validate()) {
       //Retieving values from TextFields to String
-      productType = _productTypeController!;
+      productType = productTypeNotifier.value!;
       itemName = _itemNameController.text.trim();
       itemNameArabic = _itemNameArabicController.text.trim();
       itemCode = _itemCodeController.text.trim();
@@ -594,31 +651,36 @@ class ScreenItemMaster extends StatelessWidget {
       itemCost = _itemCostController.text.trim();
       sellingPrice = _sellingPriceController.text.trim();
       secondarySellingPrice = '';
-      vatId = _vatId!;
-      vatRate = _vatRate!;
+      vatId = _itemVatId!;
+      vatRate = _itemVatRate!;
       productVAT = _productVatController!;
-      unit = _unitController!;
+      unit = _itemUnit!;
       expiryDate = _selectedDate ?? '';
       openingStock = _openingStockController.text.isEmpty ? '0' : _openingStockController.text.trim();
-      vatMethod = _vatMethodController!;
+      vatMethod = vatMethodNotifier.value!;
       alertQuantity = _alertQuantityController.text.trim();
 
       if (selectedImageNotifier.value != null) {
         //========== Getting Directory Path ==========
         final Directory extDir = await getApplicationDocumentsDirectory();
-        String dirPath = extDir.path;
+        final String dirPath = extDir.path;
         final fileName = DateTime.now().microsecondsSinceEpoch.toString();
         // final fileName = basename(selectedImage!.path);
         final String filePath = '$dirPath/$fileName.jpg';
 
         //========== Coping Image to new path ==========
-        image = await selectedImageNotifier.value!.copy(filePath);
-        itemImage = image!.path;
+        if (widget.itemMasterModel != null && widget.itemMasterModel?.itemImage == selectedImageNotifier.value?.path) {
+          itemImage = widget.itemMasterModel?.itemImage ?? '';
+        } else {
+          image = await selectedImageNotifier.value!.copy(filePath);
+          itemImage = image!.path;
+        }
       } else {
         itemImage = '';
       }
 
       final _itemMasterModel = ItemMasterModel(
+        id: widget.itemMasterModel?.id,
         productType: productType,
         itemName: itemName,
         itemNameArabic: itemNameArabic,
@@ -640,25 +702,31 @@ class ScreenItemMaster extends StatelessWidget {
         itemImage: itemImage,
       );
       try {
-        await itemMasterDB.createItem(_itemMasterModel);
-        log('Item $itemName Added!');
-        kSnackBar(context: context, success: true, content: 'Item "$itemName" added successfully!');
+        if (!isUpdate) {
+          await itemMasterDB.createItem(_itemMasterModel);
+          log('Item $itemName Added!');
+          kSnackBar(context: context, success: true, content: 'Product added successfully!');
+        } else {
+          final ItemMasterModel? _item = await itemMasterDB.updateProduct(_itemMasterModel);
+          kSnackBar(context: context, update: true, content: "Product updated successfully!");
+          return Navigator.pop(context, _item);
+        }
       } catch (e) {
-        if (e == 'Item Already Exist!') {
-          log('Item Already Exist!');
+        if (e == 'Item name already exist') {
+          log('Item name already exist');
           itemNameFocusNode.requestFocus();
           kSnackBar(
             context: context,
             error: true,
-            content: 'Item name already exist!',
+            content: e.toString(),
           );
-        } else if (e == 'ItemCode Already Exist!') {
-          log('ItemCode Already Exist!');
+        } else if (e == 'Item code already exist') {
+          log('Item code already exist');
           itemCodeFocusNode.requestFocus();
           kSnackBar(
             context: context,
             error: true,
-            content: 'Item code already exist!',
+            content: e.toString(),
           );
         }
       }
@@ -674,6 +742,38 @@ class ScreenItemMaster extends StatelessWidget {
       } else if (_sellingPriceController.text.isEmpty) {
         sellingPriceFocusNode.requestFocus();
       }
+    }
+  }
+
+  //========== Fetch Product Details ==========
+  void getProductDetails(ItemMasterModel product) async {
+    //retieving values from Database to TextFields
+
+    log('Product == ' + product.toString());
+
+    productTypeNotifier.value = product.productType;
+    _itemNameController.text = product.itemName;
+    _itemNameArabicController.text = product.itemNameArabic;
+    _itemCodeController.text = product.itemCode;
+
+    _itemCategoryId = product.itemCategoryId;
+    itemCategoryNotifier.value = _itemCategoryId!;
+
+    _itemSubCategoryId = product.itemSubCategoryId;
+    _itemBrandId = product.itemBrandId;
+    _itemCostController.text = product.itemCost;
+    _sellingPriceController.text = product.sellingPrice;
+    _productVatController = product.productVAT;
+    _itemVatId = product.vatId;
+    _itemVatRate = product.vatRate;
+    vatMethodNotifier.value = product.vatMethod;
+    _itemUnit = product.unit;
+    _selectedDate = product.expiryDate;
+    _dateController.text = Converter.dateFormat.format(DateTime.parse(_selectedDate!));
+    _openingStockController.text = product.openingStock;
+    _alertQuantityController.text = product.alertQuantity ?? '';
+    if (await File(product.itemImage!).exists()) {
+      selectedImageNotifier.value = File(product.itemImage!);
     }
   }
 }

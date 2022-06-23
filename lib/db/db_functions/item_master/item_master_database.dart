@@ -16,13 +16,26 @@ class ItemMasterDatabase {
     final _itemCode = await db.rawQuery('''select * from $tableItemMaster where ${ItemMasterFields.itemCode} = "${_itemMasterModel.itemCode}"''');
 
     if (_item.isNotEmpty) {
-      throw 'Item Already Exist!';
+      throw 'Item name already exist';
     } else if (_itemCode.isNotEmpty) {
-      throw 'ItemCode Already Exist!';
+      throw 'Item code already exist';
     } else {
       final id = await db.insert(tableItemMaster, _itemMasterModel.toJson());
       log('Item id = $id');
     }
+  }
+
+  //========== Update Product ==========
+  Future<ItemMasterModel> updateProduct(ItemMasterModel itemMasterModel) async {
+    final db = await dbInstance.database;
+    final _id = await db.update(
+      tableItemMaster,
+      itemMasterModel.toJson(),
+      where: '${ItemMasterFields.id} = ?',
+      whereArgs: [itemMasterModel.id],
+    );
+    log('Products ($_id) updated successfully');
+    return itemMasterModel;
   }
 
   //========== Get Products By Brand Id ==========

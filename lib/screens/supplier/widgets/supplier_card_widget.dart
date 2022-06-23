@@ -84,7 +84,7 @@ class SupplierCardWidget extends StatelessWidget {
                       child: Text(
                         supplier[index].supplierName,
                         overflow: TextOverflow.ellipsis,
-                        style: kBoldTextSalesCard,
+                        style: kTextBoldSalesCard,
                         maxLines: 1,
                       ),
                     ),

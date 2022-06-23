@@ -94,7 +94,7 @@ class UserCardwidget extends StatelessWidget {
                         child: AutoSizeText(
                           user.name ?? user.shopName,
                           overflow: TextOverflow.ellipsis,
-                          style: kBoldTextSalesCard,
+                          style: kTextBoldSalesCard,
                           maxLines: 1,
                           minFontSize: 10,
                           maxFontSize: 14,

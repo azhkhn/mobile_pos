@@ -115,7 +115,7 @@ class SalesCardWidget extends StatelessWidget {
                         child: AutoSizeText(
                           sales.customerName,
                           overflow: TextOverflow.ellipsis,
-                          style: kBoldTextSalesCard,
+                          style: kTextBoldSalesCard,
                           maxLines: 1,
                           minFontSize: 10,
                           maxFontSize: 14,

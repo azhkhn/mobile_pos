@@ -13,6 +13,8 @@ class ContstantTexts {
 const kBoldText = TextStyle(fontWeight: FontWeight.bold);
 const kTextBoldWhite = TextStyle(fontWeight: FontWeight.bold, color: kWhite);
 const kText12 = TextStyle(fontSize: 12);
+const kText13 = TextStyle(fontSize: 13);
+const kText13Bold = TextStyle(fontSize: 13, fontWeight: FontWeight.bold);
 const kText12Black = TextStyle(fontSize: 12, color: kBlack);
 const kText12Lite = TextStyle(color: kTextColor, fontSize: 12);
 const kText10Lite = TextStyle(color: kTextColor, fontSize: 10);
@@ -27,7 +29,7 @@ final kItemsButtontyle = TextStyle(color: kWhite, fontWeight: FontWeight.bold, f
 
 //========== Custom TextStyles for Widgets ====================
 const kTextSalesCard = TextStyle(fontSize: 12);
-const kBoldTextSalesCard = TextStyle(fontSize: 12, fontWeight: FontWeight.bold);
+const kTextBoldSalesCard = TextStyle(fontSize: 12, fontWeight: FontWeight.bold);
 
 //==================== Constant Texts ====================
 const kTextDelete = Text('Delete', style: TextStyle(color: ContstantTexts.kColorDeleteText, fontWeight: FontWeight.bold));

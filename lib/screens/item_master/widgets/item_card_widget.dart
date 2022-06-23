@@ -35,7 +35,7 @@ class ItemCardWidget extends StatelessWidget {
                           const Text(
                             'No.  ',
                             overflow: TextOverflow.ellipsis,
-                            style: kTextSalesCard,
+                            style: kText12Lite,
                             maxLines: 1,
                           ),
                           Expanded(
@@ -57,7 +57,7 @@ class ItemCardWidget extends StatelessWidget {
                           const Text(
                             'Expiry Date:  ',
                             overflow: TextOverflow.ellipsis,
-                            style: kTextSalesCard,
+                            style: kText12Lite,
                             maxLines: 1,
                           ),
                           Expanded(
@@ -78,16 +78,16 @@ class ItemCardWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'item:  ',
+                      'Product:  ',
                       overflow: TextOverflow.ellipsis,
-                      style: kTextSalesCard,
+                      style: kText12Lite,
                       maxLines: 1,
                     ),
                     Expanded(
                       child: Text(
                         product.itemName,
                         overflow: TextOverflow.ellipsis,
-                        style: kBoldTextSalesCard,
+                        style: kTextBoldSalesCard,
                         maxLines: 1,
                       ),
                     ),
@@ -106,7 +106,7 @@ class ItemCardWidget extends StatelessWidget {
                       const Text(
                         'Cost:  ',
                         overflow: TextOverflow.ellipsis,
-                        style: kTextSalesCard,
+                        style: kText12Lite,
                         maxLines: 1,
                       ),
                       Expanded(
@@ -128,7 +128,7 @@ class ItemCardWidget extends StatelessWidget {
                       const Text(
                         'Price:  ',
                         overflow: TextOverflow.ellipsis,
-                        style: kTextSalesCard,
+                        style: kText12Lite,
                         maxLines: 1,
                       ),
                       Expanded(
@@ -150,7 +150,7 @@ class ItemCardWidget extends StatelessWidget {
                       const Text(
                         'Stock:  ',
                         overflow: TextOverflow.ellipsis,
-                        style: kTextSalesCard,
+                        style: kText12Lite,
                         maxLines: 1,
                       ),
                       Expanded(

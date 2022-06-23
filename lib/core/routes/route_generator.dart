@@ -67,8 +67,19 @@ class RouteGenerator {
       case routeSignUp:
         return MaterialPageRoute(builder: (_) => ScreenSignUp());
       case routeItemMaster:
-        if (permission!.products.contains('2')) return MaterialPageRoute(builder: (_) => ScreenItemMaster());
-        return _errorPermission();
+        if (args is Map) {
+          if (permission!.products.contains('3')) {
+            return MaterialPageRoute(
+                builder: (_) => ScreenItemMaster(
+                      from: args.containsKey('from'),
+                      itemMasterModel: args.containsKey('product') ? args['product'] : null,
+                    ));
+          }
+          return _errorPermission();
+        } else {
+          if (permission!.products.contains('2')) return MaterialPageRoute(builder: (_) => const ScreenItemMaster());
+          return _errorPermission();
+        }
       case routeManageItemMaster:
         if (permission!.products.contains('1')) return MaterialPageRoute(builder: (_) => ScreenItemMasterManage());
         return _errorPermission();

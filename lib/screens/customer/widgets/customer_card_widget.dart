@@ -84,7 +84,7 @@ class CustomerCardWidget extends StatelessWidget {
                       child: Text(
                         customer[index].customer,
                         overflow: TextOverflow.ellipsis,
-                        style: kBoldTextSalesCard,
+                        style: kTextBoldSalesCard,
                         maxLines: 1,
                       ),
                     ),
