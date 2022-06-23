@@ -13,11 +13,13 @@ class UserDatabase {
   Future<UserModel> createUser(UserModel userModel) async {
     final db = await dbInstance.database;
     final user = await db.rawQuery(
-        '''select * from $tableUser where ${UserFields.mobileNumber} = "${userModel.mobileNumber}" or ${UserFields.username} = "${userModel.username}" or ${UserFields.email} = "${userModel.email}"''');
+        '''select * from $tableUser where ${UserFields.name} = "${userModel.name}" or ${UserFields.mobileNumber} = "${userModel.mobileNumber}" or ${UserFields.username} = "${userModel.username}" or ${UserFields.email} = "${userModel.email}"''');
     if (user.isNotEmpty) {
-      final _user = UserModel.fromJson(user.first);
+      final UserModel _user = UserModel.fromJson(user.first);
 
-      if (_user.username == userModel.username) {
+      if (_user.name == userModel.name) {
+        throw 'Name already exist';
+      } else if (_user.username == userModel.username) {
         throw 'Username number already exist';
       } else if (_user.mobileNumber == userModel.mobileNumber) {
         throw 'Mobile number already exist';

@@ -14,6 +14,7 @@ class CustomDropDownField extends StatelessWidget {
     this.hintText,
     this.labelStyle,
     this.hintStyle,
+    this.enabled = true,
     this.border = false,
     this.isDesne = false,
     this.errorStyle = false,
@@ -31,6 +32,7 @@ class CustomDropDownField extends StatelessWidget {
   final String? hintText;
   final TextStyle? labelStyle;
   final TextStyle? hintStyle;
+  final bool enabled;
   final Icon? prefixIcon;
   final List<dynamic> snapshot;
   final String? Function(dynamic)? validator;
@@ -55,6 +57,7 @@ class CustomDropDownField extends StatelessWidget {
         hintText: hintText,
         hintStyle: hintStyle,
         labelStyle: labelStyle,
+        enabled: enabled,
         prefixIcon: prefixIcon,
         border: border ? const OutlineInputBorder() : null,
         isDense: isDesne,

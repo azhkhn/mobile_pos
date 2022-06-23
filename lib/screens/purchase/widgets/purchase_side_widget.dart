@@ -88,7 +88,7 @@ class PurchaseSideWidget extends StatelessWidget {
                           flex: 6,
                           child: TypeAheadField(
                             debounceDuration: const Duration(milliseconds: 500),
-                            hideSuggestionsOnKeyboardHide: false,
+                            hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
                                 controller: supplierController,
                                 style: const TextStyle(fontSize: 12),

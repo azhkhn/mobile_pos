@@ -26,7 +26,7 @@ class UserUtils {
   Future<void> fetchUserDetails() async {
     await loggedUser;
     await businessProfile;
-    await group;
+    await userGroup;
     await permission;
   }
 
@@ -54,7 +54,7 @@ class UserUtils {
   }
 
   //========== Get User-Group Details ==========
-  Future<GroupModel> get group async {
+  Future<GroupModel> get userGroup async {
     if (groupModel != null) return groupModel!;
     await getGroup();
     return groupModel!;
@@ -74,7 +74,7 @@ class UserUtils {
     groupModel = null;
     permissionModel = null;
 
-    await group;
+    await userGroup;
     await permission;
   }
 

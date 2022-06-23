@@ -101,7 +101,7 @@ class ScreenUserList extends StatelessWidget {
                                                     }
                                                   },
                                                 },
-                                                //========== Delete User ==========
+                                                //========== Disable User ==========
                                                 if (_user.groupId != 1)
                                                   {
                                                     'title': _user.status == 1 ? 'Disable User' : 'Enable User',

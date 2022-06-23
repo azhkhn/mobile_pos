@@ -42,18 +42,21 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 10, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 11, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
 
 //     const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-//     const textType = 'TEXT NOT NULL';
+    const textType = 'TEXT NOT NULL';
 //     const textNull = 'TEXT';
 //     const intNull = 'INTEGER';
 //     const idLogin = 'INTEGER NOT NULL';
 //     const intType = 'INTEGER NOT NULL';
+
+    await db.execute("ALTER TABLE $tablePermission ADD COLUMN ${PermissionFields.user} $textType DEFAULT '13'");
+    await db.execute("ALTER TABLE $tablePermission ADD COLUMN ${PermissionFields.returns} $textType DEFAULT '0'");
 
 //     await db.execute('DROP TABLE IF EXISTS $tableUser');
 //     await db.execute('DROP TABLE IF EXISTS $tableLogin');

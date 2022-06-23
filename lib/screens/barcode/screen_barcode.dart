@@ -53,7 +53,7 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                   //==================== Product Search Bar ====================
                   TypeAheadField(
                     debounceDuration: const Duration(milliseconds: 500),
-                    hideSuggestionsOnKeyboardHide: false,
+                    hideSuggestionsOnKeyboardHide: true,
                     textFieldConfiguration: TextFieldConfiguration(
                         controller: _productController,
                         focusNode: _productFocusNode,

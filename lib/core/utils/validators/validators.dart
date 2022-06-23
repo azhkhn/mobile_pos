@@ -9,6 +9,16 @@ class Validators {
     return null;
   }
 
+  //========== Username Validator ==========
+  static String? usernameValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field is required*';
+    } else if (value.contains(' ')) {
+      return 'Username cannot contain space*';
+    }
+    return null;
+  }
+
   //========== Number Validator ==========
   String? numberValidator(String? value) {
     if (value == null) {

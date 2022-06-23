@@ -25,9 +25,7 @@ class SalesListFilter extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   //========== Lists ==========
-  List<SalesModel> salesList = [],
-      salesByCustomerList = [],
-      salesByInvoiceList = [];
+  List<SalesModel> salesList = [], salesByCustomerList = [], salesByInvoiceList = [];
 
   //========== TextEditing Controllers ==========
   final TextEditingController _invoiceController = TextEditingController();
@@ -52,7 +50,7 @@ class SalesListFilter extends StatelessWidget {
             Expanded(
               child: TypeAheadField(
                 debounceDuration: const Duration(milliseconds: 500),
-                hideSuggestionsOnKeyboardHide: false,
+                hideSuggestionsOnKeyboardHide: true,
                 textFieldConfiguration: TextFieldConfiguration(
                     controller: _invoiceController,
                     style: const TextStyle(fontSize: 12),
@@ -92,14 +90,10 @@ class SalesListFilter extends StatelessWidget {
                       hintStyle: const TextStyle(fontSize: 12),
                       border: const OutlineInputBorder(),
                     )),
-                noItemsFoundBuilder: (context) => const SizedBox(
-                    height: 50,
-                    child: Center(
-                        child: Text('No Invoice Found!', style: kText12))),
+                noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText12))),
                 suggestionsCallback: (pattern) async {
                   if (salesByCustomerList.isNotEmpty) {
-                    return salesByCustomerList.where((sales) =>
-                        sales.invoiceNumber!.toLowerCase().contains(pattern));
+                    return salesByCustomerList.where((sales) => sales.invoiceNumber!.toLowerCase().contains(pattern));
                   } else {
                     return await salesDB.getSalesByInvoiceSuggestions(pattern);
                   }
@@ -172,10 +166,7 @@ class SalesListFilter extends StatelessWidget {
                       hintStyle: const TextStyle(fontSize: 12),
                       border: const OutlineInputBorder(),
                     )),
-                noItemsFoundBuilder: (context) => const SizedBox(
-                    height: 50,
-                    child: Center(
-                        child: Text('No Customer Found!', style: kText12))),
+                noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Customer Found!', style: kText12))),
                 suggestionsCallback: (pattern) async {
                   return await customerDB.getCustomerSuggestions(pattern);
                 },
@@ -195,8 +186,7 @@ class SalesListFilter extends StatelessWidget {
                   _invoiceController.clear();
                   _customerController.text = suggestion.customer;
                   final customerId = suggestion.id;
-                  salesByCustomerList =
-                      await salesDB.getSalesByCustomerId('$customerId');
+                  salesByCustomerList = await salesDB.getSalesByCustomerId('$customerId');
                   salesNotifier.value = salesByCustomerList;
                 },
               ),

@@ -200,28 +200,28 @@ class RouteGenerator {
       case routeDatabase:
         return MaterialPageRoute(builder: (_) => const ScreenDatabase());
       case routeUserManage:
-        return MaterialPageRoute(builder: (_) => const ScreenUserManage());
+        if (permission!.user.contains('0')) return _errorPermission();
+        if (permission.user.contains('1')) return MaterialPageRoute(builder: (_) => const ScreenUserManage());
+        return _errorPermission();
       case routeAddUser:
-        return MaterialPageRoute(
-            builder: (_) => ScreenAddUser(
-                  userModel: args is UserModel ? args : null,
-                ));
+        if (permission!.user.contains('2')) return MaterialPageRoute(builder: (_) => ScreenAddUser(userModel: args is UserModel ? args : null));
+        return _errorPermission();
 
       case routeListUser:
-        return MaterialPageRoute(builder: (_) => ScreenUserList());
+        if (permission!.user.contains('1')) return MaterialPageRoute(builder: (_) => ScreenUserList());
+        return _errorPermission();
       case routeAddGroup:
-        return MaterialPageRoute(
-            builder: (_) => ScreenAddGroup(
-                  groupModel: args is GroupModel ? args : null,
-                ));
+        if (permission!.user.contains('2')) return MaterialPageRoute(builder: (_) => ScreenAddGroup(groupModel: args is GroupModel ? args : null));
+        return _errorPermission();
       case routeListGroup:
-        return MaterialPageRoute(builder: (_) => const ScreenGroupList());
-
+        if (permission!.user.contains('1')) return MaterialPageRoute(builder: (_) => ScreenGroupList());
+        return _errorPermission();
       default:
         return _errorRoute();
     }
   }
 
+  //========== Error Page if Navigation goes wrong ==========
   static Route<dynamic> _errorRoute() {
     return MaterialPageRoute(
       builder: (_) => Scaffold(
@@ -238,6 +238,7 @@ class RouteGenerator {
     );
   }
 
+  //========== Error Page if not permitted ==========
   static Route<dynamic> _errorPermission() {
     return PageRouteBuilder(
       opaque: false,

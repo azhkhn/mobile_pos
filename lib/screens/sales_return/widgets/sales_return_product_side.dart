@@ -86,7 +86,7 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                     flex: 9,
                     child: TypeAheadField(
                       debounceDuration: const Duration(milliseconds: 500),
-                      hideSuggestionsOnKeyboardHide: false,
+                      hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(
                           controller: _productController,
                           style: const TextStyle(fontSize: 12),

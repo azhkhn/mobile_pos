@@ -87,7 +87,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                     flex: 9,
                     child: TypeAheadField(
                       debounceDuration: const Duration(milliseconds: 500),
-                      hideSuggestionsOnKeyboardHide: false,
+                      hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(
                           controller: _productController,
                           style: const TextStyle(fontSize: 12),
@@ -176,7 +176,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                           flex: 6,
                           child: TypeAheadField(
                             debounceDuration: const Duration(milliseconds: 500),
-                            hideSuggestionsOnKeyboardHide: false,
+                            hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
                                 controller: PurchaseSideWidget.supplierController,
                                 style: const TextStyle(fontSize: 12),

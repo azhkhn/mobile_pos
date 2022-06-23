@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
+import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
 import 'package:shop_ez/model/group/group_model.dart';
 
@@ -123,6 +124,7 @@ class UserCardwidget extends StatelessWidget {
                         maxFontSize: 14,
                       ),
                       Expanded(
+                        flex: 10,
                         child: AutoSizeText(
                           user.username,
                           overflow: TextOverflow.ellipsis,
@@ -132,6 +134,12 @@ class UserCardwidget extends StatelessWidget {
                           maxFontSize: 14,
                         ),
                       ),
+                      if (UserUtils.instance.userModel?.id == user.id)
+                        const Icon(
+                          Icons.circle_rounded,
+                          color: kGreen300,
+                          size: 10,
+                        )
                     ],
                   ),
                   kHeight5,

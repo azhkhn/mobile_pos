@@ -25,9 +25,7 @@ class SalesReturnListFilter extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   //========== Lists ==========
-  List<SalesReturnModal> salesList = [],
-      salesReturnsByCustomerList = [],
-      salesReturnByInvoiceList = [];
+  List<SalesReturnModal> salesList = [], salesReturnsByCustomerList = [], salesReturnByInvoiceList = [];
 
   //========== TextEditing Controllers ==========
   final TextEditingController _invoiceController = TextEditingController();
@@ -52,7 +50,7 @@ class SalesReturnListFilter extends StatelessWidget {
             Expanded(
               child: TypeAheadField(
                 debounceDuration: const Duration(milliseconds: 500),
-                hideSuggestionsOnKeyboardHide: false,
+                hideSuggestionsOnKeyboardHide: true,
                 textFieldConfiguration: TextFieldConfiguration(
                     controller: _invoiceController,
                     style: const TextStyle(fontSize: 12),
@@ -75,14 +73,12 @@ class SalesReturnListFilter extends StatelessWidget {
                             _invoiceController.clear();
                             salesReturnByInvoiceList = [];
                             if (salesReturnsByCustomerList.isNotEmpty) {
-                              salesReturnNotifier.value =
-                                  salesReturnsByCustomerList;
+                              salesReturnNotifier.value = salesReturnsByCustomerList;
                             } else {
                               if (salesList.isNotEmpty) {
                                 salesReturnNotifier.value = salesList;
                               } else {
-                                salesList =
-                                    await salesReturnDB.getAllSalesReturns();
+                                salesList = await salesReturnDB.getAllSalesReturns();
                                 salesReturnNotifier.value = salesList;
                               }
                             }
@@ -94,17 +90,12 @@ class SalesReturnListFilter extends StatelessWidget {
                       hintStyle: const TextStyle(fontSize: 12),
                       border: const OutlineInputBorder(),
                     )),
-                noItemsFoundBuilder: (context) => const SizedBox(
-                    height: 50,
-                    child: Center(
-                        child: Text('No Invoice Found!', style: kText12))),
+                noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText12))),
                 suggestionsCallback: (pattern) async {
                   if (salesReturnsByCustomerList.isNotEmpty) {
-                    return salesReturnsByCustomerList.where((sales) =>
-                        sales.invoiceNumber!.toLowerCase().contains(pattern));
+                    return salesReturnsByCustomerList.where((sales) => sales.invoiceNumber!.toLowerCase().contains(pattern));
                   } else {
-                    return await salesReturnDB
-                        .getSalesReturnByInvoiceSuggestions(pattern);
+                    return await salesReturnDB.getSalesReturnByInvoiceSuggestions(pattern);
                   }
                 },
                 itemBuilder: (context, SalesReturnModal suggestion) {
@@ -158,14 +149,12 @@ class SalesReturnListFilter extends StatelessWidget {
                             _customerController.clear();
                             salesReturnsByCustomerList = [];
                             if (salesReturnByInvoiceList.isNotEmpty) {
-                              salesReturnNotifier.value =
-                                  salesReturnByInvoiceList;
+                              salesReturnNotifier.value = salesReturnByInvoiceList;
                             } else {
                               if (salesList.isNotEmpty) {
                                 salesReturnNotifier.value = salesList;
                               } else {
-                                salesList =
-                                    await salesReturnDB.getAllSalesReturns();
+                                salesList = await salesReturnDB.getAllSalesReturns();
                                 salesReturnNotifier.value = salesList;
                               }
                             }
@@ -177,10 +166,7 @@ class SalesReturnListFilter extends StatelessWidget {
                       hintStyle: const TextStyle(fontSize: 12),
                       border: const OutlineInputBorder(),
                     )),
-                noItemsFoundBuilder: (context) => const SizedBox(
-                    height: 50,
-                    child: Center(
-                        child: Text('No Customer Found!', style: kText12))),
+                noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Customer Found!', style: kText12))),
                 suggestionsCallback: (pattern) async {
                   return await customerDB.getCustomerSuggestions(pattern);
                 },
@@ -200,8 +186,7 @@ class SalesReturnListFilter extends StatelessWidget {
                   _invoiceController.clear();
                   _customerController.text = suggestion.customer;
                   final customerId = suggestion.id;
-                  salesReturnsByCustomerList =
-                      await salesReturnDB.getSalesByCustomerId('$customerId');
+                  salesReturnsByCustomerList = await salesReturnDB.getSalesByCustomerId('$customerId');
                   salesReturnNotifier.value = salesReturnsByCustomerList;
                 },
               ),

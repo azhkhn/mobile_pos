@@ -10,7 +10,7 @@ class ItemScreenPaddingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(10),
       child: child,
     );
   }

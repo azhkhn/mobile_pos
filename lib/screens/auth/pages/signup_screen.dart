@@ -210,7 +210,7 @@ class ScreenSignUp extends StatelessWidget {
                               Icons.person,
                               color: Colors.black,
                             ),
-                            validator: (value) => Validators.nullValidator(value),
+                            validator: (value) => Validators.usernameValidator(value),
                           ),
 
                           //========== Password Field ==========

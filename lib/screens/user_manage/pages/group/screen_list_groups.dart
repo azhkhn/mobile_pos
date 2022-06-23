@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
+import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/group/group_database.dart';
 import 'package:shop_ez/model/group/group_model.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
@@ -14,19 +16,29 @@ import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
 class ScreenGroupList extends StatelessWidget {
-  const ScreenGroupList({
+  ScreenGroupList({
     Key? key,
   }) : super(key: key);
 
   //========== Value Notifier ==========
-  static final ValueNotifier<List<GroupModel>> groupsNotifier = ValueNotifier([]);
+  final ValueNotifier<List<GroupModel>> groupsNotifier = ValueNotifier([]);
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final List<GroupModel> _groups = await GroupDatabase.instance.getAllGroups();
+      final GroupModel _userGroup = await UserUtils.instance.userGroup;
 
-      groupsNotifier.value = _groups;
+// Hide owner group if owner is not the one who logged in
+      if (_userGroup.id != 1) {
+        for (GroupModel group in _groups) {
+          if (group.id != 1) groupsNotifier.value.add(group);
+        }
+      } else {
+        groupsNotifier.value = _groups;
+      }
+
+      groupsNotifier.notifyListeners();
     });
 
     return Scaffold(
@@ -81,6 +93,13 @@ class ScreenGroupList extends StatelessWidget {
                                     ),
                                   ),
                                   onTap: () async {
+                                    final GroupModel userGroup = await UserUtils.instance.userGroup;
+
+                                    if (userGroup.id != 1) {
+                                      if (userGroup.id == groups[index].id) {
+                                        return kSnackBar(context: context, error: true, content: "Contact owner for Admin updation");
+                                      }
+                                    }
                                     showDialog(
                                         context: context,
                                         builder: (ctx) => CustomPopupOptions(

@@ -72,6 +72,10 @@ class ScreenAddUser extends StatelessWidget {
                           return const CircularProgressIndicator();
                         case ConnectionState.done:
                         default:
+                          List<GroupModel> groups = snap.data;
+                          if (userModel?.groupId == 1) groups = groups.where((group) => group.id == 1).toList();
+                          if (userModel?.groupId != 1) groups.removeWhere((group) => group.id == 1);
+
                           return ValueListenableBuilder(
                               valueListenable: _groupNotifier,
                               builder: (context, GroupModel? group, _) {
@@ -81,18 +85,20 @@ class ScreenAddUser extends StatelessWidget {
                                   labelStyle: kText12,
                                   hintStyle: kText12,
                                   style: kText12Black,
-                                  snapshot: snapshot.data,
+                                  snapshot: groups,
                                   border: true,
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
                                   isDesne: true,
                                   value: group != null ? jsonEncode(group.toJson()) : null,
-                                  onChanged: (value) {
-                                    final GroupModel _group = GroupModel.fromJson(jsonDecode(value));
-                                    log(_group.name);
-                                    log(_group.id.toString());
+                                  onChanged: group?.id == 1
+                                      ? null
+                                      : (value) {
+                                          final GroupModel _group = GroupModel.fromJson(jsonDecode(value));
+                                          log(_group.name);
+                                          log(_group.id.toString());
 
-                                    _groupNotifier.value = _group;
-                                  },
+                                          _groupNotifier.value = _group;
+                                        },
                                   validator: (value) {
                                     if (value == null || _groupNotifier.value == null) {
                                       return 'This field is required*';
@@ -193,14 +199,7 @@ class ScreenAddUser extends StatelessWidget {
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     textInputType: TextInputType.text,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'This field is required*';
-                      } else if (value.contains(' ')) {
-                        return 'Username cannot contain space*';
-                      }
-                      return null;
-                    },
+                    validator: (value) => Validators.usernameValidator(value),
                   ),
                   kHeight10,
 

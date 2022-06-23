@@ -38,16 +38,26 @@ class ScreenAddGroup extends StatelessWidget {
     '0',
     '0',
     '0',
+    '0',
+    '0',
   ]);
 
   final ValueNotifier<List<Map>> permissionsNotifier = ValueNotifier(
     [
+      {
+        'name': 'User',
+        'perms': [false, false, false, false, false]
+      },
       {
         'name': 'Sales',
         'perms': [false, false, false, false, false]
       },
       {
         'name': 'Purchase',
+        'perms': [false, false, false, false, false]
+      },
+      {
+        'name': 'Returns',
         'perms': [false, false, false, false, false]
       },
       {
@@ -357,17 +367,19 @@ class ScreenAddGroup extends StatelessWidget {
     //Retrieving data from TextFields
     final String name = _nameController.text, description = _descriptionController.text;
     //Retrieving data from CheckBoxes
-    final String sale = permValueNotifier.value[0].isEmpty ? '0' : permValueNotifier.value[0],
-        purchase = permValueNotifier.value[1].isEmpty ? '0' : permValueNotifier.value[1],
-        products = permValueNotifier.value[2].isEmpty ? '0' : permValueNotifier.value[2],
-        customer = permValueNotifier.value[3].isEmpty ? '0' : permValueNotifier.value[3],
-        supplier = permValueNotifier.value[4].isEmpty ? '0' : permValueNotifier.value[4];
+    final String user = permValueNotifier.value[0].isEmpty ? '0' : permValueNotifier.value[0],
+        sale = permValueNotifier.value[1].isEmpty ? '0' : permValueNotifier.value[1],
+        purchase = permValueNotifier.value[2].isEmpty ? '0' : permValueNotifier.value[2],
+        returns = permValueNotifier.value[3].isEmpty ? '0' : permValueNotifier.value[3],
+        products = permValueNotifier.value[4].isEmpty ? '0' : permValueNotifier.value[4],
+        customer = permValueNotifier.value[5].isEmpty ? '0' : permValueNotifier.value[5],
+        supplier = permValueNotifier.value[6].isEmpty ? '0' : permValueNotifier.value[6];
 
     final isFormValid = _formKey.currentState!;
 
     if (isFormValid.validate()) {
       log('Name = $name, Description = $description');
-      log('sale = $sale, purchase = $purchase, products = $products, customer = $customer, supplier = $supplier');
+      log('user = $user, sale = $sale, purchase = $purchase, returns = $returns, products = $products, customer = $customer, supplier = $supplier');
 
       final GroupModel _groupModel = GroupModel(
         id: groupModel?.id,
@@ -376,7 +388,16 @@ class ScreenAddGroup extends StatelessWidget {
       );
 
       final PermissionModel _permissionModel = PermissionModel(
-          id: groupModel?.id, groupId: groupModel?.id, sale: sale, purchase: purchase, products: products, customer: customer, supplier: supplier);
+        id: groupModel?.id,
+        groupId: groupModel?.id,
+        user: user,
+        sale: sale,
+        purchase: purchase,
+        returns: returns,
+        products: products,
+        customer: customer,
+        supplier: supplier,
+      );
 
       try {
         if (!isUpdate) {
@@ -406,11 +427,22 @@ class ScreenAddGroup extends StatelessWidget {
 
     final PermissionModel _permission = await PermissionDatabase.instance.getPermissionByGroupId(group.id!);
 
-    final sale = permissionsNotifier.value[0];
-    final purchase = permissionsNotifier.value[1];
-    final products = permissionsNotifier.value[2];
-    final customer = permissionsNotifier.value[3];
-    final supplier = permissionsNotifier.value[4];
+    final user = permissionsNotifier.value[0];
+    final sale = permissionsNotifier.value[1];
+    final purchase = permissionsNotifier.value[2];
+    final returns = permissionsNotifier.value[3];
+    final products = permissionsNotifier.value[4];
+    final customer = permissionsNotifier.value[5];
+    final supplier = permissionsNotifier.value[6];
+
+    user.update('perms', (value) {
+      value[0] = _permission.user.contains('1');
+      value[1] = _permission.user.contains('2');
+      value[2] = _permission.user.contains('3');
+      value[3] = _permission.user.contains('4');
+      value[4] = _permission.user.contains('1234');
+      return value;
+    });
 
     sale.update('perms', (value) {
       value[0] = _permission.sale.contains('1');
@@ -426,6 +458,14 @@ class ScreenAddGroup extends StatelessWidget {
       value[2] = _permission.purchase.contains('3');
       value[3] = _permission.purchase.contains('4');
       value[4] = _permission.purchase.contains('1234');
+      return value;
+    });
+    returns.update('perms', (value) {
+      value[0] = _permission.returns.contains('1');
+      value[1] = _permission.returns.contains('2');
+      value[2] = _permission.returns.contains('3');
+      value[3] = _permission.returns.contains('4');
+      value[4] = _permission.returns.contains('1234');
       return value;
     });
     products.update('perms', (value) {
@@ -453,8 +493,16 @@ class ScreenAddGroup extends StatelessWidget {
       return value;
     });
 
-    permissionsNotifier.value = [sale, purchase, products, customer, supplier];
-    permValueNotifier.value = [_permission.sale, _permission.purchase, _permission.products, _permission.customer, _permission.supplier];
+    permissionsNotifier.value = [user, sale, purchase, returns, products, customer, supplier];
+    permValueNotifier.value = [
+      _permission.user,
+      _permission.sale,
+      _permission.purchase,
+      _permission.returns,
+      _permission.products,
+      _permission.customer,
+      _permission.supplier
+    ];
 
     permissionsNotifier.notifyListeners();
     permValueNotifier.notifyListeners();

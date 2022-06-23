@@ -50,7 +50,7 @@ class PurchaseReturnListFilter extends StatelessWidget {
             Expanded(
               child: TypeAheadField(
                 debounceDuration: const Duration(milliseconds: 500),
-                hideSuggestionsOnKeyboardHide: false,
+                hideSuggestionsOnKeyboardHide: true,
                 textFieldConfiguration: TextFieldConfiguration(
                     controller: _invoiceController,
                     style: const TextStyle(fontSize: 12),
