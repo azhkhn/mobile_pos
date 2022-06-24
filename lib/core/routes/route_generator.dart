@@ -15,6 +15,7 @@ import 'package:shop_ez/screens/item_master/screen_manage_item_master.dart';
 import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return.dart';
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return_list.dart';
+import 'package:shop_ez/screens/reports/screen_reports.dart';
 import 'package:shop_ez/screens/sales/pages/screen_sales_list.dart';
 import 'package:shop_ez/screens/sales_return/pages/screen_sales_return.dart';
 import 'package:shop_ez/screens/sales_return/pages/screen_sales_return_list.dart';
@@ -225,6 +226,9 @@ class RouteGenerator {
       case routeListGroup:
         if (permission!.user.contains('1')) return MaterialPageRoute(builder: (_) => ScreenGroupList());
         return _errorPermission();
+      case routeReports:
+        return MaterialPageRoute(builder: (_) => const ScreenReports());
+
       default:
         return _errorRoute();
     }

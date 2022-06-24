@@ -42,6 +42,7 @@ class ScreenItemMasterManage extends StatelessWidget {
                   Flexible(
                     flex: 8,
                     child: TypeAheadField(
+                      minCharsForSuggestions: 1,
                       debounceDuration: const Duration(milliseconds: 500),
                       hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(
@@ -75,7 +76,7 @@ class ScreenItemMasterManage extends StatelessWidget {
                             hintStyle: const TextStyle(fontSize: 12),
                             border: const OutlineInputBorder(),
                           )),
-                      noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Supplier Found!'))),
+                      noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
                       suggestionsCallback: (pattern) async {
                         return ItemMasterDatabase.instance.getProductSuggestions(pattern);
                       },

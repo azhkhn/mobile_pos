@@ -82,6 +82,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                   Flexible(
                     flex: 9,
                     child: TypeAheadField(
+                      minCharsForSuggestions: 1,
                       debounceDuration: const Duration(milliseconds: 500),
                       hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(
@@ -174,6 +175,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                               valueListenable: PurchaseReturnSideWidget.originalPurchaseNotifier,
                               builder: (context, _, __) {
                                 return TypeAheadField(
+                                  minCharsForSuggestions: 1,
                                   debounceDuration: const Duration(milliseconds: 500),
                                   hideSuggestionsOnKeyboardHide: true,
                                   textFieldConfiguration: TextFieldConfiguration(
@@ -238,6 +240,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                         Flexible(
                           flex: 5,
                           child: TypeAheadField(
+                            minCharsForSuggestions: 1,
                             debounceDuration: const Duration(milliseconds: 500),
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(

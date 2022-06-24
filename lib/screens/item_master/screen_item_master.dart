@@ -47,8 +47,8 @@ class ScreenItemMaster extends StatefulWidget {
 
 class _ScreenItemMasterState extends State<ScreenItemMaster> {
   //========== Global Keys ==========
-  final _dropdownKey = GlobalKey<FormFieldState>();
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormFieldState> _dropdownKey = GlobalKey<FormFieldState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   //========== Lists ==========
   final List<String> vatMethodList = ['Exclusive', 'Inclusive'];
@@ -236,6 +236,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                               log('Category == ' + category.category);
                               _itemCategoryId = category.id;
                               itemCategoryNotifier.value = category.id!;
+                              futureSubCategory = subCategoryDB.getSubCategoryByCategoryId(categoryId: _itemCategoryId!);
                             },
                             validator: (value) {
                               if (value == null || _itemCategoryId == null) {
@@ -263,13 +264,12 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
                               case ConnectionState.done:
                               default:
                                 final List<SubCategoryModel> _subCategories = snap.data;
+                                final subCat = _subCategories.where((subCat) => subCat.id == _itemSubCategoryId).toList();
                                 return CustomDropDownField(
                                   dropdownKey: _dropdownKey,
                                   labelText: 'Item Sub-Category',
                                   snapshot: snapshot.data,
-                                  value: _itemSubCategoryId != null
-                                      ? jsonEncode(_subCategories.where((subCat) => subCat.id == _itemSubCategoryId).toList().first)
-                                      : null,
+                                  value: widget.itemMasterModel != null && subCat.isNotEmpty ? jsonEncode(subCat.first) : null,
                                   contentPadding: const EdgeInsets.all(10),
                                   onChanged: (value) {
                                     final SubCategoryModel subCategory = SubCategoryModel.fromJson(jsonDecode(value!));

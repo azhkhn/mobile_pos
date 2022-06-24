@@ -49,6 +49,7 @@ class PurchaseListFilter extends StatelessWidget {
             //==================== Get All Invoice Search Field ====================
             Expanded(
               child: TypeAheadField(
+                minCharsForSuggestions: 1,
                 debounceDuration: const Duration(milliseconds: 500),
                 hideSuggestionsOnKeyboardHide: true,
                 textFieldConfiguration: TextFieldConfiguration(
@@ -126,6 +127,7 @@ class PurchaseListFilter extends StatelessWidget {
             //==================== Get All Supplier Search Field ====================
             Expanded(
               child: TypeAheadField(
+                minCharsForSuggestions: 1,
                 debounceDuration: const Duration(milliseconds: 500),
                 hideSuggestionsOnKeyboardHide: true,
                 textFieldConfiguration: TextFieldConfiguration(

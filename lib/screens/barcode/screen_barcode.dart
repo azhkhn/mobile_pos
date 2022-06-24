@@ -52,6 +52,7 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                   kHeight10,
                   //==================== Product Search Bar ====================
                   TypeAheadField(
+                    minCharsForSuggestions: 1,
                     debounceDuration: const Duration(milliseconds: 500),
                     hideSuggestionsOnKeyboardHide: true,
                     textFieldConfiguration: TextFieldConfiguration(

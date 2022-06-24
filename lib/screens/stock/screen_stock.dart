@@ -78,6 +78,7 @@ class ScreenStock extends StatelessWidget {
                       Flexible(
                         flex: 9,
                         child: TypeAheadField(
+                          minCharsForSuggestions: 1,
                           debounceDuration: const Duration(milliseconds: 500),
                           hideSuggestionsOnKeyboardHide: true,
                           textFieldConfiguration: TextFieldConfiguration(

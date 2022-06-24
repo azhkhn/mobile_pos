@@ -73,6 +73,9 @@ class HomeGrid extends StatelessWidget {
                   await Navigator.pushNamed(context, routeStock);
                   await OrientationMode.toPortrait();
                   break;
+                case 7:
+                  await Navigator.pushNamed(context, routeReports);
+                  break;
                 case 8:
                   await changeDeviceMode(context);
                   break;
