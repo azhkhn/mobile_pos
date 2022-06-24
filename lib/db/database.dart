@@ -55,7 +55,7 @@ class EzDatabase {
 //     const idLogin = 'INTEGER NOT NULL';
 //     const intType = 'INTEGER NOT NULL';
 
-    await db.execute("ALTER TABLE $tablePermission ADD COLUMN ${PermissionFields.user} $textType DEFAULT '13'");
+    await db.execute("ALTER TABLE $tablePermission ADD COLUMN ${PermissionFields.user} $textType DEFAULT '0'");
     await db.execute("ALTER TABLE $tablePermission ADD COLUMN ${PermissionFields.returns} $textType DEFAULT '0'");
 
 //     await db.execute('DROP TABLE IF EXISTS $tableUser');
@@ -405,8 +405,10 @@ class EzDatabase {
     await db.execute('''CREATE TABLE $tablePermission (
       ${PermissionFields.id} $idAuto,
       ${PermissionFields.groupId} $intType,
+      ${PermissionFields.user} $textType,
       ${PermissionFields.sale} $textType,
       ${PermissionFields.purchase} $textType,
+      ${PermissionFields.returns} $textType,
       ${PermissionFields.products} $textType,
       ${PermissionFields.customer} $textType,
       ${PermissionFields.supplier} $textType)''');

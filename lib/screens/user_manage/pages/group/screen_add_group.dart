@@ -159,6 +159,7 @@ class ScreenAddGroup extends StatelessWidget {
                                   Map _perms = selectedPermissions[index];
                                   List<bool> _permList = _perms['perms'];
                                   final String _permValue = permValueNotifier.value[index];
+                                  final bool isUserOwner = groupModel?.id != 2 && _perms['name'] == 'User';
 
                                   bool allPerm = true;
                                   for (var i = 0; i < _permList.length - 1; i++) {
@@ -200,22 +201,24 @@ class ScreenAddGroup extends StatelessWidget {
                                       child: Checkbox(
                                         value: _permList[0],
                                         activeColor: kGreen300,
-                                        onChanged: (state) {
-                                          _perms.update('perms', (val) {
-                                            val[0] = state;
-                                            return val;
-                                          });
+                                        onChanged: isUserOwner
+                                            ? null
+                                            : (state) {
+                                                _perms.update('perms', (val) {
+                                                  val[0] = state;
+                                                  return val;
+                                                });
 
-                                          if (state!) {
-                                            permValueNotifier.value[index] = _permValue.replaceAll('0', '') + '1';
-                                          } else {
-                                            permValueNotifier.value[index] = _permValue.replaceAll('1', '');
-                                          }
+                                                if (state!) {
+                                                  permValueNotifier.value[index] = _permValue.replaceAll('0', '') + '1';
+                                                } else {
+                                                  permValueNotifier.value[index] = _permValue.replaceAll('1', '');
+                                                }
 
-                                          permissionsNotifier.value[index] = _perms;
-                                          log('permissions == ' + permissionsNotifier.value[index].toString());
-                                          permissionsNotifier.notifyListeners();
-                                        },
+                                                permissionsNotifier.value[index] = _perms;
+                                                log('permissions == ' + permissionsNotifier.value[index].toString());
+                                                permissionsNotifier.notifyListeners();
+                                              },
                                       ),
                                     ),
                                     //==================== Add Box ====================
@@ -227,22 +230,24 @@ class ScreenAddGroup extends StatelessWidget {
                                       child: Checkbox(
                                         value: _permList[1],
                                         activeColor: kGreen300,
-                                        onChanged: (state) {
-                                          _perms.update('perms', (val) {
-                                            val[1] = state;
-                                            return val;
-                                          });
+                                        onChanged: isUserOwner
+                                            ? null
+                                            : (state) {
+                                                _perms.update('perms', (val) {
+                                                  val[1] = state;
+                                                  return val;
+                                                });
 
-                                          if (state!) {
-                                            permValueNotifier.value[index] = _permValue.replaceAll('0', '') + '2';
-                                          } else {
-                                            permValueNotifier.value[index] = _permValue.replaceAll('2', '');
-                                          }
+                                                if (state!) {
+                                                  permValueNotifier.value[index] = _permValue.replaceAll('0', '') + '2';
+                                                } else {
+                                                  permValueNotifier.value[index] = _permValue.replaceAll('2', '');
+                                                }
 
-                                          permissionsNotifier.value[index] = _perms;
-                                          log('permissions == ' + permissionsNotifier.value[index].toString());
-                                          permissionsNotifier.notifyListeners();
-                                        },
+                                                permissionsNotifier.value[index] = _perms;
+                                                log('permissions == ' + permissionsNotifier.value[index].toString());
+                                                permissionsNotifier.notifyListeners();
+                                              },
                                       ),
                                     ),
                                     //==================== Edit Box ====================
@@ -254,22 +259,24 @@ class ScreenAddGroup extends StatelessWidget {
                                       child: Checkbox(
                                         value: _permList[2],
                                         activeColor: kGreen300,
-                                        onChanged: (state) {
-                                          _perms.update('perms', (val) {
-                                            val[2] = state;
-                                            return val;
-                                          });
+                                        onChanged: isUserOwner
+                                            ? null
+                                            : (state) {
+                                                _perms.update('perms', (val) {
+                                                  val[2] = state;
+                                                  return val;
+                                                });
 
-                                          if (state!) {
-                                            permValueNotifier.value[index] = _permValue.replaceAll('0', '') + '3';
-                                          } else {
-                                            permValueNotifier.value[index] = _permValue.replaceAll('3', '');
-                                          }
+                                                if (state!) {
+                                                  permValueNotifier.value[index] = _permValue.replaceAll('0', '') + '3';
+                                                } else {
+                                                  permValueNotifier.value[index] = _permValue.replaceAll('3', '');
+                                                }
 
-                                          permissionsNotifier.value[index] = _perms;
-                                          log('permissions == ' + permissionsNotifier.value[index].toString());
-                                          permissionsNotifier.notifyListeners();
-                                        },
+                                                permissionsNotifier.value[index] = _perms;
+                                                log('permissions == ' + permissionsNotifier.value[index].toString());
+                                                permissionsNotifier.notifyListeners();
+                                              },
                                       ),
                                     ),
                                     //==================== Delete Box ====================
@@ -281,22 +288,24 @@ class ScreenAddGroup extends StatelessWidget {
                                       child: Checkbox(
                                         value: _permList[3],
                                         activeColor: kGreen300,
-                                        onChanged: (state) {
-                                          _perms.update('perms', (val) {
-                                            val[3] = state;
-                                            return val;
-                                          });
+                                        onChanged: isUserOwner
+                                            ? null
+                                            : (state) {
+                                                _perms.update('perms', (val) {
+                                                  val[3] = state;
+                                                  return val;
+                                                });
 
-                                          if (state!) {
-                                            permValueNotifier.value[index] = _permValue.replaceAll('0', '') + '4';
-                                          } else {
-                                            permValueNotifier.value[index] = _permValue.replaceAll('4', '');
-                                          }
+                                                if (state!) {
+                                                  permValueNotifier.value[index] = _permValue.replaceAll('0', '') + '4';
+                                                } else {
+                                                  permValueNotifier.value[index] = _permValue.replaceAll('4', '');
+                                                }
 
-                                          permissionsNotifier.value[index] = _perms;
-                                          log('permissions == ' + permissionsNotifier.value[index].toString());
-                                          permissionsNotifier.notifyListeners();
-                                        },
+                                                permissionsNotifier.value[index] = _perms;
+                                                log('permissions == ' + permissionsNotifier.value[index].toString());
+                                                permissionsNotifier.notifyListeners();
+                                              },
                                       ),
                                     ),
                                     //==================== All Box ====================
@@ -308,22 +317,24 @@ class ScreenAddGroup extends StatelessWidget {
                                       child: Checkbox(
                                         value: _permList[4],
                                         activeColor: kGreen300,
-                                        onChanged: (state) {
-                                          _perms.update('perms', (val) {
-                                            List<bool> perms = [state!, state, state, state, state];
-                                            return perms;
-                                          });
+                                        onChanged: isUserOwner
+                                            ? null
+                                            : (state) {
+                                                _perms.update('perms', (val) {
+                                                  List<bool> perms = [state!, state, state, state, state];
+                                                  return perms;
+                                                });
 
-                                          if (state!) {
-                                            permValueNotifier.value[index] = '1234';
-                                          } else {
-                                            permValueNotifier.value[index] = '0';
-                                          }
+                                                if (state!) {
+                                                  permValueNotifier.value[index] = '1234';
+                                                } else {
+                                                  permValueNotifier.value[index] = '0';
+                                                }
 
-                                          permissionsNotifier.value[index] = _perms;
-                                          log('permissions == ' + permissionsNotifier.value[index].toString());
-                                          permissionsNotifier.notifyListeners();
-                                        },
+                                                permissionsNotifier.value[index] = _perms;
+                                                log('permissions == ' + permissionsNotifier.value[index].toString());
+                                                permissionsNotifier.notifyListeners();
+                                              },
                                       ),
                                     ),
                                   ]);

@@ -204,15 +204,24 @@ class RouteGenerator {
         if (permission.user.contains('1')) return MaterialPageRoute(builder: (_) => const ScreenUserManage());
         return _errorPermission();
       case routeAddUser:
-        if (permission!.user.contains('2')) return MaterialPageRoute(builder: (_) => ScreenAddUser(userModel: args is UserModel ? args : null));
+        if (args is UserModel) {
+          if (permission!.user.contains('3')) return MaterialPageRoute(builder: (_) => ScreenAddUser(userModel: args));
+          return _errorPermission();
+        }
+        if (permission!.user.contains('2')) return MaterialPageRoute(builder: (_) => ScreenAddUser());
         return _errorPermission();
 
       case routeListUser:
         if (permission!.user.contains('1')) return MaterialPageRoute(builder: (_) => ScreenUserList());
         return _errorPermission();
       case routeAddGroup:
-        if (permission!.user.contains('2')) return MaterialPageRoute(builder: (_) => ScreenAddGroup(groupModel: args is GroupModel ? args : null));
+        if (args is GroupModel) {
+          if (permission!.user.contains('3')) return MaterialPageRoute(builder: (_) => ScreenAddGroup(groupModel: args));
+          return _errorPermission();
+        }
+        if (permission!.user.contains('2')) return MaterialPageRoute(builder: (_) => ScreenAddGroup());
         return _errorPermission();
+
       case routeListGroup:
         if (permission!.user.contains('1')) return MaterialPageRoute(builder: (_) => ScreenGroupList());
         return _errorPermission();

@@ -191,7 +191,7 @@ class ScreenLogin extends StatelessWidget {
 
   //========== Login and Verification ==========
   Future<void> onLogin(BuildContext context) async {
-    final String _username = usernameController.text, _password = passwordController.text;
+    final String _username = usernameController.text.trim(), _password = passwordController.text;
 
     log('username == $_username');
     log('password == $_password');
