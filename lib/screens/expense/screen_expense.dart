@@ -136,12 +136,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                     TextFeildWidget(
                       labelText: 'Expense Title *',
                       controller: _expenseTitleController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'This field is required*';
-                        }
-                        return null;
-                      },
+                      validator: (value) => Validators.nullValidator(value),
                     ),
                     kHeight10,
 
@@ -151,12 +146,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                       controller: _amountController,
                       inputFormatters: Validators.digitsOnly,
                       textInputType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'This field is required*';
-                        }
-                        return null;
-                      },
+                      validator: (value) => Validators.nullValidator(value),
                     ),
                     kHeight10,
 
@@ -186,12 +176,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                           setState(() {});
                         }
                       },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'This field is required*';
-                        }
-                        return null;
-                      },
+                      validator: (value) => Validators.nullValidator(value),
                     ),
                     kHeight10,
 
@@ -219,8 +204,9 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                     kHeight10,
                     //========== Pay By ==========
                     TextFeildWidget(
-                      labelText: 'Pay By',
+                      labelText: 'Pay By *',
                       controller: _payByController,
+                      validator: (value) => Validators.nullValidator(value),
                     ),
 
                     kHeight20,
@@ -329,7 +315,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                     //========== Submit Button ==========
                     CustomMaterialBtton(
                       buttonText: 'Submit',
-                      onPressed: () => addExpense(),
+                      onPressed: () async => await addExpense(),
                     ),
                     kHeight10,
                   ],
@@ -354,7 +340,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
     );
   }
 
-  addExpense() async {
+  Future<void> addExpense() async {
     final String? expenseCategory, expenseTitle, amount, date, note, voucherNumber, payBy, documents;
 
     //retieving values from TextFields to String
@@ -364,7 +350,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
     date = _selectedDate.trim();
     note = _noteController.text.isEmpty ? null : _noteController.text.trim();
     voucherNumber = _voucherNumberController.text.isEmpty ? null : _voucherNumberController.text.trim();
-    payBy = _payByController.text.isEmpty ? null : _payByController.text.trim();
+    payBy = _payByController.text.trim();
 
     if (selectedDocument != null) {
       //========== Getting Directory Path ==========

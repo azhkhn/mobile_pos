@@ -55,14 +55,20 @@ class SupplierDatabase {
       whereArgs: [supplierId],
     );
     log('Supplier === $_result');
-    final _suppliers = _result.map((json) => SupplierModel.fromJson(json)).toList();
-    return _suppliers.first;
+    final _suppliers = SupplierModel.fromJson(_result.first);
+    return _suppliers;
   }
 
   //========== Get All Supplier By Query ==========
   Future<List<SupplierModel>> getSupplierSuggestions(String pattern) async {
     final db = await dbInstance.database;
-    final res = await db.rawQuery('''select * from $tableSupplier where ${SupplierFields.supplierName} LIKE "%$pattern%"''');
+    final List<Map<String, Object?>> res;
+
+    if (pattern.isNotEmpty) {
+      res = await db.rawQuery('''select * from $tableSupplier where ${SupplierFields.supplierName} LIKE "%$pattern%" limit 20''');
+    } else {
+      res = await db.query(tableSupplier, limit: 10);
+    }
 
     List<SupplierModel> list = res.isNotEmpty ? res.map((c) => SupplierModel.fromJson(c)).toList() : [];
 

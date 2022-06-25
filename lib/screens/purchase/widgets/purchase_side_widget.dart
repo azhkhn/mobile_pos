@@ -87,7 +87,7 @@ class PurchaseSideWidget extends StatelessWidget {
                         Flexible(
                           flex: 6,
                           child: TypeAheadField(
-                            minCharsForSuggestions: 1,
+                            minCharsForSuggestions: 0,
                             debounceDuration: const Duration(milliseconds: 500),
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
@@ -123,7 +123,7 @@ class PurchaseSideWidget extends StatelessWidget {
                             itemBuilder: (context, SupplierModel suggestion) {
                               return ListTile(
                                 title: Text(
-                                  suggestion.contactName,
+                                  suggestion.supplierName,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: kText_10_12,
@@ -131,7 +131,7 @@ class PurchaseSideWidget extends StatelessWidget {
                               );
                             },
                             onSuggestionSelected: (SupplierModel suggestion) {
-                              supplierController.text = suggestion.contactName;
+                              supplierController.text = suggestion.supplierName;
                               supplierNotifier.value = suggestion;
                               log(suggestion.supplierName);
                             },

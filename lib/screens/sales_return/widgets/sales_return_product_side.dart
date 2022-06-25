@@ -85,7 +85,7 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                   Flexible(
                     flex: 9,
                     child: TypeAheadField(
-                      minCharsForSuggestions: 1,
+                      minCharsForSuggestions: 0,
                       debounceDuration: const Duration(milliseconds: 500),
                       hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(
@@ -178,7 +178,7 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                               valueListenable: SalesReturnSideWidget.originalSaleNotifier,
                               builder: (context, _, __) {
                                 return TypeAheadField(
-                                  minCharsForSuggestions: 1,
+                                  minCharsForSuggestions: 0,
                                   debounceDuration: const Duration(milliseconds: 500),
                                   hideSuggestionsOnKeyboardHide: true,
                                   textFieldConfiguration: TextFieldConfiguration(
@@ -237,7 +237,7 @@ class _SalesReturnProductSideWidgetState extends State<SalesReturnProductSideWid
                         Flexible(
                           flex: 5,
                           child: TypeAheadField(
-                            minCharsForSuggestions: 1,
+                            minCharsForSuggestions: 0,
                             debounceDuration: const Duration(milliseconds: 500),
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(

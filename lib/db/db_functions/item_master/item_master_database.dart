@@ -107,8 +107,13 @@ class ItemMasterDatabase {
   //========== Get All Products By Query ==========
   Future<List<ItemMasterModel>> getProductSuggestions(String pattern) async {
     final db = await dbInstance.database;
-    final res = await db.rawQuery(
-        '''select * from $tableItemMaster where ${ItemMasterFields.itemName} LIKE "%$pattern%" OR ${ItemMasterFields.itemCode} LIKE "%$pattern%"''');
+    final List<Map<String, Object?>> res;
+    if (pattern.isNotEmpty) {
+      res = await db.rawQuery(
+          '''select * from $tableItemMaster where ${ItemMasterFields.itemName} LIKE "%$pattern%" OR ${ItemMasterFields.itemCode} LIKE "%$pattern%" limit 20''');
+    } else {
+      res = await db.query(tableItemMaster, limit: 10);
+    }
 
     List<ItemMasterModel> list = res.isNotEmpty ? res.map((c) => ItemMasterModel.fromJson(c)).toList() : [];
 

@@ -22,8 +22,7 @@ class ExpenseDatabase {
     final _result = await db.query(tableExpense);
     // db.delete(tableExpense);
     log('Expenses == $_result');
-    final _expenses =
-        _result.map((json) => ExpenseModel.fromJson(json)).toList();
+    final _expenses = _result.map((json) => ExpenseModel.fromJson(json)).toList();
     return _expenses;
   }
 }

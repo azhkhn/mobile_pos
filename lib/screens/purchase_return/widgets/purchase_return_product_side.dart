@@ -82,7 +82,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                   Flexible(
                     flex: 9,
                     child: TypeAheadField(
-                      minCharsForSuggestions: 1,
+                      minCharsForSuggestions: 0,
                       debounceDuration: const Duration(milliseconds: 500),
                       hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(
@@ -175,7 +175,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                               valueListenable: PurchaseReturnSideWidget.originalPurchaseNotifier,
                               builder: (context, _, __) {
                                 return TypeAheadField(
-                                  minCharsForSuggestions: 1,
+                                  minCharsForSuggestions: 0,
                                   debounceDuration: const Duration(milliseconds: 500),
                                   hideSuggestionsOnKeyboardHide: true,
                                   textFieldConfiguration: TextFieldConfiguration(
@@ -219,7 +219,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                                     return Padding(
                                       padding: const EdgeInsets.all(10),
                                       child: Text(
-                                        suggestion.contactName,
+                                        suggestion.supplierName,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: kText_10_12,
@@ -227,7 +227,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                                     );
                                   },
                                   onSuggestionSelected: (SupplierModel suggestion) {
-                                    PurchaseReturnSideWidget.supplierController.text = suggestion.contactName;
+                                    PurchaseReturnSideWidget.supplierController.text = suggestion.supplierName;
                                     PurchaseReturnSideWidget.supplierNotifier.value = suggestion;
                                     log(suggestion.supplierName);
                                   },
@@ -240,7 +240,7 @@ class _PurchaseReturnProductSideWidgetState extends State<PurchaseReturnProductS
                         Flexible(
                           flex: 5,
                           child: TypeAheadField(
-                            minCharsForSuggestions: 1,
+                            minCharsForSuggestions: 0,
                             debounceDuration: const Duration(milliseconds: 500),
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(

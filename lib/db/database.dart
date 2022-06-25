@@ -42,7 +42,7 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 5, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 6, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -65,7 +65,7 @@ class EzDatabase {
       ${ExpenseFields.date} $textNotNull,
       ${ExpenseFields.note} $textNull,
       ${ExpenseFields.voucherNumber} $textNull,
-      ${ExpenseFields.payBy} $textNull,
+      ${ExpenseFields.payBy} $textNotNull,
       ${ExpenseFields.documents} $textNull)''');
 
     // await db.execute("ALTER TABLE $tableTransactions ADD COLUMN ${TransactionsField.customerId} $intNull");
@@ -526,7 +526,7 @@ class EzDatabase {
       ${ExpenseFields.date} $textNotNull,
       ${ExpenseFields.note} $textNull,
       ${ExpenseFields.voucherNumber} $textNull,
-      ${ExpenseFields.payBy} $textNull,
+      ${ExpenseFields.payBy} $textNotNull,
       ${ExpenseFields.documents} $textNull)''');
 
 //========== Table Business Profile ==========

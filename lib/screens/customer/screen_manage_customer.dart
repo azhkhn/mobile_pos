@@ -46,7 +46,7 @@ class CustomerManageScreen extends StatelessWidget {
                   Flexible(
                     flex: 8,
                     child: TypeAheadField(
-                      minCharsForSuggestions: 1,
+                      minCharsForSuggestions: 0,
                       debounceDuration: const Duration(milliseconds: 500),
                       hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(

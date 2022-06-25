@@ -1,8 +1,9 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member, must_be_immutable
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
@@ -12,8 +13,10 @@ import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart'
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
+import 'package:shop_ez/screens/reports/pages/payment_reports/widgets/payment_report_card.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
+import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 class ScreenPaymentReport extends StatelessWidget {
   ScreenPaymentReport({Key? key}) : super(key: key);
@@ -21,12 +24,11 @@ class ScreenPaymentReport extends StatelessWidget {
   //==================== TextEditing Controllers ====================
   final TextEditingController customerController = TextEditingController();
   final TextEditingController supplierController = TextEditingController();
+  final TextEditingController payByController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
 
   //==================== ValueNotifer ====================
   final ValueNotifier<List<TransactionsModel>> transactionsNotifier = ValueNotifier([]);
-
-  //==================== Integer ====================
-  int? customerId, supplierId;
 
   //==================== List ====================
   List<TransactionsModel> transactionsList = [];
@@ -37,6 +39,9 @@ class ScreenPaymentReport extends StatelessWidget {
       appBar: AppBarWidget(title: 'Payment Reports'),
       body: SafeArea(
           child: ItemScreenPaddingWidget(
+        //=============================================================================
+        //==================== Customer and Supplier Filter Fields ====================
+        //=============================================================================
         child: Column(
           children: [
             Row(
@@ -45,12 +50,12 @@ class ScreenPaymentReport extends StatelessWidget {
                 Flexible(
                   flex: 1,
                   child: TypeAheadField(
-                    minCharsForSuggestions: 1,
+                    minCharsForSuggestions: 0,
                     debounceDuration: const Duration(milliseconds: 500),
                     hideSuggestionsOnKeyboardHide: true,
                     textFieldConfiguration: TextFieldConfiguration(
-                        controller: TextEditingController(),
-                        style: const TextStyle(fontSize: 12),
+                        controller: customerController,
+                        style: kText12,
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
@@ -65,12 +70,18 @@ class ScreenPaymentReport extends StatelessWidget {
                               child: const Icon(Icons.clear, size: 15),
                               onTap: () async {
                                 customerController.clear();
+                                if (transactionsList.isNotEmpty) {
+                                  transactionsNotifier.value = transactionsList;
+                                } else {
+                                  await futureTransactions();
+                                  transactionsNotifier.value = transactionsList;
+                                }
                               },
                             ),
                           ),
                           contentPadding: const EdgeInsets.all(10),
                           hintText: 'Customer',
-                          hintStyle: const TextStyle(fontSize: 12),
+                          hintStyle: kText12,
                           border: const OutlineInputBorder(),
                         )),
                     noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Customer Found!', style: kText10))),
@@ -87,10 +98,16 @@ class ScreenPaymentReport extends StatelessWidget {
                         ),
                       );
                     },
-                    onSuggestionSelected: (CustomerModel suggestion) {
-                      customerController.text = suggestion.customer;
-                      customerId = suggestion.id;
-                      log('Customer = ' + suggestion.customer);
+                    onSuggestionSelected: (CustomerModel selectedCustomer) async {
+                      dateController.clear();
+                      supplierController.clear();
+                      payByController.clear();
+                      customerController.text = selectedCustomer.customer;
+                      log('Selected Customer = ' + selectedCustomer.customer);
+                      final List<TransactionsModel> _transactionsByCustomer =
+                          await TransactionDatabase.instance.getAllTransactionsByCustomerId(selectedCustomer.id!);
+                      //Notify Transactions by selected Customer
+                      transactionsNotifier.value = _transactionsByCustomer;
                     },
                   ),
                 ),
@@ -99,12 +116,12 @@ class ScreenPaymentReport extends StatelessWidget {
                 Flexible(
                   flex: 1,
                   child: TypeAheadField(
-                    minCharsForSuggestions: 1,
+                    minCharsForSuggestions: 0,
                     debounceDuration: const Duration(milliseconds: 500),
                     hideSuggestionsOnKeyboardHide: true,
                     textFieldConfiguration: TextFieldConfiguration(
-                        controller: TextEditingController(),
-                        style: const TextStyle(fontSize: 12),
+                        controller: supplierController,
+                        style: kText12,
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
@@ -118,13 +135,19 @@ class ScreenPaymentReport extends StatelessWidget {
                             child: InkWell(
                               child: const Icon(Icons.clear, size: 15),
                               onTap: () async {
-                                customerController.clear();
+                                supplierController.clear();
+                                if (transactionsList.isNotEmpty) {
+                                  transactionsNotifier.value = transactionsList;
+                                } else {
+                                  await futureTransactions();
+                                  transactionsNotifier.value = transactionsList;
+                                }
                               },
                             ),
                           ),
                           contentPadding: const EdgeInsets.all(10),
                           hintText: 'Supplier',
-                          hintStyle: const TextStyle(fontSize: 12),
+                          hintStyle: kText12,
                           border: const OutlineInputBorder(),
                         )),
                     noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Supplier Found!', style: kText10))),
@@ -141,13 +164,155 @@ class ScreenPaymentReport extends StatelessWidget {
                         ),
                       );
                     },
-                    onSuggestionSelected: (SupplierModel suggestion) {
-                      customerController.text = suggestion.supplierName;
-                      supplierId = suggestion.id;
-                      log('Supplier = ' + suggestion.supplierName);
+                    onSuggestionSelected: (SupplierModel selectedSupplier) async {
+                      customerController.clear();
+                      dateController.clear();
+                      payByController.clear();
+                      supplierController.text = selectedSupplier.supplierName;
+                      log('Supplier = ' + selectedSupplier.supplierName);
+
+                      final List<TransactionsModel> _transactionsBySupplier =
+                          await TransactionDatabase.instance.getAllTransactionsBySupplierId(selectedSupplier.id!);
+
+                      //Notify Transactions by selected Supplier
+                      transactionsNotifier.value = _transactionsBySupplier;
                     },
                   ),
                 ),
+              ],
+            ),
+
+            kHeight10,
+
+            //======================================================================
+            //==================== PayBy and Date Filter Fields ====================
+            //======================================================================
+            Row(
+              children: [
+                //==================== PayBy Search Field ====================
+                Flexible(
+                  flex: 1,
+                  child: TypeAheadField(
+                    minCharsForSuggestions: 0,
+                    debounceDuration: const Duration(milliseconds: 500),
+                    hideSuggestionsOnKeyboardHide: true,
+                    textFieldConfiguration: TextFieldConfiguration(
+                        controller: payByController,
+                        style: kText12,
+                        decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          isDense: true,
+                          suffixIconConstraints: const BoxConstraints(
+                            minWidth: 10,
+                            minHeight: 10,
+                          ),
+                          suffixIcon: Padding(
+                            padding: kClearTextIconPadding,
+                            child: InkWell(
+                              child: const Icon(Icons.clear, size: 15),
+                              onTap: () async {
+                                payByController.clear();
+                                if (transactionsList.isNotEmpty) {
+                                  transactionsNotifier.value = transactionsList;
+                                } else {
+                                  await futureTransactions();
+                                  transactionsNotifier.value = transactionsList;
+                                }
+                              },
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.all(10),
+                          hintText: 'Pay By',
+                          hintStyle: kText12,
+                          border: const OutlineInputBorder(),
+                        )),
+                    noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('Not Found!', style: kText10))),
+                    suggestionsCallback: (pattern) async {
+                      return TransactionDatabase.instance.getPayBySuggestions(pattern);
+                    },
+                    itemBuilder: (context, TransactionsModel suggestion) {
+                      return ListTile(
+                        title: Text(
+                          suggestion.payBy!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: kText_10_12,
+                        ),
+                      );
+                    },
+                    onSuggestionSelected: (TransactionsModel selectedPayer) async {
+                      customerController.clear();
+                      supplierController.clear();
+                      dateController.clear();
+                      payByController.text = selectedPayer.payBy!;
+                      log('Selected Payer = ' + selectedPayer.payBy.toString());
+
+                      //Notify Transactions by selected Payer
+                      transactionsNotifier.value = transactionsList.where((transaction) => transaction.payBy == selectedPayer.payBy).toList();
+                    },
+                  ),
+                ),
+                kWidth5,
+                //==================== Date Search Field ====================
+                Flexible(
+                  flex: 1,
+                  child: TextFeildWidget(
+                    hintText: 'Date ',
+                    controller: dateController,
+                    suffixIconConstraints: const BoxConstraints(
+                      minWidth: 10,
+                      minHeight: 10,
+                    ),
+                    suffixIcon: Padding(
+                      padding: kClearTextIconPadding,
+                      child: InkWell(
+                        child: const Icon(Icons.clear, size: 15),
+                        onTap: () async {
+                          dateController.clear();
+                          if (transactionsList.isNotEmpty) {
+                            transactionsNotifier.value = transactionsList;
+                          } else {
+                            await futureTransactions();
+                            transactionsNotifier.value = transactionsList;
+                          }
+                        },
+                      ),
+                    ),
+                    contentPadding: const EdgeInsets.all(10),
+                    hintStyle: kText12,
+                    readOnly: true,
+                    isDense: true,
+                    textStyle: kText12,
+                    inputBorder: const OutlineInputBorder(),
+                    onTap: () async {
+                      final _selectedDate = await datePicker(context);
+
+                      if (_selectedDate != null) {
+                        // customerController.clear();
+                        // supplierController.clear();
+                        // payByController.clear();
+
+                        final parseDate = Converter.dateFormat.format(_selectedDate);
+                        dateController.text = parseDate.toString();
+
+                        List<TransactionsModel> _transactionByDate = [];
+
+                        for (TransactionsModel transaction in transactionsNotifier.value) {
+                          final DateTime _transactionDate = DateTime.parse(transaction.dateTime);
+
+                          final bool isSameDate = Converter.isSameDate(_selectedDate, _transactionDate);
+
+                          if (isSameDate) {
+                            _transactionByDate.add(transaction);
+                          }
+                        }
+                        transactionsNotifier.value = _transactionByDate;
+                        transactionsNotifier.notifyListeners();
+                      }
+                    },
+                  ),
+                )
               ],
             ),
 
@@ -160,9 +325,10 @@ class ScreenPaymentReport extends StatelessWidget {
                     case ConnectionState.waiting:
                       return const Center(child: CircularProgressIndicator());
                     case ConnectionState.done:
-
                     default:
-                      final List<TransactionsModel> _recentPayments = (snapshot.data as List<TransactionsModel>).reversed.toList();
+                      if (!snapshot.hasData) return const Center(child: Text('No recent Transactions!'));
+
+                      final List<TransactionsModel> _recentPayments = snapshot.data as List<TransactionsModel>;
                       transactionsNotifier.value = _recentPayments;
 
                       return _recentPayments.isNotEmpty
@@ -172,39 +338,14 @@ class ScreenPaymentReport extends StatelessWidget {
                                 return ListView.builder(
                                   itemCount: _transactions.length,
                                   itemBuilder: (ctx, index) {
-                                    final _payment = _transactions[index];
-                                    return Card(
-                                      child: ListTile(
-                                          leading: CircleAvatar(
-                                            backgroundColor: kTransparentColor,
-                                            child: Text(
-                                              '${index + 1}'.toString(),
-                                              style: const TextStyle(fontSize: 12, color: kTextColor),
-                                            ),
-                                          ),
-                                          title: Text(
-                                            Converter.dateTimeFormatAmPm.format(DateTime.parse(_payment.dateTime)),
-                                            style: kText12Lite,
-                                          ),
-                                          trailing: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                _payment.transactionType == 'Income'
-                                                    ? Converter.currency.format(num.parse(_payment.amount))
-                                                    : Converter.currency.format(num.parse(_payment.amount)),
-                                                style: TextStyle(
-                                                    color: _payment.transactionType == 'Income' ? const Color(0xFF1B5E20) : const Color(0xFFB71C1C)),
-                                              ),
-                                              kWidth10,
-                                              // Icon(Icons.verified_outlined, color: _payment.transactionType == 'Income' ? kGreen : Colors.red),
-                                            ],
-                                          )),
-                                    );
+                                    final TransactionsModel transaction = _transactions[index];
+
+                                    //==================== Payment Report Card ====================
+                                    return PaymentReportCard(index: index, transactionsModel: transaction);
                                   },
                                 );
                               })
-                          : const Center(child: Text('No recent Transactions'));
+                          : const Center(child: Text('No recent Transactions!'));
                   }
                 },
               ),
@@ -215,14 +356,28 @@ class ScreenPaymentReport extends StatelessWidget {
     );
   }
 
-  Future<List<TransactionsModel>> futureTransactions() async {
+//== == == == == FutureBuilder Transactions == == == == ==
+  Future<List<TransactionsModel>?> futureTransactions() async {
+    log('FutureBuiler ()=> called!');
     if (transactionsList.isEmpty) {
-      log('fetching transactions from the db');
+      log('Fetching transaction from the Database..');
       transactionsList = await TransactionDatabase.instance.getAllTransactions();
-      return transactionsList;
+      return transactionsList = transactionsList.reversed.toList();
     } else {
-      log('fetching transactions from the list');
-      return transactionsList;
+      log('Fetching transaction from the List..');
+      return transactionsList = transactionsList.reversed.toList();
     }
+  }
+
+  //========== Date Picker ==========
+  Future<DateTime?> datePicker(BuildContext context) {
+    return showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(
+        const Duration(days: 30),
+      ),
+      lastDate: DateTime.now(),
+    );
   }
 }

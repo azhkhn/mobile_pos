@@ -86,7 +86,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                   Flexible(
                     flex: 9,
                     child: TypeAheadField(
-                      minCharsForSuggestions: 1,
+                      minCharsForSuggestions: 0,
                       debounceDuration: const Duration(milliseconds: 500),
                       hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(
@@ -176,7 +176,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                         Flexible(
                           flex: 6,
                           child: TypeAheadField(
-                            minCharsForSuggestions: 1,
+                            minCharsForSuggestions: 0,
                             debounceDuration: const Duration(milliseconds: 500),
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
@@ -212,7 +212,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                             itemBuilder: (context, SupplierModel suggestion) {
                               return ListTile(
                                 title: Text(
-                                  suggestion.contactName,
+                                  suggestion.supplierName,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: kText_10_12,
@@ -220,7 +220,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                               );
                             },
                             onSuggestionSelected: (SupplierModel suggestion) {
-                              PurchaseSideWidget.supplierController.text = suggestion.contactName;
+                              PurchaseSideWidget.supplierController.text = suggestion.supplierName;
                               PurchaseSideWidget.supplierNotifier.value = suggestion;
                               log(suggestion.supplierName);
                             },

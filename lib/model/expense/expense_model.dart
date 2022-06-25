@@ -25,12 +25,11 @@ class ExpenseModel with _$ExpenseModel {
     required String expenseTitle,
     required String amount,
     required String date,
+    required String payBy,
     String? note,
     String? voucherNumber,
-    String? payBy,
     String? documents,
   }) = _ExpenseModel;
 
-  factory ExpenseModel.fromJson(Map<String, dynamic> json) =>
-      _$ExpenseModelFromJson(json);
+  factory ExpenseModel.fromJson(Map<String, dynamic> json) => _$ExpenseModelFromJson(json);
 }

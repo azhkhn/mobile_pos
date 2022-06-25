@@ -16,13 +16,18 @@ class Converter {
     return roundedAmount;
   }
 
+  //==================== Compare Dates ====================
+  static bool isSameDate(DateTime date1, DateTime date2) {
+    return date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
+  }
+
   // static final NumberFormat roundNumber = NumberFormat("###.0#", "en_US");
 
   //==================== Convert Date and Time to readable Format ====================
   static final DateFormat dateFormat = DateFormat('dd-MM-yyyy');
   static final DateFormat dateFormatReverse = DateFormat('yyyy-MM-dd');
-  static final DateFormat dateTimeFormatAmPm = DateFormat('dd-MM-yyyy, h:mm a');
+  static final DateFormat dateTimeFormatAmPm = DateFormat('dd-MM-yyyy h:mm a');
+  static final DateFormat dateTimeFormatTransaction = DateFormat("dd MMMM yyyy 'at' hh:mm");
   static final DateFormat dateTimeFormat = DateFormat('dd-MM-yyyy, h:mm');
-
   static final DateFormat dateTimeForFileName = DateFormat('dd-MM-yyyy-h~mma');
 }

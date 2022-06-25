@@ -49,7 +49,7 @@ class PurchaseListFilter extends StatelessWidget {
             //==================== Get All Invoice Search Field ====================
             Expanded(
               child: TypeAheadField(
-                minCharsForSuggestions: 1,
+                minCharsForSuggestions: 0,
                 debounceDuration: const Duration(milliseconds: 500),
                 hideSuggestionsOnKeyboardHide: true,
                 textFieldConfiguration: TextFieldConfiguration(
@@ -127,7 +127,7 @@ class PurchaseListFilter extends StatelessWidget {
             //==================== Get All Supplier Search Field ====================
             Expanded(
               child: TypeAheadField(
-                minCharsForSuggestions: 1,
+                minCharsForSuggestions: 0,
                 debounceDuration: const Duration(milliseconds: 500),
                 hideSuggestionsOnKeyboardHide: true,
                 textFieldConfiguration: TextFieldConfiguration(
@@ -173,7 +173,7 @@ class PurchaseListFilter extends StatelessWidget {
                 itemBuilder: (context, SupplierModel suggestion) {
                   return ListTile(
                     title: AutoSizeText(
-                      suggestion.contactName,
+                      suggestion.supplierName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(fontSize: _isTablet ? 12 : 10),
@@ -184,7 +184,7 @@ class PurchaseListFilter extends StatelessWidget {
                 },
                 onSuggestionSelected: (SupplierModel suggestion) async {
                   _invoiceController.clear();
-                  _supplierController.text = suggestion.contactName;
+                  _supplierController.text = suggestion.supplierName;
                   final supplierId = suggestion.id;
                   purchaseBySupllierList = await purchaseDB.getPurchasesBySupplierId('$supplierId');
                   purchaseNotifier.value = purchaseBySupllierList;

@@ -63,14 +63,19 @@ class CustomerDatabase {
       whereArgs: [customerId],
     );
     log('Customer === $_result');
-    final _customers = _result.map((json) => CustomerModel.fromJson(json)).toList();
-    return _customers.first;
+    final _customers = CustomerModel.fromJson(_result.first);
+    return _customers;
   }
 
   //========== Get All Customers By Query ==========
   Future<List<CustomerModel>> getCustomerSuggestions(String pattern) async {
     final db = await dbInstance.database;
-    final res = await db.rawQuery('''select * from $tableCustomer where ${CustomerFields.customer} LIKE "%$pattern%"''');
+    final List<Map<String, Object?>> res;
+    if (pattern.isNotEmpty) {
+      res = await db.rawQuery('''select * from $tableCustomer where ${CustomerFields.customer} LIKE "%$pattern%" limit 20''');
+    } else {
+      res = await db.query(tableCustomer, limit: 10);
+    }
 
     List<CustomerModel> list = res.isNotEmpty ? res.map((c) => CustomerModel.fromJson(c)).toList() : [];
 

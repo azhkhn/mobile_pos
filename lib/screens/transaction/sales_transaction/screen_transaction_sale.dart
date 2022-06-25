@@ -114,9 +114,7 @@ class TransactionScreenSale extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
-                                          _payment.transactionType == 'Income'
-                                              ? Converter.currency.format(num.parse(_payment.amount))
-                                              : Converter.currency.format(num.parse(_payment.amount)),
+                                          Converter.currency.format(num.parse(_payment.amount)),
                                           style: TextStyle(
                                               color: _payment.transactionType == 'Income' ? const Color(0xFF1B5E20) : const Color(0xFFB71C1C)),
                                         ),

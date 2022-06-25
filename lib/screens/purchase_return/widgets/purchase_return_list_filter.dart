@@ -49,7 +49,7 @@ class PurchaseReturnListFilter extends StatelessWidget {
             //==================== Get All Invoice Search Field ====================
             Expanded(
               child: TypeAheadField(
-                minCharsForSuggestions: 1,
+                minCharsForSuggestions: 0,
                 debounceDuration: const Duration(milliseconds: 500),
                 hideSuggestionsOnKeyboardHide: true,
                 textFieldConfiguration: TextFieldConfiguration(
@@ -126,7 +126,7 @@ class PurchaseReturnListFilter extends StatelessWidget {
             //==================== Get All Customer Search Field ====================
             Expanded(
               child: TypeAheadField(
-                minCharsForSuggestions: 1,
+                minCharsForSuggestions: 0,
                 debounceDuration: const Duration(milliseconds: 500),
                 hideSuggestionsOnKeyboardHide: true,
                 textFieldConfiguration: TextFieldConfiguration(

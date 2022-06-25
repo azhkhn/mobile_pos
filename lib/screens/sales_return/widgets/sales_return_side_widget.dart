@@ -100,7 +100,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                         valueListenable: originalSaleNotifier,
                         builder: (context, _, __) {
                           return TypeAheadField(
-                            minCharsForSuggestions: 1,
+                            minCharsForSuggestions: 0,
                             debounceDuration: const Duration(milliseconds: 500),
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
@@ -159,7 +159,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                   Flexible(
                     flex: 9,
                     child: TypeAheadField(
-                      minCharsForSuggestions: 1,
+                      minCharsForSuggestions: 0,
                       debounceDuration: const Duration(milliseconds: 500),
                       hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(

@@ -58,7 +58,13 @@ class SalesDatabase {
   //========== Get All Sales By Query ==========
   Future<List<SalesModel>> getSalesByInvoiceSuggestions(String pattern) async {
     final db = await dbInstance.database;
-    final res = await db.rawQuery('''select * from $tableSales where ${SalesFields.invoiceNumber} LIKE "%$pattern%"''');
+    final List<Map<String, Object?>> res;
+
+    if (pattern.isNotEmpty) {
+      res = await db.rawQuery('''select * from $tableSales where ${SalesFields.invoiceNumber} LIKE "%$pattern%" ORDER BY _id DESC limit 20''');
+    } else {
+      res = await db.query(tableSales, orderBy: '_id DESC', limit: 10);
+    }
 
     List<SalesModel> list = res.isNotEmpty ? res.map((c) => SalesModel.fromJson(c)).toList() : [];
 

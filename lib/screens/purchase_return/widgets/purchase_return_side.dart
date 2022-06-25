@@ -105,7 +105,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                         valueListenable: originalPurchaseNotifier,
                         builder: (context, _, __) {
                           return TypeAheadField(
-                            minCharsForSuggestions: 1,
+                            minCharsForSuggestions: 0,
                             debounceDuration: const Duration(milliseconds: 500),
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
@@ -149,7 +149,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                               return Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Text(
-                                  suggestion.contactName,
+                                  suggestion.supplierName,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: kText_10_12,
@@ -157,7 +157,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                               );
                             },
                             onSuggestionSelected: (SupplierModel suggestion) {
-                              supplierController.text = suggestion.contactName;
+                              supplierController.text = suggestion.supplierName;
                               supplierNotifier.value = suggestion;
                               log(suggestion.supplierName);
                             },
@@ -170,7 +170,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                   Flexible(
                     flex: 9,
                     child: TypeAheadField(
-                      minCharsForSuggestions: 1,
+                      minCharsForSuggestions: 0,
                       debounceDuration: const Duration(milliseconds: 500),
                       hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(

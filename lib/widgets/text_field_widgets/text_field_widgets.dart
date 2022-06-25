@@ -5,7 +5,7 @@ import 'package:shop_ez/core/constant/colors.dart';
 class TextFeildWidget extends StatelessWidget {
   const TextFeildWidget(
       {Key? key,
-      required this.labelText,
+      this.labelText,
       this.hintText,
       this.textStyle,
       this.hintStyle,
@@ -36,7 +36,7 @@ class TextFeildWidget extends StatelessWidget {
       this.obscureText,
       this.floatingLabelBehavior})
       : super(key: key);
-  final String labelText;
+  final String? labelText;
   final String? hintText;
   final TextStyle? textStyle;
   final TextStyle? hintStyle;
