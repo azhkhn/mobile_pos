@@ -25,9 +25,9 @@ class UserUtils {
 //========== Load all User Details ==========
   Future<void> fetchUserDetails() async {
     await loggedUser;
-    await businessProfile;
     await userGroup;
     await permission;
+    await businessProfile;
   }
 
   //========== Unload all User Details ==========
@@ -86,6 +86,15 @@ class UserUtils {
       throw 'Business Profile is Empty';
     }
     return businessProfileModel!;
+  }
+
+  //========== Update Business Profile Details ==========
+  Future<void> get updateBusinessProfile async {
+    log('Updating saved Group & Permission details..');
+
+    businessProfileModel = null;
+
+    await businessProfile;
   }
 
 //Business Profile details (Access User details all over the Application)

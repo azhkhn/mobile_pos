@@ -334,6 +334,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
           status: paymentStatus,
           description: 'Transaction Completed Successfully!',
           purchaseId: purchaseId,
+          supplierId: supplierId,
         );
 
         //==================== Create Transactions ====================

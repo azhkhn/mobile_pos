@@ -41,3 +41,4 @@ const String routeListUser = '/list_user';
 const String routeAddGroup = '/add_group';
 const String routeListGroup = '/list_group';
 const String routeReports = '/reports';
+const String routePaymentReport = '/payment_report';

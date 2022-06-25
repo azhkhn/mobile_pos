@@ -93,9 +93,9 @@ class HomeDrawer extends StatelessWidget {
                 style: kText12,
               ),
             ),
-            onTap: () {
+            onTap: () async {
               Navigator.pop(context);
-              Navigator.pushNamed(context, routeBusinessProfile);
+              await Navigator.pushNamed(context, routeBusinessProfile);
             }),
         Expanded(
           child: SingleChildScrollView(

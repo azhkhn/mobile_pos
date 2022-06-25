@@ -158,6 +158,7 @@ class TransactionScreenPurchase extends StatelessWidget {
         status: purchase.paymentStatus,
         description: 'Transaction ${purchase.id}',
         purchaseId: purchase.id,
+        supplierId: purchase.supplierId,
       );
 
       //-------------------- Create Transactions --------------------

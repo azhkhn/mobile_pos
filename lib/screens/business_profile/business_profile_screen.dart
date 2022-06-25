@@ -490,10 +490,9 @@ class _BusinessProfileState extends State<BusinessProfile> {
 
       try {
         await businessProfileDB.createBusinessProfile(_businessProfileModel);
-        UserUtils().getBusinessProfile();
+        await UserUtils.instance.updateBusinessProfile;
         Navigator.pop(context);
-        log('Profile Updated!');
-
+        log('Profile updated successfully!');
         kSnackBar(context: context, success: true, content: 'Profile updated successfully!');
       } catch (e) {
         log(e.toString());

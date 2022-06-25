@@ -12,6 +12,7 @@ class ContstantTexts {
 //==================== Constant TextStyles ====================
 const kBoldText = TextStyle(fontWeight: FontWeight.bold);
 const kTextBoldWhite = TextStyle(fontWeight: FontWeight.bold, color: kWhite);
+const kText10 = TextStyle(fontSize: 10);
 const kText12 = TextStyle(fontSize: 12);
 const kText13 = TextStyle(fontSize: 13);
 const kText13Bold = TextStyle(fontSize: 13, fontWeight: FontWeight.bold);

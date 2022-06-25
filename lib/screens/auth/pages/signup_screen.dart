@@ -210,6 +210,7 @@ class ScreenSignUp extends StatelessWidget {
                               Icons.person,
                               color: Colors.black,
                             ),
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
                             validator: (value) => Validators.usernameValidator(value),
                           ),
 
@@ -398,12 +399,12 @@ class ScreenSignUp extends StatelessWidget {
       supplier: '1234',
     );
     const GroupModel _groupModelAdmin = GroupModel(
-      id: 1,
+      id: 2,
       name: 'Admin',
       description: 'Admin has most of the previlege owner has only with few limitations',
     );
     const PermissionModel _permissionModelAdmin = PermissionModel(
-      groupId: 1,
+      groupId: 2,
       user: '123',
       sale: '123',
       purchase: '123',

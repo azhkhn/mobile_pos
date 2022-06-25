@@ -559,6 +559,7 @@ class PaymentButtonsWidget extends StatelessWidget {
           status: paymentStatus,
           description: 'Transaction $salesId',
           salesId: salesId,
+          customerId: customerId,
         );
 
         //==================== Create Transactions ====================

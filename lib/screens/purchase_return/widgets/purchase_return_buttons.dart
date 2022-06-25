@@ -442,6 +442,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         description: 'Transaction ',
         purchaseId: purchase.id,
         purchaseReturnId: purchaseReturnId,
+        supplierId: purchase.supplierId,
       );
       //-------------------- Create Transaction --------------------
       await transactionDatabase.createTransaction(_transactionSR);
@@ -478,6 +479,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         description: 'Transaction $purchaseReturnId',
         purchaseId: purchase.id,
         purchaseReturnId: purchaseReturnId,
+        supplierId: purchase.supplierId,
       );
 
       final TransactionsModel _transactionForPurchasesReturn = TransactionsModel(
@@ -489,6 +491,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         description: 'Transaction $purchaseReturnId',
         purchaseId: purchase.id,
         purchaseReturnId: purchaseReturnId,
+        supplierId: purchase.supplierId,
       );
 
       if (_paidAmount > _updatedPaidAmount) {
@@ -503,6 +506,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
           description: 'Transaction $purchaseReturnId',
           purchaseId: purchase.id,
           purchaseReturnId: purchaseReturnId,
+          supplierId: purchase.supplierId,
         );
 
         await transactionDatabase.createTransaction(_transactionForPR);
@@ -515,14 +519,16 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
       // ---------- When purchase is fully returned ----------
       if (_updatedReturnAmount == _totalAmount) {
         final TransactionsModel _transactionSR = TransactionsModel(
-            category: 'Purchase Return',
-            transactionType: 'Income',
-            dateTime: dateTime,
-            amount: _paidAmount.toString(),
-            status: purchase.paymentStatus,
-            description: 'Transaction $purchaseReturnId',
-            purchaseId: purchase.id,
-            purchaseReturnId: purchaseReturnId);
+          category: 'Purchase Return',
+          transactionType: 'Income',
+          dateTime: dateTime,
+          amount: _paidAmount.toString(),
+          status: purchase.paymentStatus,
+          description: 'Transaction $purchaseReturnId',
+          purchaseId: purchase.id,
+          supplierId: purchase.supplierId,
+          purchaseReturnId: purchaseReturnId,
+        );
 
         //-------------------- Create Transactions --------------------
         await transactionDatabase.createTransaction(_transactionSR);
@@ -561,6 +567,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         description: 'Transaction $purchaseReturnId',
         purchaseId: purchase.id,
         purchaseReturnId: purchaseReturnId,
+        supplierId: purchase.supplierId,
       );
 
       final TransactionsModel _transactionSR = TransactionsModel(
@@ -572,6 +579,7 @@ class PurchaseReturnButtonsWidget extends StatelessWidget {
         description: 'Transaction $purchaseReturnId',
         purchaseId: purchase.id,
         purchaseReturnId: purchaseReturnId,
+        supplierId: purchase.supplierId,
       );
 
       //-------------------- Create Transactions --------------------

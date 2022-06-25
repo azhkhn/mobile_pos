@@ -42,278 +42,297 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 11, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 5, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
 
-//     const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    const textType = 'TEXT NOT NULL';
-//     const textNull = 'TEXT';
-//     const intNull = 'INTEGER';
-//     const idLogin = 'INTEGER NOT NULL';
-//     const intType = 'INTEGER NOT NULL';
+    const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const textNotNull = 'TEXT NOT NULL';
+    const textNull = 'TEXT';
+    const intNull = 'INTEGER';
+    // const idLogin = 'INTEGER NOT NULL';
+    const intNotNull = 'INTEGER NOT NULL';
 
-    await db.execute("ALTER TABLE $tablePermission ADD COLUMN ${PermissionFields.user} $textType DEFAULT '0'");
-    await db.execute("ALTER TABLE $tablePermission ADD COLUMN ${PermissionFields.returns} $textType DEFAULT '0'");
+    await db.execute('drop table if exists $tableExpense');
+    //========== Table Expense ==========
+    await db.execute('''CREATE TABLE $tableExpense (
+      ${ExpenseFields.id} $idAuto,
+      ${ExpenseFields.expenseCategory} $textNotNull,
+      ${ExpenseFields.expenseTitle} $textNotNull,
+      ${ExpenseFields.amount} $textNotNull,
+      ${ExpenseFields.date} $textNotNull,
+      ${ExpenseFields.note} $textNull,
+      ${ExpenseFields.voucherNumber} $textNull,
+      ${ExpenseFields.payBy} $textNull,
+      ${ExpenseFields.documents} $textNull)''');
+
+    // await db.execute("ALTER TABLE $tableTransactions ADD COLUMN ${TransactionsField.customerId} $intNull");
+    // await db.execute("ALTER TABLE $tableTransactions ADD COLUMN ${TransactionsField.supplierId} $intNull");
+    // await db.execute("ALTER TABLE $tableTransactions ADD COLUMN ${TransactionsField.payBy} $textNull");
 
 //     await db.execute('DROP TABLE IF EXISTS $tableUser');
 //     await db.execute('DROP TABLE IF EXISTS $tableLogin');
 //     await db.execute('DROP TABLE IF EXISTS $tableGroup');
 //     await db.execute('DROP TABLE IF EXISTS $tablePermission');
 
-//     //========== Table Users ==========
+// //========== Table Users ==========
 //     await db.execute('''CREATE TABLE $tableUser (
 //       ${UserFields.id} $idAuto,
-//       ${UserFields.groupId} $intType,
-//       ${UserFields.shopName} $textType,
-//       ${UserFields.countryName} $textType,
-//       ${UserFields.shopCategory} $textType,
+//       ${UserFields.groupId} $intNotNull,
+//       ${UserFields.shopName} $textNotNull,
+//       ${UserFields.countryName} $textNotNull,
+//       ${UserFields.shopCategory} $textNotNull,
 //       ${UserFields.name} $textNull,
 //       ${UserFields.nameArabic} $textNull,
 //       ${UserFields.address} $textNull,
-//       ${UserFields.mobileNumber} $textType,
+//       ${UserFields.mobileNumber} $textNotNull,
 //       ${UserFields.email} $textNull,
-//       ${UserFields.username} $textType,
-//       ${UserFields.password} $textType,
-//       ${UserFields.status} $intType,
+//       ${UserFields.username} $textNotNull,
+//       ${UserFields.password} $textNotNull,
+//       ${UserFields.status} $intNotNull,
 //       ${UserFields.document} $textNull)''');
 
-//     //========== Table Login ==========
+// //========== Table Login ==========
 //     await db.execute('''CREATE TABLE $tableLogin (
 //       ${UserFields.id} $idLogin,
-//       ${UserFields.groupId} $intType,
-//       ${UserFields.shopName} $textType,
-//       ${UserFields.countryName} $textType,
-//       ${UserFields.shopCategory} $textType,
+//       ${UserFields.groupId} $intNotNull,
+//       ${UserFields.shopName} $textNotNull,
+//       ${UserFields.countryName} $textNotNull,
+//       ${UserFields.shopCategory} $textNotNull,
 //       ${UserFields.name} $textNull,
 //       ${UserFields.nameArabic} $textNull,
 //       ${UserFields.address} $textNull,
-//       ${UserFields.mobileNumber} $textType,
+//       ${UserFields.mobileNumber} $textNotNull,
 //       ${UserFields.email} $textNull,
-//       ${UserFields.username} $textType,
-//       ${UserFields.password} $textType,
-//       ${UserFields.status} $intType,
+//       ${UserFields.username} $textNotNull,
+//       ${UserFields.password} $textNotNull,
+//       ${UserFields.status} $intNotNull,
 //       ${UserFields.document} $textNull)''');
 
-//     //========== Table Group ==========
+// //========== Table Group ==========
 //     await db.execute('''CREATE TABLE $tableGroup (
 //       ${GroupFields.id} $idAuto,
-//       ${GroupFields.name} $textType,
-//       ${GroupFields.description} $textType)''');
+//       ${GroupFields.name} $textNotNull,
+//       ${GroupFields.description} $textNotNull)''');
 
 //     //========== Table Permission ==========
 //     await db.execute('''CREATE TABLE $tablePermission (
 //       ${PermissionFields.id} $idAuto,
-//       ${PermissionFields.groupId} $intType,
-//       ${PermissionFields.sale} $textType,
-//       ${PermissionFields.purchase} $textType,
-//       ${PermissionFields.products} $textType,
-//       ${PermissionFields.customer} $textType,
-//       ${PermissionFields.supplier} $textType)''');
+//       ${PermissionFields.groupId} $intNotNull,
+//       ${PermissionFields.user} $textNotNull,
+//       ${PermissionFields.sale} $textNotNull,
+//       ${PermissionFields.purchase} $textNotNull,
+//       ${PermissionFields.returns} $textNotNull,
+//       ${PermissionFields.products} $textNotNull,
+//       ${PermissionFields.customer} $textNotNull,
+//       ${PermissionFields.supplier} $textNotNull)''');
 
-//     await db.execute("DROP TABLE IF EXISTS $tableSales");
-//     await db.execute("DROP TABLE IF EXISTS $tableSalesItems");
-//     await db.execute("DROP TABLE IF EXISTS $tablePurchase");
-//     await db.execute("DROP TABLE IF EXISTS $tablePurchaseItems");
-//     await db.execute("DROP TABLE IF EXISTS $tableTransactions");
-//     await db.execute("DROP TABLE IF EXISTS $tableSalesReturn");
-//     await db.execute("DROP TABLE IF EXISTS $tableSalesReturnItems");
-//     await db.execute("DROP TABLE IF EXISTS $tablePurchaseReturn");
-//     await db.execute("DROP TABLE IF EXISTS $tablePurchaseItemsReturn");
+    await db.execute("DROP TABLE IF EXISTS $tableSales");
+    await db.execute("DROP TABLE IF EXISTS $tableSalesItems");
+    await db.execute("DROP TABLE IF EXISTS $tablePurchase");
+    await db.execute("DROP TABLE IF EXISTS $tablePurchaseItems");
+    await db.execute("DROP TABLE IF EXISTS $tableTransactions");
+    await db.execute("DROP TABLE IF EXISTS $tableSalesReturn");
+    await db.execute("DROP TABLE IF EXISTS $tableSalesReturnItems");
+    await db.execute("DROP TABLE IF EXISTS $tablePurchaseReturn");
+    await db.execute("DROP TABLE IF EXISTS $tablePurchaseItemsReturn");
 
-// //========== Table Sales ==========
-//     await db.execute('''CREATE TABLE $tableSales (
-//       ${SalesFields.id} $idAuto,
-//       ${SalesFields.invoiceNumber} $textType,
-//       ${SalesFields.returnAmount} $textNull,
-//       ${SalesFields.salesNote} $textType,
-//       ${SalesFields.dateTime} $textType,
-//       ${SalesFields.customerId} $intType,
-//       ${SalesFields.customerName} $textType,
-//       ${SalesFields.billerName} $textType,
-//       ${SalesFields.totalItems} $textType,
-//       ${SalesFields.vatAmount} $textType,
-//       ${SalesFields.subTotal} $textType,
-//       ${SalesFields.discount} $textType,
-//       ${SalesFields.grantTotal} $textType,
-//       ${SalesFields.paid} $textType,
-//       ${SalesFields.balance} $textType,
-//       ${SalesFields.paymentType} $textType,
-//       ${SalesFields.salesStatus} $textType,
-//       ${SalesFields.paymentStatus} $textType,
-//       ${SalesFields.createdBy} $textType)''');
+//========== Table Sales ==========
+    await db.execute('''CREATE TABLE $tableSales (
+      ${SalesFields.id} $idAuto,
+      ${SalesFields.invoiceNumber} $textNotNull,
+      ${SalesFields.returnAmount} $textNull,
+      ${SalesFields.salesNote} $textNotNull,
+      ${SalesFields.dateTime} $textNotNull,
+      ${SalesFields.customerId} $intNotNull,
+      ${SalesFields.customerName} $textNotNull,
+      ${SalesFields.billerName} $textNotNull,
+      ${SalesFields.totalItems} $textNotNull,
+      ${SalesFields.vatAmount} $textNotNull,
+      ${SalesFields.subTotal} $textNotNull,
+      ${SalesFields.discount} $textNotNull,
+      ${SalesFields.grantTotal} $textNotNull,
+      ${SalesFields.paid} $textNotNull,
+      ${SalesFields.balance} $textNotNull,
+      ${SalesFields.paymentType} $textNotNull,
+      ${SalesFields.salesStatus} $textNotNull,
+      ${SalesFields.paymentStatus} $textNotNull,
+      ${SalesFields.createdBy} $textNotNull)''');
 
-// //========== Table Sales Items ==========
-//     await db.execute('''CREATE TABLE $tableSalesItems (
-//       ${SalesItemsFields.id} $idAuto,
-//       ${SalesItemsFields.saleId} $intType,
-//       ${SalesItemsFields.productId} $intType,
-//       ${SalesItemsFields.productType} $textType,
-//       ${SalesItemsFields.productName} $textType,
-//       ${SalesItemsFields.categoryId} $intType,
-//       ${SalesItemsFields.productCode} $textType,
-//       ${SalesItemsFields.unitPrice} $textType,
-//       ${SalesItemsFields.productCost} $textType,
-//       ${SalesItemsFields.quantity} $textType,
-//       ${SalesItemsFields.subTotal} $textType,
-//       ${SalesItemsFields.vatMethod} $textType,
-//       ${SalesItemsFields.vatId} $intType,
-//       ${SalesItemsFields.vatTotal} $textType,
-//       ${SalesItemsFields.unitCode} $textType,
-//       ${SalesItemsFields.netUnitPrice} $textType,
-//       ${SalesItemsFields.vatPercentage} $textType,
-//       ${SalesItemsFields.vatRate} $intType)''');
+//========== Table Sales Items ==========
+    await db.execute('''CREATE TABLE $tableSalesItems (
+      ${SalesItemsFields.id} $idAuto,
+      ${SalesItemsFields.saleId} $intNotNull,
+      ${SalesItemsFields.productId} $intNotNull,
+      ${SalesItemsFields.productType} $textNotNull,
+      ${SalesItemsFields.productName} $textNotNull,
+      ${SalesItemsFields.categoryId} $intNotNull,
+      ${SalesItemsFields.productCode} $textNotNull,
+      ${SalesItemsFields.unitPrice} $textNotNull,
+      ${SalesItemsFields.productCost} $textNotNull,
+      ${SalesItemsFields.quantity} $textNotNull,
+      ${SalesItemsFields.subTotal} $textNotNull,
+      ${SalesItemsFields.vatMethod} $textNotNull,
+      ${SalesItemsFields.vatId} $intNotNull,
+      ${SalesItemsFields.vatTotal} $textNotNull,
+      ${SalesItemsFields.unitCode} $textNotNull,
+      ${SalesItemsFields.netUnitPrice} $textNotNull,
+      ${SalesItemsFields.vatPercentage} $textNotNull,
+      ${SalesItemsFields.vatRate} $intNotNull)''');
 
-// //========== Table Transactions ==========
-//     await db.execute('''CREATE TABLE $tableTransactions (
-//       ${TransactionsField.id} $idAuto,
-//       ${TransactionsField.category} $textType,
-//       ${TransactionsField.transactionType} $textType,
-//       ${TransactionsField.dateTime} $textType,
-//       ${TransactionsField.amount} $textType,
-//       ${TransactionsField.status} $textType,
-//       ${TransactionsField.description} $textType,
-//       ${TransactionsField.salesId} $intNull,
-//       ${TransactionsField.purchaseId} $intNull,
-//       ${TransactionsField.salesReturnId} $intNull,
-//       ${TransactionsField.purchaseReturnId} $intNull)''');
+//========== Table Transactions ==========
+    await db.execute('''CREATE TABLE $tableTransactions (
+      ${TransactionsField.id} $idAuto,
+      ${TransactionsField.category} $textNotNull,
+      ${TransactionsField.transactionType} $textNotNull,
+      ${TransactionsField.dateTime} $textNotNull,
+      ${TransactionsField.amount} $textNotNull,
+      ${TransactionsField.status} $textNotNull,
+      ${TransactionsField.description} $textNull,
+      ${TransactionsField.salesId} $intNull,
+      ${TransactionsField.purchaseId} $intNull,
+      ${TransactionsField.salesReturnId} $intNull,
+      ${TransactionsField.purchaseReturnId} $intNull,
+      ${TransactionsField.customerId} $intNull,
+      ${TransactionsField.supplierId} $intNull,
+      ${TransactionsField.payBy} $textNull)''');
 
-// //========== Table Purchase ==========
-//     await db.execute('''CREATE TABLE $tablePurchase (
-//       ${PurchaseFields.id} $idAuto,
-//       ${PurchaseFields.invoiceNumber} $textType,
-//       ${PurchaseFields.referenceNumber} $textType,
-//       ${PurchaseFields.purchaseNote} $textType,
-//       ${PurchaseFields.dateTime} $textType,
-//       ${PurchaseFields.supplierId} $intType,
-//       ${PurchaseFields.supplierName} $textType,
-//       ${PurchaseFields.billerName} $textType,
-//       ${PurchaseFields.totalItems} $textType,
-//       ${PurchaseFields.vatAmount} $textType,
-//       ${PurchaseFields.subTotal} $textType,
-//       ${PurchaseFields.discount} $textType,
-//       ${PurchaseFields.grantTotal} $textType,
-//       ${PurchaseFields.paid} $textType,
-//       ${PurchaseFields.balance} $textType,
-//       ${SalesFields.returnAmount} $textNull,
-//       ${PurchaseFields.paymentType} $textType,
-//       ${PurchaseFields.purchaseStatus} $textType,
-//       ${PurchaseFields.paymentStatus} $textType,
-//       ${PurchaseFields.createdBy} $textType)''');
+//========== Table Purchase ==========
+    await db.execute('''CREATE TABLE $tablePurchase (
+      ${PurchaseFields.id} $idAuto,
+      ${PurchaseFields.invoiceNumber} $textNotNull,
+      ${PurchaseFields.referenceNumber} $textNotNull,
+      ${PurchaseFields.purchaseNote} $textNotNull,
+      ${PurchaseFields.dateTime} $textNotNull,
+      ${PurchaseFields.supplierId} $intNotNull,
+      ${PurchaseFields.supplierName} $textNotNull,
+      ${PurchaseFields.billerName} $textNotNull,
+      ${PurchaseFields.totalItems} $textNotNull,
+      ${PurchaseFields.vatAmount} $textNotNull,
+      ${PurchaseFields.subTotal} $textNotNull,
+      ${PurchaseFields.discount} $textNotNull,
+      ${PurchaseFields.grantTotal} $textNotNull,
+      ${PurchaseFields.paid} $textNotNull,
+      ${PurchaseFields.balance} $textNotNull,
+      ${SalesFields.returnAmount} $textNull,
+      ${PurchaseFields.paymentType} $textNotNull,
+      ${PurchaseFields.purchaseStatus} $textNotNull,
+      ${PurchaseFields.paymentStatus} $textNotNull,
+      ${PurchaseFields.createdBy} $textNotNull)''');
 
-// //========== Table Purchase Items ==========
-//     await db.execute('''CREATE TABLE $tablePurchaseItems (
-//       ${PurchaseItemsFields.id} $idAuto,
-//       ${PurchaseItemsFields.purchaseId} $intType,
-//       ${PurchaseItemsFields.productId} $intType,
-//       ${PurchaseItemsFields.productType} $textType,
-//       ${PurchaseItemsFields.productName} $textType,
-//       ${PurchaseItemsFields.categoryId} $intType,
-//       ${PurchaseItemsFields.productCode} $textType,
-//       ${PurchaseItemsFields.unitPrice} $textType,
-//       ${PurchaseItemsFields.productCost} $textType,
-//       ${PurchaseItemsFields.quantity} $textType,
-//       ${PurchaseItemsFields.subTotal} $textType,
-//       ${PurchaseItemsFields.vatId} $intType,
-//       ${PurchaseItemsFields.vatMethod} $textType,
-//       ${PurchaseItemsFields.vatRate} $intType,
-//       ${PurchaseItemsFields.vatTotal} $textType,
-//       ${PurchaseItemsFields.unitCode} $textType,
-//       ${PurchaseItemsFields.netUnitPrice} $textType,
-//       ${PurchaseItemsFields.vatPercentage} $textType)''');
+//========== Table Purchase Items ==========
+    await db.execute('''CREATE TABLE $tablePurchaseItems (
+      ${PurchaseItemsFields.id} $idAuto,
+      ${PurchaseItemsFields.purchaseId} $intNotNull,
+      ${PurchaseItemsFields.productId} $intNotNull,
+      ${PurchaseItemsFields.productType} $textNotNull,
+      ${PurchaseItemsFields.productName} $textNotNull,
+      ${PurchaseItemsFields.categoryId} $intNotNull,
+      ${PurchaseItemsFields.productCode} $textNotNull,
+      ${PurchaseItemsFields.unitPrice} $textNotNull,
+      ${PurchaseItemsFields.productCost} $textNotNull,
+      ${PurchaseItemsFields.quantity} $textNotNull,
+      ${PurchaseItemsFields.subTotal} $textNotNull,
+      ${PurchaseItemsFields.vatId} $intNotNull,
+      ${PurchaseItemsFields.vatMethod} $textNotNull,
+      ${PurchaseItemsFields.vatRate} $intNotNull,
+      ${PurchaseItemsFields.vatTotal} $textNotNull,
+      ${PurchaseItemsFields.unitCode} $textNotNull,
+      ${PurchaseItemsFields.netUnitPrice} $textNotNull,
+      ${PurchaseItemsFields.vatPercentage} $textNotNull)''');
 
-// // ========== Table Sales Return ==========
-//     await db.execute('''CREATE TABLE $tableSalesReturn (
-//       ${SalesReturnFields.id} $idAuto,
-//       ${SalesReturnFields.saleId} $intNull,
-//       ${SalesReturnFields.invoiceNumber} $textType,
-//       ${SalesReturnFields.originalInvoiceNumber} $textType,
-//       ${SalesReturnFields.salesNote} $textType,
-//       ${SalesReturnFields.dateTime} $textType,
-//       ${SalesReturnFields.customerId} $intType,
-//       ${SalesReturnFields.customerName} $textType,
-//       ${SalesReturnFields.billerName} $textType,
-//       ${SalesReturnFields.totalItems} $textType,
-//       ${SalesReturnFields.vatAmount} $textType,
-//       ${SalesReturnFields.subTotal} $textType,
-//       ${SalesReturnFields.discount} $textType,
-//       ${SalesReturnFields.grantTotal} $textType,
-//       ${SalesReturnFields.paid} $textType,
-//       ${SalesReturnFields.balance} $textType,
-//       ${SalesReturnFields.paymentType} $textType,
-//       ${SalesReturnFields.salesStatus} $textType,
-//       ${SalesReturnFields.paymentStatus} $textType,
-//       ${SalesReturnFields.createdBy} $textType)''');
+// ========== Table Sales Return ==========
+    await db.execute('''CREATE TABLE $tableSalesReturn (
+      ${SalesReturnFields.id} $idAuto,
+      ${SalesReturnFields.saleId} $intNull,
+      ${SalesReturnFields.invoiceNumber} $textNotNull,
+      ${SalesReturnFields.originalInvoiceNumber} $textNotNull,
+      ${SalesReturnFields.salesNote} $textNotNull,
+      ${SalesReturnFields.dateTime} $textNotNull,
+      ${SalesReturnFields.customerId} $intNotNull,
+      ${SalesReturnFields.customerName} $textNotNull,
+      ${SalesReturnFields.billerName} $textNotNull,
+      ${SalesReturnFields.totalItems} $textNotNull,
+      ${SalesReturnFields.vatAmount} $textNotNull,
+      ${SalesReturnFields.subTotal} $textNotNull,
+      ${SalesReturnFields.discount} $textNotNull,
+      ${SalesReturnFields.grantTotal} $textNotNull,
+      ${SalesReturnFields.paid} $textNotNull,
+      ${SalesReturnFields.balance} $textNotNull,
+      ${SalesReturnFields.paymentType} $textNotNull,
+      ${SalesReturnFields.salesStatus} $textNotNull,
+      ${SalesReturnFields.paymentStatus} $textNotNull,
+      ${SalesReturnFields.createdBy} $textNotNull)''');
 
-// //========== Table Sales Return Items ==========
-//     await db.execute('''CREATE TABLE $tableSalesReturnItems (
-//       ${SalesReturnItemsFields.id} $idAuto,
-//       ${SalesReturnItemsFields.saleId} $intType,
-//       ${SalesReturnItemsFields.saleReturnId} $intType,
-//       ${SalesReturnItemsFields.originalInvoiceNumber} $textType,
-//       ${SalesReturnItemsFields.productId} $intType,
-//       ${SalesReturnItemsFields.productType} $textType,
-//       ${SalesReturnItemsFields.productName} $textType,
-//       ${SalesReturnItemsFields.categoryId} $intType,
-//       ${SalesReturnItemsFields.productCode} $textType,
-//       ${SalesReturnItemsFields.unitPrice} $textType,
-//       ${SalesReturnItemsFields.productCost} $textType,
-//       ${SalesReturnItemsFields.quantity} $textType,
-//       ${SalesReturnItemsFields.subTotal} $textType,
-//       ${SalesReturnItemsFields.vatMethod} $textType,
-//       ${SalesReturnItemsFields.vatId} $intType,
-//       ${SalesReturnItemsFields.vatRate} $intType,
-//       ${SalesReturnItemsFields.vatTotal} $textType,
-//       ${SalesReturnItemsFields.unitCode} $textType,
-//       ${SalesReturnItemsFields.netUnitPrice} $textType,
-//       ${SalesReturnItemsFields.vatPercentage} $textType)''');
+//========== Table Sales Return Items ==========
+    await db.execute('''CREATE TABLE $tableSalesReturnItems (
+      ${SalesReturnItemsFields.id} $idAuto,
+      ${SalesReturnItemsFields.saleId} $intNotNull,
+      ${SalesReturnItemsFields.saleReturnId} $intNotNull,
+      ${SalesReturnItemsFields.originalInvoiceNumber} $textNotNull,
+      ${SalesReturnItemsFields.productId} $intNotNull,
+      ${SalesReturnItemsFields.productType} $textNotNull,
+      ${SalesReturnItemsFields.productName} $textNotNull,
+      ${SalesReturnItemsFields.categoryId} $intNotNull,
+      ${SalesReturnItemsFields.productCode} $textNotNull,
+      ${SalesReturnItemsFields.unitPrice} $textNotNull,
+      ${SalesReturnItemsFields.productCost} $textNotNull,
+      ${SalesReturnItemsFields.quantity} $textNotNull,
+      ${SalesReturnItemsFields.subTotal} $textNotNull,
+      ${SalesReturnItemsFields.vatMethod} $textNotNull,
+      ${SalesReturnItemsFields.vatId} $intNotNull,
+      ${SalesReturnItemsFields.vatRate} $intNotNull,
+      ${SalesReturnItemsFields.vatTotal} $textNotNull,
+      ${SalesReturnItemsFields.unitCode} $textNotNull,
+      ${SalesReturnItemsFields.netUnitPrice} $textNotNull,
+      ${SalesReturnItemsFields.vatPercentage} $textNotNull)''');
 
-// // ========== Table Purchase Return ==========
-//     await db.execute('''CREATE TABLE $tablePurchaseReturn (
-//       ${PurchaseReturnFields.id} $idAuto,
-//       ${PurchaseReturnFields.purchaseId} $intType,
-//       ${PurchaseReturnFields.invoiceNumber} $textType,
-//       ${PurchaseReturnFields.referenceNumber} $textType,
-//       ${PurchaseReturnFields.originalInvoiceNumber} $textNull,
-//       ${PurchaseReturnFields.purchaseNote} $textType,
-//       ${PurchaseReturnFields.dateTime} $textType,
-//       ${PurchaseReturnFields.supplierId} $intType,
-//       ${PurchaseReturnFields.supplierName} $textType,
-//       ${PurchaseReturnFields.billerName} $textType,
-//       ${PurchaseReturnFields.totalItems} $textType,
-//       ${PurchaseReturnFields.vatAmount} $textType,
-//       ${PurchaseReturnFields.subTotal} $textType,
-//       ${PurchaseReturnFields.discount} $textType,
-//       ${PurchaseReturnFields.grantTotal} $textType,
-//       ${PurchaseReturnFields.paid} $textType,
-//       ${PurchaseReturnFields.balance} $textType,
-//       ${PurchaseReturnFields.paymentType} $textType,
-//       ${PurchaseReturnFields.purchaseStatus} $textType,
-//       ${PurchaseReturnFields.paymentStatus} $textType,
-//       ${PurchaseReturnFields.createdBy} $textType)''');
+// ========== Table Purchase Return ==========
+    await db.execute('''CREATE TABLE $tablePurchaseReturn (
+      ${PurchaseReturnFields.id} $idAuto,
+      ${PurchaseReturnFields.purchaseId} $intNotNull,
+      ${PurchaseReturnFields.invoiceNumber} $textNotNull,
+      ${PurchaseReturnFields.referenceNumber} $textNotNull,
+      ${PurchaseReturnFields.originalInvoiceNumber} $textNull,
+      ${PurchaseReturnFields.purchaseNote} $textNotNull,
+      ${PurchaseReturnFields.dateTime} $textNotNull,
+      ${PurchaseReturnFields.supplierId} $intNotNull,
+      ${PurchaseReturnFields.supplierName} $textNotNull,
+      ${PurchaseReturnFields.billerName} $textNotNull,
+      ${PurchaseReturnFields.totalItems} $textNotNull,
+      ${PurchaseReturnFields.vatAmount} $textNotNull,
+      ${PurchaseReturnFields.subTotal} $textNotNull,
+      ${PurchaseReturnFields.discount} $textNotNull,
+      ${PurchaseReturnFields.grantTotal} $textNotNull,
+      ${PurchaseReturnFields.paid} $textNotNull,
+      ${PurchaseReturnFields.balance} $textNotNull,
+      ${PurchaseReturnFields.paymentType} $textNotNull,
+      ${PurchaseReturnFields.purchaseStatus} $textNotNull,
+      ${PurchaseReturnFields.paymentStatus} $textNotNull,
+      ${PurchaseReturnFields.createdBy} $textNotNull)''');
 
-// //========== Table Purchase Return Items ==========
-//     await db.execute('''CREATE TABLE $tablePurchaseItemsReturn (
-//       ${PurchaseReturnItemsFields.id} $idAuto,
-//       ${PurchaseReturnItemsFields.purchaseId} $intType,
-//       ${PurchaseReturnItemsFields.purchaseReturnId} $intType,
-//       ${PurchaseReturnItemsFields.originalInvoiceNumber} $textNull,
-//       ${PurchaseReturnItemsFields.productId} $intType,
-//       ${PurchaseReturnItemsFields.productType} $textType,
-//       ${PurchaseReturnItemsFields.productName} $textType,
-//       ${PurchaseReturnItemsFields.categoryId} $intType,
-//       ${PurchaseReturnItemsFields.productCode} $textType,
-//       ${PurchaseReturnItemsFields.unitPrice} $textType,
-//       ${PurchaseReturnItemsFields.productCost} $textType,
-//       ${PurchaseReturnItemsFields.quantity} $textType,
-//       ${PurchaseReturnItemsFields.subTotal} $textType,
-//       ${PurchaseReturnItemsFields.vatId} $intType,
-//       ${PurchaseReturnItemsFields.vatTotal} $textType,
-//       ${PurchaseReturnItemsFields.unitCode} $textType,
-//       ${PurchaseReturnItemsFields.netUnitPrice} $textType,
-//       ${PurchaseReturnItemsFields.vatPercentage} $textType)''');
+//========== Table Purchase Return Items ==========
+    await db.execute('''CREATE TABLE $tablePurchaseItemsReturn (
+      ${PurchaseReturnItemsFields.id} $idAuto,
+      ${PurchaseReturnItemsFields.purchaseId} $intNotNull,
+      ${PurchaseReturnItemsFields.purchaseReturnId} $intNotNull,
+      ${PurchaseReturnItemsFields.originalInvoiceNumber} $textNull,
+      ${PurchaseReturnItemsFields.productId} $intNotNull,
+      ${PurchaseReturnItemsFields.productType} $textNotNull,
+      ${PurchaseReturnItemsFields.productName} $textNotNull,
+      ${PurchaseReturnItemsFields.categoryId} $intNotNull,
+      ${PurchaseReturnItemsFields.productCode} $textNotNull,
+      ${PurchaseReturnItemsFields.unitPrice} $textNotNull,
+      ${PurchaseReturnItemsFields.productCost} $textNotNull,
+      ${PurchaseReturnItemsFields.quantity} $textNotNull,
+      ${PurchaseReturnItemsFields.subTotal} $textNotNull,
+      ${PurchaseReturnItemsFields.vatId} $intNotNull,
+      ${PurchaseReturnItemsFields.vatTotal} $textNotNull,
+      ${PurchaseReturnItemsFields.unitCode} $textNotNull,
+      ${PurchaseReturnItemsFields.netUnitPrice} $textNotNull,
+      ${PurchaseReturnItemsFields.vatPercentage} $textNotNull)''');
 
     //================================================================================================================
     //================================================================================================================
@@ -336,7 +355,7 @@ class EzDatabase {
 
     //**
     //    await db.execute(
-    //    "ALTER TABLE TABLE_NAME ADD COLUMN COLUMN_NAME $textType DEFAULT ''");
+    //    "ALTER TABLE TABLE_NAME ADD COLUMN COLUMN_NAME $textNotNull DEFAULT ''");
     //
     //    await db.rawQuery('DROP TABLE IF EXISTS TABLE_NAME');
     //
@@ -356,382 +375,385 @@ class EzDatabase {
     const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const idNotNull = 'INTEGER NOT NULL';
     const idLogin = 'INTEGER NOT NULL';
-    const textType = 'TEXT NOT NULL';
-    const intType = 'INTEGER NOT NULL';
+    const textNotNull = 'TEXT NOT NULL';
+    const intNotNull = 'INTEGER NOT NULL';
     const textNull = 'TEXT';
     const intNull = 'INTEGER';
 
 //========== Table Users ==========
     await db.execute('''CREATE TABLE $tableUser (
       ${UserFields.id} $idAuto,
-      ${UserFields.groupId} $intType,
-      ${UserFields.shopName} $textType,
-      ${UserFields.countryName} $textType,
-      ${UserFields.shopCategory} $textType,
+      ${UserFields.groupId} $intNotNull,
+      ${UserFields.shopName} $textNotNull,
+      ${UserFields.countryName} $textNotNull,
+      ${UserFields.shopCategory} $textNotNull,
       ${UserFields.name} $textNull,
       ${UserFields.nameArabic} $textNull,
       ${UserFields.address} $textNull,
-      ${UserFields.mobileNumber} $textType,
+      ${UserFields.mobileNumber} $textNotNull,
       ${UserFields.email} $textNull,
-      ${UserFields.username} $textType,
-      ${UserFields.password} $textType,
-      ${UserFields.status} $intType,
+      ${UserFields.username} $textNotNull,
+      ${UserFields.password} $textNotNull,
+      ${UserFields.status} $intNotNull,
       ${UserFields.document} $textNull)''');
 
 //========== Table Login ==========
     await db.execute('''CREATE TABLE $tableLogin (
       ${UserFields.id} $idLogin,
-      ${UserFields.groupId} $intType,
-      ${UserFields.shopName} $textType,
-      ${UserFields.countryName} $textType,
-      ${UserFields.shopCategory} $textType,
+      ${UserFields.groupId} $intNotNull,
+      ${UserFields.shopName} $textNotNull,
+      ${UserFields.countryName} $textNotNull,
+      ${UserFields.shopCategory} $textNotNull,
       ${UserFields.name} $textNull,
       ${UserFields.nameArabic} $textNull,
       ${UserFields.address} $textNull,
-      ${UserFields.mobileNumber} $textType,
+      ${UserFields.mobileNumber} $textNotNull,
       ${UserFields.email} $textNull,
-      ${UserFields.username} $textType,
-      ${UserFields.password} $textType,
-      ${UserFields.status} $intType,
+      ${UserFields.username} $textNotNull,
+      ${UserFields.password} $textNotNull,
+      ${UserFields.status} $intNotNull,
       ${UserFields.document} $textNull)''');
 
 //========== Table Group ==========
     await db.execute('''CREATE TABLE $tableGroup (
       ${GroupFields.id} $idAuto,
-      ${GroupFields.name} $textType,
-      ${GroupFields.description} $textType)''');
+      ${GroupFields.name} $textNotNull,
+      ${GroupFields.description} $textNotNull)''');
 
     //========== Table Permission ==========
     await db.execute('''CREATE TABLE $tablePermission (
       ${PermissionFields.id} $idAuto,
-      ${PermissionFields.groupId} $intType,
-      ${PermissionFields.user} $textType,
-      ${PermissionFields.sale} $textType,
-      ${PermissionFields.purchase} $textType,
-      ${PermissionFields.returns} $textType,
-      ${PermissionFields.products} $textType,
-      ${PermissionFields.customer} $textType,
-      ${PermissionFields.supplier} $textType)''');
+      ${PermissionFields.groupId} $intNotNull,
+      ${PermissionFields.user} $textNotNull,
+      ${PermissionFields.sale} $textNotNull,
+      ${PermissionFields.purchase} $textNotNull,
+      ${PermissionFields.returns} $textNotNull,
+      ${PermissionFields.products} $textNotNull,
+      ${PermissionFields.customer} $textNotNull,
+      ${PermissionFields.supplier} $textNotNull)''');
 
 //========== Table Category ==========
     await db.execute('''CREATE TABLE $tableCategory (
       ${CategoryFields.id} $idAuto,
-      ${CategoryFields.category} $textType)''');
+      ${CategoryFields.category} $textNotNull)''');
 
 //========== Table Sub-Category ==========
     await db.execute('''CREATE TABLE $tableSubCategory (
       ${SubCategoryFields.id} $idAuto, 
-      ${SubCategoryFields.category} $textType,
-      ${SubCategoryFields.categoryId} $intType,
-      ${SubCategoryFields.subCategory} $textType)''');
+      ${SubCategoryFields.category} $textNotNull,
+      ${SubCategoryFields.categoryId} $intNotNull,
+      ${SubCategoryFields.subCategory} $textNotNull)''');
 
 //========== Table Brand ==========
     await db.execute('''CREATE TABLE $tableBrand (
       ${BrandFields.id} $idAuto,
-      ${BrandFields.brand} $textType)''');
+      ${BrandFields.brand} $textNotNull)''');
 
 //========== Table Unit ==========
     await db.execute('''CREATE TABLE $tableUnit (
       ${UnitFields.id} $idAuto,
-      ${UnitFields.unit} $textType)''');
+      ${UnitFields.unit} $textNotNull)''');
 
 //========== Table Supplier ==========
     await db.execute('''CREATE TABLE $tableSupplier (
       ${SupplierFields.id} $idAuto, 
-      ${SupplierFields.supplierName} $textType,
-      ${SupplierFields.supplierNameArabic} $textType, 
-      ${SupplierFields.contactName} $textType,
-      ${SupplierFields.contactNumber} $textType,
-      ${SupplierFields.vatNumber} $textType,
-      ${SupplierFields.email} $textType,
-      ${SupplierFields.address} $textType,
-      ${SupplierFields.addressArabic} $textType,
-      ${SupplierFields.city} $textType,
-      ${SupplierFields.cityArabic} $textType,
-      ${SupplierFields.state} $textType,
-      ${SupplierFields.stateArabic} $textType,
-      ${SupplierFields.country} $textType,
-      ${SupplierFields.countryArabic} $textType,
-      ${SupplierFields.poBox} $textType)''');
+      ${SupplierFields.supplierName} $textNotNull,
+      ${SupplierFields.supplierNameArabic} $textNotNull, 
+      ${SupplierFields.contactName} $textNotNull,
+      ${SupplierFields.contactNumber} $textNotNull,
+      ${SupplierFields.vatNumber} $textNotNull,
+      ${SupplierFields.email} $textNotNull,
+      ${SupplierFields.address} $textNotNull,
+      ${SupplierFields.addressArabic} $textNotNull,
+      ${SupplierFields.city} $textNotNull,
+      ${SupplierFields.cityArabic} $textNotNull,
+      ${SupplierFields.state} $textNotNull,
+      ${SupplierFields.stateArabic} $textNotNull,
+      ${SupplierFields.country} $textNotNull,
+      ${SupplierFields.countryArabic} $textNotNull,
+      ${SupplierFields.poBox} $textNotNull)''');
 
 //========== Table Customer ==========
     await db.execute('''CREATE TABLE $tableCustomer (
       ${CustomerFields.id} $idAuto,
-      ${CustomerFields.customerType} $textType,
-      ${CustomerFields.company} $textType,
-      ${CustomerFields.companyArabic} $textType, 
-      ${CustomerFields.customer} $textType,
-      ${CustomerFields.customerArabic} $textType,
-      ${CustomerFields.contactNumber} $textType,
-      ${CustomerFields.vatNumber} $textType,
-      ${CustomerFields.email} $textType,
-      ${CustomerFields.address} $textType,
-      ${CustomerFields.addressArabic} $textType,
-      ${CustomerFields.city} $textType,
-      ${CustomerFields.cityArabic} $textType,
-      ${CustomerFields.state} $textType,
-      ${CustomerFields.stateArabic} $textType,
-      ${CustomerFields.country} $textType,
-      ${CustomerFields.countryArabic} $textType,
-      ${CustomerFields.poBox} $textType)''');
+      ${CustomerFields.customerType} $textNotNull,
+      ${CustomerFields.company} $textNotNull,
+      ${CustomerFields.companyArabic} $textNotNull, 
+      ${CustomerFields.customer} $textNotNull,
+      ${CustomerFields.customerArabic} $textNotNull,
+      ${CustomerFields.contactNumber} $textNotNull,
+      ${CustomerFields.vatNumber} $textNotNull,
+      ${CustomerFields.email} $textNotNull,
+      ${CustomerFields.address} $textNotNull,
+      ${CustomerFields.addressArabic} $textNotNull,
+      ${CustomerFields.city} $textNotNull,
+      ${CustomerFields.cityArabic} $textNotNull,
+      ${CustomerFields.state} $textNotNull,
+      ${CustomerFields.stateArabic} $textNotNull,
+      ${CustomerFields.country} $textNotNull,
+      ${CustomerFields.countryArabic} $textNotNull,
+      ${CustomerFields.poBox} $textNotNull)''');
 
 //========== Table Item-Master ==========
     await db.execute('''CREATE TABLE $tableItemMaster (
       ${ItemMasterFields.id} $idAuto,
-      ${ItemMasterFields.productType} $textType,
-      ${ItemMasterFields.itemName} $textType,
-      ${ItemMasterFields.itemNameArabic} $textType, 
-      ${ItemMasterFields.itemCode} $textType,
-      ${ItemMasterFields.itemCategoryId} $intType,
+      ${ItemMasterFields.productType} $textNotNull,
+      ${ItemMasterFields.itemName} $textNotNull,
+      ${ItemMasterFields.itemNameArabic} $textNotNull, 
+      ${ItemMasterFields.itemCode} $textNotNull,
+      ${ItemMasterFields.itemCategoryId} $intNotNull,
       ${ItemMasterFields.itemSubCategoryId} $intNull,
       ${ItemMasterFields.itemBrandId} $intNull,
-      ${ItemMasterFields.itemCost} $textType,
-      ${ItemMasterFields.sellingPrice} $textType,
-      ${ItemMasterFields.secondarySellingPrice} $textType,
-      ${ItemMasterFields.vatId} $intType,
-      ${ItemMasterFields.vatRate} $intType,
-      ${ItemMasterFields.productVAT} $textType,
-      ${ItemMasterFields.unit} $textType,
-      ${ItemMasterFields.expiryDate} $textType,
-      ${ItemMasterFields.openingStock} $textType,
-      ${ItemMasterFields.vatMethod} $textType,
-      ${ItemMasterFields.alertQuantity} $textType,
-      ${ItemMasterFields.itemImage} $textType)''');
+      ${ItemMasterFields.itemCost} $textNotNull,
+      ${ItemMasterFields.sellingPrice} $textNotNull,
+      ${ItemMasterFields.secondarySellingPrice} $textNotNull,
+      ${ItemMasterFields.vatId} $intNotNull,
+      ${ItemMasterFields.vatRate} $intNotNull,
+      ${ItemMasterFields.productVAT} $textNotNull,
+      ${ItemMasterFields.unit} $textNotNull,
+      ${ItemMasterFields.expiryDate} $textNotNull,
+      ${ItemMasterFields.openingStock} $textNotNull,
+      ${ItemMasterFields.vatMethod} $textNotNull,
+      ${ItemMasterFields.alertQuantity} $textNotNull,
+      ${ItemMasterFields.itemImage} $textNotNull)''');
 
 //========== Table Expense ==========
     await db.execute('''CREATE TABLE $tableExpense (
       ${ExpenseFields.id} $idAuto,
-      ${ExpenseFields.expenseCategory} $textType,
-      ${ExpenseFields.expenseTitle} $textType,
-      ${ExpenseFields.amount} $textType,
-      ${ExpenseFields.date} $textType,
-      ${ExpenseFields.note} $textType,
-      ${ExpenseFields.voucherNumber} $textType,
-      ${ExpenseFields.payBy} $textType,
-      ${ExpenseFields.documents} $textType)''');
+      ${ExpenseFields.expenseCategory} $textNotNull,
+      ${ExpenseFields.expenseTitle} $textNotNull,
+      ${ExpenseFields.amount} $textNotNull,
+      ${ExpenseFields.date} $textNotNull,
+      ${ExpenseFields.note} $textNull,
+      ${ExpenseFields.voucherNumber} $textNull,
+      ${ExpenseFields.payBy} $textNull,
+      ${ExpenseFields.documents} $textNull)''');
 
 //========== Table Business Profile ==========
     await db.execute('''CREATE TABLE $tableBusinessProfile (
       ${BusinessProfileFields.id} $idNotNull,
-      ${BusinessProfileFields.business} $textType,
-      ${BusinessProfileFields.businessArabic} $textType,
-      ${BusinessProfileFields.billerName} $textType,
-      ${BusinessProfileFields.address} $textType, 
-      ${BusinessProfileFields.addressArabic} $textType,
-      ${BusinessProfileFields.city} $textType,
-      ${BusinessProfileFields.cityArabic} $textType,
-      ${BusinessProfileFields.state} $textType,
-      ${BusinessProfileFields.stateArabic} $textType,
-      ${BusinessProfileFields.country} $textType,
-      ${BusinessProfileFields.countryArabic} $textType,
-      ${BusinessProfileFields.vatNumber} $textType,
-      ${BusinessProfileFields.phoneNumber} $textType,
-      ${BusinessProfileFields.email} $textType,
-      ${BusinessProfileFields.logo} $textType)''');
+      ${BusinessProfileFields.business} $textNotNull,
+      ${BusinessProfileFields.businessArabic} $textNotNull,
+      ${BusinessProfileFields.billerName} $textNotNull,
+      ${BusinessProfileFields.address} $textNotNull, 
+      ${BusinessProfileFields.addressArabic} $textNotNull,
+      ${BusinessProfileFields.city} $textNotNull,
+      ${BusinessProfileFields.cityArabic} $textNotNull,
+      ${BusinessProfileFields.state} $textNotNull,
+      ${BusinessProfileFields.stateArabic} $textNotNull,
+      ${BusinessProfileFields.country} $textNotNull,
+      ${BusinessProfileFields.countryArabic} $textNotNull,
+      ${BusinessProfileFields.vatNumber} $textNotNull,
+      ${BusinessProfileFields.phoneNumber} $textNotNull,
+      ${BusinessProfileFields.email} $textNotNull,
+      ${BusinessProfileFields.logo} $textNotNull)''');
 
 //========== Table VAT ==========
     await db.execute('''CREATE TABLE $tableVat (
       ${VatFields.id} $idAuto, 
-      ${VatFields.name} $textType,
-      ${VatFields.code} $textType,
-      ${VatFields.rate} $intType,
-      ${VatFields.type} $textType)''');
+      ${VatFields.name} $textNotNull,
+      ${VatFields.code} $textNotNull,
+      ${VatFields.rate} $intNotNull,
+      ${VatFields.type} $textNotNull)''');
 
 //========== Table Expense ==========
     await db.execute('''CREATE TABLE $tableExpenseCategory (
       ${ExpenseCategoryFields.id} $idAuto,
-      ${ExpenseCategoryFields.expense} $textType)''');
+      ${ExpenseCategoryFields.expense} $textNotNull)''');
 
 //========== Table Sales ==========
     await db.execute('''CREATE TABLE $tableSales (
       ${SalesFields.id} $idAuto,
-      ${SalesFields.invoiceNumber} $textType,
+      ${SalesFields.invoiceNumber} $textNotNull,
       ${SalesFields.returnAmount} $textNull,
-      ${SalesFields.salesNote} $textType,
-      ${SalesFields.dateTime} $textType,
-      ${SalesFields.customerId} $intType, 
-      ${SalesFields.customerName} $textType,
-      ${SalesFields.billerName} $textType,
-      ${SalesFields.totalItems} $textType,
-      ${SalesFields.vatAmount} $textType,
-      ${SalesFields.subTotal} $textType,
-      ${SalesFields.discount} $textType,
-      ${SalesFields.grantTotal} $textType,
-      ${SalesFields.paid} $textType,
-      ${SalesFields.balance} $textType,
-      ${SalesFields.paymentType} $textType,
-      ${SalesFields.salesStatus} $textType,
-      ${SalesFields.paymentStatus} $textType,
-      ${SalesFields.createdBy} $textType)''');
+      ${SalesFields.salesNote} $textNotNull,
+      ${SalesFields.dateTime} $textNotNull,
+      ${SalesFields.customerId} $intNotNull, 
+      ${SalesFields.customerName} $textNotNull,
+      ${SalesFields.billerName} $textNotNull,
+      ${SalesFields.totalItems} $textNotNull,
+      ${SalesFields.vatAmount} $textNotNull,
+      ${SalesFields.subTotal} $textNotNull,
+      ${SalesFields.discount} $textNotNull,
+      ${SalesFields.grantTotal} $textNotNull,
+      ${SalesFields.paid} $textNotNull,
+      ${SalesFields.balance} $textNotNull,
+      ${SalesFields.paymentType} $textNotNull,
+      ${SalesFields.salesStatus} $textNotNull,
+      ${SalesFields.paymentStatus} $textNotNull,
+      ${SalesFields.createdBy} $textNotNull)''');
 
 //========== Table Sales Items ==========
     await db.execute('''CREATE TABLE $tableSalesItems (
       ${SalesItemsFields.id} $idAuto,
-      ${SalesItemsFields.saleId} $intType,
-      ${SalesItemsFields.productId} $intType,
-      ${SalesItemsFields.productType} $textType,
-      ${SalesItemsFields.productName} $textType,
-      ${SalesItemsFields.categoryId} $intType,
-      ${SalesItemsFields.productCode} $textType,
-      ${SalesItemsFields.unitPrice} $textType,
-      ${SalesItemsFields.productCost} $textType,
-      ${SalesItemsFields.quantity} $textType,
-      ${SalesItemsFields.subTotal} $textType,
-      ${SalesItemsFields.vatMethod} $textType,
-      ${SalesItemsFields.vatId} $intType,
-      ${SalesItemsFields.vatTotal} $textType,
-      ${SalesItemsFields.unitCode} $textType,
-      ${SalesItemsFields.netUnitPrice} $textType,
-      ${SalesItemsFields.vatPercentage} $textType,
-      ${SalesItemsFields.vatRate} $intType)''');
+      ${SalesItemsFields.saleId} $intNotNull,
+      ${SalesItemsFields.productId} $intNotNull,
+      ${SalesItemsFields.productType} $textNotNull,
+      ${SalesItemsFields.productName} $textNotNull,
+      ${SalesItemsFields.categoryId} $intNotNull,
+      ${SalesItemsFields.productCode} $textNotNull,
+      ${SalesItemsFields.unitPrice} $textNotNull,
+      ${SalesItemsFields.productCost} $textNotNull,
+      ${SalesItemsFields.quantity} $textNotNull,
+      ${SalesItemsFields.subTotal} $textNotNull,
+      ${SalesItemsFields.vatMethod} $textNotNull,
+      ${SalesItemsFields.vatId} $intNotNull,
+      ${SalesItemsFields.vatTotal} $textNotNull,
+      ${SalesItemsFields.unitCode} $textNotNull,
+      ${SalesItemsFields.netUnitPrice} $textNotNull,
+      ${SalesItemsFields.vatPercentage} $textNotNull,
+      ${SalesItemsFields.vatRate} $intNotNull)''');
 
 //========== Table Transactions ==========
     await db.execute('''CREATE TABLE $tableTransactions (
       ${TransactionsField.id} $idAuto,
-      ${TransactionsField.category} $textType,
-      ${TransactionsField.transactionType} $textType,
-      ${TransactionsField.dateTime} $textType,
-      ${TransactionsField.amount} $textType,
-      ${TransactionsField.status} $textType,
-      ${TransactionsField.description} $textType,
+      ${TransactionsField.category} $textNotNull,
+      ${TransactionsField.transactionType} $textNotNull,
+      ${TransactionsField.dateTime} $textNotNull,
+      ${TransactionsField.amount} $textNotNull,
+      ${TransactionsField.status} $textNotNull,
+      ${TransactionsField.description} $textNull,
       ${TransactionsField.salesId} $intNull,
       ${TransactionsField.purchaseId} $intNull,
       ${TransactionsField.salesReturnId} $intNull,
-      ${TransactionsField.purchaseReturnId} $intNull)''');
+      ${TransactionsField.purchaseReturnId} $intNull,
+      ${TransactionsField.customerId} $intNull,
+      ${TransactionsField.supplierId} $intNull,
+      ${TransactionsField.payBy} $textNull)''');
 
 //========== Table Purchase ==========
     await db.execute('''CREATE TABLE $tablePurchase (
       ${PurchaseFields.id} $idAuto,
-      ${PurchaseFields.invoiceNumber} $textType,
-      ${PurchaseFields.referenceNumber} $textType,
-      ${PurchaseFields.purchaseNote} $textType,
-      ${PurchaseFields.dateTime} $textType,
-      ${PurchaseFields.supplierId} $intType, 
-      ${PurchaseFields.supplierName} $textType,
-      ${PurchaseFields.billerName} $textType,
-      ${PurchaseFields.totalItems} $textType,
-      ${PurchaseFields.vatAmount} $textType,
-      ${PurchaseFields.subTotal} $textType,
-      ${PurchaseFields.discount} $textType,
-      ${PurchaseFields.grantTotal} $textType,
-      ${PurchaseFields.paid} $textType,
-      ${PurchaseFields.balance} $textType,
+      ${PurchaseFields.invoiceNumber} $textNotNull,
+      ${PurchaseFields.referenceNumber} $textNotNull,
+      ${PurchaseFields.purchaseNote} $textNotNull,
+      ${PurchaseFields.dateTime} $textNotNull,
+      ${PurchaseFields.supplierId} $intNotNull, 
+      ${PurchaseFields.supplierName} $textNotNull,
+      ${PurchaseFields.billerName} $textNotNull,
+      ${PurchaseFields.totalItems} $textNotNull,
+      ${PurchaseFields.vatAmount} $textNotNull,
+      ${PurchaseFields.subTotal} $textNotNull,
+      ${PurchaseFields.discount} $textNotNull,
+      ${PurchaseFields.grantTotal} $textNotNull,
+      ${PurchaseFields.paid} $textNotNull,
+      ${PurchaseFields.balance} $textNotNull,
       ${SalesFields.returnAmount} $textNull,
-      ${PurchaseFields.paymentType} $textType,
-      ${PurchaseFields.purchaseStatus} $textType,
-      ${PurchaseFields.paymentStatus} $textType,
-      ${PurchaseFields.createdBy} $textType)''');
+      ${PurchaseFields.paymentType} $textNotNull,
+      ${PurchaseFields.purchaseStatus} $textNotNull,
+      ${PurchaseFields.paymentStatus} $textNotNull,
+      ${PurchaseFields.createdBy} $textNotNull)''');
 
 //========== Table Purchase Items ==========
     await db.execute('''CREATE TABLE $tablePurchaseItems (
       ${PurchaseItemsFields.id} $idAuto,
-      ${PurchaseItemsFields.purchaseId} $intType,
-      ${PurchaseItemsFields.productId} $intType,
-      ${PurchaseItemsFields.productType} $textType,
-      ${PurchaseItemsFields.productName} $textType,
-      ${PurchaseItemsFields.categoryId} $intType,
-      ${PurchaseItemsFields.productCode} $textType,
-      ${PurchaseItemsFields.unitPrice} $textType,
-      ${PurchaseItemsFields.productCost} $textType,
-      ${PurchaseItemsFields.quantity} $textType,
-      ${PurchaseItemsFields.subTotal} $textType,
-      ${PurchaseItemsFields.vatId} $intType,
-      ${PurchaseItemsFields.vatMethod} $textType,
-      ${PurchaseItemsFields.vatRate} $intType,
-      ${PurchaseItemsFields.vatTotal} $textType,
-      ${PurchaseItemsFields.unitCode} $textType,
-      ${PurchaseItemsFields.netUnitPrice} $textType,
-      ${PurchaseItemsFields.vatPercentage} $textType)''');
+      ${PurchaseItemsFields.purchaseId} $intNotNull,
+      ${PurchaseItemsFields.productId} $intNotNull,
+      ${PurchaseItemsFields.productType} $textNotNull,
+      ${PurchaseItemsFields.productName} $textNotNull,
+      ${PurchaseItemsFields.categoryId} $intNotNull,
+      ${PurchaseItemsFields.productCode} $textNotNull,
+      ${PurchaseItemsFields.unitPrice} $textNotNull,
+      ${PurchaseItemsFields.productCost} $textNotNull,
+      ${PurchaseItemsFields.quantity} $textNotNull,
+      ${PurchaseItemsFields.subTotal} $textNotNull,
+      ${PurchaseItemsFields.vatId} $intNotNull,
+      ${PurchaseItemsFields.vatMethod} $textNotNull,
+      ${PurchaseItemsFields.vatRate} $intNotNull,
+      ${PurchaseItemsFields.vatTotal} $textNotNull,
+      ${PurchaseItemsFields.unitCode} $textNotNull,
+      ${PurchaseItemsFields.netUnitPrice} $textNotNull,
+      ${PurchaseItemsFields.vatPercentage} $textNotNull)''');
 
 // ========== Table Sales Return ==========
     await db.execute('''CREATE TABLE $tableSalesReturn (
       ${SalesReturnFields.id} $idAuto,
       ${SalesReturnFields.saleId} $intNull,
-      ${SalesReturnFields.invoiceNumber} $textType,
-      ${SalesReturnFields.originalInvoiceNumber} $textType,
-      ${SalesReturnFields.salesNote} $textType,
-      ${SalesReturnFields.dateTime} $textType,
-      ${SalesReturnFields.customerId} $intType,
-      ${SalesReturnFields.customerName} $textType,
-      ${SalesReturnFields.billerName} $textType,
-      ${SalesReturnFields.totalItems} $textType,
-      ${SalesReturnFields.vatAmount} $textType,
-      ${SalesReturnFields.subTotal} $textType,
-      ${SalesReturnFields.discount} $textType,
-      ${SalesReturnFields.grantTotal} $textType,
-      ${SalesReturnFields.paid} $textType,
-      ${SalesReturnFields.balance} $textType,
-      ${SalesReturnFields.paymentType} $textType,
-      ${SalesReturnFields.salesStatus} $textType,
-      ${SalesReturnFields.paymentStatus} $textType,
-      ${SalesReturnFields.createdBy} $textType)''');
+      ${SalesReturnFields.invoiceNumber} $textNotNull,
+      ${SalesReturnFields.originalInvoiceNumber} $textNotNull,
+      ${SalesReturnFields.salesNote} $textNotNull,
+      ${SalesReturnFields.dateTime} $textNotNull,
+      ${SalesReturnFields.customerId} $intNotNull,
+      ${SalesReturnFields.customerName} $textNotNull,
+      ${SalesReturnFields.billerName} $textNotNull,
+      ${SalesReturnFields.totalItems} $textNotNull,
+      ${SalesReturnFields.vatAmount} $textNotNull,
+      ${SalesReturnFields.subTotal} $textNotNull,
+      ${SalesReturnFields.discount} $textNotNull,
+      ${SalesReturnFields.grantTotal} $textNotNull,
+      ${SalesReturnFields.paid} $textNotNull,
+      ${SalesReturnFields.balance} $textNotNull,
+      ${SalesReturnFields.paymentType} $textNotNull,
+      ${SalesReturnFields.salesStatus} $textNotNull,
+      ${SalesReturnFields.paymentStatus} $textNotNull,
+      ${SalesReturnFields.createdBy} $textNotNull)''');
 
 //========== Table Sales Return Items ==========
     await db.execute('''CREATE TABLE $tableSalesReturnItems (
       ${SalesReturnItemsFields.id} $idAuto,
-      ${SalesReturnItemsFields.saleId} $intType,
-      ${SalesReturnItemsFields.saleReturnId} $intType,
-      ${SalesReturnItemsFields.originalInvoiceNumber} $textType,
-      ${SalesReturnItemsFields.productId} $intType,
-      ${SalesReturnItemsFields.productType} $textType,
-      ${SalesReturnItemsFields.productName} $textType,
-      ${SalesReturnItemsFields.categoryId} $intType,
-      ${SalesReturnItemsFields.productCode} $textType,
-      ${SalesReturnItemsFields.unitPrice} $textType,
-      ${SalesReturnItemsFields.productCost} $textType,
-      ${SalesReturnItemsFields.quantity} $textType,
-      ${SalesReturnItemsFields.subTotal} $textType,
-      ${SalesReturnItemsFields.vatMethod} $textType,
-      ${SalesReturnItemsFields.vatId} $intType,
-      ${SalesReturnItemsFields.vatRate} $intType,
-      ${SalesReturnItemsFields.vatTotal} $textType,
-      ${SalesReturnItemsFields.unitCode} $textType,
-      ${SalesReturnItemsFields.netUnitPrice} $textType,
-      ${SalesReturnItemsFields.vatPercentage} $textType)''');
+      ${SalesReturnItemsFields.saleId} $intNotNull,
+      ${SalesReturnItemsFields.saleReturnId} $intNotNull,
+      ${SalesReturnItemsFields.originalInvoiceNumber} $textNotNull,
+      ${SalesReturnItemsFields.productId} $intNotNull,
+      ${SalesReturnItemsFields.productType} $textNotNull,
+      ${SalesReturnItemsFields.productName} $textNotNull,
+      ${SalesReturnItemsFields.categoryId} $intNotNull,
+      ${SalesReturnItemsFields.productCode} $textNotNull,
+      ${SalesReturnItemsFields.unitPrice} $textNotNull,
+      ${SalesReturnItemsFields.productCost} $textNotNull,
+      ${SalesReturnItemsFields.quantity} $textNotNull,
+      ${SalesReturnItemsFields.subTotal} $textNotNull,
+      ${SalesReturnItemsFields.vatMethod} $textNotNull,
+      ${SalesReturnItemsFields.vatId} $intNotNull,
+      ${SalesReturnItemsFields.vatRate} $intNotNull,
+      ${SalesReturnItemsFields.vatTotal} $textNotNull,
+      ${SalesReturnItemsFields.unitCode} $textNotNull,
+      ${SalesReturnItemsFields.netUnitPrice} $textNotNull,
+      ${SalesReturnItemsFields.vatPercentage} $textNotNull)''');
 
 // ========== Table Purchase Return ==========
     await db.execute('''CREATE TABLE $tablePurchaseReturn (
       ${PurchaseReturnFields.id} $idAuto,
-      ${PurchaseReturnFields.purchaseId} $intType,
-      ${PurchaseReturnFields.invoiceNumber} $textType,
-      ${PurchaseReturnFields.referenceNumber} $textType,
+      ${PurchaseReturnFields.purchaseId} $intNotNull,
+      ${PurchaseReturnFields.invoiceNumber} $textNotNull,
+      ${PurchaseReturnFields.referenceNumber} $textNotNull,
       ${PurchaseReturnFields.originalInvoiceNumber} $textNull,
-      ${PurchaseReturnFields.purchaseNote} $textType,
-      ${PurchaseReturnFields.dateTime} $textType,
-      ${PurchaseReturnFields.supplierId} $intType,
-      ${PurchaseReturnFields.supplierName} $textType,
-      ${PurchaseReturnFields.billerName} $textType,
-      ${PurchaseReturnFields.totalItems} $textType,
-      ${PurchaseReturnFields.vatAmount} $textType,
-      ${PurchaseReturnFields.subTotal} $textType,
-      ${PurchaseReturnFields.discount} $textType,
-      ${PurchaseReturnFields.grantTotal} $textType,
-      ${PurchaseReturnFields.paid} $textType,
-      ${PurchaseReturnFields.balance} $textType,
-      ${PurchaseReturnFields.paymentType} $textType,
-      ${PurchaseReturnFields.purchaseStatus} $textType,
-      ${PurchaseReturnFields.paymentStatus} $textType,
-      ${PurchaseReturnFields.createdBy} $textType)''');
+      ${PurchaseReturnFields.purchaseNote} $textNotNull,
+      ${PurchaseReturnFields.dateTime} $textNotNull,
+      ${PurchaseReturnFields.supplierId} $intNotNull,
+      ${PurchaseReturnFields.supplierName} $textNotNull,
+      ${PurchaseReturnFields.billerName} $textNotNull,
+      ${PurchaseReturnFields.totalItems} $textNotNull,
+      ${PurchaseReturnFields.vatAmount} $textNotNull,
+      ${PurchaseReturnFields.subTotal} $textNotNull,
+      ${PurchaseReturnFields.discount} $textNotNull,
+      ${PurchaseReturnFields.grantTotal} $textNotNull,
+      ${PurchaseReturnFields.paid} $textNotNull,
+      ${PurchaseReturnFields.balance} $textNotNull,
+      ${PurchaseReturnFields.paymentType} $textNotNull,
+      ${PurchaseReturnFields.purchaseStatus} $textNotNull,
+      ${PurchaseReturnFields.paymentStatus} $textNotNull,
+      ${PurchaseReturnFields.createdBy} $textNotNull)''');
 
 //========== Table Purchase Return Items ==========
     await db.execute('''CREATE TABLE $tablePurchaseItemsReturn (
       ${PurchaseReturnItemsFields.id} $idAuto,
-      ${PurchaseReturnItemsFields.purchaseId} $intType,
-      ${PurchaseReturnItemsFields.purchaseReturnId} $intType,
+      ${PurchaseReturnItemsFields.purchaseId} $intNotNull,
+      ${PurchaseReturnItemsFields.purchaseReturnId} $intNotNull,
       ${PurchaseReturnItemsFields.originalInvoiceNumber} $textNull,
-      ${PurchaseReturnItemsFields.productId} $intType,
-      ${PurchaseReturnItemsFields.productType} $textType,
-      ${PurchaseReturnItemsFields.productName} $textType,
-      ${PurchaseReturnItemsFields.categoryId} $intType,
-      ${PurchaseReturnItemsFields.productCode} $textType,
-      ${PurchaseReturnItemsFields.unitPrice} $textType,
-      ${PurchaseReturnItemsFields.productCost} $textType,
-      ${PurchaseReturnItemsFields.quantity} $textType,
-      ${PurchaseReturnItemsFields.subTotal} $textType,
-      ${PurchaseReturnItemsFields.vatId} $intType,
-      ${PurchaseReturnItemsFields.vatTotal} $textType,
-      ${PurchaseReturnItemsFields.unitCode} $textType,
-      ${PurchaseReturnItemsFields.netUnitPrice} $textType,
-      ${PurchaseReturnItemsFields.vatPercentage} $textType)''');
+      ${PurchaseReturnItemsFields.productId} $intNotNull,
+      ${PurchaseReturnItemsFields.productType} $textNotNull,
+      ${PurchaseReturnItemsFields.productName} $textNotNull,
+      ${PurchaseReturnItemsFields.categoryId} $intNotNull,
+      ${PurchaseReturnItemsFields.productCode} $textNotNull,
+      ${PurchaseReturnItemsFields.unitPrice} $textNotNull,
+      ${PurchaseReturnItemsFields.productCost} $textNotNull,
+      ${PurchaseReturnItemsFields.quantity} $textNotNull,
+      ${PurchaseReturnItemsFields.subTotal} $textNotNull,
+      ${PurchaseReturnItemsFields.vatId} $intNotNull,
+      ${PurchaseReturnItemsFields.vatTotal} $textNotNull,
+      ${PurchaseReturnItemsFields.unitCode} $textNotNull,
+      ${PurchaseReturnItemsFields.netUnitPrice} $textNotNull,
+      ${PurchaseReturnItemsFields.vatPercentage} $textNotNull)''');
   }
 }

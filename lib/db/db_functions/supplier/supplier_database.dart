@@ -62,7 +62,7 @@ class SupplierDatabase {
   //========== Get All Supplier By Query ==========
   Future<List<SupplierModel>> getSupplierSuggestions(String pattern) async {
     final db = await dbInstance.database;
-    final res = await db.rawQuery('''select * from $tableSupplier where ${SupplierFields.contactName} LIKE "%$pattern%"''');
+    final res = await db.rawQuery('''select * from $tableSupplier where ${SupplierFields.supplierName} LIKE "%$pattern%"''');
 
     List<SupplierModel> list = res.isNotEmpty ? res.map((c) => SupplierModel.fromJson(c)).toList() : [];
 

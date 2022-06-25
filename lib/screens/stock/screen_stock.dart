@@ -33,7 +33,7 @@ class ScreenStock extends StatelessWidget {
   final itemMasterDB = ItemMasterDatabase.instance;
 
   //========== Value Notifiers ==========
-  static final ValueNotifier<List<dynamic>> itemsNotifier = ValueNotifier([]);
+  final ValueNotifier<List<dynamic>> itemsNotifier = ValueNotifier([]);
 
   //========== TextEditing Controllers ==========
   static final _productController = TextEditingController();

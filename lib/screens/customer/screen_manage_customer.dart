@@ -16,6 +16,7 @@ import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
+import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
 class CustomerManageScreen extends StatelessWidget {
   CustomerManageScreen({Key? key}) : super(key: key);
@@ -34,8 +35,7 @@ class CustomerManageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBarWidget(title: 'Customer Manage'),
-        body: Padding(
-          padding: const EdgeInsets.all(10.0),
+        body: ItemScreenPaddingWidget(
           child: Column(
             children: [
               //==================== Search & Filter ====================

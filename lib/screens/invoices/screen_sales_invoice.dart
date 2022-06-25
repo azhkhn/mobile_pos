@@ -209,10 +209,20 @@ class ScreenSalesInvoice extends StatelessWidget {
           textAlign: TextAlign.right,
           style: kStyle,
         ),
-        Text(
-          'هاتف: ${business.phoneNumber}',
-          textDirection: TextDirection.ltr,
-          style: kStyle,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              business.phoneNumber,
+              style: kStyle,
+            ),
+            const Text(
+              'هاتف: ',
+              textDirection: TextDirection.rtl,
+              style: kStyle,
+            ),
+          ],
         ),
         Text(
           'البريد: ${business.email}',
@@ -555,27 +565,35 @@ class ScreenSalesInvoice extends StatelessWidget {
       children: List<TableRow>.generate(tableLength, (index) {
         return index == 0
             ? TableRow(
-                decoration: const BoxDecoration(color: Color(0xFFE0E0E0)),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE0E0E0),
+                ),
                 children: List.generate(
                   headers.length,
-                  (_i) => Text(
-                    headers[_i],
-                    textAlign: _i == 0 || _i == 1 ? TextAlign.left : TextAlign.right,
-                    style: const TextStyle(
-                      fontSize: 8,
-                      fontWeight: FontWeight.bold,
+                  (_i) => Padding(
+                    padding: kPadding2,
+                    child: Text(
+                      headers[_i],
+                      textAlign: _i == 0 || _i == 1 ? TextAlign.left : TextAlign.right,
+                      style: const TextStyle(
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ))
             : TableRow(
                 children: List.generate(
                 headers.length,
-                (_i) => Text(
-                  data[index - 1][_i],
-                  textAlign: _i == 0 || _i == 1 ? TextAlign.left : TextAlign.right,
-                  style: const TextStyle(
-                    fontSize: 7,
-                    fontWeight: FontWeight.normal,
+                (_i) => Padding(
+                  padding: kPadding2,
+                  child: Text(
+                    data[index - 1][_i],
+                    textAlign: _i == 0 || _i == 1 ? TextAlign.left : TextAlign.right,
+                    style: const TextStyle(
+                      fontSize: 7,
+                      fontWeight: FontWeight.normal,
+                    ),
                   ),
                 ),
               ));

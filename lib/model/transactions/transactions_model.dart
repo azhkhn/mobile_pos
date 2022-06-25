@@ -17,6 +17,9 @@ class TransactionsField {
   static const purchaseId = 'purchaseId';
   static const salesReturnId = 'salesReturnId';
   static const purchaseReturnId = 'purchaseReturnId';
+  static const customerId = 'customerId';
+  static const supplierId = 'supplierId';
+  static const payBy = 'payBy';
 }
 
 @freezed
@@ -28,13 +31,15 @@ class TransactionsModel with _$TransactionsModel {
     required String dateTime,
     required String amount,
     required String status,
-    required String description,
+    String? description,
     int? salesId,
     int? purchaseId,
     int? salesReturnId,
     int? purchaseReturnId,
+    int? customerId,
+    int? supplierId,
+    String? payBy,
   }) = _TransactionsModel;
 
-  factory TransactionsModel.fromJson(Map<String, dynamic> json) =>
-      _$TransactionsModelFromJson(json);
+  factory TransactionsModel.fromJson(Map<String, dynamic> json) => _$TransactionsModelFromJson(json);
 }
