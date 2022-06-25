@@ -40,7 +40,7 @@ class SalesListFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+      padding: kPadding10,
       child: Form(
         key: _formKey,
         child: Row(

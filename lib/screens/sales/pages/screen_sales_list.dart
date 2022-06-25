@@ -9,7 +9,6 @@ import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/sales/widgets/sales_card_widget.dart';
 import 'package:shop_ez/screens/sales/widgets/sales_list_filter.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
 class SalesList extends StatelessWidget {
@@ -26,8 +25,7 @@ class SalesList extends StatelessWidget {
         appBar: AppBarWidget(
           title: 'Sales',
         ),
-        body: BackgroundContainerWidget(
-            child: ItemScreenPaddingWidget(
+        body: ItemScreenPaddingWidget(
           child: Column(
             children: [
               //========== Sales Filter Options ==========
@@ -45,7 +43,7 @@ class SalesList extends StatelessWidget {
 
                         default:
                           if (!snapshot.hasData) {
-                            return const Center(child: Text('Sales is Empty!'));
+                            return const Center(child: Text('No recent Sales!'));
                           }
                           salesNotifier.value = snapshot.data!;
                           return ValueListenableBuilder(
@@ -140,13 +138,13 @@ class SalesList extends StatelessWidget {
                                           );
                                         },
                                       )
-                                    : const Center(child: Text('Sales is Empty!'));
+                                    : const Center(child: Text('No recent Sales!'));
                               });
                       }
                     }),
               ),
             ],
           ),
-        )));
+        ));
   }
 }

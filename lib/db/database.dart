@@ -42,7 +42,7 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 6, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 1, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -54,19 +54,6 @@ class EzDatabase {
     const intNull = 'INTEGER';
     // const idLogin = 'INTEGER NOT NULL';
     const intNotNull = 'INTEGER NOT NULL';
-
-    await db.execute('drop table if exists $tableExpense');
-    //========== Table Expense ==========
-    await db.execute('''CREATE TABLE $tableExpense (
-      ${ExpenseFields.id} $idAuto,
-      ${ExpenseFields.expenseCategory} $textNotNull,
-      ${ExpenseFields.expenseTitle} $textNotNull,
-      ${ExpenseFields.amount} $textNotNull,
-      ${ExpenseFields.date} $textNotNull,
-      ${ExpenseFields.note} $textNull,
-      ${ExpenseFields.voucherNumber} $textNull,
-      ${ExpenseFields.payBy} $textNotNull,
-      ${ExpenseFields.documents} $textNull)''');
 
     // await db.execute("ALTER TABLE $tableTransactions ADD COLUMN ${TransactionsField.customerId} $intNull");
     // await db.execute("ALTER TABLE $tableTransactions ADD COLUMN ${TransactionsField.supplierId} $intNull");
@@ -134,6 +121,7 @@ class EzDatabase {
     await db.execute("DROP TABLE IF EXISTS $tablePurchase");
     await db.execute("DROP TABLE IF EXISTS $tablePurchaseItems");
     await db.execute("DROP TABLE IF EXISTS $tableTransactions");
+    await db.execute('drop table if exists $tableExpense');
     await db.execute("DROP TABLE IF EXISTS $tableSalesReturn");
     await db.execute("DROP TABLE IF EXISTS $tableSalesReturnItems");
     await db.execute("DROP TABLE IF EXISTS $tablePurchaseReturn");
@@ -198,6 +186,18 @@ class EzDatabase {
       ${TransactionsField.customerId} $intNull,
       ${TransactionsField.supplierId} $intNull,
       ${TransactionsField.payBy} $textNull)''');
+
+    //========== Table Expense ==========
+    await db.execute('''CREATE TABLE $tableExpense (
+      ${ExpenseFields.id} $idAuto,
+      ${ExpenseFields.expenseCategory} $textNotNull,
+      ${ExpenseFields.expenseTitle} $textNotNull,
+      ${ExpenseFields.amount} $textNotNull,
+      ${ExpenseFields.date} $textNotNull,
+      ${ExpenseFields.note} $textNull,
+      ${ExpenseFields.voucherNumber} $textNull,
+      ${ExpenseFields.payBy} $textNotNull,
+      ${ExpenseFields.documents} $textNull)''');
 
 //========== Table Purchase ==========
     await db.execute('''CREATE TABLE $tablePurchase (

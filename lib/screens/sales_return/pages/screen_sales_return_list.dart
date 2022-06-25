@@ -42,7 +42,7 @@ class SalesReturnList extends StatelessWidget {
 
                         default:
                           if (!snapshot.hasData) {
-                            return const Center(child: Text('Sales Return is Empty!'));
+                            return const Center(child: Text('No recent Sales Returns!'));
                           }
                           salesReturnNotifier.value = snapshot.data!;
                           return ValueListenableBuilder(
@@ -68,7 +68,7 @@ class SalesReturnList extends StatelessWidget {
                                           );
                                         },
                                       )
-                                    : const Center(child: Text('Sales Return is Empty!'));
+                                    : const Center(child: Text('No recent Sales Returns!!'));
                               });
                       }
                     }),

@@ -41,7 +41,7 @@ class PurchaseReturnList extends StatelessWidget {
 
                         default:
                           if (!snapshot.hasData) {
-                            return const Center(child: Text('Purchase Return is Empty!'));
+                            return const Center(child: Text('No recent Purchase Returns!'));
                           }
                           purchasesReturnNotifier.value = snapshot.data!;
                           return ValueListenableBuilder(
@@ -60,7 +60,7 @@ class PurchaseReturnList extends StatelessWidget {
                                           );
                                         },
                                       )
-                                    : const Center(child: Text('Purchase Return is Empty!'));
+                                    : const Center(child: Text('No recent Purchase Returns!'));
                               });
                       }
                     }),

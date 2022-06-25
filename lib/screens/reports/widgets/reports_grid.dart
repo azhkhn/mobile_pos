@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 
 const List homeGridName = [
@@ -37,6 +39,7 @@ class ReportsGrid extends StatelessWidget {
                   Navigator.pushNamed(context, routePaymentReport);
                   break;
                 case 2:
+                  Navigator.pushNamed(context, routePendingPayment);
                   break;
                 case 3:
                   break;
@@ -57,7 +60,7 @@ class ReportsGrid extends StatelessWidget {
             },
             child: GridTile(
               footer: Padding(
-                padding: const EdgeInsets.all(5.0),
+                padding: kPadding10,
                 child: Text(
                   homeGridName[index],
                   textAlign: TextAlign.center,
@@ -70,6 +73,7 @@ class ReportsGrid extends StatelessWidget {
               ),
               child: const Icon(
                 Icons.flag,
+                color: kBlack,
                 size: 40,
               ),
             ),

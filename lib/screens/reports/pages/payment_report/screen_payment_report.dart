@@ -13,7 +13,7 @@ import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart'
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
-import 'package:shop_ez/screens/reports/pages/payment_reports/widgets/payment_report_card.dart';
+import 'package:shop_ez/screens/reports/pages/payment_report/widgets/payment_report_card.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
@@ -182,7 +182,7 @@ class ScreenPaymentReport extends StatelessWidget {
               ],
             ),
 
-            kHeight10,
+            kHeight5,
 
             //======================================================================
             //==================== PayBy and Date Filter Fields ====================
@@ -315,6 +315,8 @@ class ScreenPaymentReport extends StatelessWidget {
                 )
               ],
             ),
+
+            kHeight10,
 
             // == == == == == Transactions == == == == ==
             Expanded(
