@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
 import 'package:shop_ez/model/vat/vat_model.dart';
 
@@ -18,6 +19,24 @@ class VatCalculator {
     // log('Inclusive == ' '${_inclusiveAmount * 115 / 100}');
 
     return _exclusiveAmount;
+  }
+
+  //==================== Get VAT Amount ====================
+  static num getVatAmount({
+    required String vatMethod,
+    required String amount,
+    required int vatRate,
+  }) {
+    num? itemTotalVat;
+    num sellingPrice = num.parse(amount);
+
+    if (vatMethod == 'Inclusive') {
+      sellingPrice = getExclusiveAmount(sellingPrice: '$sellingPrice', vatRate: vatRate);
+    }
+
+    itemTotalVat = sellingPrice * vatRate / 100;
+    log('Item VAT == $itemTotalVat');
+    return Converter.amountRounder(itemTotalVat);
   }
 }
 

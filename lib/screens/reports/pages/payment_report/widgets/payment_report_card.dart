@@ -49,9 +49,31 @@ class PaymentReportCard extends StatelessWidget {
                   style: TextStyle(color: person == null ? kGrey : null),
                 );
               }),
-          subtitle: Text(
-            Converter.dateTimeFormatTransaction.format(DateTime.parse(transactionsModel.dateTime)),
-            style: kText12Lite,
+          subtitle: Row(
+            children: [
+              FittedBox(
+                child: Text(
+                  Converter.dateTimeFormatTransaction.format(DateTime.parse(transactionsModel.dateTime)),
+                  style: kText12Lite,
+                ),
+              ),
+              kWidth5,
+              const Text(' ~ '),
+              FittedBox(
+                child: Text(
+                  transactionsModel.salesReturnId != null
+                      ? 'Sale Return'
+                      : transactionsModel.purchaseReturnId != null
+                          ? 'Purchase Return'
+                          : transactionsModel.salesId != null
+                              ? 'Sale'
+                              : transactionsModel.purchaseId != null
+                                  ? 'Purchase'
+                                  : 'Expense',
+                  style: kText12Black,
+                ),
+              ),
+            ],
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -65,7 +87,7 @@ class PaymentReportCard extends StatelessWidget {
                   fontSize: 12,
                 ),
               ),
-              kWidth10,
+              // kWidth10,
               // Icon(Icons.verified_outlined, color: transactionsModel.transactionType == 'Income' ? kGreen : Colors.red),
             ],
           )),

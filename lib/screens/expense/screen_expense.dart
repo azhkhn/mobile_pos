@@ -14,12 +14,15 @@ import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
+import 'package:shop_ez/core/utils/vat/vat.dart';
 import 'package:shop_ez/db/db_functions/expense/expense_category_database.dart';
 import 'package:shop_ez/db/db_functions/expense/expense_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
+import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
 import 'package:shop_ez/model/expense/expense_category_model.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
+import 'package:shop_ez/model/vat/vat_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
@@ -42,7 +45,11 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<FormFieldState> _dropdownKey = GlobalKey<FormFieldState>();
 
+  //========== Lists ==========
+  final List<String> vatMethodList = ['Exclusive', 'Inclusive'];
+
   //========== Databse Instances ==========
+  final vatDB = VatDatabase.instance;
   final expenseDB = ExpenseDatabase.instance;
   final expenseCategoryDB = ExpenseCategoryDatabase.instance;
   final transactionDatabase = TransactionDatabase.instance;
@@ -64,15 +71,23 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
   final _voucherNumberController = TextEditingController();
   final _dateController = TextEditingController();
 
+  //========== Integers ==========
+  int? _vatId, _vatRate;
+  String? _vathMethod, _vatAmount;
+  // final _dateController = TextEditingController();
+
   String _expenseCategoryController = '';
   String _selectedDate = '';
 
   Future<List<ExpenseCategoryModel>>? futureExpenceCategories;
+  Future<List<VatModel>>? futureVat;
 
   @override
   void initState() {
     super.initState();
+    expenseDB.getAllExpense();
     futureExpenceCategories = expenseCategoryDB.getAllExpenseCategories();
+    futureVat = vatDB.getAllVats();
   }
 
   @override
@@ -148,6 +163,68 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                       textInputType: TextInputType.number,
                       validator: (value) => Validators.nullValidator(value),
                     ),
+                    kHeight10,
+
+                    //========== Product VAT Dropdown ==========
+                    FutureBuilder(
+                      future: futureVat,
+                      builder: (context, dynamic snapshot) {
+                        final snap = snapshot as AsyncSnapshot;
+                        switch (snap.connectionState) {
+                          case ConnectionState.waiting:
+                            return const CircularProgressIndicator();
+                          case ConnectionState.done:
+                          default:
+                            return CustomDropDownField(
+                              labelText: 'Expense VAT',
+                              snapshot: snapshot.data,
+                              contentPadding: const EdgeInsets.all(10),
+                              onChanged: (value) async {
+                                final _vat = VatModel.fromJson(jsonDecode(value!));
+                                _vatId = _vat.id;
+                                _vatRate = _vat.rate;
+
+                                log('VAT id = $_vatId');
+                              },
+                              validator: (value) {
+                                if (_vatId == null && _vathMethod != null) {
+                                  return 'This field is required*';
+                                }
+                                return null;
+                              },
+                            );
+                        }
+                      },
+                    ),
+                    kHeight10,
+
+                    //========== VAT Method Dropdown ==========
+                    DropdownButtonFormField(
+                      decoration: const InputDecoration(
+                        label: Text(
+                          'VAT Method',
+                          style: TextStyle(color: klabelColorGrey),
+                        ),
+                        contentPadding: EdgeInsets.all(10),
+                      ),
+                      isExpanded: true,
+                      items: vatMethodList.map((String item) {
+                        return DropdownMenuItem<String>(
+                          value: item,
+                          child: Text(item),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        _vathMethod = value.toString();
+                      },
+                      validator: (value) {
+                        if (_vathMethod == null && _vatId != null) {
+                          return 'This field is required*';
+                        }
+                        return null;
+                      },
+                    ),
+
                     kHeight10,
 
                     //========== Date ==========
@@ -371,10 +448,18 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
     final _formState = _formKey.currentState!;
 
     if (_formState.validate()) {
+      if (_vatId != null) {
+        _vatAmount = VatCalculator.getVatAmount(vatMethod: _vathMethod!, amount: amount, vatRate: _vatRate!).toString();
+        log('vat Amount == $_vatAmount');
+      }
+
       final _expenseModel = ExpenseModel(
         expenseCategory: expenseCategory,
         expenseTitle: expenseTitle,
         amount: amount,
+        vatId: _vatId,
+        vatMethod: _vathMethod,
+        vatAmount: _vatAmount,
         date: date,
         note: note,
         voucherNumber: voucherNumber,

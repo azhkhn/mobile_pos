@@ -10,6 +10,9 @@ class ExpenseFields {
   static const String expenseCategory = 'expenseCategory';
   static const String expenseTitle = 'expenseTitle';
   static const String amount = 'amount';
+  static const String vatId = 'vatId';
+  static const String vatMethod = 'vatMethod';
+  static const String vatAmount = 'vatAmount';
   static const String date = 'date';
   static const String note = 'note';
   static const String voucherNumber = 'voucherNumber';
@@ -27,6 +30,9 @@ class ExpenseModel with _$ExpenseModel {
     required String date,
     required String payBy,
     String? note,
+    String? vatMethod,
+    String? vatAmount,
+    int? vatId,
     String? voucherNumber,
     String? documents,
   }) = _ExpenseModel;

@@ -46,15 +46,22 @@ class ScreenPendingPayment extends StatelessWidget {
             valueListenable: navigationNotifier,
             builder: (context, int nav, _) {
               return NavigationBar(
-                height: 55,
+                height: 50,
                 backgroundColor: kGrey300,
                 selectedIndex: nav,
                 onDestinationSelected: (int index) {
                   navigationNotifier.value = index;
                 },
+                animationDuration: const Duration(milliseconds: 800),
                 destinations: const [
-                  NavigationDestination(icon: Icon(Icons.south_west, size: 20), label: 'Receivable'),
-                  NavigationDestination(icon: Icon(Icons.north_east, size: 20), label: 'Payable'),
+                  NavigationDestination(
+                    icon: Icon(Icons.south_west, size: 20),
+                    label: 'Receivable',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.north_east, size: 20),
+                    label: 'Payable',
+                  ),
                 ],
               );
             }),

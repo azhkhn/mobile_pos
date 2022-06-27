@@ -152,7 +152,7 @@ class ScreenAccountPayable extends StatelessWidget {
                         final parseDate = Converter.dateFormat.format(_selectedDate);
                         dateController.text = parseDate.toString();
 
-                        List<PurchaseModel> _transactionByDate = [];
+                        final List<PurchaseModel> _transactionByDate = [];
 
                         final bool isFilter = payablebySupplier.isNotEmpty;
 

@@ -155,7 +155,7 @@ class ScreenAccountReceivable extends StatelessWidget {
                         final parseDate = Converter.dateFormat.format(_selectedDate);
                         dateController.text = parseDate.toString();
 
-                        List<SalesModel> _transactionByDate = [];
+                        final List<SalesModel> _transactionByDate = [];
 
                         final bool isFilter = receivablebyCustomer.isNotEmpty;
 

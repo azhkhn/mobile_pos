@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 
-const List homeGridName = [
+const List reportGridName = [
   'OPERATION SUMMARY',
   'PAYMENT REPORT',
   'PENDING PAYMENT',
@@ -14,6 +12,19 @@ const List homeGridName = [
   'TAX SUMMARY REPORT',
   'PURCHASE TAX REPORT',
   'SALES TAX REPORT',
+];
+
+const List reportGridIcons = [
+  'assets/images/reports/operation_summary.png',
+  'assets/images/reports/payment_report.png',
+  'assets/images/reports/pending_payment.png',
+  'assets/images/reports/sales_report.png',
+  'assets/images/reports/expense_report.png',
+  'assets/images/reports/negative_stock_report.png',
+  'assets/images/reports/stock_reorder_report.png',
+  'assets/images/reports/tax_summary_report.png',
+  'assets/images/reports/purchase_tax_report.png',
+  'assets/images/reports/sales_tax_report.png',
 ];
 
 class ReportsGrid extends StatelessWidget {
@@ -55,26 +66,28 @@ class ReportsGrid extends StatelessWidget {
                   break;
                 case 9:
                   break;
+                case 10:
+                  break;
                 default:
               }
             },
             child: GridTile(
               footer: Padding(
-                padding: kPadding10,
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                 child: Text(
-                  homeGridName[index],
+                  reportGridName[index],
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   style: const TextStyle(
-                    fontSize: 9,
+                    fontSize: 8,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              child: const Icon(
-                Icons.flag,
-                color: kBlack,
-                size: 40,
+              child: Image(
+                image: AssetImage(
+                  reportGridIcons[index],
+                ),
               ),
             ),
           )),

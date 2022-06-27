@@ -32,6 +32,7 @@ class ScreenPaymentReport extends StatelessWidget {
 
   //==================== List ====================
   List<TransactionsModel> transactionsList = [];
+  List<TransactionsModel> filteredList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -69,13 +70,18 @@ class ScreenPaymentReport extends StatelessWidget {
                             child: InkWell(
                               child: const Icon(Icons.clear, size: 15),
                               onTap: () async {
-                                customerController.clear();
-                                if (transactionsList.isNotEmpty) {
-                                  transactionsNotifier.value = transactionsList;
-                                } else {
-                                  await futureTransactions();
-                                  transactionsNotifier.value = transactionsList;
+                                if (customerController.text.isNotEmpty) {
+                                  filteredList.clear();
+                                  dateController.clear();
+
+                                  if (transactionsList.isNotEmpty) {
+                                    transactionsNotifier.value = transactionsList;
+                                  } else {
+                                    await futureTransactions();
+                                    transactionsNotifier.value = transactionsList;
+                                  }
                                 }
+                                customerController.clear();
                               },
                             ),
                           ),
@@ -104,10 +110,9 @@ class ScreenPaymentReport extends StatelessWidget {
                       payByController.clear();
                       customerController.text = selectedCustomer.customer;
                       log('Selected Customer = ' + selectedCustomer.customer);
-                      final List<TransactionsModel> _transactionsByCustomer =
-                          await TransactionDatabase.instance.getAllTransactionsByCustomerId(selectedCustomer.id!);
+                      filteredList = transactionsList.where((transaction) => transaction.customerId == selectedCustomer.id).toList();
                       //Notify Transactions by selected Customer
-                      transactionsNotifier.value = _transactionsByCustomer;
+                      transactionsNotifier.value = filteredList;
                     },
                   ),
                 ),
@@ -135,13 +140,18 @@ class ScreenPaymentReport extends StatelessWidget {
                             child: InkWell(
                               child: const Icon(Icons.clear, size: 15),
                               onTap: () async {
-                                supplierController.clear();
-                                if (transactionsList.isNotEmpty) {
-                                  transactionsNotifier.value = transactionsList;
-                                } else {
-                                  await futureTransactions();
-                                  transactionsNotifier.value = transactionsList;
+                                if (supplierController.text.isNotEmpty) {
+                                  filteredList.clear();
+                                  dateController.clear();
+
+                                  if (transactionsList.isNotEmpty) {
+                                    transactionsNotifier.value = transactionsList;
+                                  } else {
+                                    await futureTransactions();
+                                    transactionsNotifier.value = transactionsList;
+                                  }
                                 }
+                                supplierController.clear();
                               },
                             ),
                           ),
@@ -171,11 +181,10 @@ class ScreenPaymentReport extends StatelessWidget {
                       supplierController.text = selectedSupplier.supplierName;
                       log('Supplier = ' + selectedSupplier.supplierName);
 
-                      final List<TransactionsModel> _transactionsBySupplier =
-                          await TransactionDatabase.instance.getAllTransactionsBySupplierId(selectedSupplier.id!);
+                      filteredList = transactionsList.where((transaction) => transaction.supplierId == selectedSupplier.id).toList();
 
                       //Notify Transactions by selected Supplier
-                      transactionsNotifier.value = _transactionsBySupplier;
+                      transactionsNotifier.value = filteredList;
                     },
                   ),
                 ),
@@ -212,13 +221,19 @@ class ScreenPaymentReport extends StatelessWidget {
                             child: InkWell(
                               child: const Icon(Icons.clear, size: 15),
                               onTap: () async {
-                                payByController.clear();
-                                if (transactionsList.isNotEmpty) {
-                                  transactionsNotifier.value = transactionsList;
-                                } else {
-                                  await futureTransactions();
-                                  transactionsNotifier.value = transactionsList;
+                                if (payByController.text.isNotEmpty) {
+                                  filteredList.clear();
+                                  dateController.clear();
+
+                                  if (transactionsList.isNotEmpty) {
+                                    transactionsNotifier.value = transactionsList;
+                                  } else {
+                                    await futureTransactions();
+                                    transactionsNotifier.value = transactionsList;
+                                  }
                                 }
+
+                                payByController.clear();
                               },
                             ),
                           ),
@@ -248,8 +263,10 @@ class ScreenPaymentReport extends StatelessWidget {
                       payByController.text = selectedPayer.payBy!;
                       log('Selected Payer = ' + selectedPayer.payBy.toString());
 
+                      filteredList = transactionsList.where((transaction) => transaction.payBy == selectedPayer.payBy).toList();
+
                       //Notify Transactions by selected Payer
-                      transactionsNotifier.value = transactionsList.where((transaction) => transaction.payBy == selectedPayer.payBy).toList();
+                      transactionsNotifier.value = filteredList;
                     },
                   ),
                 ),
@@ -269,13 +286,19 @@ class ScreenPaymentReport extends StatelessWidget {
                       child: InkWell(
                         child: const Icon(Icons.clear, size: 15),
                         onTap: () async {
-                          dateController.clear();
-                          if (transactionsList.isNotEmpty) {
-                            transactionsNotifier.value = transactionsList;
-                          } else {
-                            await futureTransactions();
-                            transactionsNotifier.value = transactionsList;
+                          if (dateController.text.isNotEmpty) {
+                            if (transactionsList.isNotEmpty) {
+                              transactionsNotifier.value = transactionsList;
+                            } else {
+                              await futureTransactions();
+                              transactionsNotifier.value = transactionsList;
+                            }
+                            customerController.clear();
+                            supplierController.clear();
+                            payByController.clear();
                           }
+
+                          dateController.clear();
                         },
                       ),
                     ),
@@ -289,16 +312,14 @@ class ScreenPaymentReport extends StatelessWidget {
                       final _selectedDate = await datePicker(context);
 
                       if (_selectedDate != null) {
-                        // customerController.clear();
-                        // supplierController.clear();
-                        // payByController.clear();
-
                         final parseDate = Converter.dateFormat.format(_selectedDate);
                         dateController.text = parseDate.toString();
 
-                        List<TransactionsModel> _transactionByDate = [];
+                        final List<TransactionsModel> _transactionByDate = [];
 
-                        for (TransactionsModel transaction in transactionsList) {
+                        final bool isFilter = filteredList.isNotEmpty;
+
+                        for (TransactionsModel transaction in isFilter ? filteredList : transactionsList) {
                           final DateTime _transactionDate = DateTime.parse(transaction.dateTime);
 
                           final bool isSameDate = Converter.isSameDate(_selectedDate, _transactionDate);
