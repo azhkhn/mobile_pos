@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
@@ -21,8 +19,7 @@ class PaymentReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      log('Duration == ' + timeStamp.toString());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (transactionsModel.customerId != null) {
         final CustomerModel _customer = await CustomerDatabase.instance.getCustomerById(transactionsModel.customerId!);
         personNotifier.value = _customer.customer;

@@ -92,4 +92,19 @@ class PurchaseDatabase {
       throw 'Purchases is Empty!';
     }
   }
+
+  //========== Get Pending Payment Purchase ==========
+  Future<List<PurchaseModel>> getPendingPurchases() async {
+    final db = await dbInstance.database;
+    final res = await db.query(
+      tablePurchase,
+      where: "${PurchaseFields.paymentStatus} NOT IN('Paid','Returned')",
+    );
+
+    log('Purchase with pending amount == $res');
+
+    List<PurchaseModel> list = res.map((c) => PurchaseModel.fromJson(c)).toList();
+
+    return list;
+  }
 }

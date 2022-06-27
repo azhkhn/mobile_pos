@@ -14,14 +14,14 @@ class PurchaseCardWidget extends StatelessWidget {
     Key? key,
   }) : super(key: key);
   final int index;
-  final List<PurchaseModel> purchases;
+  final PurchaseModel purchases;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 10,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: kPadding8,
         child: Flex(
           mainAxisAlignment: MainAxisAlignment.start,
           direction: Axis.horizontal,
@@ -67,7 +67,7 @@ class PurchaseCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          purchases[index].invoiceNumber!,
+                          purchases.invoiceNumber!,
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -90,7 +90,7 @@ class PurchaseCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.dateFormat.format(DateTime.parse(purchases[index].dateTime)),
+                          Converter.dateFormat.format(DateTime.parse(purchases.dateTime)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -113,7 +113,7 @@ class PurchaseCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          purchases[index].supplierName,
+                          purchases.supplierName,
                           overflow: TextOverflow.ellipsis,
                           style: kTextBoldSalesCard,
                           maxLines: 1,
@@ -144,7 +144,7 @@ class PurchaseCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.currency.format(num.parse(purchases[index].grantTotal)),
+                          Converter.currency.format(num.parse(purchases.grantTotal)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -167,7 +167,7 @@ class PurchaseCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.currency.format(num.parse(purchases[index].paid)),
+                          Converter.currency.format(num.parse(purchases.paid)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -190,7 +190,7 @@ class PurchaseCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.currency.format(num.parse(purchases[index].balance)),
+                          Converter.currency.format(num.parse(purchases.balance)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -212,18 +212,18 @@ class PurchaseCardWidget extends StatelessWidget {
                         maxFontSize: 14,
                       ),
                       Expanded(
-                        child: purchases[index].paymentStatus != 'Returned'
+                        child: purchases.paymentStatus != 'Returned'
                             ? AutoSizeText(
-                                purchases[index].paymentStatus,
+                                purchases.paymentStatus,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
-                                    color: purchases[index].paymentStatus == 'Paid'
+                                    color: purchases.paymentStatus == 'Paid'
                                         ? kGreen
-                                        : purchases[index].paymentStatus == 'Partial'
+                                        : purchases.paymentStatus == 'Partial'
                                             ? kOrange
-                                            : purchases[index].paymentStatus == 'Credit'
+                                            : purchases.paymentStatus == 'Credit'
                                                 ? kRed
                                                 : kRed),
                                 maxLines: 1,

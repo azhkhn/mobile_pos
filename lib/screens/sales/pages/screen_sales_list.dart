@@ -8,6 +8,7 @@ import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/sales/widgets/sales_card_widget.dart';
 import 'package:shop_ez/screens/sales/widgets/sales_list_filter.dart';
+import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
@@ -64,76 +65,112 @@ class SalesList extends StatelessWidget {
 
                                               showDialog(
                                                 context: context,
-                                                builder: (context) => AlertDialog(
-                                                  contentPadding: kPadding0,
-                                                  content: SizedBox(
-                                                    height: payable ? 100 : 50,
-                                                    child: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                                                      children: [
-                                                        Expanded(
-                                                            child: MaterialButton(
-                                                          onPressed: () async {
-                                                            Navigator.pop(context);
-
-                                                            await Navigator.pushNamed(
-                                                              context,
-                                                              routeSalesInvoice,
-                                                              arguments: [sales[index], false],
-                                                            );
-                                                          },
-                                                          color: Colors.blueGrey[400],
-                                                          child: Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            children: const [
-                                                              Icon(
-                                                                Icons.receipt_outlined,
-                                                                color: kWhite,
-                                                              ),
-                                                              kWidth5,
-                                                              Text(
-                                                                'View Invoice',
-                                                                style: TextStyle(fontWeight: FontWeight.bold, color: kWhite),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        )),
-                                                        payable
-                                                            ? Expanded(
-                                                                child: MaterialButton(
-                                                                    onPressed: () async {
-                                                                      Navigator.pop(context);
-                                                                      final dynamic updatedSale = await Navigator.pushNamed(
-                                                                          context, routeTransactionSale,
-                                                                          arguments: sales[index]);
-                                                                      if (updatedSale != null) {
-                                                                        salesNotifier.value[index] = updatedSale as SalesModel;
-                                                                        salesNotifier.notifyListeners();
-                                                                      }
-                                                                    },
-                                                                    color: Colors.teal[400],
-                                                                    child: Row(
-                                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                                      children: const [
-                                                                        Icon(
-                                                                          Icons.payment_outlined,
-                                                                          color: kWhite,
-                                                                        ),
-                                                                        kWidth5,
-                                                                        Text(
-                                                                          'Make Payment',
-                                                                          style: TextStyle(fontWeight: FontWeight.bold, color: kWhite),
-                                                                        ),
-                                                                      ],
-                                                                    )),
-                                                              )
-                                                            : kNone,
-                                                      ],
-                                                    ),
-                                                  ),
+                                                builder: (ctx) => CustomPopupOptions(
+                                                  options: [
+                                                    //========== View Invoice ==========
+                                                    {
+                                                      'title': 'View Invoice',
+                                                      'color': kBlueGrey400,
+                                                      'icon': Icons.receipt_outlined,
+                                                      'action': () async {
+                                                        await Navigator.pushNamed(
+                                                          context,
+                                                          routeSalesInvoice,
+                                                          arguments: [sales[index], false],
+                                                        );
+                                                      },
+                                                    },
+                                                    //========== Make Payment ==========
+                                                    if (payable)
+                                                      {
+                                                        'title': 'Make Payment',
+                                                        'color': kTeal400,
+                                                        'icon': Icons.payment_outlined,
+                                                        'action': () async {
+                                                          final dynamic updatedSale =
+                                                              await Navigator.pushNamed(context, routeTransactionSale, arguments: sales[index]);
+                                                          if (updatedSale != null) {
+                                                            salesNotifier.value[index] = updatedSale as SalesModel;
+                                                            salesNotifier.notifyListeners();
+                                                          }
+                                                        }
+                                                      },
+                                                  ],
                                                 ),
                                               );
+
+                                              // showDialog(
+                                              //   context: context,
+                                              //   builder: (context) => AlertDialog(
+                                              //     contentPadding: kPadding0,
+                                              //     content: SizedBox(
+                                              //       height: payable ? 100 : 50,
+                                              //       child: Column(
+                                              //         mainAxisSize: MainAxisSize.min,
+                                              //         crossAxisAlignment: CrossAxisAlignment.stretch,
+                                              //         children: [
+                                              //           Expanded(
+                                              //               child: MaterialButton(
+                                              //             onPressed: () async {
+                                              //               Navigator.pop(context);
+
+                                              //               await Navigator.pushNamed(
+                                              //                 context,
+                                              //                 routeSalesInvoice,
+                                              //                 arguments: [sales[index], false],
+                                              //               );
+                                              //             },
+                                              //             color: Colors.blueGrey[400],
+                                              //             child: Row(
+                                              //               mainAxisAlignment: MainAxisAlignment.center,
+                                              //               children: const [
+                                              //                 Icon(
+                                              //                   Icons.receipt_outlined,
+                                              //                   color: kWhite,
+                                              //                 ),
+                                              //                 kWidth5,
+                                              //                 Text(
+                                              //                   'View Invoice',
+                                              //                   style: TextStyle(fontWeight: FontWeight.bold, color: kWhite),
+                                              //                 ),
+                                              //               ],
+                                              //             ),
+                                              //           )),
+                                              //           payable
+                                              //               ? Expanded(
+                                              //                   child: MaterialButton(
+                                              //                       onPressed: () async {
+                                              //                         Navigator.pop(context);
+                                              //                         final dynamic updatedSale = await Navigator.pushNamed(
+                                              //                             context, routeTransactionSale,
+                                              //                             arguments: sales[index]);
+                                              //                         if (updatedSale != null) {
+                                              //                           salesNotifier.value[index] = updatedSale as SalesModel;
+                                              //                           salesNotifier.notifyListeners();
+                                              //                         }
+                                              //                       },
+                                              //                       color: Colors.teal[400],
+                                              //                       child: Row(
+                                              //                         mainAxisAlignment: MainAxisAlignment.center,
+                                              //                         children: const [
+                                              //                           Icon(
+                                              //                             Icons.payment_outlined,
+                                              //                             color: kWhite,
+                                              //                           ),
+                                              //                           kWidth5,
+                                              //                           Text(
+                                              //                             'Make Payment',
+                                              //                             style: TextStyle(fontWeight: FontWeight.bold, color: kWhite),
+                                              //                           ),
+                                              //                         ],
+                                              //                       )),
+                                              //                 )
+                                              //               : kNone,
+                                              //         ],
+                                              //       ),
+                                              //     ),
+                                              //   ),
+                                              // );
                                             },
                                           );
                                         },

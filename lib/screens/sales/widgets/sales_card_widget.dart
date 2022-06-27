@@ -21,7 +21,7 @@ class SalesCardWidget extends StatelessWidget {
     return Card(
       elevation: 10,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: kPadding8,
         child: Flex(
           mainAxisAlignment: MainAxisAlignment.start,
           direction: Axis.horizontal,

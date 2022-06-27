@@ -56,7 +56,7 @@ class PurchasesList extends StatelessWidget {
                                         separatorBuilder: (BuildContext context, int index) => kHeight5,
                                         itemBuilder: (BuildContext context, int index) {
                                           return InkWell(
-                                            child: PurchaseCardWidget(index: index, purchases: purchases),
+                                            child: PurchaseCardWidget(index: index, purchases: purchases[index]),
                                             onTap: () async {
                                               final bool payable =
                                                   purchases[index].paymentStatus == 'Partial' || purchases[index].paymentStatus == 'Credit';

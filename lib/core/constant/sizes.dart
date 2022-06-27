@@ -28,6 +28,7 @@ const EdgeInsets kPadding0 = EdgeInsets.all(0);
 const EdgeInsets kPadding1 = EdgeInsets.all(1);
 const EdgeInsets kPadding2 = EdgeInsets.all(2);
 const EdgeInsets kPadding5 = EdgeInsets.all(5);
+const EdgeInsets kPadding8 = EdgeInsets.all(8);
 const EdgeInsets kPadding10 = EdgeInsets.all(10);
 const EdgeInsets kPadding15 = EdgeInsets.all(15);
 const EdgeInsets kPadding20 = EdgeInsets.all(20);

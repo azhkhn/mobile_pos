@@ -298,7 +298,7 @@ class ScreenPaymentReport extends StatelessWidget {
 
                         List<TransactionsModel> _transactionByDate = [];
 
-                        for (TransactionsModel transaction in transactionsNotifier.value) {
+                        for (TransactionsModel transaction in transactionsList) {
                           final DateTime _transactionDate = DateTime.parse(transaction.dateTime);
 
                           final bool isSameDate = Converter.isSameDate(_selectedDate, _transactionDate);

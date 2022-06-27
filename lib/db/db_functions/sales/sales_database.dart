@@ -85,6 +85,21 @@ class SalesDatabase {
     return list;
   }
 
+  //========== Get Pending Payment Sales ==========
+  Future<List<SalesModel>> getPendingSales() async {
+    final db = await dbInstance.database;
+    final res = await db.query(
+      tableSales,
+      where: "${SalesFields.paymentStatus} NOT IN('Paid','Returned')",
+    );
+
+    log('Sales with pending amount == $res');
+
+    List<SalesModel> list = res.map((c) => SalesModel.fromJson(c)).toList();
+
+    return list;
+  }
+
 //========== Update Sales By SalesId ==========
   Future<void> updateSaleBySalesId({required final SalesModel sale}) async {
     final db = await dbInstance.database;
