@@ -31,7 +31,7 @@ class ExpenseDatabase {
     final db = await dbInstance.database;
     final List<Map<String, Object?>> _res;
     if (pattern.isNotEmpty) {
-      _res = await db.query(tableExpense, where: '${ExpenseFields.expenseTitle} LIKE %$pattern%', limit: 20);
+      _res = await db.query(tableExpense, where: "${ExpenseFields.payBy} LIKE '%$pattern%'", limit: 20);
     } else {
       _res = await db.query(tableExpense, limit: 10);
     }

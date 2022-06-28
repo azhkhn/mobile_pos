@@ -146,7 +146,6 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
                       },
                     ),
                     kHeight10,
-                    kHeight10,
 
                     //========== Expense Title ==========
                     TextFeildWidget(

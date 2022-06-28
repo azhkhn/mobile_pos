@@ -6,7 +6,7 @@ import 'package:shop_ez/core/constant/colors.dart';
 class CustomDropDownField extends StatelessWidget {
   const CustomDropDownField({
     Key? key,
-    required this.labelText,
+    this.labelText,
     required this.snapshot,
     required this.onChanged,
     this.value,
@@ -27,7 +27,7 @@ class CustomDropDownField extends StatelessWidget {
   }) : super(key: key);
 
   final Object? value;
-  final String labelText;
+  final String? labelText;
   final TextStyle? style;
   final String? hintText;
   final TextStyle? labelStyle;
@@ -50,10 +50,7 @@ class CustomDropDownField extends StatelessWidget {
     return DropdownButtonFormField(
       key: dropdownKey,
       decoration: InputDecoration(
-        label: Text(
-          labelText,
-          style: labelStyle ?? const TextStyle(color: klabelColorGrey),
-        ),
+        label: labelText != null ? Text(labelText!, style: labelStyle ?? const TextStyle(color: klabelColorGrey)) : null,
         hintText: hintText,
         hintStyle: hintStyle,
         labelStyle: labelStyle,
