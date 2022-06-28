@@ -117,8 +117,7 @@ class TransactionScreenPurchase extends StatelessWidget {
                                             _payment.transactionType == 'Income'
                                                 ? Converter.currency.format(num.parse(_payment.amount))
                                                 : Converter.currency.format(num.parse(_payment.amount)),
-                                            style: TextStyle(
-                                                color: _payment.transactionType == 'Income' ? const Color(0xFF1B5E20) : const Color(0xFFB71C1C)),
+                                            style: TextStyle(color: _payment.transactionType == 'Income' ? kGreen900 : kRed900),
                                           ),
                                           kWidth10,
                                           Icon(Icons.verified_outlined, color: _payment.transactionType == 'Income' ? kGreen : Colors.red),

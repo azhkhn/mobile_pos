@@ -22,7 +22,7 @@ class ExpenseFloatingAddOptions extends StatelessWidget {
       childrenButtonSize: const Size(50, 50),
       // label: const Text('Expense Category'),
       onPress: () async {
-        await Navigator.pushNamed(context, routeExpenseCategory);
+        await Navigator.pushNamed(context, routeAddExpenseCategory);
       },
       spacing: 5,
       openCloseDial: isDialOpen,

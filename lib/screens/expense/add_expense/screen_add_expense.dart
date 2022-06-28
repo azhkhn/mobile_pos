@@ -13,6 +13,7 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
+import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/core/utils/vat/vat.dart';
 import 'package:shop_ez/db/db_functions/expense/expense_category_database.dart';
@@ -30,16 +31,16 @@ import 'package:shop_ez/widgets/dropdown_field_widget/dropdown_field_widget.dart
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
-import '../../core/utils/snackbar/snackbar.dart';
+import '../../../core/utils/snackbar/snackbar.dart';
 
-class ManageExpenseScreen extends StatefulWidget {
-  const ManageExpenseScreen({Key? key}) : super(key: key);
+class ScreenAddExpense extends StatefulWidget {
+  const ScreenAddExpense({Key? key}) : super(key: key);
 
   @override
-  State<ManageExpenseScreen> createState() => _ManageExpenseScreenState();
+  State<ScreenAddExpense> createState() => _ScreenAddExpenseState();
 }
 
-class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
+class _ScreenAddExpenseState extends State<ScreenAddExpense> {
   late Size _screenSize;
 
   final _formKey = GlobalKey<FormState>();
@@ -404,7 +405,7 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
         // floatingActionButton: ExpenseFloatingAddOptions(isDialOpen: isDialOpen),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            await Navigator.pushNamed(context, routeExpenseCategory);
+            await Navigator.pushNamed(context, routeAddExpenseCategory);
             _dropdownKey.currentState!.reset();
             expenseCategoriesNotifier.value = await expenseCategoryDB.getAllExpenseCategories();
             expenseCategoriesNotifier.notifyListeners();

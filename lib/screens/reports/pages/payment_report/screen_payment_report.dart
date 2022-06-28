@@ -380,7 +380,7 @@ class ScreenPaymentReport extends StatelessWidget {
   }
 
 //== == == == == FutureBuilder Transactions == == == == ==
-  Future<List<TransactionsModel>?> futureTransactions() async {
+  Future<List<TransactionsModel>> futureTransactions() async {
     log('FutureBuiler ()=> called!');
     if (transactionsList.isEmpty) {
       log('Fetching transaction from the Database..');

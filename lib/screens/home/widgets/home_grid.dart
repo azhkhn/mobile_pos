@@ -66,7 +66,7 @@ class HomeGrid extends StatelessWidget {
                   Navigator.pushNamed(context, routePurchase);
                   break;
                 case 5:
-                  Navigator.pushNamed(context, routeExpense);
+                  Navigator.pushNamed(context, routeAddExpense);
                   break;
                 case 6:
                   await OrientationMode.toLandscape();

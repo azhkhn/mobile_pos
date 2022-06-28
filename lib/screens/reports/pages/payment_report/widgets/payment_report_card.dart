@@ -83,7 +83,7 @@ class PaymentReportCard extends StatelessWidget {
                     ? '+' + Converter.currency.format(num.parse(transactionsModel.amount))
                     : '-' + Converter.currency.format(num.parse(transactionsModel.amount)),
                 style: TextStyle(
-                  color: transactionsModel.transactionType == 'Income' ? const Color(0xFF1B5E20) : const Color(0xFFB71C1C),
+                  color: transactionsModel.transactionType == 'Income' ? kGreen900 : kRed900,
                   fontSize: 12,
                 ),
               ),

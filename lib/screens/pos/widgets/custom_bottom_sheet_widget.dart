@@ -78,7 +78,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                         Expanded(
                           flex: 7,
                           child: AutoSizeText(
-                            supplier ? model.supplierName : model.customer,
+                            supplier ? model.supplierName : model.expense,
                             textAlign: TextAlign.end,
                             maxFontSize: 20,
                             style: const TextStyle(fontSize: 12),

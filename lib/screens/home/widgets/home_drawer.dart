@@ -147,7 +147,7 @@ class DrawerItemsWidget extends StatelessWidget {
             Navigator.pushNamed(context, routePurchase);
             break;
           case 3:
-            Navigator.pushNamed(context, routeExpense);
+            Navigator.pushNamed(context, routeManageExpense);
             break;
           case 4:
             Navigator.pushNamed(context, routeManageItemMaster);

@@ -10,6 +10,7 @@ import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/barcode/screen_barcode.dart';
 import 'package:shop_ez/screens/customer/screen_manage_customer.dart';
 import 'package:shop_ez/screens/database/screen_database.dart';
+import 'package:shop_ez/screens/expense/manage_expense/screen_manage_expense.dart';
 import 'package:shop_ez/screens/invoices/screen_sales_invoice.dart';
 import 'package:shop_ez/screens/item_master/screen_manage_item_master.dart';
 import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
@@ -38,8 +39,8 @@ import '../../screens/brand/screen_brand.dart';
 import '../../screens/business_profile/business_profile_screen.dart';
 import '../../screens/category/screen_category.dart';
 import '../../screens/customer/screen_add_customer.dart';
-import '../../screens/expense/screen_expense.dart';
-import '../../screens/expense/screen_expense_category.dart';
+import '../../screens/expense/add_expense/screen_add_expense.dart';
+import '../../screens/expense/add_expense_category/screen_add_expense_category.dart';
 import '../../screens/home/home_screen.dart';
 import '../../screens/item_master/screen_item_master.dart';
 import '../../screens/payments/partial_payment/screen_partial_payment.dart';
@@ -129,14 +130,16 @@ class RouteGenerator {
         return _errorPermission();
       case routeUnit:
         return MaterialPageRoute(builder: (_) => UnitScreen());
-      case routeExpense:
-        return MaterialPageRoute(builder: (_) => const ManageExpenseScreen());
+      case routeAddExpense:
+        return MaterialPageRoute(builder: (_) => const ScreenAddExpense());
+      case routeManageExpense:
+        return MaterialPageRoute(builder: (_) => ScreenManageExpense());
       case routeBusinessProfile:
         return MaterialPageRoute(builder: (_) => const BusinessProfile());
       case routeVat:
         return MaterialPageRoute(builder: (_) => VatScreen());
-      case routeExpenseCategory:
-        return MaterialPageRoute(builder: (_) => const ExpenseCategory());
+      case routeAddExpenseCategory:
+        return MaterialPageRoute(builder: (_) => const ScreenAddExpenseCategory());
       case routePos:
         if (permission!.sale.contains('2')) return MaterialPageRoute(builder: (_) => const PosScreen());
         return _errorPermission();

@@ -22,9 +22,11 @@ const Color kColorDim = Color(0x50000000);
 
 const Color kGreen300 = Color(0xFF81C784);
 const Color kGreen400 = Color(0xFF66BB6A);
+const Color kGreen900 = Color(0xFF1B5E20);
 
 const Color kRed300 = Color(0xFFE57373);
 const Color kRed400 = Color(0xFFEF5350);
+const Color kRed900 = Color(0xFFB71C1C);
 
 const Color kTeal400 = Color(0xFF26A69A);
 const Color kBlueGrey400 = Color(0xFF78909C);

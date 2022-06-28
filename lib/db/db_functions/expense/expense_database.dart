@@ -25,4 +25,29 @@ class ExpenseDatabase {
     final _expenses = _result.map((json) => ExpenseModel.fromJson(json)).toList();
     return _expenses;
   }
+
+  //========== Get PayBy Suggestions ==========
+  Future<List<ExpenseModel>> getPayBySuggestions(String pattern) async {
+    final db = await dbInstance.database;
+    final List<Map<String, Object?>> _res;
+    if (pattern.isNotEmpty) {
+      _res = await db.query(tableExpense, where: '${ExpenseFields.expenseTitle} LIKE %$pattern%', limit: 20);
+    } else {
+      _res = await db.query(tableExpense, limit: 10);
+    }
+
+    final List<ExpenseModel> list = _res.map((c) => ExpenseModel.fromJson(c)).toList();
+
+    final List<String> payers = [];
+    final List<ExpenseModel> trimmedList = [];
+
+    for (var transaction in list) {
+      if (!payers.contains(transaction.payBy)) {
+        payers.add(transaction.payBy);
+        trimmedList.add(transaction);
+      }
+    }
+
+    return trimmedList;
+  }
 }
