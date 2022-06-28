@@ -21,9 +21,6 @@ import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import '../../core/utils/device/device.dart';
 import '../../core/utils/converters/converters.dart';
 
-//========== DropDown Items ==========
-const List types = ['Negative Stock', 'Zero Stock', 'Expired Stock'];
-
 class ScreenStock extends StatelessWidget {
   ScreenStock({Key? key}) : super(key: key);
 

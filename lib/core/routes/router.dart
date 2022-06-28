@@ -89,3 +89,4 @@ const String routeDatabase = '/database';
 const String routeReports = '/reports';
 const String routePaymentReport = '/payment_report';
 const String routePendingPayment = '/pending_payment';
+const String routeSalesReport = '/sales_report';

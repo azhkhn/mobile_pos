@@ -388,7 +388,7 @@ class ScreenPaymentReport extends StatelessWidget {
       return transactionsList = transactionsList.reversed.toList();
     } else {
       log('Fetching transaction from the List..');
-      return transactionsList = transactionsList.reversed.toList();
+      return transactionsList.reversed.toList();
     }
   }
 

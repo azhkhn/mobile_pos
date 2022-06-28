@@ -8,14 +8,14 @@ import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/screens/reports/pages/sales_report/widgets/sales_report_filter.dart';
 import 'package:shop_ez/screens/sales/widgets/sales_card_widget.dart';
-import 'package:shop_ez/screens/sales/widgets/sales_list_filter.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
-class ScreenSalesList extends StatelessWidget {
-  const ScreenSalesList({
+class ScreenSalesReport extends StatelessWidget {
+  const ScreenSalesReport({
     Key? key,
   }) : super(key: key);
 
@@ -29,15 +29,15 @@ class ScreenSalesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBarWidget(
-          title: 'Sales',
+          title: 'Sales Report',
         ),
         body: ItemScreenPaddingWidget(
           child: Column(
             children: [
               //========== Sales Filter Options ==========
-              SalesListFilter(),
+              SalesReportFilter(),
 
-              kHeight5,
+              kWidth5,
 
               //========== List Sales ==========
               Expanded(
@@ -68,7 +68,7 @@ class ScreenSalesList extends StatelessWidget {
                                               sales: sales[index],
                                             ),
                                             onTap: () async {
-                                              final bool payable = sales[index].paymentStatus == 'Partial' || sales[index].paymentStatus == 'Credit';
+                                              // final bool payable = sales[index].paymentStatus == 'Partial' || sales[index].paymentStatus == 'Credit';
 
                                               showDialog(
                                                 context: context,
@@ -87,21 +87,21 @@ class ScreenSalesList extends StatelessWidget {
                                                         );
                                                       },
                                                     },
-                                                    //========== Make Payment ==========
-                                                    if (payable)
-                                                      {
-                                                        'title': 'Make Payment',
-                                                        'color': kTeal400,
-                                                        'icon': Icons.payment_outlined,
-                                                        'action': () async {
-                                                          final dynamic updatedSale =
-                                                              await Navigator.pushNamed(context, routeTransactionSale, arguments: sales[index]);
-                                                          if (updatedSale != null) {
-                                                            salesNotifier.value[index] = updatedSale as SalesModel;
-                                                            salesNotifier.notifyListeners();
-                                                          }
-                                                        }
-                                                      },
+                                                    // //========== Make Payment ==========
+                                                    // if (payable)
+                                                    //   {
+                                                    //     'title': 'Make Payment',
+                                                    //     'color': kTeal400,
+                                                    //     'icon': Icons.payment_outlined,
+                                                    //     'action': () async {
+                                                    //       final dynamic updatedSale =
+                                                    //           await Navigator.pushNamed(context, routeTransactionSale, arguments: sales[index]);
+                                                    //       if (updatedSale != null) {
+                                                    //         salesNotifier.value[index] = updatedSale as SalesModel;
+                                                    //         salesNotifier.notifyListeners();
+                                                    //       }
+                                                    //     }
+                                                    //   },
                                                   ],
                                                 ),
                                               );

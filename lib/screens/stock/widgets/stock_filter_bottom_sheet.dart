@@ -142,7 +142,7 @@ class StockFilterBottomSheet extends StatelessWidget {
                     label: Text('Stock', style: TextStyle(color: klabelColorBlack)),
                     border: OutlineInputBorder(),
                   ),
-                  items: types
+                  items: ['Negative Stock', 'Zero Stock', 'Expired Stock']
                       .map((values) => DropdownMenuItem<String>(
                             value: values,
                             child: Text(values),
