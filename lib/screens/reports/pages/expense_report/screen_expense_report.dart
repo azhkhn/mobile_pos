@@ -1,6 +1,5 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member, must_be_immutable
 
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -15,7 +14,6 @@ import 'package:shop_ez/model/expense/expense_category_model.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
 import 'package:shop_ez/screens/expense/manage_expense/widgets/expense_card.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/dropdown_field_widget/dropdown_field_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
@@ -27,17 +25,12 @@ class ScreenExpenseReport extends StatelessWidget {
   final payByController = TextEditingController();
   final dateController = TextEditingController();
 
-  //==================== Global Keys ====================
-  final GlobalKey<FormFieldState> _dropdownKey = GlobalKey<FormFieldState>();
-
   //==================== Value Notifiers ====================
-  final ValueNotifier<int?> customerIdNotifier = ValueNotifier(null);
   final ValueNotifier<List<ExpenseModel>> expensesNotifer = ValueNotifier([]);
 
   //==================== List Customers ====================
   List<ExpenseModel> expensesList = [];
-  List<ExpenseModel> expensesByPayBy = [];
-  List<ExpenseModel> expensesByDate = [];
+  List<ExpenseModel> expensesByPayByList = [];
   List<ExpenseModel> expensesByCategoryList = [];
 
   @override
@@ -51,117 +44,145 @@ class ScreenExpenseReport extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  //========== Expense Category ==========
+                  //========== Expense Category Field ==========
                   Flexible(
                     flex: 1,
-                    child: FutureBuilder(
-                      future: ExpenseCategoryDatabase.instance.getAllExpenseCategories(),
-                      builder: (context, dynamic snapshot) {
-                        final snap = snapshot as AsyncSnapshot;
-                        switch (snap.connectionState) {
-                          case ConnectionState.waiting:
-                            return const CircularProgressIndicator();
-                          case ConnectionState.done:
-                          default:
-                            return CustomDropDownField(
-                              isDesne: true,
-                              border: true,
-                              style: kText12Black,
-                              hintStyle: kText12,
-                              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                              dropdownKey: _dropdownKey,
-                              hintText: 'Choose Expense *',
-                              snapshot: snap.data,
-                              onChanged: (value) {
-                                final ExpenseCategoryModel _expense = ExpenseCategoryModel.fromJson(jsonDecode(value));
-                                expenseCategoryController.text = _expense.expense.toString();
+                    child: TypeAheadField(
+                      minCharsForSuggestions: 0,
+                      debounceDuration: const Duration(milliseconds: 500),
+                      hideSuggestionsOnKeyboardHide: true,
+                      textFieldConfiguration: TextFieldConfiguration(
+                          controller: expenseCategoryController,
+                          style: const TextStyle(fontSize: 12),
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            isDense: true,
+                            suffixIconConstraints: const BoxConstraints(
+                              minWidth: 10,
+                              minHeight: 10,
+                            ),
+                            suffixIcon: Padding(
+                              padding: kClearTextIconPadding,
+                              child: InkWell(
+                                child: const Icon(Icons.clear, size: 15),
+                                onTap: () async {
+                                  if (expenseCategoryController.text.isNotEmpty) {
+                                    dateController.clear();
 
-                                log('Selected Expense Category == ' + _expense.expense);
+                                    if (expensesByPayByList.isNotEmpty) {
+                                      expensesNotifer.value = expensesByPayByList;
+                                    } else {
+                                      expensesNotifer.value = expensesList;
+                                    }
+                                  }
+                                  expensesByCategoryList.clear();
+                                  expenseCategoryController.clear();
+                                },
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.all(10),
+                            hintText: 'Expense Category',
+                            hintStyle: const TextStyle(fontSize: 12),
+                            border: const OutlineInputBorder(),
+                          )),
+                      noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Expense Found!'))),
+                      suggestionsCallback: (pattern) async {
+                        return ExpenseCategoryDatabase.instance.getExpenseCategoriesSuggestions(pattern);
+                      },
+                      itemBuilder: (context, ExpenseCategoryModel suggestion) {
+                        return ListTile(
+                          title: Text(
+                            suggestion.expense,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: kText_10_12,
+                          ),
+                        );
+                      },
+                      onSuggestionSelected: (ExpenseCategoryModel selectedExpense) {
+                        dateController.clear();
+                        payByController.clear();
+                        expensesByPayByList.clear();
+                        expenseCategoryController.text = selectedExpense.expense;
+                        log('Selected Expense Category = ' + selectedExpense.expense);
 
-                                if (dateController.text.isNotEmpty) {
-                                  expensesNotifer.value = expensesByDate.where((expense) => expense.expenseCategory == _expense.expense).toList();
-                                } else if (expensesByPayBy.isNotEmpty) {
-                                  expensesNotifer.value = expensesByPayBy.where((expense) => expense.expenseCategory == _expense.expense).toList();
-                                } else {
-                                  expensesNotifer.value = expensesList.where((expense) => expense.expenseCategory == _expense.expense).toList();
-                                }
-
-                                expensesNotifer.notifyListeners();
-                              },
-                            );
-                        }
+                        //Notify Expense List
+                        expensesByCategoryList = expensesList.where((expense) => expense.expenseCategory == selectedExpense.expense).toList();
+                        expensesNotifer.value = expensesByCategoryList;
                       },
                     ),
                   ),
 
                   kWidth5,
 
-                  //==================== Date Search Field ====================
+                  //==================== Get All Pay By Search Field ====================
                   Flexible(
                     flex: 1,
-                    child: TextFeildWidget(
-                      hintText: 'Date ',
-                      controller: dateController,
-                      suffixIconConstraints: const BoxConstraints(
-                        minWidth: 10,
-                        minHeight: 10,
-                      ),
-                      suffixIcon: Padding(
-                        padding: kClearTextIconPadding,
-                        child: InkWell(
-                          child: const Icon(Icons.clear, size: 15),
-                          onTap: () async {
-                            if (dateController.text.isNotEmpty && payByController.text.isNotEmpty && expensesByPayBy.isNotEmpty) {
-                              expensesNotifer.value = expensesByPayBy;
-                            } else if (dateController.text.isNotEmpty) {
-                              if (expensesList.isNotEmpty) {
-                                expensesNotifer.value = expensesList;
-                              } else {
-                                expensesNotifer.value = await futureExpenses();
-                              }
-                              payByController.clear();
-                            }
+                    child: TypeAheadField(
+                      minCharsForSuggestions: 0,
+                      debounceDuration: const Duration(milliseconds: 500),
+                      hideSuggestionsOnKeyboardHide: true,
+                      textFieldConfiguration: TextFieldConfiguration(
+                          controller: payByController,
+                          style: const TextStyle(fontSize: 12),
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            isDense: true,
+                            suffixIconConstraints: const BoxConstraints(
+                              minWidth: 10,
+                              minHeight: 10,
+                            ),
+                            suffixIcon: Padding(
+                              padding: kClearTextIconPadding,
+                              child: InkWell(
+                                child: const Icon(Icons.clear, size: 15),
+                                onTap: () async {
+                                  if (payByController.text.isNotEmpty) {
+                                    dateController.clear();
 
-                            dateController.clear();
-                            expensesByDate.clear();
-                          },
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.all(10),
-                      hintStyle: kText12,
-                      readOnly: true,
-                      isDense: true,
-                      textStyle: kText12,
-                      inputBorder: const OutlineInputBorder(),
-                      onTap: () async {
-                        final _selectedDate = await DateTimeUtils.instance.datePicker(context);
+                                    if (expensesByCategoryList.isNotEmpty) {
+                                      expensesNotifer.value = expensesByCategoryList;
+                                    } else {
+                                      expensesNotifer.value = expensesList;
+                                    }
+                                  }
+                                  expensesByPayByList.clear();
+                                  payByController.clear();
+                                },
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.all(10),
+                            hintText: 'Pay By',
+                            hintStyle: const TextStyle(fontSize: 12),
+                            border: const OutlineInputBorder(),
+                          )),
+                      noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Expense Found!'))),
+                      suggestionsCallback: (pattern) async {
+                        return ExpenseDatabase.instance.getPayBySuggestions(pattern);
+                      },
+                      itemBuilder: (context, ExpenseModel suggestion) {
+                        return ListTile(
+                          title: Text(
+                            suggestion.payBy,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: kText_10_12,
+                          ),
+                        );
+                      },
+                      onSuggestionSelected: (ExpenseModel selectedExpense) {
+                        dateController.clear();
 
-                        if (_selectedDate != null) {
-                          final parseDate = Converter.dateFormat.format(_selectedDate);
-                          dateController.text = parseDate.toString();
+                        payByController.text = selectedExpense.payBy;
+                        log('Selected Expense Title = ' + selectedExpense.expenseTitle);
 
-                          final List<ExpenseModel> _expenseByDate = [];
+                        final List<ExpenseModel> filterList = expensesByCategoryList.isNotEmpty ? expensesByCategoryList : expensesList;
 
-                          final bool isPayBy = expensesByPayBy.isNotEmpty;
-                          final bool isDateBy = expensesByDate.isNotEmpty;
-
-                          for (ExpenseModel expense in isPayBy
-                              ? expensesByPayBy
-                              : isDateBy
-                                  ? expensesByDate
-                                  : expensesList) {
-                            final DateTime _expenseDate = DateTime.parse(expense.date);
-
-                            final bool isSameDate = Converter.isSameDate(_selectedDate, _expenseDate);
-
-                            if (isSameDate) {
-                              _expenseByDate.add(expense);
-                            }
-                          }
-                          expensesByDate = _expenseByDate;
-                          expensesNotifer.value = _expenseByDate;
-                          expensesNotifer.notifyListeners();
-                        }
+                        //Notify Expense List
+                        expensesByPayByList = filterList.where((expense) => expense.payBy == selectedExpense.payBy).toList();
+                        expensesNotifer.value = expensesByPayByList;
                       },
                     ),
                   )
@@ -170,69 +191,70 @@ class ScreenExpenseReport extends StatelessWidget {
 
               kHeight5,
 
-              //========== Get All Expenses Search Field ==========
-              TypeAheadField(
-                minCharsForSuggestions: 0,
-                debounceDuration: const Duration(milliseconds: 500),
-                hideSuggestionsOnKeyboardHide: true,
-                textFieldConfiguration: TextFieldConfiguration(
-                    controller: payByController,
-                    style: const TextStyle(fontSize: 12),
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      filled: true,
-                      isDense: true,
-                      suffixIconConstraints: const BoxConstraints(
-                        minWidth: 10,
-                        minHeight: 10,
-                      ),
-                      suffixIcon: Padding(
-                        padding: kClearTextIconPadding,
-                        child: InkWell(
-                          child: const Icon(Icons.clear, size: 15),
-                          onTap: () async {
-                            if (payByController.text.isNotEmpty) {
-                              expensesByPayBy.clear();
-                              dateController.clear();
+              //==================== Date Search Field ====================
+              TextFeildWidget(
+                hintText: 'Date ',
+                controller: dateController,
+                suffixIconConstraints: const BoxConstraints(
+                  minWidth: 10,
+                  minHeight: 10,
+                ),
+                suffixIcon: Padding(
+                  padding: kClearTextIconPadding,
+                  child: InkWell(
+                    child: const Icon(Icons.clear, size: 15),
+                    onTap: () async {
+                      if (dateController.text.isNotEmpty && expensesByCategoryList.isNotEmpty) {
+                        expensesNotifer.value = expensesByCategoryList;
+                        payByController.clear();
+                        expensesByPayByList.clear();
+                      } else if (dateController.text.isNotEmpty && expensesByPayByList.isNotEmpty) {
+                        expensesNotifer.value = expensesByPayByList;
+                        expenseCategoryController.clear();
+                      } else if (dateController.text.isNotEmpty) {
+                        expensesNotifer.value = expensesList;
+                        expenseCategoryController.clear();
+                        payByController.clear();
+                      }
 
-                              if (expensesList.isNotEmpty) {
-                                expensesNotifer.value = expensesList;
-                              } else {
-                                expensesNotifer.value = await futureExpenses();
-                              }
-                            }
-                            payByController.clear();
-                          },
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.all(10),
-                      hintText: 'Pay By',
-                      hintStyle: const TextStyle(fontSize: 12),
-                      border: const OutlineInputBorder(),
-                    )),
-                noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Expense Found!'))),
-                suggestionsCallback: (pattern) async {
-                  return ExpenseDatabase.instance.getPayBySuggestions(pattern);
-                },
-                itemBuilder: (context, ExpenseModel suggestion) {
-                  return ListTile(
-                    title: Text(
-                      suggestion.payBy,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: kText_10_12,
-                    ),
-                  );
-                },
-                onSuggestionSelected: (ExpenseModel selectedExpense) {
-                  dateController.clear();
-                  expenseCategoryController.clear();
-                  payByController.text = selectedExpense.payBy;
-                  log('Selected Expense Title = ' + selectedExpense.expenseTitle);
+                      dateController.clear();
+                    },
+                  ),
+                ),
+                contentPadding: const EdgeInsets.all(10),
+                hintStyle: kText12,
+                readOnly: true,
+                isDense: true,
+                textStyle: kText12,
+                inputBorder: const OutlineInputBorder(),
+                onTap: () async {
+                  final _selectedDate = await DateTimeUtils.instance.datePicker(context);
 
-                  //Notify Expense List
-                  expensesByPayBy = expensesList.where((expense) => expense.payBy == selectedExpense.payBy).toList();
-                  expensesNotifer.value = expensesByPayBy;
+                  if (_selectedDate != null) {
+                    final parseDate = Converter.dateFormat.format(_selectedDate);
+                    dateController.text = parseDate.toString();
+
+                    final List<ExpenseModel> _expenseByDate = [];
+
+                    final bool isCatBy = expensesByCategoryList.isNotEmpty;
+                    final bool isPayBy = expensesByPayByList.isNotEmpty;
+
+                    for (ExpenseModel expense in isCatBy
+                        ? expensesByCategoryList
+                        : isPayBy
+                            ? expensesByPayByList
+                            : expensesList) {
+                      final DateTime _expenseDate = DateTime.parse(expense.date);
+
+                      final bool isSameDate = Converter.isSameDate(_selectedDate, _expenseDate);
+
+                      if (isSameDate) {
+                        _expenseByDate.add(expense);
+                      }
+                    }
+                    expensesNotifer.value = _expenseByDate;
+                    expensesNotifer.notifyListeners();
+                  }
                 },
               ),
 

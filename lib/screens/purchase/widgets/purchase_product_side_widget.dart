@@ -434,7 +434,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
           Expanded(
             flex: widget.isVertical ? 1 : 1,
             child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: FutureBuilder(
                   future: futureGrid,
                   builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {

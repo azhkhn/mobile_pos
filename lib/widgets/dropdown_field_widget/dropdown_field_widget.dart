@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
 
 class CustomDropDownField extends StatelessWidget {
   const CustomDropDownField({
@@ -20,6 +21,7 @@ class CustomDropDownField extends StatelessWidget {
     this.errorStyle = false,
     this.dropdownKey,
     this.prefixIcon,
+    this.suffix,
     this.validator,
     this.constraints,
     this.contentPadding,
@@ -34,6 +36,7 @@ class CustomDropDownField extends StatelessWidget {
   final TextStyle? hintStyle;
   final bool enabled;
   final Icon? prefixIcon;
+  final Widget? suffix;
   final List<dynamic> snapshot;
   final String? Function(dynamic)? validator;
   final void Function(dynamic)? onChanged;
@@ -55,12 +58,13 @@ class CustomDropDownField extends StatelessWidget {
         hintStyle: hintStyle,
         labelStyle: labelStyle,
         enabled: enabled,
+        suffix: suffix,
         prefixIcon: prefixIcon,
         border: border ? const OutlineInputBorder() : null,
         isDense: isDesne,
         errorStyle: errorStyle ? const TextStyle(fontSize: 0.01) : null,
         constraints: constraints,
-        contentPadding: contentPadding ?? const EdgeInsets.all(10),
+        contentPadding: contentPadding ?? kPadding10,
         floatingLabelBehavior: floatingLabelBehavior,
       ),
       style: style,
