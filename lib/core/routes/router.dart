@@ -91,3 +91,4 @@ const String routePaymentReport = '/payment_report';
 const String routePendingPayment = '/pending_payment';
 const String routeSalesReport = '/sales_report';
 const String routeExpenseReport = '/expense_report';
+const String routeNegativeStockReport = '/negative_stock_report';

@@ -29,7 +29,7 @@ final kItemsPriceStyleBold = TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10, 
 final kItemsButtontyle = TextStyle(color: kWhite, fontWeight: FontWeight.bold, fontSize: DeviceUtil.isTablet ? 12 : 11);
 
 //========== Custom TextStyles for Widgets ====================
-const kTextSalesCard = TextStyle(fontSize: 12);
+const kTextSalesCard = TextStyle(fontSize: 12, color: kBlack);
 const kTextBoldSalesCard = TextStyle(fontSize: 12, fontWeight: FontWeight.bold);
 
 //==================== Constant Texts ====================

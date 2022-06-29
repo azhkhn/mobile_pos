@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
 
@@ -27,9 +28,9 @@ class ItemCardWidget extends StatelessWidget {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Expanded(
-                      flex: 2,
                       child: Row(
                         children: [
                           const Text(
@@ -53,6 +54,8 @@ class ItemCardWidget extends StatelessWidget {
                     Expanded(
                       flex: 3,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.max,
                         children: [
                           const Text(
                             'Expiry Date:  ',
@@ -60,11 +63,13 @@ class ItemCardWidget extends StatelessWidget {
                             style: kText12Lite,
                             maxLines: 1,
                           ),
-                          Expanded(
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
                             child: Text(
-                              Converter.dateTimeFormatAmPm.format(DateTime.parse(product.expiryDate!)),
+                              Converter.dateFormat.format(DateTime.parse(product.expiryDate!)),
                               overflow: TextOverflow.ellipsis,
                               style: kTextSalesCard,
+                              textAlign: TextAlign.end,
                               maxLines: 1,
                             ),
                           ),
@@ -100,68 +105,65 @@ class ItemCardWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Cost:  ',
-                        overflow: TextOverflow.ellipsis,
-                        style: kText12Lite,
-                        maxLines: 1,
-                      ),
-                      Expanded(
-                        child: Text(
-                          Converter.currency.format(num.parse(product.itemCost)),
-                          overflow: TextOverflow.ellipsis,
-                          style: kTextSalesCard,
-                          maxLines: 1,
+                  child: RichText(
+                    textAlign: TextAlign.start,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                    text: TextSpan(
+                      children: <TextSpan>[
+                        const TextSpan(
+                          text: 'Cost:  ',
+                          style: kText12Lite,
                         ),
-                      ),
-                    ],
+                        TextSpan(
+                          text: Converter.currency.format(num.parse(product.itemCost)),
+                          style: kTextSalesCard,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 kWidth5,
                 Expanded(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Price:  ',
-                        overflow: TextOverflow.ellipsis,
-                        style: kText12Lite,
-                        maxLines: 1,
-                      ),
-                      Expanded(
-                        child: Text(
-                          Converter.currency.format(num.parse(product.sellingPrice)),
-                          overflow: TextOverflow.ellipsis,
-                          style: kTextSalesCard,
-                          maxLines: 1,
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                    text: TextSpan(
+                      children: <TextSpan>[
+                        const TextSpan(
+                          text: 'Price:  ',
+                          style: kText12Lite,
                         ),
-                      ),
-                    ],
+                        TextSpan(
+                          text: Converter.currency.format(num.parse(product.sellingPrice)),
+                          style: kTextSalesCard,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 kWidth5,
                 Expanded(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Stock:  ',
-                        overflow: TextOverflow.ellipsis,
-                        style: kText12Lite,
-                        maxLines: 1,
-                      ),
-                      Expanded(
-                        child: Text(
-                          product.openingStock,
-                          overflow: TextOverflow.ellipsis,
-                          style: kTextSalesCard,
-                          maxLines: 1,
+                  child: RichText(
+                    textAlign: TextAlign.end,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                    text: TextSpan(
+                      children: <TextSpan>[
+                        const TextSpan(
+                          text: 'Stock:  ',
+                          style: kText12Lite,
                         ),
-                      ),
-                    ],
+                        TextSpan(
+                          text: product.openingStock,
+                          style: TextStyle(fontSize: 12, color: num.parse(product.openingStock) < 0 ? kRed : kBlack),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

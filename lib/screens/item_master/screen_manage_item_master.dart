@@ -167,7 +167,7 @@ class ScreenItemMasterManage extends StatelessWidget {
 
               kHeight10,
 
-              //========== List Suppliers ==========
+              //========== List Items ==========
               Expanded(
                 child: FutureBuilder(
                     future: ItemMasterDatabase.instance.getAllItems(),

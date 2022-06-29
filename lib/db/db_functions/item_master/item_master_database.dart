@@ -185,6 +185,22 @@ class ItemMasterDatabase {
   }
 
   //========== Get All Items ==========
+  Future<List<ItemMasterModel>> getNegativeStock() async {
+    final db = await dbInstance.database;
+    final _res = await db.query(tableItemMaster);
+
+    final List<ItemMasterModel> _items = _res.map((json) => ItemMasterModel.fromJson(json)).toList();
+
+    final List<ItemMasterModel> negItems = _items.where((item) {
+      final num stock = num.parse(item.openingStock);
+      return stock < 0;
+    }).toList();
+
+    log('Negative Stocks == $negItems');
+    return negItems;
+  }
+
+  //========== Get All Items ==========
   Future<List<ItemMasterModel>> getAllItems() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableItemMaster);

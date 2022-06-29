@@ -59,6 +59,7 @@ class ReportsGrid extends StatelessWidget {
                   Navigator.pushNamed(context, routeExpenseReport);
                   break;
                 case 5:
+                  Navigator.pushNamed(context, routeNegativeStockReport);
                   break;
                 case 6:
                   break;
