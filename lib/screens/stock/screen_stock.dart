@@ -123,13 +123,12 @@ class ScreenStock extends StatelessWidget {
                           ),
                         );
                       },
-                      onSuggestionSelected: (ItemMasterModel suggestion) async {
-                        final itemId = suggestion.id;
-                        _productController.text = suggestion.itemName;
+                      onSuggestionSelected: (ItemMasterModel selectedItem) async {
+                        _productController.text = selectedItem.itemName;
                         _builderModel = null;
-                        itemsNotifier.value = await itemMasterDB.getProductById(itemId!);
+                        itemsNotifier.value = [selectedItem];
 
-                        log(suggestion.itemName);
+                        log(selectedItem.itemName);
                       },
                     ),
                   ),

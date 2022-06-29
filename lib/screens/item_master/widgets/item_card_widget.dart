@@ -160,7 +160,7 @@ class ItemCardWidget extends StatelessWidget {
                         ),
                         TextSpan(
                           text: product.openingStock,
-                          style: TextStyle(fontSize: 12, color: num.parse(product.openingStock) < 0 ? kRed : kBlack),
+                          style: TextStyle(fontSize: 12, color: num.parse(product.openingStock) <= 0 ? kRed : kBlack),
                         ),
                       ],
                     ),

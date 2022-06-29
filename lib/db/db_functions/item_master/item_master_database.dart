@@ -184,7 +184,7 @@ class ItemMasterDatabase {
     log('Item Quantity Updated!');
   }
 
-  //========== Get All Items ==========
+  //========== Get Items with Negative Stock ==========
   Future<List<ItemMasterModel>> getNegativeStock() async {
     final db = await dbInstance.database;
     final _res = await db.query(tableItemMaster);
@@ -198,6 +198,22 @@ class ItemMasterDatabase {
 
     log('Negative Stocks == $negItems');
     return negItems;
+  }
+
+  //========== Get Items with Zero Stock ==========
+  Future<List<ItemMasterModel>> getZeroStock() async {
+    final db = await dbInstance.database;
+    final _res = await db.query(tableItemMaster);
+
+    final List<ItemMasterModel> _items = _res.map((json) => ItemMasterModel.fromJson(json)).toList();
+
+    final List<ItemMasterModel> zeroStockItems = _items.where((item) {
+      final num stock = num.parse(item.openingStock);
+      return stock == 0;
+    }).toList();
+
+    log('Zero Stocks == $zeroStockItems');
+    return zeroStockItems;
   }
 
   //========== Get All Items ==========

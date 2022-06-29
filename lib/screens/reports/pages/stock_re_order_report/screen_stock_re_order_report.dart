@@ -10,8 +10,8 @@ import 'package:shop_ez/screens/item_master/widgets/item_card_widget.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
-class ScreenNegativeStockReport extends StatelessWidget {
-  ScreenNegativeStockReport({Key? key}) : super(key: key);
+class ScreenStockReOrderReport extends StatelessWidget {
+  ScreenStockReOrderReport({Key? key}) : super(key: key);
 
   //========== TextEditing Controllers ==========
   final TextEditingController _productController = TextEditingController();
@@ -26,7 +26,7 @@ class ScreenNegativeStockReport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: 'Negative Stock Report'),
+      appBar: AppBarWidget(title: 'Stock Re-Order Report'),
       body: SafeArea(
         child: ItemScreenPaddingWidget(
             child: Column(
@@ -89,7 +89,7 @@ class ScreenNegativeStockReport extends StatelessWidget {
             //========== List Items ==========
             Expanded(
               child: FutureBuilder(
-                  future: ItemMasterDatabase.instance.getNegativeStock(),
+                  future: ItemMasterDatabase.instance.getZeroStock(),
                   builder: (context, AsyncSnapshot<List<ItemMasterModel>> snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
