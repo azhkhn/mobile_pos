@@ -109,9 +109,8 @@ class ScreenStockReOrderReport extends StatelessWidget {
                             valueListenable: itemsNotifier,
                             builder: (context, List<ItemMasterModel> items, _) {
                               return items.isNotEmpty
-                                  ? ListView.separated(
+                                  ? ListView.builder(
                                       itemCount: items.length,
-                                      separatorBuilder: (BuildContext context, int index) => kHeight5,
                                       itemBuilder: (BuildContext context, int index) {
                                         return ItemCardWidget(
                                           index: index,

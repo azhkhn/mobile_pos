@@ -58,9 +58,8 @@ class ScreenSalesReport extends StatelessWidget {
                               valueListenable: salesNotifier,
                               builder: (context, List<SalesModel> sales, _) {
                                 return sales.isNotEmpty
-                                    ? ListView.separated(
+                                    ? ListView.builder(
                                         itemCount: sales.length,
-                                        separatorBuilder: (BuildContext context, int index) => kHeight5,
                                         itemBuilder: (BuildContext context, int index) {
                                           return InkWell(
                                             child: SalesCardWidget(

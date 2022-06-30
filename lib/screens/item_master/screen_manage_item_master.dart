@@ -78,7 +78,12 @@ class ScreenItemMasterManage extends StatelessWidget {
                           )),
                       noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
                       suggestionsCallback: (pattern) async {
-                        return ItemMasterDatabase.instance.getProductSuggestions(pattern);
+                        return itemsList
+                            .where((item) {
+                              return item.itemName.toLowerCase().contains(pattern.toLowerCase()) || item.itemCode.contains(pattern);
+                            })
+                            .toList()
+                            .take(10);
                       },
                       itemBuilder: (context, ItemMasterModel suggestion) {
                         return ListTile(
@@ -96,42 +101,6 @@ class ScreenItemMasterManage extends StatelessWidget {
                     ),
                   ),
                   kWidth5,
-
-                  //     //========== View Supplier Button ==========
-                  //     Flexible(
-                  //       flex: 1,
-                  //       child: FittedBox(
-                  //         child: IconButton(
-                  //             padding: const EdgeInsets.all(5),
-                  //             alignment: Alignment.center,
-                  //             constraints: const BoxConstraints(
-                  //               minHeight: 30,
-                  //               maxHeight: 30,
-                  //             ),
-                  //             onPressed: () {
-                  //               if (supplierIdNotifier.value != null) {
-                  //                 log('Supplier Id == ${supplierIdNotifier.value}');
-
-                  //                 showModalBottomSheet(
-                  //                     context: context,
-                  //                     isScrollControlled: true,
-                  //                     backgroundColor: kTransparentColor,
-                  //                     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                  //                     builder: (context) => DismissibleWidget(
-                  //                           context: context,
-                  //                           child: CustomBottomSheetWidget(supplier: true, model: supplierNotifer.value.first),
-                  //                         ));
-                  //               } else {
-                  //                 kSnackBar(context: context, content: 'Please select any Supplier to show details!');
-                  //               }
-                  //             },
-                  //             icon: const Icon(
-                  //               Icons.visibility,
-                  //               color: Colors.blue,
-                  //               size: 25,
-                  //             )),
-                  //       ),
-                  //     ),
 
                   //========== Add Product Button ==========
                   Flexible(
@@ -190,9 +159,8 @@ class ScreenItemMasterManage extends StatelessWidget {
                               valueListenable: productsNotifier,
                               builder: (context, List<ItemMasterModel> items, _) {
                                 return items.isNotEmpty
-                                    ? ListView.separated(
+                                    ? ListView.builder(
                                         itemCount: items.length,
-                                        separatorBuilder: (BuildContext context, int index) => kHeight5,
                                         itemBuilder: (BuildContext context, int index) {
                                           return InkWell(
                                             child: ItemCardWidget(
@@ -204,23 +172,6 @@ class ScreenItemMasterManage extends StatelessWidget {
                                                   context: context,
                                                   builder: (ctx) => CustomPopupOptions(
                                                         options: [
-                                                          // {
-                                                          //   'title': 'View Item',
-                                                          //   'color': Colors.blueGrey[400],
-                                                          //   'icon': Icons.person_search_outlined,
-                                                          //   'action': () {
-                                                          //     return showModalBottomSheet(
-                                                          //         context: context,
-                                                          //         isScrollControlled: true,
-                                                          //         backgroundColor: kTransparentColor,
-                                                          //         shape: const RoundedRectangleBorder(
-                                                          //             borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                                                          //         builder: (context) => DismissibleWidget(
-                                                          //               context: context,
-                                                          //               child: CustomBottomSheetWidget(model: items[index], supplier: true),
-                                                          //             ));
-                                                          //   },
-                                                          // },
                                                           {
                                                             'title': 'Edit Item',
                                                             'color': Colors.teal[400],

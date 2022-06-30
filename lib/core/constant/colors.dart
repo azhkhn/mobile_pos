@@ -31,6 +31,7 @@ const Color kRed900 = Color(0xFFB71C1C);
 const Color kTeal400 = Color(0xFF26A69A);
 const Color kBlueGrey400 = Color(0xFF78909C);
 const Color kGrey300 = Color(0xFFE0E0E0);
+const Color kGrey200 = Color(0xFFEEEEEE);
 
 //=================== Const Colors for Widgets ====================
 const kButtonTextWhite = Colors.white;
