@@ -35,7 +35,8 @@ class PaymentButtonsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size _screenSize = MediaQuery.of(context).size;
+    final Size _screenSize = MediaQuery.of(context).size;
+    final bool isSmall = DeviceUtil.isSmall;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
@@ -50,7 +51,11 @@ class PaymentButtonsWidget extends StatelessWidget {
     return Column(
       children: [
         Container(
-          height: isVertical ? _screenSize.height / 26 : _screenSize.width / 25,
+          height: isVertical
+              ? isSmall
+                  ? 22
+                  : 32
+              : _screenSize.width / 25,
           width: double.infinity,
           color: Colors.blueGrey,
           child: FractionallySizedBox(
@@ -90,7 +95,11 @@ class PaymentButtonsWidget extends StatelessWidget {
           children: [
             Expanded(
               child: SizedBox(
-                height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
+                height: isVertical
+                    ? isSmall
+                        ? 33
+                        : 40
+                    : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
                     final int? customerId = SaleSideWidget.customerNotifier.value?.id;
@@ -181,7 +190,11 @@ class PaymentButtonsWidget extends StatelessWidget {
             ),
             Expanded(
               child: SizedBox(
-                height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
+                height: isVertical
+                    ? isSmall
+                        ? 33
+                        : 40
+                    : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
                     final int? customerId = SaleSideWidget.customerNotifier.value?.id;
@@ -264,7 +277,11 @@ class PaymentButtonsWidget extends StatelessWidget {
           children: [
             Expanded(
               child: SizedBox(
-                height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
+                height: isVertical
+                    ? isSmall
+                        ? 33
+                        : 40
+                    : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
                     final items = SaleSideWidget.selectedProductsNotifier.value;
@@ -299,7 +316,11 @@ class PaymentButtonsWidget extends StatelessWidget {
             ),
             Expanded(
               child: SizedBox(
-                height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
+                height: isVertical
+                    ? isSmall
+                        ? 33
+                        : 40
+                    : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () async {
                     final int? customerId = SaleSideWidget.customerNotifier.value?.id;

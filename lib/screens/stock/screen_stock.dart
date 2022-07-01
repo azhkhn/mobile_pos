@@ -56,7 +56,7 @@ class ScreenStock extends StatelessWidget {
     return Scaffold(
       appBar: isVertical
           ? AppBarWidget(
-              title: 'Stock',
+              title: 'Stocks',
             )
           : null,
       backgroundColor: kBackgroundGrey,

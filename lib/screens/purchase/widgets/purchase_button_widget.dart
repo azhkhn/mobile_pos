@@ -3,6 +3,7 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
@@ -31,6 +32,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size _screenSize = MediaQuery.of(context).size;
+    final bool isSmall = DeviceUtil.isSmall;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
@@ -45,7 +47,11 @@ class PurchaseButtonsWidget extends StatelessWidget {
     return Column(
       children: [
         Container(
-          height: isVertical ? _screenSize.height / 26 : _screenSize.width / 25,
+          height: isVertical
+              ? isSmall
+                  ? 22
+                  : 32
+              : _screenSize.width / 25,
           width: double.infinity,
           color: Colors.blueGrey,
           child: FractionallySizedBox(
@@ -85,7 +91,11 @@ class PurchaseButtonsWidget extends StatelessWidget {
           children: [
             Expanded(
               child: SizedBox(
-                height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
+                height: isVertical
+                    ? isSmall
+                        ? 33
+                        : 40
+                    : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
                     if (PurchaseSideWidget.selectedProductsNotifier.value.isEmpty) {
@@ -117,7 +127,11 @@ class PurchaseButtonsWidget extends StatelessWidget {
             ),
             Expanded(
               child: SizedBox(
-                height: isVertical ? _screenSize.height / 22 : _screenSize.width / 25,
+                height: isVertical
+                    ? isSmall
+                        ? 33
+                        : 40
+                    : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () async {
                     final int? customerId = PurchaseSideWidget.supplierNotifier.value?.id;

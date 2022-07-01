@@ -30,7 +30,7 @@ const List drawerListItem = [
   'POS',
   'Purchase',
   'Manage Expense',
-  'Manage Products',
+  'Manage Item Master',
   'Manage Customer',
   'Manage Supplier',
   'Manage Category',
@@ -124,6 +124,7 @@ class DrawerItemsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      dense: true,
       leading: Image(
         // color: Colors.white,
         image: AssetImage(drawerListItemImage[index]),

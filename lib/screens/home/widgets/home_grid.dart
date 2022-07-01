@@ -21,10 +21,10 @@ const List homeGridName = [
   'POS',
   'SALES',
   'ITEM MASTER',
-  'MANAGE USER',
-  'PURCHASE',
-  'EXPENSE',
-  'STOCK',
+  'MANAGE USERS',
+  'PURCHASES',
+  'EXPENSES',
+  'STOCKS',
   'REPORTS',
   'SETTINGS',
 ];
@@ -144,9 +144,12 @@ class HomeGrid extends StatelessWidget {
                             prefs.setString(OrientationMode.deviceModeKey, OrientationMode.verticalMode);
                             OrientationMode.deviceMode = OrientationMode.verticalMode;
                           },
-                          child: const Text(
-                            'Vertical Mode',
-                            style: TextStyle(color: kWhite),
+                          child: const FittedBox(
+                            child: Text(
+                              'Vertical Mode',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: kWhite),
+                            ),
                           ),
                           color: Colors.blueGrey[300],
                         ),
@@ -159,9 +162,12 @@ class HomeGrid extends StatelessWidget {
                             prefs.setString(OrientationMode.deviceModeKey, OrientationMode.normalMode);
                             OrientationMode.deviceMode = OrientationMode.normalMode;
                           },
-                          child: const Text(
-                            'Normal Mode',
-                            style: TextStyle(color: kWhite),
+                          child: const FittedBox(
+                            child: Text(
+                              'Normal Mode',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: kWhite),
+                            ),
                           ),
                           color: mainColor.withOpacity(.8),
                         ),

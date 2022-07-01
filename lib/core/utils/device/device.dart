@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum DeviceType { phone, tablet }
+enum DeviceType { phone, smallPhone, tablet }
 
 class DeviceUtil {
   //========== Singleton Instance ==========
@@ -14,15 +14,31 @@ class DeviceUtil {
     return instance;
   }
 
+  //========== Get Screen Size ==========
+  static Size screenSize(BuildContext context) {
+    return MediaQuery.of(context).size;
+  }
+
   //========== Get Device Type ==========
   static Enum get _getDeviceType {
     final data = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
     return data.size.shortestSide < 550 ? DeviceType.phone : DeviceType.tablet;
   }
 
+  //========== Get Phone Type ==========
+  static Enum get _getPhoneType {
+    final data = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    return data.size.shortestSide < 360 ? DeviceType.smallPhone : DeviceType.phone;
+  }
+
   //========== Checking if it's Tablet or Smartphone ==========
   static bool get isTablet {
     return _getDeviceType == DeviceType.tablet;
+  }
+
+  //========== Checking if Phone is Small or Big ==========
+  static bool get isSmall {
+    return _getPhoneType == DeviceType.smallPhone;
   }
 }
 

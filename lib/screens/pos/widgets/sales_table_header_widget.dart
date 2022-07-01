@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 
@@ -14,6 +13,8 @@ class SalesTableHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isSmall = DeviceUtil.isSmall;
+    final bool isTablet = DeviceUtil.isTablet;
     return Table(
       columnWidths: const {
         0: FractionColumnWidth(0.30),
@@ -27,63 +28,83 @@ class SalesTableHeaderWidget extends StatelessWidget {
         TableRow(children: [
           Container(
             color: Colors.blue,
-            height: 30,
+            height: isSmall ? 20 : 25,
             alignment: Alignment.center,
-            child: AutoSizeText(
+            child: Text(
               'Items',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: DeviceUtil.isTablet ? 13 : 12, color: kWhite, fontWeight: FontWeight.bold),
-              minFontSize: 12,
-              maxFontSize: 13,
+              style: TextStyle(
+                  fontSize: isSmall
+                      ? 10
+                      : isTablet
+                          ? 13
+                          : 12,
+                  color: kWhite,
+                  fontWeight: FontWeight.bold),
             ),
           ),
           Container(
             color: Colors.blue,
-            height: 30,
+            height: isSmall ? 20 : 25,
             alignment: Alignment.center,
-            child: AutoSizeText(
+            child: Text(
               !isPurchase ? 'Price' : 'Cost',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: DeviceUtil.isTablet ? 13 : 12, color: kWhite, fontWeight: FontWeight.bold),
-              minFontSize: 12,
-              maxFontSize: 13,
+              style: TextStyle(
+                  fontSize: isSmall
+                      ? 10
+                      : isTablet
+                          ? 13
+                          : 12,
+                  color: kWhite,
+                  fontWeight: FontWeight.bold),
             ),
           ),
           Container(
             color: Colors.blue,
-            height: 30,
+            height: isSmall ? 20 : 25,
             alignment: Alignment.center,
-            child: AutoSizeText(
+            child: Text(
               'Qty',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: DeviceUtil.isTablet ? 13 : 12, color: kWhite, fontWeight: FontWeight.bold),
-              minFontSize: 12,
-              maxFontSize: 13,
+              style: TextStyle(
+                  fontSize: isSmall
+                      ? 10
+                      : isTablet
+                          ? 13
+                          : 12,
+                  color: kWhite,
+                  fontWeight: FontWeight.bold),
             ),
           ),
           Container(
             color: Colors.blue,
-            height: 30,
+            height: isSmall ? 20 : 25,
             alignment: Alignment.center,
-            child: AutoSizeText(
+            child: Text(
               'Subtotal',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: DeviceUtil.isTablet ? 13 : 12, color: kWhite, fontWeight: FontWeight.bold),
-              minFontSize: 12,
-              maxFontSize: 13,
+              style: TextStyle(
+                  fontSize: isSmall
+                      ? 10
+                      : isTablet
+                          ? 13
+                          : 12,
+                  color: kWhite,
+                  fontWeight: FontWeight.bold),
             ),
           ),
           Container(
               color: Colors.blue,
-              height: 30,
-              child: const Center(
+              height: isSmall ? 20 : 25,
+              child: Center(
                   child: Icon(
                 Icons.delete,
-                size: 16,
+                size: isSmall ? 12 : 16,
                 color: kWhite,
               )))
         ]),

@@ -11,50 +11,56 @@ class Purchase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size _screenSize = MediaQuery.of(context).size;
+    // Size _screenSize = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: kBackgroundGrey,
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: _screenSize.width * .015, horizontal: _screenSize.width * .02),
-          child: OrientationMode.deviceMode == OrientationMode.normalMode
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    //========================================                  ========================================
-                    //======================================== Purchase Side Widget ========================================
-                    //========================================                  ========================================
-                    PurchaseSideWidget(),
+        child: Align(
+          alignment: Alignment.center,
+          child: FractionallySizedBox(
+            heightFactor: .99,
+            widthFactor: .98,
+            alignment: Alignment.topCenter,
+            // padding: EdgeInsets.symmetric(vertical: _screenSize.width * .015, horizontal: _screenSize.width * .02),
+            child: OrientationMode.deviceMode == OrientationMode.normalMode
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      //========================================                  ========================================
+                      //======================================== Purchase Side Widget ========================================
+                      //========================================                  ========================================
+                      PurchaseSideWidget(),
 
-                    //==================== Constant Width ====================
-                    kWidth20,
+                      //==================== Constant Width ====================
+                      kWidth20,
 
-                    //========================================                     ========================================
-                    //======================================== Purchase Product Side Widget ========================================
-                    //========================================                     ========================================
-                    PurchaseProductSideWidget()
-                  ],
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    //========================================                     ========================================
-                    //======================================== Purchase Product Side Widget ========================================
-                    //========================================                     ========================================
-                    PurchaseProductSideWidget(isVertical: true),
+                      //========================================                     ========================================
+                      //======================================== Purchase Product Side Widget ========================================
+                      //========================================                     ========================================
+                      PurchaseProductSideWidget()
+                    ],
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      //========================================                     ========================================
+                      //======================================== Purchase Product Side Widget ========================================
+                      //========================================                     ========================================
+                      PurchaseProductSideWidget(isVertical: true),
 
-                    //==================== Divider ====================
-                    Divider(thickness: 1, height: 10),
+                      //==================== Divider ====================
+                      Divider(thickness: 1, height: 10),
 
-                    //========================================                  ========================================
-                    //======================================== Purchase Side Widget ========================================
-                    //========================================                  ========================================
-                    PurchaseSideWidget(isVertical: true),
-                  ],
-                ),
+                      //========================================                  ========================================
+                      //======================================== Purchase Side Widget ========================================
+                      //========================================                  ========================================
+                      PurchaseSideWidget(isVertical: true),
+                    ],
+                  ),
+          ),
         ),
       ),
     );

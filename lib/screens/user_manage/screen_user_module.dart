@@ -20,7 +20,7 @@ class ScreenUserManage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBarWidget(
-        title: 'User Manage',
+        title: 'Manage Users',
       ),
       body: BackgroundContainerWidget(
         child: ItemScreenPaddingWidget(

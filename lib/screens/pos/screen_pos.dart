@@ -11,7 +11,7 @@ class PosScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size _screenSize = MediaQuery.of(context).size;
+    // Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         return true;
@@ -20,46 +20,53 @@ class PosScreen extends StatelessWidget {
         resizeToAvoidBottomInset: false,
         backgroundColor: kBackgroundGrey,
         body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: _screenSize.height * .015, horizontal: _screenSize.width * .02),
-            child: OrientationMode.deviceMode == OrientationMode.normalMode
-                ? Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      //========================================                  ========================================
-                      //======================================== Sale Side Widget ========================================
-                      //========================================                  ========================================
-                      SaleSideWidget(),
+          child: Align(
+            alignment: Alignment.center,
+            child: FractionallySizedBox(
+              heightFactor: .99,
+              widthFactor: .98,
+              alignment: Alignment.topCenter,
+              // padding: EdgeInsets.symmetric(vertical: _screenSize.height * .005, horizontal: _screenSize.width * .02),
+              // padding: EdgeInsets.symmetric(vertical: _screenSize.height * .015, horizontal: _screenSize.width * .02),
+              child: OrientationMode.deviceMode == OrientationMode.normalMode
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        //========================================                  ========================================
+                        //======================================== Sale Side Widget ========================================
+                        //========================================                  ========================================
+                        SaleSideWidget(),
 
-                      //==================== Constant Width ====================
-                      kWidth20,
+                        //==================== Constant Width ====================
+                        kWidth20,
 
-                      //========================================                     ========================================
-                      //======================================== Product Side Widget ========================================
-                      //========================================                     ========================================
-                      ProductSideWidget()
-                    ],
-                  )
-                : Column(
-                    // crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      //========================================                     ========================================
-                      //======================================== Product Side Widget ========================================
-                      //========================================                     ========================================
-                      ProductSideWidget(isVertical: true),
+                        //========================================                     ========================================
+                        //======================================== Product Side Widget ========================================
+                        //========================================                     ========================================
+                        ProductSideWidget()
+                      ],
+                    )
+                  : Column(
+                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        //========================================                     ========================================
+                        //======================================== Product Side Widget ========================================
+                        //========================================                     ========================================
+                        ProductSideWidget(isVertical: true),
 
-                      //==================== Divider ====================
-                      Divider(thickness: 1, height: 10),
+                        //==================== Divider ====================
+                        Divider(thickness: 1, height: 10),
 
-                      // //========================================                  ========================================
-                      // //======================================== Sale Side Widget ========================================
-                      // //========================================                  ========================================
-                      SaleSideWidget(isVertical: true),
-                    ],
-                  ),
+                        // //========================================                  ========================================
+                        // //======================================== Sale Side Widget ========================================
+                        // //========================================                  ========================================
+                        SaleSideWidget(isVertical: true),
+                      ],
+                    ),
+            ),
           ),
         ),
       ),

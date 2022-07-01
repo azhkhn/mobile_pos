@@ -8,6 +8,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/vat/vat.dart';
 import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
@@ -56,16 +57,14 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
   //========== Lists ==========
   List categories = [], subCategories = [], brands = [], itemsList = [];
 
-  //========== MediaQuery Screen Size ==========
-  late Size _screenSize;
-
   //========== TextEditing Controllers ==========
   final _productController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = MediaQuery.of(context).size;
-    _builderModel = null;
+    final Size _screenSize = MediaQuery.of(context).size;
+    final bool isSmall = DeviceUtil.isSmall;
+
     return SizedBox(
       width: widget.isVertical ? double.infinity : _screenSize.width / 1.9,
       height: widget.isVertical ? _screenSize.height / 2.25 : double.infinity,
@@ -91,7 +90,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                       hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(
                           controller: _productController,
-                          style: const TextStyle(fontSize: 12),
+                          style: kText_10_12,
                           decoration: InputDecoration(
                             fillColor: Colors.white,
                             filled: true,
@@ -117,9 +116,9 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                 },
                               ),
                             ),
-                            contentPadding: const EdgeInsets.all(10),
+                            contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
                             hintText: 'Search product by name/code',
-                            hintStyle: const TextStyle(fontSize: 12),
+                            hintStyle: kText_10_12,
                             border: const OutlineInputBorder(),
                           )),
                       noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
@@ -157,17 +156,21 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                         padding: const EdgeInsets.all(5),
                         alignment: Alignment.center,
                         constraints: const BoxConstraints(
-                          minHeight: 30,
-                          maxHeight: 30,
+                          minHeight: 20,
+                          maxHeight: 20,
                         ),
                         onPressed: () async => await onBarcodeScan(),
-                        icon: const Icon(Icons.qr_code, color: Colors.blue),
+                        icon: Icon(
+                          Icons.qr_code,
+                          color: Colors.blue,
+                          size: isSmall ? 22 : 25,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
-              kHeight5,
+              kHeight3,
               widget.isVertical
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,7 +184,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
                                 controller: PurchaseSideWidget.supplierController,
-                                style: const TextStyle(fontSize: 12),
+                                style: kText_10_12,
                                 decoration: InputDecoration(
                                   fillColor: Colors.white,
                                   filled: true,
@@ -200,9 +203,9 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                       },
                                     ),
                                   ),
-                                  contentPadding: const EdgeInsets.all(10),
+                                  contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
                                   hintText: 'Supplier',
-                                  hintStyle: const TextStyle(fontSize: 12),
+                                  hintStyle: kText_10_12,
                                   border: const OutlineInputBorder(),
                                 )),
                             noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No supplier Found!'))),
@@ -248,12 +251,12 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                               ),
                             ),
                             controller: PurchaseSideWidget.referenceNumberController,
-                            textStyle: const TextStyle(fontSize: 12),
+                            textStyle: kText_10_12,
                             inputBorder: const OutlineInputBorder(),
                             textInputType: TextInputType.text,
                             constraints: const BoxConstraints(maxHeight: 40),
-                            hintStyle: const TextStyle(fontSize: 12),
-                            contentPadding: const EdgeInsets.all(10),
+                            hintStyle: kText_10_12,
+                            contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
                             errorStyle: true,
                             autovalidateMode: AutovalidateMode.onUserInteraction,
                           ),
@@ -268,8 +271,8 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                 padding: const EdgeInsets.all(5),
                                 alignment: Alignment.center,
                                 constraints: const BoxConstraints(
-                                  minHeight: 30,
-                                  maxHeight: 30,
+                                  minHeight: 20,
+                                  maxHeight: 20,
                                 ),
                                 onPressed: () {
                                   if (PurchaseSideWidget.supplierNotifier.value != null) {
@@ -291,10 +294,10 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                     kSnackBar(context: context, content: 'Please select any Supplier to show details!');
                                   }
                                 },
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.visibility,
                                   color: Colors.blue,
-                                  size: 25,
+                                  size: isSmall ? 25 : 25,
                                 )),
                           ),
                         ),
@@ -307,8 +310,8 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                 padding: const EdgeInsets.all(5),
                                 alignment: Alignment.center,
                                 constraints: const BoxConstraints(
-                                  minHeight: 30,
-                                  maxHeight: 30,
+                                  minHeight: 20,
+                                  maxHeight: 20,
                                 ),
                                 onPressed: () async {
                                   // OrientationMode.isLandscape = false;
@@ -323,10 +326,10 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
 
                                   // await OrientationMode.toLandscape();
                                 },
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.person_add,
                                   color: Colors.blue,
-                                  size: 25,
+                                  size: isSmall ? 25 : 25,
                                 )),
                           ),
                         ),
@@ -338,9 +341,9 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
 
           //==================== Quick Filter Buttons ====================
           Padding(
-            padding: widget.isVertical ? const EdgeInsets.symmetric(vertical: 5.0) : const EdgeInsets.only(bottom: 5),
+            padding: widget.isVertical ? const EdgeInsets.only(top: 4.0, bottom: 2.0) : const EdgeInsets.only(bottom: 5),
             child: SizedBox(
-              height: 30,
+              height: isSmall ? 22 : 30,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -363,7 +366,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                           }
                         },
                         padding: kPadding0,
-                        fontSize: 12,
+                        fontSize: 10,
                         buttonText: 'Categories'),
                   ),
                   kWidth5,
@@ -380,7 +383,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                           }
                         },
                         padding: kPadding0,
-                        fontSize: 12,
+                        fontSize: 10,
                         color: Colors.orange,
                         buttonText: 'Sub Categories'),
                   ),
@@ -399,7 +402,7 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                       },
                       padding: kPadding0,
                       color: Colors.indigo,
-                      fontSize: 12,
+                      fontSize: 10,
                       buttonText: 'Brands',
                     ),
                   ),
@@ -419,9 +422,12 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                         }
                       },
                       color: Colors.blue,
-                      child: const Icon(
-                        Icons.rotate_left,
-                        color: kWhite,
+                      child: const FittedBox(
+                        fit: BoxFit.fitHeight,
+                        child: Icon(
+                          Icons.rotate_left,
+                          color: kWhite,
+                        ),
                       ),
                     ),
                   )

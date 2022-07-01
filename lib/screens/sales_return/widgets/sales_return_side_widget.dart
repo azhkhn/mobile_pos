@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/debouncer/debouncer.dart';
@@ -58,6 +59,8 @@ class SalesReturnSideWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     //========== Device Utils ==========
     // Size _screenSize = MediaQuery.of(context).size;
+    final bool isSmall = DeviceUtil.isSmall;
+
     return WillPopScope(
       onWillPop: () async {
         if (selectedProductsNotifier.value.isEmpty) {
@@ -125,7 +128,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                                       },
                                     ),
                                   ),
-                                  contentPadding: const EdgeInsets.all(10),
+                                  contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
                                   hintText: 'Customer',
                                   hintStyle: kText_10_12,
                                   border: const OutlineInputBorder(),
@@ -189,7 +192,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                                 },
                               ),
                             ),
-                            contentPadding: const EdgeInsets.all(10),
+                            contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
                             hintText: 'Invoice No',
                             hintStyle: kText_10_12,
                             border: const OutlineInputBorder(),
@@ -226,13 +229,14 @@ class SalesReturnSideWidget extends StatelessWidget {
                   //========== View customer Button ==========
                   Flexible(
                     flex: isVertical ? 2 : 1,
-                    child: Center(
+                    child: FittedBox(
+                      alignment: Alignment.center,
                       child: IconButton(
-                          padding: const EdgeInsets.all(0),
+                          padding: const EdgeInsets.all(5),
                           alignment: Alignment.center,
                           constraints: const BoxConstraints(
-                            minHeight: 30,
-                            maxHeight: 30,
+                            minHeight: 20,
+                            maxHeight: 20,
                           ),
                           onPressed: () {
                             if (customerNotifier.value != null) {
@@ -254,10 +258,10 @@ class SalesReturnSideWidget extends StatelessWidget {
                               kSnackBar(context: context, content: 'Please select any Customer to show details!');
                             }
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.person_search,
                             color: Colors.blue,
-                            size: 28,
+                            size: isSmall ? 23 : 25,
                           )),
                     ),
                   ),
@@ -328,7 +332,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                       color: Colors.white,
-                                      height: 30,
+                                      height: isSmall ? 25 : 30,
                                       alignment: Alignment.centerLeft,
                                       child: Text(
                                         _product.itemName,
@@ -341,7 +345,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                       color: Colors.white,
-                                      height: 30,
+                                      height: isSmall ? 25 : 30,
                                       alignment: Alignment.center,
                                       child: Text(
                                         _product.vatMethod == 'Exclusive'
@@ -355,7 +359,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                                     ),
                                     Container(
                                       color: Colors.white,
-                                      height: 30,
+                                      height: isSmall ? 25 : 30,
                                       alignment: Alignment.topCenter,
                                       child: TextFormField(
                                         controller: quantityNotifier.value[index],
@@ -415,7 +419,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                                     Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                         color: Colors.white,
-                                        height: 30,
+                                        height: isSmall ? 25 : 30,
                                         alignment: Alignment.center,
                                         child: ValueListenableBuilder(
                                             valueListenable: subTotalNotifier,
@@ -429,7 +433,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                                             })),
                                     Container(
                                         color: Colors.white,
-                                        height: 30,
+                                        height: isSmall ? 25 : 30,
                                         alignment: Alignment.center,
                                         child: IconButton(
                                           onPressed: () {
@@ -445,9 +449,9 @@ class SalesReturnSideWidget extends StatelessWidget {
                                             getTotalVAT();
                                             getTotalPayable();
                                           },
-                                          icon: const Icon(
+                                          icon: Icon(
                                             Icons.close,
-                                            size: 16,
+                                            size: isSmall ? 12 : 16,
                                           ),
                                         ))
                                   ]);

@@ -12,6 +12,7 @@ import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
+import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
@@ -23,7 +24,7 @@ class ScreenDatabase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: 'Database Manage'),
+      appBar: AppBarWidget(title: 'Manage Database'),
       body: Card(
         child: Column(
           children: [
@@ -151,6 +152,7 @@ class ScreenDatabase extends StatelessWidget {
 
               log('Database restored successfully');
               kSnackBar(context: context, update: true, content: 'Database restored successfully');
+              await UserUtils.instance.reloadUserDetails();
             },
           ),
         );

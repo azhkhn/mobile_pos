@@ -19,7 +19,7 @@ class ScreenHome extends StatelessWidget {
   final int? initialEntry;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final isDialOpen = ValueNotifier(false);
-  final ValueNotifier<BusinessProfileModel?> businessNotifier = ValueNotifier(null);
+  static final ValueNotifier<BusinessProfileModel?> businessNotifier = ValueNotifier(null);
 
   @override
   Widget build(BuildContext context) {

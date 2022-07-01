@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
 
 const List reportGridName = [
   'OPERATION SUMMARY',
-  'PAYMENT REPORT',
+  'TRANSACTION REPORT',
   'PENDING PAYMENT',
   'SALES REPORT',
   'EXPENSE REPORT',
@@ -77,22 +78,18 @@ class ReportsGrid extends StatelessWidget {
                 default:
               }
             },
-            child: GridTile(
-              footer: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+            child: GridTileBar(
+              title: Image(
+                image: AssetImage(
+                  reportGridIcons[index],
+                ),
+              ),
+              subtitle: Center(
                 child: Text(
                   reportGridName[index],
                   textAlign: TextAlign.center,
                   maxLines: 2,
-                  style: const TextStyle(
-                    fontSize: 8,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              child: Image(
-                image: AssetImage(
-                  reportGridIcons[index],
+                  style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: kBlack),
                 ),
               ),
             ),

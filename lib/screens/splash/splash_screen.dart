@@ -93,9 +93,12 @@ class ScreenSplash extends StatelessWidget {
                               await OrientationMode.getDeviceMode;
                               await userAuthentication(context);
                             },
-                            child: const Text(
-                              'Vertical Mode',
-                              style: TextStyle(color: kWhite),
+                            child: const FittedBox(
+                              child: Text(
+                                'Vertical Mode',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: kWhite),
+                              ),
                             ),
                             color: Colors.blueGrey[300],
                           ),
@@ -109,9 +112,12 @@ class ScreenSplash extends StatelessWidget {
                               await OrientationMode.getDeviceMode;
                               await userAuthentication(context);
                             },
-                            child: const Text(
-                              'Normal Mode',
-                              style: TextStyle(color: kWhite),
+                            child: const FittedBox(
+                              child: Text(
+                                'Normal Mode',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: kWhite),
+                              ),
                             ),
                             color: mainColor.withOpacity(.8),
                           ),

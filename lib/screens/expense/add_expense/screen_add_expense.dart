@@ -104,7 +104,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
         }
       },
       child: Scaffold(
-        appBar: AppBarWidget(title: 'Expense'),
+        appBar: AppBarWidget(title: 'Expenses'),
         body: BackgroundContainerWidget(
           child: ItemScreenPaddingWidget(
             child: Form(

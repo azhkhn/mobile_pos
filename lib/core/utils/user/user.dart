@@ -6,6 +6,7 @@ import 'package:shop_ez/db/db_functions/permission/permission_database.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:shop_ez/model/group/group_model.dart';
 import 'package:shop_ez/model/permission/permission_model.dart';
+import 'package:shop_ez/screens/home/home_screen.dart';
 import '../../../model/auth/user_model.dart';
 
 class UserUtils {
@@ -31,12 +32,18 @@ class UserUtils {
   }
 
   //========== Unload all User Details ==========
-  Future<void> cleanUserDetails() async {
+  void cleanUserDetails() {
     log('Cleaning saved user details..');
     userModel = null;
     businessProfileModel = null;
     groupModel = null;
     permissionModel = null;
+  }
+
+  //========== Reload all User Details ==========
+  Future<void> reloadUserDetails() async {
+    cleanUserDetails();
+    await fetchUserDetails();
   }
 
 //========== Get User Details ==========
@@ -103,6 +110,7 @@ class UserUtils {
     final BusinessProfileDatabase businessProfileDB = BusinessProfileDatabase.instance;
     final _businessProfile = await businessProfileDB.getBusinessProfile();
     businessProfileModel = _businessProfile;
+    ScreenHome.businessNotifier.value = businessProfileModel;
     log('Done!');
   }
 

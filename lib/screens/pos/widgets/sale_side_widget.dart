@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/debouncer/debouncer.dart';
@@ -46,14 +47,15 @@ class SaleSideWidget extends StatelessWidget {
   static final ValueNotifier<num> totalPayableNotifier = ValueNotifier(0);
 
   //==================== TextEditing Controllers ====================
-  static final customerController = TextEditingController();
+  static final TextEditingController customerController = TextEditingController();
 
   //==================== Global Keys ====================
   // static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    Size _screenSize = MediaQuery.of(context).size;
+    final Size _screenSize = DeviceUtil.screenSize(context);
+    final bool isSmall = DeviceUtil.isSmall;
     return WillPopScope(
       onWillPop: () async {
         if (selectedProductsNotifier.value.isEmpty) {
@@ -215,7 +217,7 @@ class SaleSideWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-              kHeight5,
+              if (!isVertical) kHeight3,
               //==================== Table Header ====================
               const SalesTableHeaderWidget(),
 
@@ -243,7 +245,7 @@ class SaleSideWidget extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                 color: Colors.white,
-                                height: 30,
+                                height: isSmall ? 25 : 30,
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   _product.itemName,
@@ -258,7 +260,7 @@ class SaleSideWidget extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                 color: Colors.white,
-                                height: 30,
+                                height: isSmall ? 25 : 30,
                                 alignment: Alignment.topCenter,
                                 child: TextFormField(
                                   controller: unitPriceNotifier.value[index],
@@ -293,7 +295,7 @@ class SaleSideWidget extends StatelessWidget {
                               //==================== Quantity ====================
                               Container(
                                 color: Colors.white,
-                                height: 30,
+                                height: isSmall ? 25 : 30,
                                 alignment: Alignment.topCenter,
                                 child: TextFormField(
                                   controller: quantityNotifier.value[index],
@@ -354,7 +356,7 @@ class SaleSideWidget extends StatelessWidget {
                               Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                   color: Colors.white,
-                                  height: 30,
+                                  height: isSmall ? 25 : 30,
                                   alignment: Alignment.center,
                                   child: ValueListenableBuilder(
                                       valueListenable: subTotalNotifier,
@@ -369,7 +371,7 @@ class SaleSideWidget extends StatelessWidget {
                               //==================== Delete Icon ====================
                               Container(
                                   color: Colors.white,
-                                  height: 30,
+                                  height: isSmall ? 25 : 30,
                                   alignment: Alignment.center,
                                   child: IconButton(
                                     onPressed: () {
@@ -392,9 +394,9 @@ class SaleSideWidget extends StatelessWidget {
                                       getTotalPayable();
                                       ProductSideWidget.notifyStock(itemId: itemId, bulk: true, reset: true);
                                     },
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.close,
-                                      size: 16,
+                                      size: isSmall ? 12 : 16,
                                       color: kTextColor,
                                     ),
                                   ))

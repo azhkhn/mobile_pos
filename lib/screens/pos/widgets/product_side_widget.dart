@@ -146,9 +146,6 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
   static List<ItemMasterModel> itemsList = [];
 
-  //========== MediaQuery Screen Size ==========
-  late Size _screenSize;
-
   //========== TextEditing Controllers ==========
   final _productController = TextEditingController();
 
@@ -162,11 +159,16 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = MediaQuery.of(context).size;
+    final Size _screenSize = MediaQuery.of(context).size;
+    final bool isSmall = DeviceUtil.isSmall;
     // _builderModel = null;
     return SizedBox(
       width: widget.isVertical ? double.infinity : _screenSize.width / 1.9,
-      height: widget.isVertical ? _screenSize.height / 2.25 : double.infinity,
+      height: widget.isVertical
+          ? isSmall
+              ? _screenSize.height / 2.60
+              : _screenSize.height / 2.25
+          : double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -190,7 +192,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                       hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(
                           controller: _productController,
-                          style: const TextStyle(fontSize: 12),
+                          style: kText_10_12,
                           decoration: InputDecoration(
                             fillColor: Colors.white,
                             filled: true,
@@ -216,9 +218,9 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                 },
                               ),
                             ),
-                            contentPadding: const EdgeInsets.all(10),
+                            contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
                             hintText: 'Search product by name/code',
-                            hintStyle: const TextStyle(fontSize: 12),
+                            hintStyle: kText_10_12,
                             border: const OutlineInputBorder(),
                           )),
                       noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
@@ -252,21 +254,26 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                   Flexible(
                     flex: 1,
                     child: FittedBox(
+                      alignment: Alignment.center,
                       child: IconButton(
                         padding: const EdgeInsets.all(5),
                         alignment: Alignment.center,
                         constraints: const BoxConstraints(
-                          minHeight: 30,
-                          maxHeight: 30,
+                          minHeight: 20,
+                          maxHeight: 20,
                         ),
                         onPressed: () async => await onBarcodeScan(),
-                        icon: const Icon(Icons.qr_code, color: Colors.blue),
+                        icon: Icon(
+                          Icons.qr_code,
+                          color: Colors.blue,
+                          size: isSmall ? 22 : 25,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
-              kHeight5,
+              kHeight3,
               //========== Get All Customers Search Field ==========
               widget.isVertical
                   ? Row(
@@ -280,8 +287,9 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
                                 controller: SaleSideWidget.customerController,
-                                style: const TextStyle(fontSize: 12),
+                                style: kText_10_12,
                                 decoration: InputDecoration(
+                                  // constraints: const BoxConstraints(maxHeight: 35),
                                   fillColor: Colors.white,
                                   filled: true,
                                   isDense: true,
@@ -299,9 +307,10 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                       },
                                     ),
                                   ),
-                                  contentPadding: const EdgeInsets.all(10),
+                                  contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
+
                                   hintText: 'Customer',
-                                  hintStyle: const TextStyle(fontSize: 12),
+                                  hintStyle: kText_10_12,
                                   border: const OutlineInputBorder(),
                                 )),
                             noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Customer Found!'))),
@@ -335,8 +344,8 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                 padding: const EdgeInsets.all(5),
                                 alignment: Alignment.center,
                                 constraints: const BoxConstraints(
-                                  minHeight: 30,
-                                  maxHeight: 30,
+                                  minHeight: 20,
+                                  maxHeight: 20,
                                 ),
                                 onPressed: () {
                                   if (SaleSideWidget.customerNotifier.value != null) {
@@ -355,10 +364,10 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                     kSnackBar(context: context, content: 'Please select any Customer to show details!');
                                   }
                                 },
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.visibility,
                                   color: Colors.blue,
-                                  size: 25,
+                                  size: isSmall ? 22 : 25,
                                 )),
                           ),
                         ),
@@ -371,8 +380,8 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                               padding: const EdgeInsets.all(5),
                               alignment: Alignment.center,
                               constraints: const BoxConstraints(
-                                minHeight: 30,
-                                maxHeight: 30,
+                                minHeight: 20,
+                                maxHeight: 20,
                               ),
                               onPressed: () async {
                                 // OrientationMode.isLandscape = false;
@@ -381,8 +390,6 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                     await Navigator.pushNamed(context, routeAddCustomer, arguments: {'from': true}) as CustomerModel;
 
                                 if (addedCustomer != null) {
-                                  // final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
-
                                   SaleSideWidget.customerController.text = addedCustomer.customer;
                                   SaleSideWidget.customerNotifier.value = addedCustomer;
                                   log(addedCustomer.company);
@@ -390,10 +397,10 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
                                 // await OrientationMode.toLandscape();
                               },
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.person_add,
                                 color: Colors.blue,
-                                size: 25,
+                                size: isSmall ? 22 : 25,
                               ),
                             ),
                           ),
@@ -406,9 +413,9 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
 
           //==================== Quick Filter Buttons ====================
           Padding(
-            padding: widget.isVertical ? const EdgeInsets.symmetric(vertical: 5.0) : const EdgeInsets.only(bottom: 5),
+            padding: widget.isVertical ? const EdgeInsets.only(top: 4.0, bottom: 2.0) : const EdgeInsets.only(bottom: 5),
             child: SizedBox(
-              height: 30,
+              height: isSmall ? 22 : 30,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -431,7 +438,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                           }
                         },
                         padding: kPadding0,
-                        fontSize: 12,
+                        fontSize: 10,
                         buttonText: 'Categories'),
                   ),
                   kWidth5,
@@ -448,7 +455,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                           }
                         },
                         padding: kPadding0,
-                        fontSize: 12,
+                        fontSize: 10,
                         color: Colors.orange,
                         buttonText: 'Sub Categories'),
                   ),
@@ -467,7 +474,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                       },
                       padding: kPadding0,
                       color: Colors.indigo,
-                      fontSize: 12,
+                      fontSize: 10,
                       buttonText: 'Brands',
                     ),
                   ),
@@ -487,9 +494,12 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                         }
                       },
                       color: Colors.blue,
-                      child: const Icon(
-                        Icons.rotate_left,
-                        color: kWhite,
+                      child: const FittedBox(
+                        fit: BoxFit.fitHeight,
+                        child: Icon(
+                          Icons.rotate_left,
+                          color: kWhite,
+                        ),
                       ),
                     ),
                   )
