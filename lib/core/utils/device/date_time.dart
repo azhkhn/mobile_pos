@@ -9,10 +9,10 @@ class DateTimeUtils {
   }
 
   //========== Date Picker ==========
-  Future<DateTime?> datePicker(BuildContext context) {
+  Future<DateTime?> datePicker(BuildContext context, {DateTime? initDate}) {
     return showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: initDate ?? DateTime.now(),
       firstDate: DateTime(1998, 04, 14),
       // firstDate: DateTime.now().subtract(
       //   const Duration(days: 30),

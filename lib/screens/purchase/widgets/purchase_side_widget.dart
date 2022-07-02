@@ -95,7 +95,7 @@ class PurchaseSideWidget extends StatelessWidget {
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
                                 controller: supplierController,
-                                style: const TextStyle(fontSize: 12),
+                                style: kText_10_12,
                                 decoration: InputDecoration(
                                   fillColor: Colors.white,
                                   filled: true,
@@ -114,9 +114,9 @@ class PurchaseSideWidget extends StatelessWidget {
                                       },
                                     ),
                                   ),
-                                  contentPadding: const EdgeInsets.all(10),
+                                  contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
                                   hintText: 'Supplier',
-                                  hintStyle: const TextStyle(fontSize: 12),
+                                  hintStyle: kText_10_12,
                                   border: const OutlineInputBorder(),
                                 )),
                             noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No supplier Found!'))),
@@ -162,12 +162,12 @@ class PurchaseSideWidget extends StatelessWidget {
                               ),
                             ),
                             controller: referenceNumberController,
-                            textStyle: const TextStyle(fontSize: 12),
+                            textStyle: kText_10_12,
                             inputBorder: const OutlineInputBorder(),
                             textInputType: TextInputType.text,
                             constraints: const BoxConstraints(maxHeight: 40),
-                            hintStyle: const TextStyle(fontSize: 12),
-                            contentPadding: const EdgeInsets.all(10),
+                            hintStyle: kText_10_12,
+                            contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
                             errorStyle: true,
                             autovalidateMode: AutovalidateMode.onUserInteraction,
                           ),
@@ -182,13 +182,11 @@ class PurchaseSideWidget extends StatelessWidget {
                                 padding: const EdgeInsets.all(5),
                                 alignment: Alignment.center,
                                 constraints: const BoxConstraints(
-                                  minHeight: 30,
-                                  maxHeight: 30,
+                                  minHeight: 20,
+                                  maxHeight: 20,
                                 ),
                                 onPressed: () {
                                   if (supplierNotifier.value != null) {
-                                    log('$supplierNotifier');
-
                                     showModalBottomSheet(
                                         context: context,
                                         isScrollControlled: true,
@@ -205,10 +203,10 @@ class PurchaseSideWidget extends StatelessWidget {
                                     kSnackBar(context: context, content: 'Please select any Supplier to show details!');
                                   }
                                 },
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.visibility,
                                   color: Colors.blue,
-                                  size: 25,
+                                  size: isSmall ? 25 : 25,
                                 )),
                           ),
                         ),
@@ -221,8 +219,8 @@ class PurchaseSideWidget extends StatelessWidget {
                                 padding: const EdgeInsets.all(5),
                                 alignment: Alignment.center,
                                 constraints: const BoxConstraints(
-                                  minHeight: 30,
-                                  maxHeight: 30,
+                                  minHeight: 20,
+                                  maxHeight: 20,
                                 ),
                                 onPressed: () async {
                                   // OrientationMode.isLandscape = false;
@@ -237,10 +235,10 @@ class PurchaseSideWidget extends StatelessWidget {
 
                                   // await OrientationMode.toLandscape();
                                 },
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.person_add,
                                   color: Colors.blue,
-                                  size: 25,
+                                  size: isSmall ? 25 : 25,
                                 )),
                           ),
                         ),

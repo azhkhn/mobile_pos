@@ -29,21 +29,15 @@ class ScreenTaxSummaryReport extends StatelessWidget {
 
   //==================== Value Notifiers ====================
   final ValueNotifier<num> totalPayabaleTaxNotifier = ValueNotifier(0);
-  final ValueNotifier<Map?> salesNotifier = ValueNotifier({
-    'totalAmount': 0,
-    'excludeAmount': 0,
-    'vatAmount': 0,
-  });
-  final ValueNotifier<Map?> purchasesNotifier = ValueNotifier({
-    'totalAmount': 0,
-    'excludeAmount': 0,
-    'vatAmount': 0,
-  });
-  final ValueNotifier<Map?> expensesNotifer = ValueNotifier({
-    'totalAmount': 0,
-    'vatAmount': 0,
-  });
+  final ValueNotifier<Map?> salesNotifier = ValueNotifier({'totalAmount': 0, 'excludeAmount': 0, 'vatAmount': 0});
+  final ValueNotifier<Map?> purchasesNotifier = ValueNotifier({'totalAmount': 0, 'excludeAmount': 0, 'vatAmount': 0});
+  final ValueNotifier<Map?> expensesNotifer = ValueNotifier({'totalAmount': 0, 'vatAmount': 0});
 
+  //==================== DateTime ====================
+  DateTime? fromDate;
+  DateTime? toDate;
+
+  //==================== Lists ====================
   List<SalesModel> salesList = [];
   List<PurchaseModel> purchasesList = [];
   List<ExpenseModel> expensesList = [];
@@ -83,6 +77,8 @@ class ScreenTaxSummaryReport extends StatelessWidget {
                         child: const Icon(Icons.clear, size: 15),
                         onTap: () async {
                           fromDateController.clear();
+                          fromDate = null;
+                          getTaxSummary();
                         },
                       ),
                     ),
@@ -93,10 +89,12 @@ class ScreenTaxSummaryReport extends StatelessWidget {
                     textStyle: kText12,
                     inputBorder: const OutlineInputBorder(),
                     onTap: () async {
-                      final _selectedDate = await DateTimeUtils.instance.datePicker(context);
+                      final _selectedDate = await DateTimeUtils.instance.datePicker(context, initDate: fromDate);
                       if (_selectedDate != null) {
                         final parseDate = Converter.dateFormat.format(_selectedDate);
                         fromDateController.text = parseDate.toString();
+                        fromDate = _selectedDate;
+                        getTaxSummary();
                       }
                     },
                   ),
@@ -119,6 +117,8 @@ class ScreenTaxSummaryReport extends StatelessWidget {
                         child: const Icon(Icons.clear, size: 15),
                         onTap: () async {
                           toDateController.clear();
+                          toDate = null;
+                          getTaxSummary();
                         },
                       ),
                     ),
@@ -129,11 +129,12 @@ class ScreenTaxSummaryReport extends StatelessWidget {
                     textStyle: kText12,
                     inputBorder: const OutlineInputBorder(),
                     onTap: () async {
-                      final _selectedDate = await DateTimeUtils.instance.datePicker(context);
+                      final _selectedDate = await DateTimeUtils.instance.datePicker(context, initDate: toDate);
                       if (_selectedDate != null) {
                         final parseDate = Converter.dateFormat.format(_selectedDate);
                         toDateController.text = parseDate.toString();
-                        await getTaxSummary();
+                        toDate = _selectedDate;
+                        getTaxSummary();
                       }
                     },
                   ),
@@ -235,12 +236,85 @@ class ScreenTaxSummaryReport extends StatelessWidget {
     if (purchasesList.isEmpty) purchasesList = await PurchaseDatabase.instance.getAllPurchases();
     if (expensesList.isEmpty) expensesList = await ExpenseDatabase.instance.getAllExpense();
 
+    List<SalesModel> sales = [];
+    List<PurchaseModel> purchases = [];
+    List<ExpenseModel> expenses = [];
+
+    if (fromDate != null || toDate != null) {
+      final _fromDate = fromDate;
+      final _toDate = toDate;
+
+      //Sales Tax Summary ~ Filter
+      for (SalesModel sale in salesList) {
+        final DateTime _date = DateTime.parse(sale.dateTime);
+
+        // if fromDate and toDate is selected
+        if (_fromDate != null && _toDate != null) {
+          if (_date.isAfter(_fromDate) && _date.isBefore(_toDate)) sales.add(sale);
+        }
+
+        // if only fromDate is selected
+        else if (_fromDate != null) {
+          if (_date.isAfter(_fromDate)) sales.add(sale);
+        }
+
+        // if only toDate is selected
+        else if (_toDate != null) {
+          if (_date.isBefore(_toDate)) sales.add(sale);
+        }
+      }
+
+      //Purchase Tax Summary ~ Filter
+      for (PurchaseModel purchase in purchasesList) {
+        final DateTime _date = DateTime.parse(purchase.dateTime);
+
+        // if fromDate and toDate is selected
+        if (_fromDate != null && _toDate != null) {
+          if (_date.isAfter(_fromDate) && _date.isBefore(_toDate)) purchases.add(purchase);
+        }
+
+        // if only fromDate is selected
+        else if (_fromDate != null) {
+          if (_date.isAfter(_fromDate)) purchases.add(purchase);
+        }
+
+        // if only toDate is selected
+        else if (_toDate != null) {
+          if (_date.isBefore(_toDate)) purchases.add(purchase);
+        }
+      }
+
+      //Expense Tax Summary ~ Filter
+      for (ExpenseModel expense in expensesList) {
+        final DateTime _date = DateTime.parse(expense.date);
+
+        // if fromDate and toDate is selected
+        if (_fromDate != null && _toDate != null) {
+          if (_date.isAfter(_fromDate) && _date.isBefore(_toDate)) expenses.add(expense);
+        }
+
+        // if only fromDate is selected
+        else if (_fromDate != null) {
+          if (_date.isAfter(_fromDate)) expenses.add(expense);
+        }
+
+        // if only toDate is selected
+        else if (_toDate != null) {
+          if (_date.isBefore(_toDate)) expenses.add(expense);
+        }
+      }
+    } else {
+      sales = salesList;
+      purchases = purchasesList;
+      expenses = expensesList;
+    }
+
     final List<num> grandTotals = [];
     final List<num> excludeAmounts = [];
     final List<num> vatAmounts = [];
 
     //== == == == == Sales Summary == == == == ==
-    for (SalesModel sale in salesList) {
+    for (SalesModel sale in sales) {
       grandTotals.add(num.parse(sale.grantTotal));
       excludeAmounts.add(num.parse(sale.subTotal));
       vatAmounts.add(num.parse(sale.vatAmount));
@@ -250,9 +324,9 @@ class ScreenTaxSummaryReport extends StatelessWidget {
     final num totalSaleExcludeAmount = excludeAmounts.sum;
     final num totalSaleVatAmount = vatAmounts.sum;
 
-    log('Total Sales Amounts == $totalSaleAmount');
-    log('Total Sales Exclude Amounts == $totalSaleExcludeAmount');
-    log('Total Sales VAT Amounts == $totalSaleVatAmount');
+    // log('Total Sales Amounts == $totalSaleAmount');
+    // log('Total Sales Exclude Amounts == $totalSaleExcludeAmount');
+    // log('Total Sales VAT Amounts == $totalSaleVatAmount');
     salesNotifier.value = {'totalAmount': totalSaleAmount, 'excludeAmount': totalSaleExcludeAmount, 'vatAmount': totalSaleVatAmount};
 
     grandTotals.clear();
@@ -260,7 +334,7 @@ class ScreenTaxSummaryReport extends StatelessWidget {
     vatAmounts.clear();
 
     //== == == == == Purchases Summary == == == == ==
-    for (PurchaseModel purchase in purchasesList) {
+    for (PurchaseModel purchase in purchases) {
       grandTotals.add(num.parse(purchase.grantTotal));
       excludeAmounts.add(num.parse(purchase.subTotal));
       vatAmounts.add(num.parse(purchase.vatAmount));
@@ -270,9 +344,9 @@ class ScreenTaxSummaryReport extends StatelessWidget {
     final num totalPurchaseExcludeAmount = excludeAmounts.sum;
     final num totalPurchaseVatAmount = vatAmounts.sum;
 
-    log('Total Purchase Amounts == $totalPurchaseAmount');
-    log('Total Purchase Exclude Amounts == $totalPurchaseExcludeAmount');
-    log('Total Purchase VAT Amounts == $totalPurchaseVatAmount');
+    // log('Total Purchase Amounts == $totalPurchaseAmount');
+    // log('Total Purchase Exclude Amounts == $totalPurchaseExcludeAmount');
+    // log('Total Purchase VAT Amounts == $totalPurchaseVatAmount');
     purchasesNotifier.value = {'totalAmount': totalPurchaseAmount, 'excludeAmount': totalPurchaseExcludeAmount, 'vatAmount': totalPurchaseVatAmount};
 
     grandTotals.clear();
@@ -280,7 +354,7 @@ class ScreenTaxSummaryReport extends StatelessWidget {
     vatAmounts.clear();
 
     //== == == == == Expenses Summary == == == == ==
-    for (ExpenseModel expense in expensesList) {
+    for (ExpenseModel expense in expenses) {
       grandTotals.add(num.parse(expense.amount));
       if (expense.vatAmount != null) vatAmounts.add(num.parse(expense.vatAmount!));
     }
@@ -288,8 +362,8 @@ class ScreenTaxSummaryReport extends StatelessWidget {
     final num totalExpenseAmount = grandTotals.sum;
     final num totalExpenseVatAmount = vatAmounts.sum;
 
-    log('Total Expense Amounts == $totalExpenseAmount');
-    log('Total Expense VAT Amounts == $totalExpenseVatAmount');
+    // log('Total Expense Amounts == $totalExpenseAmount');
+    // log('Total Expense VAT Amounts == $totalExpenseVatAmount');
     expensesNotifer.value = {'totalAmount': totalExpenseAmount, 'excludeAmount': totalPurchaseExcludeAmount, 'vatAmount': totalExpenseVatAmount};
 
     final num totalPayableVat = totalSaleVatAmount - totalPurchaseVatAmount - totalExpenseVatAmount;

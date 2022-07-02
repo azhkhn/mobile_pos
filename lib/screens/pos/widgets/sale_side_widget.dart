@@ -97,8 +97,9 @@ class SaleSideWidget extends StatelessWidget {
                             hideSuggestionsOnKeyboardHide: true,
                             textFieldConfiguration: TextFieldConfiguration(
                                 controller: customerController,
-                                style: const TextStyle(fontSize: 12),
+                                style: kText_10_12,
                                 decoration: InputDecoration(
+                                  // constraints: const BoxConstraints(maxHeight: 35),
                                   fillColor: Colors.white,
                                   filled: true,
                                   isDense: true,
@@ -116,12 +117,14 @@ class SaleSideWidget extends StatelessWidget {
                                       },
                                     ),
                                   ),
-                                  contentPadding: const EdgeInsets.all(10),
+                                  contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
+
                                   hintText: 'Customer',
-                                  hintStyle: const TextStyle(fontSize: 12),
+                                  hintStyle: kText_10_12,
                                   border: const OutlineInputBorder(),
                                 )),
-                            noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Customer Found!'))),
+                            noItemsFoundBuilder: (context) =>
+                                const SizedBox(height: 50, child: Center(child: Text('No Customer Found!', style: kText12))),
                             suggestionsCallback: (pattern) async {
                               return CustomerDatabase.instance.getCustomerSuggestions(pattern);
                             },
@@ -131,7 +134,7 @@ class SaleSideWidget extends StatelessWidget {
                                   suggestion.customer,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: kText_10_12,
+                                  style: TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10),
                                 ),
                               );
                             },
@@ -152,12 +155,12 @@ class SaleSideWidget extends StatelessWidget {
                                 padding: const EdgeInsets.all(5),
                                 alignment: Alignment.center,
                                 constraints: const BoxConstraints(
-                                  minHeight: 30,
-                                  maxHeight: 30,
+                                  minHeight: 20,
+                                  maxHeight: 20,
                                 ),
                                 onPressed: () {
                                   if (customerNotifier.value != null) {
-                                    log(' Customer Id == ${customerNotifier.value}');
+                                    log('Customer Id == ${customerNotifier.value}');
 
                                     showModalBottomSheet(
                                         context: context,
@@ -172,10 +175,10 @@ class SaleSideWidget extends StatelessWidget {
                                     kSnackBar(context: context, content: 'Please select any Customer to show details!');
                                   }
                                 },
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.visibility,
                                   color: Colors.blue,
-                                  size: 25,
+                                  size: isSmall ? 22 : 25,
                                 )),
                           ),
                         ),
@@ -188,8 +191,8 @@ class SaleSideWidget extends StatelessWidget {
                               padding: const EdgeInsets.all(5),
                               alignment: Alignment.center,
                               constraints: const BoxConstraints(
-                                minHeight: 30,
-                                maxHeight: 30,
+                                minHeight: 20,
+                                maxHeight: 20,
                               ),
                               onPressed: () async {
                                 // OrientationMode.isLandscape = false;
@@ -198,8 +201,6 @@ class SaleSideWidget extends StatelessWidget {
                                     await Navigator.pushNamed(context, routeAddCustomer, arguments: {'from': true}) as CustomerModel;
 
                                 if (addedCustomer != null) {
-                                  // final addedCustomer = await CustomerDatabase.instance.getCustomerById(id as int);
-
                                   customerController.text = addedCustomer.customer;
                                   customerNotifier.value = addedCustomer;
                                   log(addedCustomer.company);
@@ -207,10 +208,10 @@ class SaleSideWidget extends StatelessWidget {
 
                                 // await OrientationMode.toLandscape();
                               },
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.person_add,
                                 color: Colors.blue,
-                                size: 25,
+                                size: isSmall ? 22 : 25,
                               ),
                             ),
                           ),
