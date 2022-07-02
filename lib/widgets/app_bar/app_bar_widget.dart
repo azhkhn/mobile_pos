@@ -13,10 +13,12 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: appBarColor,
-      elevation: 0,
-      title: Text(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.bold),
+      // elevation: 0,
+      // titleTextStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      title: FittedBox(
+        child: Text(
+          title,
+        ),
       ),
       actions: actions,
     );

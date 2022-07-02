@@ -5,10 +5,9 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
 import 'package:shop_ez/screens/reports/pages/pending_payment/pages/screen_account_payable.dart';
 import 'package:shop_ez/screens/reports/pages/pending_payment/pages/screen_account_receivable.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 
-class ScreenPendingPayment extends StatelessWidget {
-  ScreenPendingPayment({Key? key}) : super(key: key);
+class ScreenPendingInvoice extends StatelessWidget {
+  ScreenPendingInvoice({Key? key}) : super(key: key);
 
   //==================== TextEditing Controllers ====================
   final TextEditingController customerController = TextEditingController();
@@ -30,7 +29,7 @@ class ScreenPendingPayment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: 'Pending Payment'),
+      // appBar: AppBarWidget(title: 'Pending Invoice'),
       body: ValueListenableBuilder(
         valueListenable: navigationNotifier,
         builder: (context, int index, child) {

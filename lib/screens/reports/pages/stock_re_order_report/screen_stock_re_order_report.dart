@@ -37,7 +37,7 @@ class ScreenStockReOrderReport extends StatelessWidget {
               hideSuggestionsOnKeyboardHide: true,
               textFieldConfiguration: TextFieldConfiguration(
                   controller: _productController,
-                  style: const TextStyle(fontSize: 12),
+                  style: kText12,
                   decoration: InputDecoration(
                     fillColor: Colors.white,
                     filled: true,
@@ -59,10 +59,10 @@ class ScreenStockReOrderReport extends StatelessWidget {
                     ),
                     contentPadding: const EdgeInsets.all(10),
                     hintText: 'Search product by name/code',
-                    hintStyle: const TextStyle(fontSize: 12),
+                    hintStyle: kText12,
                     border: const OutlineInputBorder(),
                   )),
-              noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
+              noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!', style: kText12))),
               suggestionsCallback: (pattern) async {
                 return stableItemsNotifier.value.where((item) => item.itemName.contains(pattern));
               },
@@ -89,7 +89,7 @@ class ScreenStockReOrderReport extends StatelessWidget {
             //========== List Items ==========
             Expanded(
               child: FutureBuilder(
-                  future: ItemMasterDatabase.instance.getZeroStock(),
+                  future: ItemMasterDatabase.instance.getReOrderStock(),
                   builder: (context, AsyncSnapshot<List<ItemMasterModel>> snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
@@ -97,9 +97,8 @@ class ScreenStockReOrderReport extends StatelessWidget {
                       case ConnectionState.done:
 
                       default:
-                        if (!snapshot.hasData) {
-                          return const Center(child: Text('Products is Empty!'));
-                        }
+                        if (!snapshot.hasData) return const Center(child: Text('No re-order stocks!'));
+                        if (snapshot.data!.isEmpty) return const Center(child: Text('No re-order stocks!'));
                         itemsNotifier.value = snapshot.data!;
 
                         if (stableItemsNotifier.value.isEmpty) {
@@ -118,7 +117,7 @@ class ScreenStockReOrderReport extends StatelessWidget {
                                         );
                                       },
                                     )
-                                  : const Center(child: Text('Products is Empty!'));
+                                  : const Center(child: Text('No re-order stocks!'));
                             });
                     }
                   }),

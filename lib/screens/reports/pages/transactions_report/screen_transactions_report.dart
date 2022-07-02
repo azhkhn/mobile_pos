@@ -13,13 +13,13 @@ import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart'
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
-import 'package:shop_ez/screens/reports/pages/payment_report/widgets/payment_report_card.dart';
+import 'package:shop_ez/screens/reports/pages/transactions_report/widgets/transactions_report_card.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
-class ScreenPaymentReport extends StatelessWidget {
-  ScreenPaymentReport({Key? key}) : super(key: key);
+class ScreenTransactionsReport extends StatelessWidget {
+  ScreenTransactionsReport({Key? key}) : super(key: key);
 
   //==================== TextEditing Controllers ====================
   final TextEditingController customerController = TextEditingController();
@@ -37,7 +37,7 @@ class ScreenPaymentReport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: 'Payment Reports'),
+      appBar: AppBarWidget(title: 'Transactions Report'),
       body: SafeArea(
           child: ItemScreenPaddingWidget(
         //=============================================================================
@@ -364,7 +364,7 @@ class ScreenPaymentReport extends StatelessWidget {
                                     final TransactionsModel transaction = _transactions[index];
 
                                     //==================== Payment Report Card ====================
-                                    return PaymentReportCard(index: index, transactionsModel: transaction);
+                                    return TransactionsReportCard(index: index, transactionsModel: transaction);
                                   },
                                 );
                               })

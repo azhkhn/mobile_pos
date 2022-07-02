@@ -5,7 +5,7 @@ import 'package:shop_ez/core/routes/router.dart';
 const List reportGridName = [
   'OPERATION SUMMARY',
   'TRANSACTION REPORT',
-  'PENDING PAYMENT',
+  'PENDING INVOICE',
   'SALES REPORT',
   'EXPENSE REPORT',
   'NEGATIVE STOCK REPORT',
@@ -89,7 +89,7 @@ class ReportsGrid extends StatelessWidget {
                   reportGridName[index],
                   textAlign: TextAlign.center,
                   maxLines: 2,
-                  style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: kBlack),
+                  style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: kBlack),
                 ),
               ),
             ),

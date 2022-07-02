@@ -16,9 +16,9 @@ import 'package:shop_ez/screens/item_master/screen_manage_item_master.dart';
 import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return.dart';
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return_list.dart';
-import 'package:shop_ez/screens/reports/pages/expense_report/screen_expense_report.dart';
+import 'package:shop_ez/screens/reports/pages/expenses_report/screen_expenses_report.dart';
 import 'package:shop_ez/screens/reports/pages/negative_stock_report/screen_negative_stock_report.dart';
-import 'package:shop_ez/screens/reports/pages/payment_report/screen_payment_report.dart';
+import 'package:shop_ez/screens/reports/pages/transactions_report/screen_transactions_report.dart';
 import 'package:shop_ez/screens/reports/pages/pending_payment/screen_pending_payment.dart';
 import 'package:shop_ez/screens/reports/pages/sales_report/screen_sales_report.dart';
 import 'package:shop_ez/screens/reports/pages/stock_re_order_report/screen_stock_re_order_report.dart';
@@ -243,13 +243,13 @@ class RouteGenerator {
       case routeReports:
         return MaterialPageRoute(builder: (_) => const ScreenReports());
       case routePaymentReport:
-        return MaterialPageRoute(builder: (_) => ScreenPaymentReport());
+        return MaterialPageRoute(builder: (_) => ScreenTransactionsReport());
       case routePendingPayment:
-        return MaterialPageRoute(builder: (_) => ScreenPendingPayment());
+        return MaterialPageRoute(builder: (_) => ScreenPendingInvoice());
       case routeSalesReport:
         return MaterialPageRoute(builder: (_) => const ScreenSalesReport());
       case routeExpenseReport:
-        return MaterialPageRoute(builder: (_) => ScreenExpenseReport());
+        return MaterialPageRoute(builder: (_) => ScreenExpensesReport());
       case routeNegativeStockReport:
         return MaterialPageRoute(builder: (_) => ScreenNegativeStockReport());
       case routeStockReOrderReport:

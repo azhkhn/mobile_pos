@@ -17,8 +17,8 @@ import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
-class ScreenExpenseReport extends StatelessWidget {
-  ScreenExpenseReport({Key? key}) : super(key: key);
+class ScreenExpensesReport extends StatelessWidget {
+  ScreenExpensesReport({Key? key}) : super(key: key);
 
   //==================== TextEditing Controllers ====================
   final expenseCategoryController = TextEditingController();
@@ -36,7 +36,7 @@ class ScreenExpenseReport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBarWidget(title: 'Expense Report'),
+        appBar: AppBarWidget(title: 'Expenses Report'),
         body: ItemScreenPaddingWidget(
           child: Column(
             children: [

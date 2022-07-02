@@ -216,6 +216,25 @@ class ItemMasterDatabase {
     return zeroStockItems;
   }
 
+  //========== Get Items with Re-Order Stock ==========
+  Future<List<ItemMasterModel>> getReOrderStock() async {
+    final db = await dbInstance.database;
+    final _res = await db.query(tableItemMaster);
+
+    final List<ItemMasterModel> _items = _res.map((json) => ItemMasterModel.fromJson(json)).toList();
+
+    final List<ItemMasterModel> reOrderStockItems = _items.where((item) {
+      final num stock = num.parse(item.openingStock);
+      final num? reOrderStock = num.tryParse(item.alertQuantity!);
+      //Return true if current stock is equal or lesser than reOrderStock
+      if (reOrderStock != null) return stock <= reOrderStock;
+      return false;
+    }).toList();
+
+    log('Re Order Stocks == $reOrderStockItems');
+    return reOrderStockItems;
+  }
+
   //========== Get All Items ==========
   Future<List<ItemMasterModel>> getAllItems() async {
     final db = await dbInstance.database;

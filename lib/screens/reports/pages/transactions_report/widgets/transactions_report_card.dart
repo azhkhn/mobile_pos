@@ -3,14 +3,15 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
 import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
 
-class PaymentReportCard extends StatelessWidget {
-  PaymentReportCard({Key? key, required this.index, required this.transactionsModel}) : super(key: key);
+class TransactionsReportCard extends StatelessWidget {
+  TransactionsReportCard({Key? key, required this.index, required this.transactionsModel}) : super(key: key);
 
   final int index;
   final TransactionsModel transactionsModel;
@@ -19,6 +20,7 @@ class PaymentReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isSmall = DeviceUtil.isSmall;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (transactionsModel.customerId != null) {
         final CustomerModel _customer = await CustomerDatabase.instance.getCustomerById(transactionsModel.customerId!);
@@ -38,7 +40,7 @@ class PaymentReportCard extends StatelessWidget {
             backgroundColor: kTransparentColor,
             child: Text(
               '${index + 1}'.toString(),
-              style: const TextStyle(fontSize: 12, color: kTextColor),
+              style: isSmall ? kTextNo10 : kTextNo12,
             ),
           ),
           title: ValueListenableBuilder(
@@ -46,37 +48,17 @@ class PaymentReportCard extends StatelessWidget {
               builder: (context, String? person, _) {
                 return Text(
                   person ?? 'Unknown',
-                  style: TextStyle(color: person == null ? kGrey : null),
+                  style: isSmall ? kText12 : null,
                 );
               }),
-          subtitle: Row(
-            children: [
-              FittedBox(
-                child: Text(
-                  Converter.dateTimeFormatTransaction.format(DateTime.parse(transactionsModel.dateTime)),
-                  style: kText12Lite,
-                ),
-              ),
-              kWidth5,
-              const Text(' ~ '),
-              FittedBox(
-                child: Text(
-                  transactionsModel.salesReturnId != null
-                      ? 'Sale Return'
-                      : transactionsModel.purchaseReturnId != null
-                          ? 'Purchase Return'
-                          : transactionsModel.salesId != null
-                              ? 'Sale'
-                              : transactionsModel.purchaseId != null
-                                  ? 'Purchase'
-                                  : 'Expense',
-                  style: kText12Black,
-                ),
-              ),
-            ],
+          subtitle: Text(
+            Converter.dateTimeFormatTransaction.format(DateTime.parse(transactionsModel.dateTime)),
+            style: isSmall ? kText10Lite : kText12Lite,
+            textAlign: TextAlign.start,
           ),
-          trailing: Row(
+          trailing: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 transactionsModel.transactionType == 'Income'
@@ -84,10 +66,22 @@ class PaymentReportCard extends StatelessWidget {
                     : '-' + Converter.currency.format(num.parse(transactionsModel.amount)),
                 style: TextStyle(
                   color: transactionsModel.transactionType == 'Income' ? kGreen900 : kRed900,
-                  fontSize: 12,
+                  fontSize: isSmall ? 10 : 12,
                 ),
               ),
-              // kWidth10,
+              kHeight3,
+              Text(
+                transactionsModel.salesReturnId != null
+                    ? ' ~ Sale Return'
+                    : transactionsModel.purchaseReturnId != null
+                        ? ' ~ Purchase Return'
+                        : transactionsModel.salesId != null
+                            ? ' ~ Sale'
+                            : transactionsModel.purchaseId != null
+                                ? ' ~ Purchase'
+                                : ' ~ Expense',
+                style: isSmall ? kText10Lite : kText12Lite,
+              ),
               // Icon(Icons.verified_outlined, color: transactionsModel.transactionType == 'Income' ? kGreen : Colors.red),
             ],
           )),

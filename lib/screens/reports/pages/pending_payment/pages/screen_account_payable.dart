@@ -12,6 +12,7 @@ import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_card_widget.dart';
+import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
@@ -32,6 +33,7 @@ class ScreenAccountPayable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBarWidget(title: 'Pending Invoice ~ Payable'),
       body: SafeArea(
           child: ItemScreenPaddingWidget(
         //=============================================================================
