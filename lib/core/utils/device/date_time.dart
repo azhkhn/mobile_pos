@@ -9,8 +9,8 @@ class DateTimeUtils {
   }
 
   //========== Date Picker ==========
-  Future<DateTime?> datePicker(BuildContext context, {DateTime? initDate}) {
-    return showDatePicker(
+  Future<DateTime?> datePicker(BuildContext context, {final DateTime? initDate, final bool endDate = false}) async {
+    final DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: initDate ?? DateTime.now(),
       firstDate: DateTime(1998, 04, 14),
@@ -20,5 +20,12 @@ class DateTimeUtils {
 
       lastDate: DateTime.now(),
     );
+
+    if (selectedDate != null && endDate) {
+      final DateTime updated = selectedDate.add(const Duration(hours: 23, minutes: 59));
+      return updated;
+    } else {
+      return selectedDate;
+    }
   }
 }

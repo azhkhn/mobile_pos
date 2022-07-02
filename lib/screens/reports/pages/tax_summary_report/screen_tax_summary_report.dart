@@ -7,6 +7,7 @@ import 'package:collection/collection.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
+import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/device/date_time.dart';
 import 'package:shop_ez/db/db_functions/expense/expense_database.dart';
@@ -129,7 +130,7 @@ class ScreenTaxSummaryReport extends StatelessWidget {
                     textStyle: kText12,
                     inputBorder: const OutlineInputBorder(),
                     onTap: () async {
-                      final _selectedDate = await DateTimeUtils.instance.datePicker(context, initDate: toDate);
+                      final _selectedDate = await DateTimeUtils.instance.datePicker(context, initDate: toDate, endDate: true);
                       if (_selectedDate != null) {
                         final parseDate = Converter.dateFormat.format(_selectedDate);
                         toDateController.text = parseDate.toString();
@@ -142,7 +143,7 @@ class ScreenTaxSummaryReport extends StatelessWidget {
               ],
             ),
 
-            kHeight10,
+            kHeight5,
 
             Expanded(
                 child: SingleChildScrollView(
@@ -152,12 +153,20 @@ class ScreenTaxSummaryReport extends StatelessWidget {
                   ValueListenableBuilder(
                       valueListenable: salesNotifier,
                       builder: (context, Map? sale, _) {
-                        return TaxSummaryCard(
-                          title: 'Sale Summary',
-                          color: kGreen,
-                          totalAmount: sale?['totalAmount'],
-                          excludeAmount: sale?['excludeAmount'],
-                          vatAmount: sale?['vatAmount'],
+                        return InkWell(
+                          child: TaxSummaryCard(
+                            title: 'Sale Summary',
+                            color: kGreen,
+                            totalAmount: sale?['totalAmount'],
+                            excludeAmount: sale?['excludeAmount'],
+                            vatAmount: sale?['vatAmount'],
+                          ),
+                          onTap: () async {
+                            await Navigator.pushNamed(context, routeSalesTaxReport, arguments: {
+                              'fromDate': fromDate,
+                              'toDate': toDate,
+                            });
+                          },
                         );
                       }),
                   kHeight10,
@@ -166,12 +175,14 @@ class ScreenTaxSummaryReport extends StatelessWidget {
                   ValueListenableBuilder(
                       valueListenable: purchasesNotifier,
                       builder: (context, Map? purchase, _) {
-                        return TaxSummaryCard(
-                          title: 'Purchase Summary',
-                          color: kBlue,
-                          totalAmount: purchase?['totalAmount'],
-                          excludeAmount: purchase?['excludeAmount'],
-                          vatAmount: purchase?['vatAmount'],
+                        return InkWell(
+                          child: TaxSummaryCard(
+                            title: 'Purchase Summary',
+                            color: kBlue,
+                            totalAmount: purchase?['totalAmount'],
+                            excludeAmount: purchase?['excludeAmount'],
+                            vatAmount: purchase?['vatAmount'],
+                          ),
                         );
                       }),
                   kHeight10,
@@ -180,11 +191,13 @@ class ScreenTaxSummaryReport extends StatelessWidget {
                   ValueListenableBuilder(
                       valueListenable: expensesNotifer,
                       builder: (context, Map? expense, _) {
-                        return TaxSummaryCard(
-                          title: 'Expense Summary',
-                          color: kOrange,
-                          totalAmount: expense?['totalAmount'],
-                          vatAmount: expense?['vatAmount'],
+                        return InkWell(
+                          child: TaxSummaryCard(
+                            title: 'Expense Summary',
+                            color: kOrange,
+                            totalAmount: expense?['totalAmount'],
+                            vatAmount: expense?['vatAmount'],
+                          ),
                         );
                       }),
 
@@ -250,7 +263,13 @@ class ScreenTaxSummaryReport extends StatelessWidget {
 
         // if fromDate and toDate is selected
         if (_fromDate != null && _toDate != null) {
-          if (_date.isAfter(_fromDate) && _date.isBefore(_toDate)) sales.add(sale);
+          if (_fromDate.isAtSameMomentAs(_toDate)) {
+            if (Converter.isSameDate(_fromDate, _date)) {
+              sales.add(sale);
+            }
+          } else if (_date.isAfter(_fromDate) && _date.isBefore(_toDate)) {
+            sales.add(sale);
+          }
         }
 
         // if only fromDate is selected

@@ -67,11 +67,11 @@ class ReportsGrid extends StatelessWidget {
                   break;
                 case 7:
                   Navigator.pushNamed(context, routeTaxSummaryReport);
-
                   break;
                 case 8:
                   break;
                 case 9:
+                  Navigator.pushNamed(context, routeSalesTaxReport);
                   break;
                 case 10:
                   break;

@@ -18,6 +18,7 @@ import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return.dar
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return_list.dart';
 import 'package:shop_ez/screens/reports/pages/expenses_report/screen_expenses_report.dart';
 import 'package:shop_ez/screens/reports/pages/negative_stock_report/screen_negative_stock_report.dart';
+import 'package:shop_ez/screens/reports/pages/sales_tax_report/screen_sales_tax_report.dart';
 import 'package:shop_ez/screens/reports/pages/transactions_report/screen_transactions_report.dart';
 import 'package:shop_ez/screens/reports/pages/pending_payment/screen_pending_payment.dart';
 import 'package:shop_ez/screens/reports/pages/sales_report/screen_sales_report.dart';
@@ -79,10 +80,8 @@ class RouteGenerator {
         if (args is Map) {
           if (permission!.products.contains('3')) {
             return MaterialPageRoute(
-                builder: (_) => ScreenItemMaster(
-                      from: args.containsKey('from'),
-                      itemMasterModel: args.containsKey('product') ? args['product'] : null,
-                    ));
+                builder: (_) =>
+                    ScreenItemMaster(from: args.containsKey('from'), itemMasterModel: args.containsKey('product') ? args['product'] : null));
           }
           return _errorPermission();
         } else {
@@ -96,10 +95,8 @@ class RouteGenerator {
         if (args is Map) {
           if (permission!.supplier.contains('3')) {
             return MaterialPageRoute(
-                builder: (_) => SupplierAddScreen(
-                      from: args.containsKey('from'),
-                      supplierModel: args.containsKey('supplier') ? args['supplier'] : null,
-                    ));
+                builder: (_) =>
+                    SupplierAddScreen(from: args.containsKey('from'), supplierModel: args.containsKey('supplier') ? args['supplier'] : null));
           }
           return _errorPermission();
         } else {
@@ -120,10 +117,8 @@ class RouteGenerator {
         if (args is Map) {
           if (permission!.customer.contains('3')) {
             return MaterialPageRoute(
-                builder: (_) => CustomerAddScreen(
-                      from: args.containsKey('from'),
-                      customerModel: args.containsKey('customer') ? args['customer'] : null,
-                    ));
+                builder: (_) =>
+                    CustomerAddScreen(from: args.containsKey('from'), customerModel: args.containsKey('customer') ? args['customer'] : null));
           }
           return _errorPermission();
         } else {
@@ -151,11 +146,7 @@ class RouteGenerator {
       case routePartialPayment:
         if (args is Map) {
           return MaterialPageRoute(
-              builder: (_) => PartialPayment(
-                    paymentDetails: args,
-                    purchase: args.containsKey('purchase'),
-                    isVertical: args['isVertical'],
-                  ));
+              builder: (_) => PartialPayment(paymentDetails: args, purchase: args.containsKey('purchase'), isVertical: args['isVertical']));
         }
         return _errorRoute();
       case routeTransactionSale:
@@ -256,6 +247,15 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ScreenStockReOrderReport());
       case routeTaxSummaryReport:
         return MaterialPageRoute(builder: (_) => ScreenTaxSummaryReport());
+      case routeSalesTaxReport:
+        if (args is Map) {
+          return MaterialPageRoute(
+              builder: (_) => ScreenSalesTaxReport(
+                    fromDate: args['fromDate'],
+                    toDate: args['toDate'],
+                  ));
+        }
+        return MaterialPageRoute(builder: (_) => ScreenSalesTaxReport());
 
       default:
         return _errorRoute();
