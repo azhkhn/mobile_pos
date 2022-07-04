@@ -96,3 +96,4 @@ const String routeNegativeStockReport = '/negative_stock_report';
 const String routeStockReOrderReport = '/stock_re_order_report';
 const String routeTaxSummaryReport = '/tax_summary_report';
 const String routeSalesTaxReport = '/sales_tax_report';
+const String routePurchasesTaxReport = '/purchases_tax_report';

@@ -183,6 +183,12 @@ class ScreenTaxSummaryReport extends StatelessWidget {
                             excludeAmount: purchase?['excludeAmount'],
                             vatAmount: purchase?['vatAmount'],
                           ),
+                          onTap: () async {
+                            await Navigator.pushNamed(context, routePurchasesTaxReport, arguments: {
+                              'fromDate': fromDate,
+                              'toDate': toDate,
+                            });
+                          },
                         );
                       }),
                   kHeight10,

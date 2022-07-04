@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/model/purchase/purchase_model.dart';
 
-class SalesTaxCardWidget extends StatelessWidget {
-  const SalesTaxCardWidget({
+class PurchaseTaxCardWidget extends StatelessWidget {
+  const PurchaseTaxCardWidget({
     required this.index,
-    required this.sales,
+    required this.purchase,
     Key? key,
   }) : super(key: key);
   final int index;
-  final SalesModel sales;
+  final PurchaseModel purchase;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class SalesTaxCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          sales.invoiceNumber!,
+                          purchase.invoiceNumber!,
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -88,7 +88,7 @@ class SalesTaxCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.dateFormat.format(DateTime.parse(sales.dateTime)),
+                          Converter.dateFormat.format(DateTime.parse(purchase.dateTime)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -102,7 +102,7 @@ class SalesTaxCardWidget extends StatelessWidget {
                   // Row(
                   //   children: [
                   //     const AutoSizeText(
-                  //       'Customer:  ',
+                  //       'Supplier:  ',
                   //       overflow: TextOverflow.ellipsis,
                   //       style: kTextSalesCard,
                   //       maxLines: 1,
@@ -111,7 +111,7 @@ class SalesTaxCardWidget extends StatelessWidget {
                   //     ),
                   //     Expanded(
                   //       child: AutoSizeText(
-                  //         sales.customerName,
+                  //         purchase.supplierName,
                   //         overflow: TextOverflow.ellipsis,
                   //         style: kTextBoldSalesCard,
                   //         maxLines: 1,
@@ -142,7 +142,7 @@ class SalesTaxCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.currency.format(num.parse(sales.grantTotal)),
+                          Converter.currency.format(num.parse(purchase.grantTotal)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -165,7 +165,7 @@ class SalesTaxCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.currency.format(num.parse(sales.subTotal)),
+                          Converter.currency.format(num.parse(purchase.subTotal)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -188,7 +188,7 @@ class SalesTaxCardWidget extends StatelessWidget {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          Converter.currency.format(num.parse(sales.vatAmount)),
+                          Converter.currency.format(num.parse(purchase.vatAmount)),
                           overflow: TextOverflow.ellipsis,
                           style: kTextSalesCard,
                           maxLines: 1,
@@ -210,18 +210,18 @@ class SalesTaxCardWidget extends StatelessWidget {
                   //       maxFontSize: 14,
                   //     ),
                   //     Expanded(
-                  //       child: sales.paymentStatus != 'Returned'
+                  //       child: purchase.paymentStatus != 'Returned'
                   //           ? AutoSizeText(
-                  //               sales.paymentStatus,
+                  //               purchase.paymentStatus,
                   //               overflow: TextOverflow.ellipsis,
                   //               style: TextStyle(
                   //                   fontSize: 12,
                   //                   fontWeight: FontWeight.bold,
-                  //                   color: sales.paymentStatus == 'Paid'
+                  //                   color: purchase.paymentStatus == 'Paid'
                   //                       ? kGreen
-                  //                       : sales.paymentStatus == 'Partial'
+                  //                       : purchase.paymentStatus == 'Partial'
                   //                           ? kOrange
-                  //                           : sales.paymentStatus == 'Credit'
+                  //                           : purchase.paymentStatus == 'Credit'
                   //                               ? kRed
                   //                               : kRed),
                   //               maxLines: 1,

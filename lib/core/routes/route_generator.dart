@@ -19,6 +19,7 @@ import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return_lis
 import 'package:shop_ez/screens/reports/pages/expenses_report/screen_expenses_report.dart';
 import 'package:shop_ez/screens/reports/pages/negative_stock_report/screen_negative_stock_report.dart';
 import 'package:shop_ez/screens/reports/pages/purchases_report/screen_purchases_report.dart';
+import 'package:shop_ez/screens/reports/pages/purchases_tax_report/screen_purchases_tax_report.dart';
 import 'package:shop_ez/screens/reports/pages/sales_tax_report/screen_sales_tax_report.dart';
 import 'package:shop_ez/screens/reports/pages/transactions_report/screen_transactions_report.dart';
 import 'package:shop_ez/screens/reports/pages/pending_payment/screen_pending_payment.dart';
@@ -251,14 +252,11 @@ class RouteGenerator {
       case routeTaxSummaryReport:
         return MaterialPageRoute(builder: (_) => ScreenTaxSummaryReport());
       case routeSalesTaxReport:
-        if (args is Map) {
-          return MaterialPageRoute(
-              builder: (_) => ScreenSalesTaxReport(
-                    fromDate: args['fromDate'],
-                    toDate: args['toDate'],
-                  ));
-        }
+        if (args is Map) return MaterialPageRoute(builder: (_) => ScreenSalesTaxReport(fromDate: args['fromDate'], toDate: args['toDate']));
         return MaterialPageRoute(builder: (_) => ScreenSalesTaxReport());
+      case routePurchasesTaxReport:
+        if (args is Map) return MaterialPageRoute(builder: (_) => ScreenPurchasesTaxReport(fromDate: args['fromDate'], toDate: args['toDate']));
+        return MaterialPageRoute(builder: (_) => ScreenPurchasesTaxReport());
 
       default:
         return _errorRoute();
