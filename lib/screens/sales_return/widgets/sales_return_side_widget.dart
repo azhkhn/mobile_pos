@@ -213,7 +213,7 @@ class SalesReturnSideWidget extends StatelessWidget {
                         );
                       },
                       onSuggestionSelected: (SalesModel sale) async {
-                        resetSalesReturn();
+                        resetSalesReturn(notify: true);
                         saleInvoiceController.text = sale.invoiceNumber!;
                         originalSaleNotifier.value = sale;
 
@@ -615,7 +615,7 @@ class SalesReturnSideWidget extends StatelessWidget {
     final List<ItemMasterModel> remainingsoldItems = [];
 
     customerController.text = sale.customerName;
-    customerNotifier.value = await CustomerDatabase.instance.getCustomerById(sale.id!);
+    customerNotifier.value = await CustomerDatabase.instance.getCustomerById(sale.customerId);
 
     //==================== Fetch sold items based on salesId ====================
     final List<SalesItemsModel> soldItems = await SalesItemsDatabase.instance.getSalesItemBySaleId(sale.id!);

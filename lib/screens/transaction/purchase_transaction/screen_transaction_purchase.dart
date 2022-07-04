@@ -32,7 +32,7 @@ class TransactionScreenPurchase extends StatelessWidget {
             children: [
               //==================== Payment Type Widget ====================
               TransactionPurchasePayment(
-                totalPayable: num.parse(purchaseModel.balance),
+                totalPayable: Converter.amountRounder(num.parse(purchaseModel.balance)),
               ),
               kHeight10,
 
@@ -143,11 +143,11 @@ class TransactionScreenPurchase extends StatelessWidget {
       final PurchaseDatabase purchaseDatabase = PurchaseDatabase.instance;
       final String _dateTime = DateTime.now().toIso8601String();
 
-      final num _payable = num.parse(purchase.balance);
-      final num _paid = num.parse(purchase.paid);
-      final num _paying = num.parse(TransactionPurchasePayment.amountController.text.trim());
-      final num _updatedPaid = _paid + _paying;
-      final num _updatedBalance = _payable - _paying;
+      final num _payable = Converter.amountRounder(num.parse(purchase.balance));
+      final num _paid = Converter.amountRounder(num.parse(purchase.paid));
+      final num _paying = Converter.amountRounder(num.parse(TransactionPurchasePayment.amountController.text.trim()));
+      final num _updatedPaid = Converter.amountRounder(_paid + _paying);
+      final num _updatedBalance = Converter.amountRounder(_payable - _paying);
 
       final TransactionsModel _transaction = TransactionsModel(
         category: 'Purchase',

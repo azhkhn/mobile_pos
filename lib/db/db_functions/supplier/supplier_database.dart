@@ -54,7 +54,7 @@ class SupplierDatabase {
       where: '${SupplierFields.id} = ?',
       whereArgs: [supplierId],
     );
-    log('Supplier === $_result');
+    log('Supplier ($supplierId) === $_result');
     final _suppliers = SupplierModel.fromJson(_result.first);
     return _suppliers;
   }

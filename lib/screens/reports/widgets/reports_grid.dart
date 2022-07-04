@@ -4,14 +4,15 @@ import 'package:shop_ez/core/routes/router.dart';
 
 const List reportGridName = [
   'OPERATION SUMMARY',
-  'TRANSACTION REPORT',
+  'TRANSACTIONS REPORT',
   'PENDING INVOICE',
   'SALES REPORT',
-  'EXPENSE REPORT',
-  'NEGATIVE STOCK REPORT',
-  'STOCK RE-ORDER REPORT',
+  'PURCHASES REPORT',
+  'EXPENSES REPORT',
+  'NEGATIVE STOCKS REPORT',
+  'STOCKS RE-ORDER REPORT',
   'TAX SUMMARY REPORT',
-  'PURCHASE TAX REPORT',
+  'PURCHASES TAX REPORT',
   'SALES TAX REPORT',
 ];
 
@@ -20,6 +21,7 @@ const List reportGridIcons = [
   'assets/images/reports/payment_report.png',
   'assets/images/reports/pending_payment.png',
   'assets/images/reports/sales_report.png',
+  'assets/images/reports/purchase_report.png',
   'assets/images/reports/expense_report.png',
   'assets/images/reports/negative_stock_report.png',
   'assets/images/reports/stock_reorder_report.png',
@@ -57,23 +59,26 @@ class ReportsGrid extends StatelessWidget {
                   Navigator.pushNamed(context, routeSalesReport);
                   break;
                 case 4:
-                  Navigator.pushNamed(context, routeExpenseReport);
+                  Navigator.pushNamed(context, routePurchasesReport);
                   break;
                 case 5:
-                  Navigator.pushNamed(context, routeNegativeStockReport);
+                  Navigator.pushNamed(context, routeExpenseReport);
                   break;
                 case 6:
-                  Navigator.pushNamed(context, routeStockReOrderReport);
+                  Navigator.pushNamed(context, routeNegativeStockReport);
                   break;
                 case 7:
-                  Navigator.pushNamed(context, routeTaxSummaryReport);
+                  Navigator.pushNamed(context, routeStockReOrderReport);
                   break;
                 case 8:
+                  Navigator.pushNamed(context, routeTaxSummaryReport);
                   break;
                 case 9:
-                  Navigator.pushNamed(context, routeSalesTaxReport);
                   break;
                 case 10:
+                  Navigator.pushNamed(context, routeSalesTaxReport);
+                  break;
+                case 11:
                   break;
                 default:
               }

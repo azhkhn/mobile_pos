@@ -15,11 +15,11 @@ import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
 import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
-import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
+import 'package:shop_ez/screens/reports/pages/purchases_report/screen_purchases_report.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
-class PurchaseListFilter extends StatelessWidget {
-  PurchaseListFilter({Key? key}) : super(key: key);
+class PurchasesReportFilter extends StatelessWidget {
+  PurchasesReportFilter({Key? key}) : super(key: key);
 
   //========== Database Instances ==========
   final PurchaseDatabase purchasesDatabase = PurchaseDatabase.instance;
@@ -30,7 +30,7 @@ class PurchaseListFilter extends StatelessWidget {
   final GlobalKey<FormFieldState> _dropDownKey = GlobalKey();
 
   //========== Lists ==========
-  List<PurchaseModel> purchasesList = ScreenPurchasesList.purchasesList, purchasesBySupplierList = [], purchasesByInvoiceList = [];
+  List<PurchaseModel> purchasesList = ScreenPurchasesReport.purchasesList, purchasesBySupplierList = [], purchasesByInvoiceList = [];
 
   //========== TextEditing Controllers ==========
   final TextEditingController _invoiceController = TextEditingController();
@@ -39,7 +39,7 @@ class PurchaseListFilter extends StatelessWidget {
   final TextEditingController _paymentStatusController = TextEditingController();
 
   //========== Value Notifiers ==========
-  final ValueNotifier<List<PurchaseModel>> purchasesNotifier = ScreenPurchasesList.purchasesNotifier;
+  final ValueNotifier<List<PurchaseModel>> purchasesNotifier = ScreenPurchasesReport.purchasesNotifier;
 
   //========== Device Utils ==========
   final bool _isTablet = DeviceUtil.isTablet;

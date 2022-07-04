@@ -51,8 +51,8 @@ class PurchaseReturnSideWidget extends StatelessWidget {
   static final ValueNotifier<num> totalPayableNotifier = ValueNotifier(0);
 
   //==================== TextEditing Controllers ====================
-  static final supplierController = TextEditingController();
-  static final purchaseInvoiceController = TextEditingController();
+  static final TextEditingController supplierController = TextEditingController();
+  static final TextEditingController purchaseInvoiceController = TextEditingController();
 
   //========== Database Instances ==========
   static final PurchaseDatabase purchaseDatabase = PurchaseDatabase.instance;
@@ -198,7 +198,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                                   purchaseInvoiceController.clear();
 
                                   if (originalPurchaseNotifier.value != null) {
-                                    return resetPurchaseReturn();
+                                    return resetPurchaseReturn(notify: true);
                                   }
 
                                   originalPurchaseNotifier.value = null;
@@ -226,7 +226,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
                         );
                       },
                       onSuggestionSelected: (PurchaseModel purchase) async {
-                        resetPurchaseReturn();
+                        resetPurchaseReturn(notify: true);
                         purchaseInvoiceController.text = purchase.invoiceNumber!;
                         originalPurchaseNotifier.value = purchase;
 
@@ -619,12 +619,14 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     log('Total Payable == $_totalPayable');
   }
 
-  //==================== Get Purchase Details ====================
+  //========================================                      ========================================
+  //======================================== Get Purchase Details ========================================
+  //========================================                      ========================================
   Future<void> getPurchaseDetails(PurchaseModel purchase) async {
     final List<ItemMasterModel> remainingPurchasedItems = [];
 
     supplierController.text = purchase.supplierName;
-    supplierNotifier.value = await SupplierDatabase.instance.getSupplierById(purchase.id!);
+    supplierNotifier.value = await SupplierDatabase.instance.getSupplierById(purchase.supplierId);
 
     //==================== Fetch sold items based on salesId ====================
     final List<PurchaseItemsModel> purchasedItems = await PurchaseItemsDatabase.instance.getPurchaseItemByPurchaseId(purchase.id!);

@@ -80,7 +80,7 @@ class TransactionPurchasePayment extends StatelessWidget {
                         errorStyle: true,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
-                          final _totalPayable = num.parse(Converter.amountRounderString(totalPayable));
+                          final num _totalPayable = Converter.amountRounder(totalPayable);
                           if (value == null || value.trim().isEmpty || value == '.') {
                             return 'This field is required*';
                           } else if (num.parse(value) > _totalPayable) {

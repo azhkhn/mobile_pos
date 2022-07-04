@@ -18,6 +18,7 @@ import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return.dar
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return_list.dart';
 import 'package:shop_ez/screens/reports/pages/expenses_report/screen_expenses_report.dart';
 import 'package:shop_ez/screens/reports/pages/negative_stock_report/screen_negative_stock_report.dart';
+import 'package:shop_ez/screens/reports/pages/purchases_report/screen_purchases_report.dart';
 import 'package:shop_ez/screens/reports/pages/sales_tax_report/screen_sales_tax_report.dart';
 import 'package:shop_ez/screens/reports/pages/transactions_report/screen_transactions_report.dart';
 import 'package:shop_ez/screens/reports/pages/pending_payment/screen_pending_payment.dart';
@@ -177,7 +178,7 @@ class RouteGenerator {
         if (permission!.purchase.contains('2')) return MaterialPageRoute(builder: (_) => const Purchase());
         return _errorPermission();
       case routeListPurchase:
-        if (permission!.purchase.contains('1')) return MaterialPageRoute(builder: (_) => const PurchasesList());
+        if (permission!.purchase.contains('1')) return MaterialPageRoute(builder: (_) => const ScreenPurchasesList());
         return _errorPermission();
       case routeStock:
         return MaterialPageRoute(builder: (_) => ScreenStock());
@@ -239,6 +240,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ScreenPendingInvoice());
       case routeSalesReport:
         return MaterialPageRoute(builder: (_) => const ScreenSalesReport());
+      case routePurchasesReport:
+        return MaterialPageRoute(builder: (_) => const ScreenPurchasesReport());
       case routeExpenseReport:
         return MaterialPageRoute(builder: (_) => ScreenExpensesReport());
       case routeNegativeStockReport:

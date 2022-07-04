@@ -37,7 +37,7 @@ class ScreenSalesReport extends StatelessWidget {
               //========== Sales Filter Options ==========
               SalesReportFilter(),
 
-              kWidth5,
+              kHeight5,
 
               //========== List Sales ==========
               Expanded(

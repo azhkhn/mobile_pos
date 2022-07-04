@@ -24,7 +24,7 @@ class TransactionSaleDetailsTable extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (totalPayingNotifier.value == 0) {
-        balanceNotifier.value = num.parse(sale.balance);
+        balanceNotifier.value = Converter.amountRounder(num.parse(sale.balance));
       }
     });
     return WillPopScope(
@@ -73,7 +73,7 @@ class TransactionSaleDetailsTable extends StatelessWidget {
                     valueListenable: totalPayingNotifier,
                     builder: (__, totalPaying, _) {
                       return AutoSizeText(
-                        firstRow ? sale.balance : Converter.currency.format(totalPaying),
+                        firstRow ? Converter.currency.format(num.parse(sale.balance)) : Converter.currency.format(totalPaying),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -107,7 +107,7 @@ class TransactionSaleDetailsTable extends StatelessWidget {
                     valueListenable: balanceNotifier,
                     builder: (_, balance, __) {
                       return AutoSizeText(
-                        firstRow ? sale.grantTotal : Converter.currency.format(balance),
+                        firstRow ? Converter.currency.format(num.parse(sale.grantTotal)) : Converter.currency.format(balance),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
