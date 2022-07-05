@@ -23,7 +23,7 @@ class SalesItemsDatabase {
       whereArgs: [saleId],
     );
     // db.delete(tableSalesItems);
-    log('Sales Items By SaleId $saleId == $_result');
+    log('Fetching sales Items By SaleId $saleId from database..');
     if (_result.isNotEmpty) {
       final _salesItems = _result.map((json) => SalesItemsModel.fromJson(json)).toList();
       return _salesItems;

@@ -14,9 +14,7 @@ import 'package:shop_ez/screens/sales/widgets/sales_card_widget.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
-final AutoDisposeStateProvider<bool> filterProvider = StateProvider.autoDispose<bool>((ref) => false);
-final AutoDisposeStateProvider<List<SalesModel>> salesProvider = StateProvider.autoDispose<List<SalesModel>>((ref) => []);
-final AutoDisposeStateProvider<List<SalesModel>> salesListProvider = StateProvider.autoDispose<List<SalesModel>>((ref) => []);
+final AutoDisposeStateProvider<bool> _filterProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 final futureSalesProvider = FutureProvider.autoDispose<List<SalesModel>>((ref) async {
   return await const ScreenSalesReport().futureSales(ref);
@@ -26,6 +24,9 @@ class ScreenSalesReport extends StatelessWidget {
   const ScreenSalesReport({
     Key? key,
   }) : super(key: key);
+
+  static final AutoDisposeStateProvider<List<SalesModel>> salesProvider = StateProvider.autoDispose<List<SalesModel>>((ref) => []);
+  static final AutoDisposeStateProvider<List<SalesModel>> salesListProvider = StateProvider.autoDispose<List<SalesModel>>((ref) => []);
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +40,13 @@ class ScreenSalesReport extends StatelessWidget {
           children: [
             //========== Sales Filter Options ==========
             Consumer(builder: (context, ref, _) {
-              final bool filter = ref.watch(filterProvider);
+              final bool filter = ref.watch(_filterProvider);
               return Visibility(
                 visible: filter,
                 maintainState: true,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: [
+                  children: const [
                     SalesReportFilter(),
                     kHeight5,
                   ],
@@ -110,7 +111,7 @@ class ScreenSalesReport extends StatelessWidget {
                 builder: ((context, ref, _) {
                   return TextButton.icon(
                       onPressed: () {
-                        ref.read(filterProvider.notifier).state = !ref.read(filterProvider.notifier).state;
+                        ref.read(_filterProvider.notifier).state = !ref.read(_filterProvider.notifier).state;
                       },
                       icon: const Icon(Icons.filter_list),
                       label: const Text('Filter', style: TextStyle(fontSize: 17)));
@@ -127,7 +128,6 @@ class ScreenSalesReport extends StatelessWidget {
 
     final salesList = await SalesDatabase.instance.getAllSales();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      log('hello');
       ref.read(salesProvider.notifier).state = salesList.reversed.toList();
       ref.read(salesListProvider.notifier).state = salesList.reversed.toList();
     });

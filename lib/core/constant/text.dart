@@ -22,6 +22,7 @@ const kText10Lite = TextStyle(color: kTextColor, fontSize: 10);
 const kText12Bold = TextStyle(fontSize: 12, fontWeight: FontWeight.bold);
 const kText16 = TextStyle(fontSize: 16);
 final kText_10_12 = TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10);
+final kText_10_12Black = TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10, color: kBlack);
 
 //========== Custom TextStyles for Widgets ====================
 const kTextNo10 = TextStyle(fontSize: 10, color: Color(0xFF616161));
