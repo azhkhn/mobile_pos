@@ -112,7 +112,7 @@ class SalesDatabase {
     final db = await dbInstance.database;
     final _result = await db.query(tableSales);
     // db.delete(tableSales);
-    log('Sales == $_result');
+    log('Fetching sales from the Database..');
     if (_result.isNotEmpty) {
       final _sales = _result.map((json) => SalesModel.fromJson(json)).toList();
       return _sales;

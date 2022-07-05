@@ -4,6 +4,7 @@ import 'dart:developer' show log;
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
@@ -18,7 +19,12 @@ import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/reports/pages/sales_report/screen_sales_report.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
-class SalesReportFilter extends StatelessWidget {
+final _paymentProvider = StateProvider.autoDispose<String?>((ref) => null);
+final _dateProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
+final _invoiceProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
+final _customerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
+
+class SalesReportFilter extends ConsumerWidget {
   SalesReportFilter({Key? key}) : super(key: key);
 
   //========== Database Instances ==========
@@ -26,26 +32,26 @@ class SalesReportFilter extends StatelessWidget {
   final CustomerDatabase customerDB = CustomerDatabase.instance;
 
   //========== Global Keys ==========
-  final GlobalKey<FormState> _formKey = GlobalKey();
+  static final GlobalKey<FormState> _formKey = GlobalKey();
   final GlobalKey<FormFieldState> _dropDownKey = GlobalKey();
 
   //========== Lists ==========
-  List<SalesModel> salesList = ScreenSalesReport.salesList, salesByCustomerList = [], salesByInvoiceList = [];
-
-  //========== TextEditing Controllers ==========
-  final TextEditingController _invoiceController = TextEditingController();
-  final TextEditingController _customerController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _paymentStatusController = TextEditingController();
-
-  //========== Value Notifiers ==========
-  final ValueNotifier<List<SalesModel>> salesNotifier = ScreenSalesReport.salesNotifier;
+  List<SalesModel> salesByCustomerList = [], salesByInvoiceList = [];
 
   //========== Device Utils ==========
   final bool _isTablet = DeviceUtil.isTablet;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final List<SalesModel> salesList = ref.watch(salesListProvider);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.watch(_customerProvider);
+      ref.watch(_invoiceProvider);
+      ref.watch(_dateProvider);
+      ref.watch(_paymentProvider);
+    });
+
     return Form(
       key: _formKey,
       child: Column(
@@ -61,7 +67,7 @@ class SalesReportFilter extends StatelessWidget {
                   debounceDuration: const Duration(milliseconds: 500),
                   hideSuggestionsOnKeyboardHide: true,
                   textFieldConfiguration: TextFieldConfiguration(
-                      controller: _customerController,
+                      controller: ref.read(_customerProvider),
                       style: kText12,
                       decoration: InputDecoration(
                         fillColor: Colors.white,
@@ -79,13 +85,13 @@ class SalesReportFilter extends StatelessWidget {
                               size: 15,
                             ),
                             onTap: () async {
-                              _customerController.clear();
+                              ref.read(_customerProvider).clear();
                               salesByCustomerList.clear();
                               if (salesByInvoiceList.isNotEmpty) {
-                                salesNotifier.value = salesByInvoiceList;
+                                ref.read(salesProvider.notifier).state = salesByInvoiceList;
                               } else {
-                                if (_dateController.text.isEmpty) {
-                                  salesNotifier.value = salesList;
+                                if (ref.read(_dateProvider).text.isEmpty) {
+                                  ref.read(salesProvider.notifier).state = salesList;
                                 }
                               }
                             },
@@ -114,16 +120,16 @@ class SalesReportFilter extends StatelessWidget {
                   },
                   onSuggestionSelected: (CustomerModel selectedCustomer) async {
                     _dropDownKey.currentState!.reset();
-                    _invoiceController.clear();
-                    _dateController.clear();
+                    ref.read(_invoiceProvider).clear();
+                    ref.read(_dateProvider).clear();
 
-                    _customerController.text = selectedCustomer.customer;
+                    ref.read(_customerProvider).text = selectedCustomer.customer;
 
                     //fetch all sales done by selected customer
                     salesByCustomerList = salesList.where((sale) => sale.customerId == selectedCustomer.id).toList();
 
                     //Notify UI
-                    salesNotifier.value = salesByCustomerList;
+                    ref.read(salesProvider.notifier).state = salesByCustomerList;
                   },
                 ),
               ),
@@ -137,7 +143,7 @@ class SalesReportFilter extends StatelessWidget {
                   debounceDuration: const Duration(milliseconds: 500),
                   hideSuggestionsOnKeyboardHide: true,
                   textFieldConfiguration: TextFieldConfiguration(
-                      controller: _invoiceController,
+                      controller: ref.read(_invoiceProvider),
                       style: kText12,
                       decoration: InputDecoration(
                         fillColor: Colors.white,
@@ -155,13 +161,13 @@ class SalesReportFilter extends StatelessWidget {
                               size: 15,
                             ),
                             onTap: () async {
-                              _invoiceController.clear();
+                              ref.read(_invoiceProvider).clear();
                               salesByInvoiceList.clear();
                               if (salesByCustomerList.isNotEmpty) {
-                                salesNotifier.value = salesByCustomerList;
+                                ref.read(salesProvider.notifier).state = salesByCustomerList;
                               } else {
-                                if (_dateController.text.isEmpty) {
-                                  salesNotifier.value = salesList;
+                                if (ref.read(_dateProvider).text.isEmpty) {
+                                  ref.read(salesProvider.notifier).state = salesList;
                                 }
                               }
                             },
@@ -195,10 +201,10 @@ class SalesReportFilter extends StatelessWidget {
                   },
                   onSuggestionSelected: (SalesModel suggestion) {
                     _dropDownKey.currentState!.reset();
-                    _dateController.clear();
-                    _invoiceController.text = suggestion.invoiceNumber!;
+                    ref.read(_dateProvider).clear();
+                    ref.read(_invoiceProvider).text = suggestion.invoiceNumber!;
                     salesByInvoiceList = [suggestion];
-                    salesNotifier.value = [suggestion];
+                    ref.read(salesProvider.notifier).state = [suggestion];
 
                     log(suggestion.invoiceNumber!);
                   },
@@ -212,7 +218,7 @@ class SalesReportFilter extends StatelessWidget {
               Flexible(
                 child: TextFeildWidget(
                   hintText: 'Date ',
-                  controller: _dateController,
+                  controller: ref.read(_dateProvider),
                   suffixIconConstraints: const BoxConstraints(
                     minWidth: 10,
                     minHeight: 10,
@@ -222,13 +228,13 @@ class SalesReportFilter extends StatelessWidget {
                     child: InkWell(
                       child: const Icon(Icons.clear, size: 15),
                       onTap: () async {
-                        if (_dateController.text.isNotEmpty && salesByCustomerList.isNotEmpty) {
-                          salesNotifier.value = salesByCustomerList;
-                        } else if (_dateController.text.isNotEmpty) {
-                          salesNotifier.value = salesList;
+                        if (ref.read(_dateProvider).text.isNotEmpty && salesByCustomerList.isNotEmpty) {
+                          ref.read(salesProvider.notifier).state = salesByCustomerList;
+                        } else if (ref.read(_dateProvider).text.isNotEmpty) {
+                          ref.read(salesProvider.notifier).state = salesList;
                         }
 
-                        _dateController.clear();
+                        ref.read(_dateProvider).clear();
                       },
                     ),
                   ),
@@ -243,9 +249,9 @@ class SalesReportFilter extends StatelessWidget {
 
                     if (_selectedDate != null) {
                       _dropDownKey.currentState!.reset();
-                      _invoiceController.clear();
+                      ref.read(_invoiceProvider).clear();
                       final parseDate = Converter.dateFormat.format(_selectedDate);
-                      _dateController.text = parseDate.toString();
+                      ref.read(_dateProvider).text = parseDate.toString();
 
                       final List<SalesModel> _salesByDate = [];
 
@@ -260,63 +266,70 @@ class SalesReportFilter extends StatelessWidget {
                           _salesByDate.add(transaction);
                         }
                       }
-                      salesNotifier.value = _salesByDate;
+                      ref.read(salesProvider.notifier).state = _salesByDate;
                     }
                   },
                 ),
               ),
               kWidth5,
 
-              //========== Stock Dropdown ==========
+              //==================== Payment Dropdown ====================
               Flexible(
                 flex: 1,
-                child: DropdownButtonFormField(
-                  key: _dropDownKey,
-                  hint: const Text('Payment Status', style: kText12),
-                  style: kText12Black,
-                  isExpanded: true,
-                  decoration: const InputDecoration(
-                    constraints: BoxConstraints(maxHeight: 45),
-                    fillColor: kWhite,
-                    filled: true,
-                    isDense: true,
-                    errorStyle: TextStyle(fontSize: 0.01),
-                    contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    border: OutlineInputBorder(),
-                  ),
-                  items: ['All', 'Paid', 'Partial', 'Credit', 'Returned']
-                      .map((values) => DropdownMenuItem<String>(
-                            value: values,
-                            child: Text(values),
-                          ))
-                      .toList(),
-                  onChanged: (String? payment) {
-                    _invoiceController.clear();
-                    salesByInvoiceList.clear();
-                    _paymentStatusController.text = payment.toString();
+                child: Consumer(builder: (context, ref, child) {
+                  final val = ref.watch(_paymentProvider);
+                  return DropdownButtonFormField(
+                    key: _dropDownKey,
+                    hint: const Text('Payment Status', style: kText12),
+                    style: kText12Black,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      constraints: BoxConstraints(maxHeight: 45),
+                      fillColor: kWhite,
+                      filled: true,
+                      isDense: true,
+                      errorStyle: TextStyle(fontSize: 0.01),
+                      contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      border: OutlineInputBorder(),
+                    ),
+                    value: val,
+                    items: ['All', 'Paid', 'Partial', 'Credit', 'Returned']
+                        .map((values) => DropdownMenuItem<String>(
+                              value: values,
+                              child: Text(values),
+                            ))
+                        .toList(),
+                    onChanged: (String? payment) {
+                      ref.read(_invoiceProvider).clear();
+                      salesByInvoiceList.clear();
+                      ref.read(_paymentProvider.notifier).state = payment.toString();
+                      ref.read(_paymentProvider.notifier).state = payment;
 
-                    if (payment != 'All') {
-                      if (_dateController.text.isNotEmpty) {
-                        salesNotifier.value = salesNotifier.value.where((sale) => sale.paymentStatus == payment).toList();
-                      } else if (salesByCustomerList.isNotEmpty) {
-                        salesNotifier.value = salesByCustomerList.where((sale) => sale.paymentStatus == payment).toList();
+                      if (payment != 'All') {
+                        if (ref.read(_dateProvider).text.isNotEmpty) {
+                          ref.read(salesProvider.notifier).state =
+                              ref.read(salesProvider.notifier).state.where((sale) => sale.paymentStatus == payment).toList();
+                        } else if (salesByCustomerList.isNotEmpty) {
+                          ref.read(salesProvider.notifier).state = salesByCustomerList.where((sale) => sale.paymentStatus == payment).toList();
+                        } else {
+                          ref.read(salesProvider.notifier).state = salesList.where((sale) => sale.paymentStatus == payment).toList();
+                        }
                       } else {
-                        salesNotifier.value = salesList.where((sale) => sale.paymentStatus == payment).toList();
+                        if (ref.read(_dateProvider).text.isNotEmpty) {
+                          ref.read(salesProvider.notifier).state =
+                              ref.read(salesProvider.notifier).state.where((sale) => sale.paymentStatus != payment).toList();
+                        } else if (salesByCustomerList.isNotEmpty) {
+                          ref.read(salesProvider.notifier).state = salesByCustomerList.where((sale) => sale.paymentStatus != payment).toList();
+                        } else {
+                          ref.read(salesProvider.notifier).state = salesList;
+                        }
                       }
-                    } else {
-                      if (_dateController.text.isNotEmpty) {
-                        salesNotifier.value = salesNotifier.value.where((sale) => sale.paymentStatus != payment).toList();
-                      } else if (salesByCustomerList.isNotEmpty) {
-                        salesNotifier.value = salesByCustomerList.where((sale) => sale.paymentStatus != payment).toList();
-                      } else {
-                        salesNotifier.value = salesList.where((sale) => sale.paymentStatus != payment).toList();
-                      }
-                    }
 
-                    log('Payment filter = $payment');
-                  },
-                ),
+                      log('Payment filter = $payment');
+                    },
+                  );
+                }),
               ),
             ],
           )
