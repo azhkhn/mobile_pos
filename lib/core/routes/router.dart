@@ -84,6 +84,7 @@ const String routeBarcode = '/barcode';
 
 //Database
 const String routeDatabase = '/database';
+const String routeDatabaseList = '/database_list';
 
 //Reports
 const String routeReports = '/reports';

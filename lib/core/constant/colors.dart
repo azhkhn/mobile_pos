@@ -16,6 +16,7 @@ const Color kGreen = Colors.green;
 const Color kOrange = Colors.orange;
 const Color kGrey = Colors.grey;
 const Color kBlueGrey = Colors.blueGrey;
+const Color kTeal = Colors.teal;
 
 //=================== Constant Shaded Colors ====================
 const Color kColorDim = Color(0x50000000);

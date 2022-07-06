@@ -9,6 +9,7 @@ import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/barcode/screen_barcode.dart';
 import 'package:shop_ez/screens/customer/screen_manage_customer.dart';
+import 'package:shop_ez/screens/database/pages/screen_list_database.dart';
 import 'package:shop_ez/screens/database/screen_database.dart';
 import 'package:shop_ez/screens/expense/manage_expense/screen_manage_expense.dart';
 import 'package:shop_ez/screens/invoices/screen_sales_invoice.dart';
@@ -201,8 +202,18 @@ class RouteGenerator {
                   : ScreenSalesInvoice(salesModel: args.first, isReturn: args.last));
         }
         return _errorRoute();
+
+      //=========================================================================================
+      //======================================== Database =======================================
+      //=========================================================================================
       case routeDatabase:
         return MaterialPageRoute(builder: (_) => const ScreenDatabase());
+      case routeDatabaseList:
+        return MaterialPageRoute(builder: (_) => const ScreenDatabaseList());
+
+      //=========================================================================================
+      //======================================== User & Group ===================================
+      //=========================================================================================
       case routeUserManage:
         if (permission!.user.contains('0')) return _errorPermission();
         if (permission.user.contains('1')) return MaterialPageRoute(builder: (_) => const ScreenUserManage());

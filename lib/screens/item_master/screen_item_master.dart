@@ -621,6 +621,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
   Future<void> addItem(BuildContext context, {final bool isUpdate = false}) async {
     final int itemCategoryId, vatRate, vatId;
     final int? itemSubCategoryId, itemBrandId;
+    final String? expiryDate;
     final String productType,
         itemName,
         itemNameArabic,
@@ -629,7 +630,6 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
         sellingPrice,
         secondarySellingPrice,
         productVAT,
-        expiryDate,
         openingStock,
         vatMethod,
         unit,
@@ -655,7 +655,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
       vatRate = _itemVatRate!;
       productVAT = _productVatController!;
       unit = _itemUnit!;
-      expiryDate = _selectedDate ?? '';
+      expiryDate = _selectedDate;
       openingStock = _openingStockController.text.isEmpty ? '0' : _openingStockController.text.trim();
       vatMethod = vatMethodNotifier.value!;
       alertQuantity = _alertQuantityController.text.trim();

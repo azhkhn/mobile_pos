@@ -51,31 +51,32 @@ class ItemCardWidget extends StatelessWidget {
                       ),
                     ),
                     kWidth5,
-                    Expanded(
-                      flex: 3,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          const Text(
-                            'Expiry Date:  ',
-                            overflow: TextOverflow.ellipsis,
-                            style: kText12Lite,
-                            maxLines: 1,
-                          ),
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              Converter.dateFormat.format(DateTime.parse(product.expiryDate!)),
+                    if (product.expiryDate!.isNotEmpty)
+                      Expanded(
+                        flex: 3,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            const Text(
+                              'Expiry Date:  ',
                               overflow: TextOverflow.ellipsis,
-                              style: kTextSalesCard,
-                              textAlign: TextAlign.end,
+                              style: kText12Lite,
                               maxLines: 1,
                             ),
-                          ),
-                        ],
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                Converter.dateFormat.format(DateTime.parse(product.expiryDate!)),
+                                overflow: TextOverflow.ellipsis,
+                                style: kTextSalesCard,
+                                textAlign: TextAlign.end,
+                                maxLines: 1,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 kHeight5,

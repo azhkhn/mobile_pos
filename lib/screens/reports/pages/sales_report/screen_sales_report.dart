@@ -127,7 +127,7 @@ class ScreenSalesReport extends StatelessWidget {
     log('FutureBuiler() => called!');
 
     final salesList = await SalesDatabase.instance.getAllSales();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(salesProvider.notifier).state = salesList.reversed.toList();
       ref.read(salesListProvider.notifier).state = salesList.reversed.toList();
     });

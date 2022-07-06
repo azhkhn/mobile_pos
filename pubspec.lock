@@ -265,6 +265,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  flutter_file_manager:
+    dependency: "direct main"
+    description:
+      name: flutter_file_manager
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   flutter_keyboard_visibility:
     dependency: transitive
     description:

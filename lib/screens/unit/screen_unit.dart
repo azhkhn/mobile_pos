@@ -65,23 +65,17 @@ class UnitScreen extends StatelessWidget {
 
                     try {
                       await unitDB.createUnit(_unit);
-                      kSnackBar(
-                          context: context,
-                          success: true,
-                          content: 'Unit "$unit" added successfully!');
+                      kSnackBar(context: context, success: true, content: 'Unit "$unit" added successfully!');
                       _unitEditingController.clear();
                     } catch (e) {
-                      kSnackBar(
-                          context: context,
-                          error: true,
-                          content: 'Unit "$unit" already exist!');
+                      kSnackBar(context: context, error: true, content: 'Unit "$unit" already exist!');
                     }
                   }
                 },
               ),
 
               //========== Unit List Field ==========
-              kHeight50,
+              kHeight20,
               Expanded(
                 child: FutureBuilder<dynamic>(
                   future: unitDB.getAllUnits(),
@@ -97,56 +91,38 @@ class UnitScreen extends StatelessWidget {
                         return ValueListenableBuilder(
                             valueListenable: unitNotifiers,
                             builder: (context, List<UnitModel> units, _) {
-                              return ListView.separated(
+                              return ListView.builder(
                                 itemBuilder: (context, index) {
                                   final item = units[index];
                                   log('item == $item');
-                                  return ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundColor: kTransparentColor,
-                                      child: Text(
-                                        '${index + 1}'.toString(),
-                                        style: const TextStyle(
-                                            color: kTextColorBlack),
-                                      ),
-                                    ),
-                                    title: Text(item.unit),
-                                    trailing: Row(
+                                  return Card(
+                                    child: ListTile(
+                                      dense: true,
+                                      leading:
+                                          CircleAvatar(backgroundColor: kTransparentColor, child: Text('${index + 1}'.toString(), style: kTextNo12)),
+                                      title: Text(item.unit),
+                                      trailing: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           IconButton(
                                             onPressed: () async {
-                                              final _unitController =
-                                                  TextEditingController(
-                                                      text: units[index].unit);
+                                              final _unitController = TextEditingController(text: units[index].unit);
 
                                               showDialog(
                                                   context: context,
-                                                  builder: (context) =>
-                                                      AlertDialog(
+                                                  builder: (context) => AlertDialog(
                                                           content: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
+                                                        mainAxisSize: MainAxisSize.min,
                                                         children: [
                                                           TextFeildWidget(
-                                                            labelText:
-                                                                'Unit Name',
-                                                            controller:
-                                                                _unitController,
-                                                            floatingLabelBehavior:
-                                                                FloatingLabelBehavior
-                                                                    .always,
-                                                            inputBorder:
-                                                                const OutlineInputBorder(),
-                                                            autovalidateMode:
-                                                                AutovalidateMode
-                                                                    .onUserInteraction,
+                                                            labelText: 'Unit Name',
+                                                            controller: _unitController,
+                                                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                            inputBorder: const OutlineInputBorder(),
+                                                            autovalidateMode: AutovalidateMode.onUserInteraction,
                                                             isDense: true,
                                                             validator: (value) {
-                                                              if (value ==
-                                                                      null ||
-                                                                  value
-                                                                      .isEmpty) {
+                                                              if (value == null || value.isEmpty) {
                                                                 return 'This field is required*';
                                                               }
                                                               return null;
@@ -154,38 +130,21 @@ class UnitScreen extends StatelessWidget {
                                                           ),
                                                           kHeight5,
                                                           CustomMaterialBtton(
-                                                              onPressed:
-                                                                  () async {
-                                                                final String
-                                                                    unitName =
-                                                                    _unitController
-                                                                        .text
-                                                                        .trim();
-                                                                if (unitName ==
-                                                                    units[index]
-                                                                        .unit) {
-                                                                  return Navigator
-                                                                      .pop(
-                                                                          context);
+                                                              onPressed: () async {
+                                                                final String unitName = _unitController.text.trim();
+                                                                if (unitName == units[index].unit) {
+                                                                  return Navigator.pop(context);
                                                                 }
-                                                                await unitDB.updateUnit(
-                                                                    unit: units[
-                                                                        index],
-                                                                    unitName:
-                                                                        unitName);
-                                                                Navigator.pop(
-                                                                    context);
+                                                                await unitDB.updateUnit(unit: units[index], unitName: unitName);
+                                                                Navigator.pop(context);
 
                                                                 kSnackBar(
-                                                                  context:
-                                                                      context,
-                                                                  content:
-                                                                      'Unit updated successfully',
+                                                                  context: context,
+                                                                  content: 'Unit updated successfully',
                                                                   update: true,
                                                                 );
                                                               },
-                                                              buttonText:
-                                                                  'Update'),
+                                                              buttonText: 'Update'),
                                                         ],
                                                       )));
                                             },
@@ -196,28 +155,22 @@ class UnitScreen extends StatelessWidget {
                                                 showDialog(
                                                   context: context,
                                                   builder: (ctx) => AlertDialog(
-                                                    content: const Text(
-                                                        'Are you sure you want to delete this item?'),
+                                                    content: const Text('Are you sure you want to delete this item?'),
                                                     actions: [
                                                       TextButton(
                                                         onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
+                                                          Navigator.pop(context);
                                                         },
                                                         child: kTextCancel,
                                                       ),
                                                       TextButton(
                                                         onPressed: () async {
-                                                          await unitDB
-                                                              .deleteUnit(
-                                                                  item.id!);
-                                                          Navigator.pop(
-                                                              context);
+                                                          await unitDB.deleteUnit(item.id!);
+                                                          Navigator.pop(context);
 
                                                           kSnackBar(
                                                             context: context,
-                                                            content:
-                                                                'Unit deleted successfully',
+                                                            content: 'Unit deleted successfully',
                                                             delete: true,
                                                           );
                                                         },
@@ -228,11 +181,11 @@ class UnitScreen extends StatelessWidget {
                                                 );
                                               },
                                               icon: kIconDelete)
-                                        ]),
+                                        ],
+                                      ),
+                                    ),
                                   );
                                 },
-                                separatorBuilder: (context, index) =>
-                                    const Divider(),
                                 itemCount: snapshot.data.length,
                               );
                             });

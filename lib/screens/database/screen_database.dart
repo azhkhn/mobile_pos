@@ -10,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
+import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
@@ -28,57 +29,81 @@ class ScreenDatabase extends StatelessWidget {
       body: Card(
         child: Column(
           children: [
-            //========== Database Backup Button ==========
-            CustomMaterialBtton(
-                onPressed: () async {
-                  showDialog(
-                    context: context,
-                    builder: (ctx) => KAlertDialog(
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text('Are you sure you want to backup database?'),
-                          kHeight5,
-                          Text(
-                            'location : "storage/emulated/0/MobilePOS"',
-                            style: kText12Lite,
-                          )
-                        ],
-                      ),
-                      submitColor: ContstantTexts.kColorEditText,
-                      submitAction: () async {
-                        Navigator.pop(ctx);
-                        return await requestPermission(context, action: 'backup');
-                      },
-                    ),
-                  );
-                },
-                buttonText: 'Backup Database',
-                icon: const Icon(Icons.backup_outlined, color: kWhite)),
+            kHeight10,
+            Row(
+              children: [
+                //========== Database Backup Button ==========
+                Flexible(
+                  child: CustomMaterialBtton(
+                    height: 50,
+                    color: kGreen,
+                    onPressed: () async {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => KAlertDialog(
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text('Are you sure you want to backup database?'),
+                              kHeight5,
+                              Text(
+                                'location : "storage/emulated/0/MobilePOS"',
+                                style: kText12Lite,
+                              )
+                            ],
+                          ),
+                          submitColor: ContstantTexts.kColorEditText,
+                          submitAction: () async {
+                            Navigator.pop(ctx);
+                            return await requestPermission(context, action: 'backup');
+                          },
+                        ),
+                      );
+                    },
+                    buttonText: 'Backup Database',
+                    icon: const Icon(Icons.backup_outlined, color: kWhite),
+                  ),
+                ),
 
-            //========== Database Restore Button ==========
-            CustomMaterialBtton(
-                onPressed: () async {
-                  showDialog(
-                    context: context,
-                    builder: (ctx) => KAlertDialog(
-                      content: const Text("Select any .db file from previous backup to restore the database."),
-                      submitColor: ContstantTexts.kColorEditText,
-                      submitText: 'Select',
-                      submitAction: () async {
-                        Navigator.pop(ctx);
-                        return await requestPermission(context, action: 'restore');
-                      },
-                    ),
-                  );
-                },
-                buttonText: 'Restore Database',
-                icon: const Icon(Icons.restore_outlined, color: kWhite)),
+                kWidth10,
+
+                //========== Database Restore Button ==========
+                Flexible(
+                  child: CustomMaterialBtton(
+                    height: 50,
+                    color: Colors.indigo[400],
+                    onPressed: () async {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => KAlertDialog(
+                          content: const Text("Select any .db file from previous backup to restore the database."),
+                          submitColor: ContstantTexts.kColorEditText,
+                          submitText: 'Select',
+                          submitAction: () async {
+                            Navigator.pop(ctx);
+                            return await requestPermission(context, action: 'restore');
+                          },
+                        ),
+                      );
+                    },
+                    buttonText: 'Restore Database',
+                    icon: const Icon(Icons.restore_outlined, color: kWhite),
+                  ),
+                ),
+              ],
+            ),
+
+            kHeight10,
 
             //========== Database List Button ==========
             CustomMaterialBtton(
-                onPressed: () {}, buttonText: "Databases", icon: const ImageIcon(AssetImage('assets/images/database.png'), color: kWhite)),
+              height: 50,
+              color: kTeal400,
+              onPressed: () => Navigator.pushNamed(context, routeDatabaseList),
+              buttonText: "Databases",
+              icon: const ImageIcon(AssetImage('assets/images/database.png'), color: kWhite),
+            ),
           ],
         ),
       ),
@@ -120,8 +145,8 @@ class ScreenDatabase extends StatelessWidget {
 
 //==================== Restore Database ====================
   Future<void> restoreDatabase(BuildContext context) async {
-    var databasesPath = await getDatabasesPath();
-    var dbPath = join(databasesPath, 'user.db');
+    final String databasesPath = await getDatabasesPath();
+    final String dbPath = join(databasesPath, 'user.db');
 
     try {
       FilePickerResult? _result = await FilePicker.platform.pickFiles(dialogTitle: 'Select Database');
