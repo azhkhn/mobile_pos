@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -6,21 +7,21 @@ import 'package:pdf/widgets.dart';
 
 class PdfAction {
   static Future<File> saveDocument({
-    required String name,
-    required Document pdf,
+    required final String name,
+    required final Document pdf,
   }) async {
-    final bytes = await pdf.save();
+    final Uint8List bytes = await pdf.save();
 
-    final dir = await getApplicationDocumentsDirectory();
-    final file = File('${dir.path}/$name');
+    final Directory dir = await getApplicationDocumentsDirectory();
+    final File file = File('${dir.path}/$name');
 
     await file.writeAsBytes(bytes);
 
     return file;
   }
 
-  static Future openFile(File file) async {
-    final url = file.path;
+  static Future openFile(final File file) async {
+    final String url = file.path;
     await OpenFile.open(url);
   }
 }

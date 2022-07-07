@@ -17,7 +17,15 @@ import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 final AutoDisposeStateProvider<bool> _filterProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 final futureSalesProvider = FutureProvider.autoDispose<List<SalesModel>>((ref) async {
-  return await const ScreenSalesReport().futureSales(ref);
+  // return await const ScreenSalesReport().futureSales(ref);
+
+  final salesList = await SalesDatabase.instance.getAllSales();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    ref.read(ScreenSalesReport.salesProvider.notifier).state = salesList.reversed.toList();
+    ref.read(ScreenSalesReport.salesListProvider.notifier).state = salesList.reversed.toList();
+  });
+
+  return salesList.reversed.toList();
 });
 
 class ScreenSalesReport extends StatelessWidget {
@@ -81,7 +89,7 @@ class ScreenSalesReport extends StatelessWidget {
                                           );
                                         },
                                       )
-                                    : const Center(child: Text('Sales is empty'));
+                                    : const Center(child: Text('Sales Not Found!'));
                               },
                             )
                           : const Center(child: Text('No recent Sales!'));
@@ -122,16 +130,16 @@ class ScreenSalesReport extends StatelessWidget {
     );
   }
 
-  //== == == == == FutureBuilder Transactions == == == == ==
-  Future<List<SalesModel>> futureSales(AutoDisposeFutureProviderRef ref) async {
-    log('FutureBuiler() => called!');
+  // //== == == == == FutureBuilder Transactions == == == == ==
+  // Future<List<SalesModel>> futureSales(AutoDisposeFutureProviderRef ref) async {
+  //   log('FutureBuiler() => called!');
 
-    final salesList = await SalesDatabase.instance.getAllSales();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(salesProvider.notifier).state = salesList.reversed.toList();
-      ref.read(salesListProvider.notifier).state = salesList.reversed.toList();
-    });
+  //   final salesList = await SalesDatabase.instance.getAllSales();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     ref.read(salesProvider.notifier).state = salesList.reversed.toList();
+  //     ref.read(salesListProvider.notifier).state = salesList.reversed.toList();
+  //   });
 
-    return salesList.reversed.toList();
-  }
+  //   return salesList.reversed.toList();
+  // }
 }

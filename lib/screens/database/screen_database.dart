@@ -62,6 +62,7 @@ class ScreenDatabase extends StatelessWidget {
                       );
                     },
                     buttonText: 'Backup Database',
+                    fittedText: true,
                     icon: const Icon(Icons.backup_outlined, color: kWhite),
                   ),
                 ),
@@ -88,6 +89,7 @@ class ScreenDatabase extends StatelessWidget {
                       );
                     },
                     buttonText: 'Restore Database',
+                    fittedText: true,
                     icon: const Icon(Icons.restore_outlined, color: kWhite),
                   ),
                 ),
@@ -102,6 +104,7 @@ class ScreenDatabase extends StatelessWidget {
               color: kTeal400,
               onPressed: () => Navigator.pushNamed(context, routeDatabaseList),
               buttonText: "Databases",
+              fittedText: true,
               icon: const ImageIcon(AssetImage('assets/images/database.png'), color: kWhite),
             ),
           ],
@@ -223,7 +226,7 @@ class ScreenDatabase extends StatelessWidget {
           duration: 4,
           error: true,
           content: 'Please allow permissions manually from settings to $action',
-          action: SnackBarAction(label: 'Open', textColor: kWhite, onPressed: () => openAppSettings()));
+          action: SnackBarAction(label: 'Open', textColor: kWhite, onPressed: () async => await openAppSettings()));
     }
 
 //Call backup or restore fucntion

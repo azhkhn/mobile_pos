@@ -1,9 +1,12 @@
 import 'dart:developer' show log;
 import 'dart:io' show Directory, File, FileSystemEntity;
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
+import 'package:permission_handler/permission_handler.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/icons.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
@@ -16,6 +19,9 @@ import 'package:sqflite/sqflite.dart';
 
 final _filesProvider = FutureProvider.autoDispose<List<FileSystemEntity>>((ref) async {
   final Directory backupDirectory = Directory("storage/emulated/0/MobilePOS");
+  final PermissionStatus _permStorageStatus = await Permission.storage.status;
+
+  if (await backupDirectory.exists() == true && !_permStorageStatus.isGranted) throw 'Insufficient Storage Permission';
   final List<FileSystemEntity> allFiles = backupDirectory.listSync();
   final List<FileSystemEntity> dbFiles = [];
   for (FileSystemEntity file in allFiles) {
@@ -26,6 +32,38 @@ final _filesProvider = FutureProvider.autoDispose<List<FileSystemEntity>>((ref) 
 
   return dbFiles.reversed.toList();
 });
+
+Future<void> requestPermission(
+  BuildContext context,
+  WidgetRef ref,
+) async {
+  final AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
+  final num osVersion = num.parse(androidInfo.version.release!);
+  log('Android OS Version = $osVersion');
+
+  final PermissionStatus _permissionStatus = await Permission.storage.request();
+  final bool check = await Permission.storage.shouldShowRequestRationale;
+
+  log('Permission Status == $_permissionStatus');
+  log('shouldShowRequestRationale == $check');
+
+  if (_permissionStatus.isGranted) return ref.refresh(_filesProvider);
+
+  if (_permissionStatus.isDenied) {
+    log("Storage permission is denied.");
+    return kSnackBar(context: context, error: true, content: 'Please allow required permissions');
+  }
+  if (_permissionStatus.isPermanentlyDenied) {
+    log("Storage permission is permanently denied.");
+    return kSnackBar(
+      context: context,
+      duration: 4,
+      error: true,
+      content: 'Please allow permissions manually from settings',
+      action: SnackBarAction(label: 'Open', textColor: kWhite, onPressed: () async => await openAppSettings()),
+    );
+  }
+}
 
 class ScreenDatabaseList extends ConsumerWidget {
   const ScreenDatabaseList({Key? key}) : super(key: key);
@@ -51,6 +89,16 @@ class ScreenDatabaseList extends ConsumerWidget {
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                //== == == == == Share Database == == == == ==
+                                Flexible(
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      await Share.shareFiles([file.path]);
+                                    },
+                                    icon: kIconShare,
+                                  ),
+                                ),
+
                                 //== == == == == Restore Database == == == == ==
                                 Flexible(
                                   child: IconButton(
@@ -114,7 +162,13 @@ class ScreenDatabaseList extends ConsumerWidget {
                       )
                     : const Center(child: Text('No recent database backups'));
               },
-              error: (_, e) {
+              error: (Object o, StackTrace? e) {
+                log('Error : ' + e.toString() + 'Exception : ' + o.toString());
+
+                if (o == 'Insufficient Storage Permission') {
+                  requestPermission(context, ref);
+                  return const Center(child: Text('Something went wrong'));
+                }
                 return const Center(child: Text('No recent database backups'));
               },
               loading: () => const Center(child: SingleChildScrollView()))),

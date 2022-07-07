@@ -39,11 +39,20 @@ class CustomMaterialBtton extends StatelessWidget {
       onPressed: onPressed,
       child: child ??
           (fittedText
-              ? FittedBox(
-                  child: Text(buttonText!,
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    icon != null ? icon! : kNone,
+                    icon != null ? kWidth10 : kNone,
+                    FittedBox(
+                        child: Text(
+                      buttonText!,
                       style: TextStyle(
                         color: textColor ?? kButtonTextWhite,
-                      )))
+                      ),
+                    )),
+                  ],
+                )
               : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
