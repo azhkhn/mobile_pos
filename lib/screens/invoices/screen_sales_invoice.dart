@@ -109,29 +109,29 @@ class ScreenSalesInvoice extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(5),
-        child: SingleChildScrollView(
-          child: Card(
-            elevation: 5,
-            child: Padding(
-              padding: const EdgeInsets.all(5),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  FutureBuilder(
-                      future: getDetails(),
-                      builder: (context, snapshot) {
-                        switch (snapshot.connectionState) {
-                          case ConnectionState.waiting:
-                            return const Center(child: CircularProgressIndicator());
-                          case ConnectionState.done:
+        child: Card(
+          elevation: 5,
+          child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FutureBuilder(
+                    future: getDetails(),
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return const Center(child: CircularProgressIndicator());
+                        case ConnectionState.done:
 
-                          default:
-                            // if (!snapshot.hasData) {
-                            //   return const Center(child: Text('Not Found!'));
-                            // }
+                        default:
+                          // if (!snapshot.hasData) {
+                          //   return const Center(child: Text('Not Found!'));
+                          // }
 
-                            return ListView(
+                          return Expanded(
+                            child: ListView(
                               shrinkWrap: true,
                               children: [
                                 buildHeader(businessProfileModel: businessProfile!),
@@ -144,11 +144,11 @@ class ScreenSalesInvoice extends StatelessWidget {
                                 const Divider(),
                                 buildTotal(sale, isReturn),
                               ],
-                            );
-                        }
-                      }),
-                ],
-              ),
+                            ),
+                          );
+                      }
+                    }),
+              ],
             ),
           ),
         ),

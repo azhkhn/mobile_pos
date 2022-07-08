@@ -1,5 +1,6 @@
 import 'dart:developer' show log;
-import 'dart:io';
+import 'dart:io' show File;
+import 'dart:typed_data' show ByteData, Uint8List;
 
 import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:pdf/pdf.dart' show PdfColors, PdfPageFormat;
@@ -48,31 +49,33 @@ class PdfSalesReceipt {
     final businessProfile = await UserUtils.instance.businessProfile;
     final customer = await CustomerDatabase.instance.getCustomerById(sale.customerId);
 
-    final businessLogo = businessProfile.logo;
-    final logoBytes = await File(businessLogo).readAsBytes();
+    final String businessLogo = businessProfile.logo;
+    final Uint8List logoBytes = await File(businessLogo).readAsBytes();
     final pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
 
     //========== Pdf Preview ==========
-    pdf.addPage(pw.Page(
-      orientation: pw.PageOrientation.portrait,
-      pageFormat: PdfPageFormat.roll80,
-      textDirection: pw.TextDirection.rtl,
-      theme: pw.ThemeData.withFont(
-        base: arabicFont,
+    pdf.addPage(
+      pw.Page(
+        orientation: pw.PageOrientation.portrait,
+        pageFormat: PdfPageFormat.roll80,
+        textDirection: pw.TextDirection.rtl,
+        theme: pw.ThemeData.withFont(
+          base: arabicFont,
+        ),
+        build: (context) {
+          return builder(
+            business: businessProfile,
+            titleFont: titleFont,
+            logoImage: logoImage,
+            sale: sale,
+            customer: customer,
+            saleItems: saleItems,
+            arabicFont: arabicFont,
+            isReturn: isReturn,
+          );
+        },
       ),
-      build: (context) {
-        return builder(
-          business: businessProfile,
-          titleFont: titleFont,
-          logoImage: logoImage,
-          sale: sale,
-          customer: customer,
-          saleItems: saleItems,
-          arabicFont: arabicFont,
-          isReturn: isReturn,
-        );
-      },
-    ));
+    );
 
     // final pdfFile = await PdfAction.saveDocument(name: 'sale_receipt.pdf', pdf: pdf);
 
@@ -105,8 +108,8 @@ class PdfSalesReceipt {
         pw.Align(
           alignment: pw.Alignment.center,
           child: pw.Container(
-            height: 40,
-            width: 40,
+            height: PdfPageFormat.roll57.availableWidth * 0.65,
+            width: PdfPageFormat.roll57.availableWidth * 0.65,
             child: pw.BarcodeWidget(
               barcode: pw.Barcode.qrCode(),
               data: EInvoiceGenerator.getEInvoiceCode(
@@ -119,8 +122,8 @@ class PdfSalesReceipt {
             ),
           ),
         ),
-        pw.SizedBox(height: .5 * PdfPageFormat.mm),
-        pw.Text('Thank you for shopping with us', style: pw.TextStyle(fontSize: 7, fontWeight: pw.FontWeight.normal))
+        pw.SizedBox(height: 2 * PdfPageFormat.mm),
+        pw.Text('Thank you for shopping with us', style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.normal))
       ],
     );
   }
@@ -392,43 +395,43 @@ class PdfSalesReceipt {
       ];
     }).toList();
 
-    return pw.Table.fromTextArray(
-      headers: headers,
-      headerPadding: const pw.EdgeInsets.all(1),
-      cellPadding: const pw.EdgeInsets.all(1),
-      data: data,
-      border: null,
-      cellStyle: pw.TextStyle(
-        fontSize: 6,
-        fontWeight: pw.FontWeight.normal,
-      ),
-      headerStyle: pw.TextStyle(fontSize: 6, fontWeight: pw.FontWeight.bold, font: arabicFont),
-      headerDecoration: pw.BoxDecoration(border: pw.Border.all(width: .5)),
-      cellHeight: 12,
-      columnWidths: const {
-        1: pw.FractionColumnWidth(0.30),
-        2: pw.FractionColumnWidth(0.11),
-        3: pw.FractionColumnWidth(0.15),
-        4: pw.FractionColumnWidth(0.15),
-        5: pw.FractionColumnWidth(0.15),
-      },
-      headerAlignments: {
-        0: pw.Alignment.centerLeft,
-        1: pw.Alignment.centerLeft,
-        2: pw.Alignment.centerRight,
-        3: pw.Alignment.centerRight,
-        4: pw.Alignment.centerRight,
-        5: pw.Alignment.centerRight,
-      },
-      cellAlignments: {
-        0: pw.Alignment.centerLeft,
-        1: pw.Alignment.centerLeft,
-        2: pw.Alignment.centerRight,
-        3: pw.Alignment.centerRight,
-        4: pw.Alignment.centerRight,
-        5: pw.Alignment.centerRight,
-      },
-    );
+    return pw.Directionality(
+        textDirection: pw.TextDirection.rtl,
+        child: pw.Table.fromTextArray(
+          headers: headers,
+          headerPadding: const pw.EdgeInsets.all(1),
+          cellPadding: const pw.EdgeInsets.all(1),
+          data: data,
+          border: null,
+          headerStyle: pw.TextStyle(fontSize: 6, fontWeight: pw.FontWeight.normal, font: arabicFont),
+          cellStyle: pw.TextStyle(fontSize: 6.2, fontWeight: pw.FontWeight.normal),
+          headerDecoration: pw.BoxDecoration(border: pw.Border.all(width: .5)),
+          cellHeight: 12,
+          columnWidths: const {
+            0: pw.FractionColumnWidth(0.10),
+            1: pw.FractionColumnWidth(0.35),
+            2: pw.FractionColumnWidth(0.13),
+            3: pw.FractionColumnWidth(0.15),
+            4: pw.FractionColumnWidth(0.15),
+            5: pw.FractionColumnWidth(0.15),
+          },
+          headerAlignments: {
+            0: pw.Alignment.centerLeft,
+            1: pw.Alignment.centerLeft,
+            2: pw.Alignment.centerRight,
+            3: pw.Alignment.centerRight,
+            4: pw.Alignment.centerRight,
+            5: pw.Alignment.centerRight,
+          },
+          cellAlignments: {
+            0: pw.Alignment.centerLeft,
+            1: pw.Alignment.centerLeft,
+            2: pw.Alignment.centerRight,
+            3: pw.Alignment.centerRight,
+            4: pw.Alignment.centerRight,
+            5: pw.Alignment.centerRight,
+          },
+        ));
   }
 
   //==================== Total Section ====================
@@ -506,7 +509,7 @@ class PdfSalesReceipt {
     final style = pw.TextStyle(
       fontWeight: pw.FontWeight.bold,
       font: arabicFont,
-      fontSize: 7,
+      fontSize: 8,
     );
 
     return pw.Container(

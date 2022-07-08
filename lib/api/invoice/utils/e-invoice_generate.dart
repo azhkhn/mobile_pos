@@ -1,7 +1,10 @@
 // ignore_for_file: file_names
 
+import 'dart:developer';
 import 'dart:typed_data' show BytesBuilder, Uint8List;
 import 'dart:convert' show Base64Encoder, utf8;
+
+import 'package:shop_ez/core/utils/converters/converters.dart';
 
 class EInvoiceGenerator {
   static String getEInvoiceCode({
@@ -12,7 +15,8 @@ class EInvoiceGenerator {
     required final String vatTotal,
   }) {
     // final DateTime dateTime = DateTime.now();
-    final String strInvoiceDate = "${invoiceDate.year}-${invoiceDate.month}-${invoiceDate.day} ${invoiceDate.hour}:${invoiceDate.minute}";
+    final String strInvoiceDate = Converter.dateFormatEInvoice.format(invoiceDate);
+    log('Date == $strInvoiceDate');
     final BytesBuilder bytesBuilder = BytesBuilder();
 // 1. Seller Name
     bytesBuilder.addByte(1);
