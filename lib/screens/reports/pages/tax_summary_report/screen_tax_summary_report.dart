@@ -260,8 +260,8 @@ class ScreenTaxSummaryReport extends StatelessWidget {
     List<ExpenseModel> expenses = [];
 
     if (fromDate != null || toDate != null) {
-      final _fromDate = fromDate;
-      final _toDate = toDate;
+      final DateTime? _fromDate = fromDate;
+      final DateTime? _toDate = toDate;
 
       //Sales Tax Summary ~ Filter
       for (SalesModel sale in salesList) {

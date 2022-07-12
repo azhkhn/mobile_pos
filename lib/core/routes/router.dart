@@ -88,8 +88,9 @@ const String routeDatabaseList = '/database_list';
 
 //Reports
 const String routeReports = '/reports';
-const String routePaymentReport = '/payment_report';
-const String routePendingPayment = '/pending_payment';
+const String routeOperationSummary = '/operation_summary';
+const String routeTransactionReport = '/transaction_report';
+const String routePendingInvoice = '/pending_invoice';
 const String routeSalesReport = '/sales_report';
 const String routePurchasesReport = '/purchases_report';
 const String routeExpenseReport = '/expense_report';

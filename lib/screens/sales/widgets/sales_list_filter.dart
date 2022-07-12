@@ -23,9 +23,9 @@ final _paymentProvider = StateProvider.autoDispose<String?>((ref) => null);
 final _customerProvider = StateProvider.autoDispose<CustomerModel?>((ref) => null);
 final _dateProvider = StateProvider.autoDispose<DateTime?>((ref) => null);
 
-final _invoiceController = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
-final _customerController = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
-final _dateController = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
+final _invoiceController = Provider.autoDispose<TextEditingController>((ref) => TextEditingController());
+final _customerController = Provider.autoDispose<TextEditingController>((ref) => TextEditingController());
+final _dateController = Provider.autoDispose<TextEditingController>((ref) => TextEditingController());
 
 //========== Global Keys ==========
 final GlobalKey<FormFieldState> _dropDownKey = GlobalKey();

@@ -19,6 +19,7 @@ import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return.dar
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return_list.dart';
 import 'package:shop_ez/screens/reports/pages/expenses_report/screen_expenses_report.dart';
 import 'package:shop_ez/screens/reports/pages/negative_stock_report/screen_negative_stock_report.dart';
+import 'package:shop_ez/screens/reports/pages/operation_summary/screen_operation_summary.dart';
 import 'package:shop_ez/screens/reports/pages/purchases_report/screen_purchases_report.dart';
 import 'package:shop_ez/screens/reports/pages/purchases_tax_report/screen_purchases_tax_report.dart';
 import 'package:shop_ez/screens/reports/pages/sales_tax_report/screen_sales_tax_report.dart';
@@ -246,9 +247,11 @@ class RouteGenerator {
       //=========================================================================================
       case routeReports:
         return MaterialPageRoute(builder: (_) => const ScreenReports());
-      case routePaymentReport:
+      case routeOperationSummary:
+        return MaterialPageRoute(builder: (_) => const ScreenOperationSummary());
+      case routeTransactionReport:
         return MaterialPageRoute(builder: (_) => ScreenTransactionsReport());
-      case routePendingPayment:
+      case routePendingInvoice:
         return MaterialPageRoute(builder: (_) => ScreenPendingInvoice());
       case routeSalesReport:
         return MaterialPageRoute(builder: (_) => const ScreenSalesReport());

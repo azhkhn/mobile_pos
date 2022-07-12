@@ -25,11 +25,11 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 //==================== Providers ====================
 final _paymentProvider = StateProvider.autoDispose<String?>((ref) => null);
 
-final _fromDateControllerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
-final _toDateControllerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
-final _invoiceProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
-final _customerControllerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
-final _productControllerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
+final _fromDateControllerProvider = Provider.autoDispose<TextEditingController>((ref) => TextEditingController());
+final _toDateControllerProvider = Provider.autoDispose<TextEditingController>((ref) => TextEditingController());
+final _invoiceProvider = Provider.autoDispose<TextEditingController>((ref) => TextEditingController());
+final _customerControllerProvider = Provider.autoDispose<TextEditingController>((ref) => TextEditingController());
+final _productControllerProvider = Provider.autoDispose<TextEditingController>((ref) => TextEditingController());
 
 final _productProvider = StateProvider.autoDispose<ItemMasterModel?>((ref) => null);
 final _customerProvider = StateProvider.autoDispose<CustomerModel?>((ref) => null);

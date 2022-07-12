@@ -48,12 +48,13 @@ class ReportsGrid extends StatelessWidget {
             onTap: () async {
               switch (index) {
                 case 0:
+                  Navigator.pushNamed(context, routeOperationSummary);
                   break;
                 case 1:
-                  Navigator.pushNamed(context, routePaymentReport);
+                  Navigator.pushNamed(context, routeTransactionReport);
                   break;
                 case 2:
-                  Navigator.pushNamed(context, routePendingPayment);
+                  Navigator.pushNamed(context, routePendingInvoice);
                   break;
                 case 3:
                   Navigator.pushNamed(context, routeSalesReport);
