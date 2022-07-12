@@ -14,17 +14,13 @@ import 'package:shop_ez/screens/sales/widgets/sales_card_widget.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
+//==================== Providers ====================
 final AutoDisposeStateProvider<bool> _filterProvider = StateProvider.autoDispose<bool>((ref) => false);
-
-final futureSalesProvider = FutureProvider.autoDispose<List<SalesModel>>((ref) async {
-  // return await const ScreenSalesReport().futureSales(ref);
-
+final AutoDisposeFutureProvider<List<SalesModel>> futureSalesProvider = FutureProvider.autoDispose<List<SalesModel>>((ref) async {
   final List<SalesModel> salesList = await SalesDatabase.instance.getAllSales();
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    // ref.read(ScreenSalesReport.salesProvider.notifier).state = salesList.reversed.toList();
     ref.read(SalesReportFilter.salesListProvider.notifier).state = salesList.reversed.toList();
   });
-
   return salesList.reversed.toList();
 });
 
@@ -140,17 +136,4 @@ class ScreenSalesReport extends StatelessWidget {
           )),
     );
   }
-
-  // //== == == == == FutureBuilder Transactions == == == == ==
-  // Future<List<SalesModel>> futureSales(AutoDisposeFutureProviderRef ref) async {
-  //   log('FutureBuiler() => called!');
-
-  //   final salesList = await SalesDatabase.instance.getAllSales();
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     ref.read(salesProvider.notifier).state = salesList.reversed.toList();
-  //     ref.read(salesListProvider.notifier).state = salesList.reversed.toList();
-  //   });
-
-  //   return salesList.reversed.toList();
-  // }
 }

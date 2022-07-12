@@ -28,15 +28,14 @@ final _paymentProvider = StateProvider.autoDispose<String?>((ref) => null);
 final _fromDateControllerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
 final _toDateControllerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
 final _invoiceProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
-final _customerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
+final _customerControllerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
 final _productControllerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
 
 final _productProvider = StateProvider.autoDispose<ItemMasterModel?>((ref) => null);
+final _customerProvider = StateProvider.autoDispose<CustomerModel?>((ref) => null);
 
 final _fromDateProvider = StateProvider.autoDispose<DateTime?>((ref) => null);
 final _toDateProvier = StateProvider.autoDispose<DateTime?>((ref) => null);
-
-final _salesByCustomerListProvider = StateProvider.autoDispose<List<SalesModel>>((ref) => []);
 
 //==================== Database Instances ====================
 final CustomerDatabase _customerDB = CustomerDatabase.instance;
@@ -50,9 +49,9 @@ class SalesReportFilter extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.watch(ScreenSalesReport.isLoadedProvider);
-      ref.watch(_salesByCustomerListProvider);
-      ref.watch(salesListProvider);
       ref.watch(_customerProvider);
+      ref.watch(salesListProvider);
+      ref.watch(_customerControllerProvider);
       ref.watch(_invoiceProvider);
       ref.watch(_fromDateControllerProvider);
       ref.watch(_toDateControllerProvider);
@@ -121,7 +120,7 @@ class SalesReportFilter extends ConsumerWidget {
                 },
                 onSuggestionSelected: (SalesModel suggestion) {
                   //clear all the other fields
-                  ref.read(_customerProvider).clear();
+                  ref.read(_customerControllerProvider).clear();
                   ref.read(_productControllerProvider).clear();
                   ref.refresh(_paymentProvider);
                   ref.refresh(_fromDateControllerProvider);
@@ -142,12 +141,11 @@ class SalesReportFilter extends ConsumerWidget {
                 debounceDuration: const Duration(milliseconds: 500),
                 hideSuggestionsOnKeyboardHide: true,
                 textFieldConfiguration: TextFieldConfiguration(
-                  controller: ref.read(_customerProvider),
+                  controller: ref.read(_customerControllerProvider),
                   style: kText12,
                   onChanged: (value) {
                     if (value.isEmpty) {
-                      ref.read(_customerProvider).clear();
-                      ref.read(_salesByCustomerListProvider).clear();
+                      ref.refresh(_customerProvider);
 
                       //Notify UI
                       filterReports(ref);
@@ -169,8 +167,8 @@ class SalesReportFilter extends ConsumerWidget {
                           size: 15,
                         ),
                         onTap: () async {
-                          ref.read(_customerProvider).clear();
-                          ref.read(_salesByCustomerListProvider).clear();
+                          ref.refresh(_customerControllerProvider);
+                          ref.refresh(_customerProvider);
 
                           //Notify UI
                           filterReports(ref);
@@ -200,12 +198,10 @@ class SalesReportFilter extends ConsumerWidget {
                   );
                 },
                 onSuggestionSelected: (CustomerModel selectedCustomer) async {
-                  ref.refresh(_invoiceProvider);
-                  ref.read(_customerProvider).text = selectedCustomer.customer;
+                  ref.read(_customerControllerProvider).text = selectedCustomer.customer;
 
                   //fetch all sales done by selected customer
-                  ref.read(_salesByCustomerListProvider.notifier).state =
-                      ref.read(salesListProvider).where((sale) => sale.customerId == selectedCustomer.id).toList();
+                  ref.read(_customerProvider.notifier).state = selectedCustomer;
 
                   //Notify UI
                   filterReports(ref);
@@ -489,7 +485,7 @@ class SalesReportFilter extends ConsumerWidget {
 
 //=== === === === === Sales Report Filter === === === === ===
   Future<void> filterReports(WidgetRef ref) async {
-    final List<SalesModel> _customerList = ref.read(_salesByCustomerListProvider);
+    final CustomerModel? _customer = ref.read(_customerProvider);
     final String? _payment = ref.read(_paymentProvider);
     final ItemMasterModel? _product = ref.read(_productProvider);
     final DateTime? _fromDate = ref.read(_fromDateProvider);
@@ -498,7 +494,7 @@ class SalesReportFilter extends ConsumerWidget {
     List<SalesModel> filteredSales = ref.read(salesListProvider);
 
     //Customer Filter
-    if (_customerList.isNotEmpty) filteredSales = _customerList;
+    if (_customer != null) filteredSales = filteredSales.where((sale) => sale.customerId == _customer.id).toList();
 
     //Product Filter
     if (_product != null) {
@@ -521,13 +517,13 @@ class SalesReportFilter extends ConsumerWidget {
 //=== === === === === Refresh List Using Filter === === === === ===
   void refreshList(WidgetRef ref) {
     ref.refresh(_invoiceProvider);
-    ref.refresh(_customerProvider);
+    ref.refresh(_customerControllerProvider);
     ref.refresh(_productControllerProvider);
     ref.refresh(_paymentProvider);
     ref.refresh(_fromDateControllerProvider);
     ref.refresh(_toDateControllerProvider);
 
-    ref.refresh(_salesByCustomerListProvider);
+    ref.refresh(_customerProvider);
     ref.refresh(_fromDateProvider);
     ref.refresh(_toDateProvier);
 

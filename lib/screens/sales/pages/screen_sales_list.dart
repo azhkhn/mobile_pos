@@ -3,27 +3,31 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/sales/widgets/sales_card_widget.dart';
 import 'package:shop_ez/screens/sales/widgets/sales_list_filter.dart';
-import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
+
+final AutoDisposeFutureProvider<List<SalesModel>> futureSalesProvider = FutureProvider.autoDispose<List<SalesModel>>((ref) async {
+  final List<SalesModel> salesList = await SalesDatabase.instance.getAllSales();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    ref.read(SalesListFilter.salesListProvider.notifier).state = salesList.reversed.toList();
+  });
+  return salesList.reversed.toList();
+});
 
 class ScreenSalesList extends StatelessWidget {
   const ScreenSalesList({
     Key? key,
   }) : super(key: key);
 
-  //========== Value Notifier ==========
-  static final ValueNotifier<List<SalesModel>> salesNotifier = ValueNotifier([]);
-
-  //========== Lists ==========
-  static List<SalesModel> salesList = [];
+  static final AutoDisposeStateProvider<List<SalesModel>> salesProvider = StateProvider.autoDispose<List<SalesModel>>((ref) => []);
+  static final AutoDisposeStateProvider<bool> isLoadedProvider = StateProvider.autoDispose<bool>((ref) => false);
 
   @override
   Widget build(BuildContext context) {
@@ -35,100 +39,60 @@ class ScreenSalesList extends StatelessWidget {
           child: Column(
             children: [
               //========== Sales Filter Options ==========
-              SalesListFilter(),
+              const SalesListFilter(),
 
               kHeight5,
 
               //========== List Sales ==========
               Expanded(
-                child: FutureBuilder(
-                    future: futureSales(),
-                    builder: (context, AsyncSnapshot<List<SalesModel>> snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return const Center(child: CircularProgressIndicator());
-                        case ConnectionState.done:
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final future = ref.watch(futureSalesProvider);
 
-                        default:
-                          if (!snapshot.hasData) {
-                            return const Center(child: Text('No recent Sales!'));
-                          }
-                          salesNotifier.value = snapshot.data!;
-                          return ValueListenableBuilder(
-                              valueListenable: salesNotifier,
-                              builder: (context, List<SalesModel> sales, _) {
-                                return sales.isNotEmpty
-                                    ? ListView.separated(
-                                        itemCount: sales.length,
-                                        separatorBuilder: (BuildContext context, int index) => kHeight5,
-                                        itemBuilder: (BuildContext context, int index) {
-                                          return InkWell(
-                                            child: SalesCardWidget(
-                                              index: index,
-                                              sales: sales[index],
-                                            ),
-                                            onTap: () async {
-                                              final bool payable = sales[index].paymentStatus == 'Partial' || sales[index].paymentStatus == 'Credit';
+                    return future.when(
+                      data: (value) {
+                        List<SalesModel> sales = value;
+                        log('FutureProvider() => called!');
 
-                                              showDialog(
-                                                context: context,
-                                                builder: (ctx) => CustomPopupOptions(
-                                                  options: [
-                                                    //========== View Invoice ==========
-                                                    {
-                                                      'title': 'View Invoice',
-                                                      'color': kBlueGrey400,
-                                                      'icon': Icons.receipt_outlined,
-                                                      'action': () async {
-                                                        await Navigator.pushNamed(
-                                                          context,
-                                                          routeSalesInvoice,
-                                                          arguments: [sales[index], false],
-                                                        );
-                                                      },
-                                                    },
-                                                    //========== Make Payment ==========
-                                                    if (payable)
-                                                      {
-                                                        'title': 'Make Payment',
-                                                        'color': kTeal400,
-                                                        'icon': Icons.payment_outlined,
-                                                        'action': () async {
-                                                          final dynamic updatedSale =
-                                                              await Navigator.pushNamed(context, routeTransactionSale, arguments: sales[index]);
-                                                          if (updatedSale != null) {
-                                                            salesNotifier.value[index] = updatedSale as SalesModel;
-                                                            salesNotifier.notifyListeners();
-                                                          }
-                                                        }
-                                                      },
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                      )
-                                    : const Center(child: Text('No recent Sales!'));
-                              });
-                      }
-                    }),
+                        return value.isNotEmpty
+                            ? Consumer(
+                                builder: (context, ref, _) {
+                                  log('SalesProvider() => called!');
+
+                                  final List<SalesModel> filteredSales = ref.watch(salesProvider);
+                                  final _isLoaded = ref.read(isLoadedProvider.state);
+                                  log('is Loaded == ' + _isLoaded.state.toString());
+                                  if (_isLoaded.state) sales = filteredSales;
+                                  WidgetsBinding.instance.addPostFrameCallback((_) => _isLoaded.state = true);
+
+                                  return sales.isNotEmpty
+                                      ? ListView.builder(
+                                          itemCount: sales.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return InkWell(
+                                              child: SalesCardWidget(
+                                                index: index,
+                                                sales: sales[index],
+                                              ),
+                                              onTap: () async {
+                                                await Navigator.pushNamed(context, routeSalesInvoice, arguments: [sales[index], false]);
+                                              },
+                                            );
+                                          },
+                                        )
+                                      : const Center(child: Text('Sales Not Found!'));
+                                },
+                              )
+                            : const Center(child: Text('No recent Sales!'));
+                      },
+                      loading: () => const Center(child: CircularProgressIndicator()),
+                      error: (_, __) => const Center(child: Text('No recent Sales!')),
+                    );
+                  },
+                ),
               ),
             ],
           ),
         ));
-  }
-
-  //== == == == == FutureBuilder Transactions == == == == ==
-  Future<List<SalesModel>> futureSales() async {
-    log('FutureBuiler()=> called!');
-    if (salesList.isEmpty) {
-      log('Fetching sales from the Database..');
-      salesList = await SalesDatabase.instance.getAllSales();
-      return salesList = salesList.reversed.toList();
-    } else {
-      log('Fetching sales from the List..');
-      return salesList;
-    }
   }
 }
