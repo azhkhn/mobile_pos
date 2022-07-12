@@ -24,22 +24,19 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 //==================== Providers ====================
 final _paymentProvider = StateProvider.autoDispose<String?>((ref) => null);
+
 final _fromDateControllerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
 final _toDateControllerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
 final _invoiceProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
 final _customerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
-final _productProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
+final _productControllerProvider = StateProvider.autoDispose<TextEditingController>((ref) => TextEditingController());
+
+final _productProvider = StateProvider.autoDispose<ItemMasterModel?>((ref) => null);
+
 final _fromDateProvider = StateProvider.autoDispose<DateTime?>((ref) => null);
 final _toDateProvier = StateProvider.autoDispose<DateTime?>((ref) => null);
+
 final _salesByCustomerListProvider = StateProvider.autoDispose<List<SalesModel>>((ref) => []);
-final _salesListProvider = StateProvider.autoDispose<List<SalesModel>>((ref) => []);
-
-//==================== Lists ====================
-// List<SalesModel> _salesByCustomerList = [];
-// List<SalesModel> _salesListProvider = [];
-
-//==================== Device Utils ====================
-final bool _isTablet = DeviceUtil.isTablet;
 
 //==================== Database Instances ====================
 final CustomerDatabase _customerDB = CustomerDatabase.instance;
@@ -47,18 +44,20 @@ final CustomerDatabase _customerDB = CustomerDatabase.instance;
 class SalesReportFilter extends ConsumerWidget {
   const SalesReportFilter({Key? key}) : super(key: key);
 
+  static final salesListProvider = StateProvider.autoDispose<List<SalesModel>>((ref) => []);
+
   @override
   Widget build(BuildContext context, ref) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(_salesListProvider.notifier).state = ref.watch(ScreenSalesReport.salesListProvider);
+      ref.watch(ScreenSalesReport.isLoadedProvider);
       ref.watch(_salesByCustomerListProvider);
-      ref.watch(_salesListProvider);
+      ref.watch(salesListProvider);
       ref.watch(_customerProvider);
       ref.watch(_invoiceProvider);
       ref.watch(_fromDateControllerProvider);
       ref.watch(_toDateControllerProvider);
       ref.watch(_paymentProvider);
-      ref.watch(_productProvider);
+      ref.watch(_productControllerProvider);
       ref.watch(_fromDateProvider);
       ref.watch(_toDateProvier);
     });
@@ -69,80 +68,6 @@ class SalesReportFilter extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            //==================== Get All Customer Search Field ====================
-            Expanded(
-              child: TypeAheadField(
-                minCharsForSuggestions: 0,
-                debounceDuration: const Duration(milliseconds: 500),
-                hideSuggestionsOnKeyboardHide: true,
-                textFieldConfiguration: TextFieldConfiguration(
-                    controller: ref.read(_customerProvider),
-                    style: kText12,
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      filled: true,
-                      isDense: true,
-                      suffixIconConstraints: const BoxConstraints(
-                        minWidth: 10,
-                        minHeight: 10,
-                      ),
-                      suffixIcon: Padding(
-                        padding: kClearTextIconPadding,
-                        child: InkWell(
-                          child: const Icon(
-                            Icons.clear,
-                            size: 15,
-                          ),
-                          onTap: () async {
-                            ref.read(_customerProvider).clear();
-                            ref.read(_salesByCustomerListProvider).clear();
-
-                            if (ref.read(_fromDateControllerProvider).text.isEmpty) {
-                              ref.read(ScreenSalesReport.salesProvider.notifier).state = ref.read(_salesListProvider);
-                            }
-                          },
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.all(10),
-                      hintText: 'Customer',
-                      hintStyle: kText12,
-                      border: const OutlineInputBorder(),
-                    )),
-                noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Customer Found!', style: kText12))),
-                suggestionsCallback: (pattern) async {
-                  return await _customerDB.getCustomerSuggestions(pattern);
-                },
-                itemBuilder: (context, CustomerModel suggestion) {
-                  return ListTile(
-                    title: AutoSizeText(
-                      suggestion.customer,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: _isTablet ? 12 : 10),
-                      minFontSize: 10,
-                      maxFontSize: 12,
-                    ),
-                  );
-                },
-                onSuggestionSelected: (CustomerModel selectedCustomer) async {
-                  ref.refresh(_paymentProvider);
-                  ref.read(_invoiceProvider).clear();
-                  ref.read(_fromDateControllerProvider).clear();
-
-                  ref.read(_customerProvider).text = selectedCustomer.customer;
-
-                  //fetch all sales done by selected customer
-                  ref.read(_salesByCustomerListProvider.notifier).state =
-                      ref.read(_salesListProvider).where((sale) => sale.customerId == selectedCustomer.id).toList();
-
-                  //Notify UI
-                  ref.read(ScreenSalesReport.salesProvider.notifier).state = ref.read(_salesByCustomerListProvider);
-                },
-              ),
-            ),
-
-            kWidth5,
-
             //==================== Get All Invoice Search Field ====================
             Expanded(
               child: TypeAheadField(
@@ -152,85 +77,9 @@ class SalesReportFilter extends ConsumerWidget {
                 textFieldConfiguration: TextFieldConfiguration(
                     controller: ref.read(_invoiceProvider),
                     style: kText12,
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      filled: true,
-                      isDense: true,
-                      suffixIconConstraints: const BoxConstraints(
-                        minWidth: 10,
-                        minHeight: 10,
-                      ),
-                      suffixIcon: Padding(
-                        padding: kClearTextIconPadding,
-                        child: InkWell(
-                          child: const Icon(
-                            Icons.clear,
-                            size: 15,
-                          ),
-                          onTap: () async {
-                            ref.read(_invoiceProvider).clear();
-
-                            if (ref.read(_salesByCustomerListProvider).isNotEmpty) {
-                              ref.read(ScreenSalesReport.salesProvider.notifier).state = ref.read(_salesByCustomerListProvider);
-                            } else {
-                              if (ref.read(_fromDateControllerProvider).text.isEmpty) {
-                                ref.read(ScreenSalesReport.salesProvider.notifier).state = ref.read(_salesListProvider);
-                              }
-                            }
-                          },
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.all(10),
-                      hintText: 'Invoice number',
-                      hintStyle: kText12,
-                      border: const OutlineInputBorder(),
-                    )),
-                noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText12))),
-                suggestionsCallback: (pattern) async {
-                  if (ref.read(_salesByCustomerListProvider).isNotEmpty) {
-                    return ref.read(_salesByCustomerListProvider).where((sales) => sales.invoiceNumber!.toLowerCase().contains(pattern));
-                  } else {
-                    // return await salesDB.getSalesByInvoiceSuggestions(pattern);
-                    return ref.read(_salesListProvider).where((sale) => sale.invoiceNumber!.toLowerCase().contains(pattern)).toList();
-                  }
-                },
-                itemBuilder: (context, SalesModel suggestion) {
-                  return ListTile(
-                    title: AutoSizeText(
-                      suggestion.invoiceNumber!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: _isTablet ? 12 : 10),
-                      minFontSize: 10,
-                      maxFontSize: 12,
-                    ),
-                  );
-                },
-                onSuggestionSelected: (SalesModel suggestion) {
-                  ref.refresh(_paymentProvider);
-                  ref.read(_fromDateControllerProvider).clear();
-                  ref.read(_invoiceProvider).text = suggestion.invoiceNumber!;
-
-                  ref.read(ScreenSalesReport.salesProvider.notifier).state = [suggestion];
-
-                  log(suggestion.invoiceNumber!);
-                },
-              ),
-            ),
-          ],
-        ),
-        kHeight5,
-        Row(
-          children: [
-            //========== Get All Products Search Field ==========
-            Flexible(
-              child: TypeAheadField(
-                minCharsForSuggestions: 0,
-                debounceDuration: const Duration(milliseconds: 500),
-                hideSuggestionsOnKeyboardHide: true,
-                textFieldConfiguration: TextFieldConfiguration(
-                    controller: ref.read(_productProvider),
-                    style: kText12,
+                    onChanged: (value) {
+                      if (ref.read(_invoiceProvider).text.isEmpty) refreshList(ref);
+                    },
                     decoration: InputDecoration(
                       fillColor: Colors.white,
                       filled: true,
@@ -244,8 +93,166 @@ class SalesReportFilter extends ConsumerWidget {
                         child: InkWell(
                           child: const Icon(Icons.clear, size: 15),
                           onTap: () async {
-                            ref.read(_productProvider).clear();
-                            refreshList(ref);
+                            if (ref.read(_invoiceProvider).text.isNotEmpty) refreshList(ref);
+                            ref.refresh(_invoiceProvider);
+                          },
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.all(10),
+                      hintText: 'Invoice number',
+                      hintStyle: kText12,
+                      border: const OutlineInputBorder(),
+                    )),
+                noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Invoice Found!', style: kText12))),
+                suggestionsCallback: (pattern) async {
+                  return ref.read(salesListProvider).where((sale) => sale.invoiceNumber!.toLowerCase().contains(pattern)).toList().take(10);
+                },
+                itemBuilder: (context, SalesModel suggestion) {
+                  return ListTile(
+                    title: AutoSizeText(
+                      suggestion.invoiceNumber!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: isTablet ? 12 : 10),
+                      minFontSize: 10,
+                      maxFontSize: 12,
+                    ),
+                  );
+                },
+                onSuggestionSelected: (SalesModel suggestion) {
+                  //clear all the other fields
+                  ref.read(_customerProvider).clear();
+                  ref.read(_productControllerProvider).clear();
+                  ref.refresh(_paymentProvider);
+                  ref.refresh(_fromDateControllerProvider);
+                  ref.refresh(_toDateControllerProvider);
+
+                  ref.read(_invoiceProvider).text = suggestion.invoiceNumber!;
+                  ref.read(ScreenSalesReport.salesProvider.notifier).state = [suggestion];
+                },
+              ),
+            ),
+
+            kWidth5,
+
+            //==================== Get All Customer Search Field ====================
+            Expanded(
+              child: TypeAheadField(
+                minCharsForSuggestions: 0,
+                debounceDuration: const Duration(milliseconds: 500),
+                hideSuggestionsOnKeyboardHide: true,
+                textFieldConfiguration: TextFieldConfiguration(
+                  controller: ref.read(_customerProvider),
+                  style: kText12,
+                  onChanged: (value) {
+                    if (value.isEmpty) {
+                      ref.read(_customerProvider).clear();
+                      ref.read(_salesByCustomerListProvider).clear();
+
+                      //Notify UI
+                      filterReports(ref);
+                    }
+                  },
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    filled: true,
+                    isDense: true,
+                    suffixIconConstraints: const BoxConstraints(
+                      minWidth: 10,
+                      minHeight: 10,
+                    ),
+                    suffixIcon: Padding(
+                      padding: kClearTextIconPadding,
+                      child: InkWell(
+                        child: const Icon(
+                          Icons.clear,
+                          size: 15,
+                        ),
+                        onTap: () async {
+                          ref.read(_customerProvider).clear();
+                          ref.read(_salesByCustomerListProvider).clear();
+
+                          //Notify UI
+                          filterReports(ref);
+                        },
+                      ),
+                    ),
+                    contentPadding: const EdgeInsets.all(10),
+                    hintText: 'Customer',
+                    hintStyle: kText12,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Customer Found!', style: kText12))),
+                suggestionsCallback: (pattern) async {
+                  return await _customerDB.getCustomerSuggestions(pattern);
+                },
+                itemBuilder: (context, CustomerModel suggestion) {
+                  return ListTile(
+                    title: AutoSizeText(
+                      suggestion.customer,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: isTablet ? 12 : 10),
+                      minFontSize: 10,
+                      maxFontSize: 12,
+                    ),
+                  );
+                },
+                onSuggestionSelected: (CustomerModel selectedCustomer) async {
+                  ref.refresh(_invoiceProvider);
+                  ref.read(_customerProvider).text = selectedCustomer.customer;
+
+                  //fetch all sales done by selected customer
+                  ref.read(_salesByCustomerListProvider.notifier).state =
+                      ref.read(salesListProvider).where((sale) => sale.customerId == selectedCustomer.id).toList();
+
+                  //Notify UI
+                  filterReports(ref);
+                },
+              ),
+            ),
+          ],
+        ),
+        kHeight5,
+        Row(
+          children: [
+            //==================== Get All Products Search Field ====================
+            Flexible(
+              child: TypeAheadField(
+                minCharsForSuggestions: 0,
+                debounceDuration: const Duration(milliseconds: 500),
+                hideSuggestionsOnKeyboardHide: true,
+                textFieldConfiguration: TextFieldConfiguration(
+                    controller: ref.read(_productControllerProvider),
+                    style: kText12,
+                    onChanged: (value) {
+                      if (value.isEmpty) {
+                        ref.refresh(_productControllerProvider);
+                        ref.refresh(_productProvider);
+
+                        //Notify UI
+                        filterReports(ref);
+                      }
+                    },
+                    decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      filled: true,
+                      isDense: true,
+                      suffixIconConstraints: const BoxConstraints(
+                        minWidth: 10,
+                        minHeight: 10,
+                      ),
+                      suffixIcon: Padding(
+                        padding: kClearTextIconPadding,
+                        child: InkWell(
+                          child: const Icon(Icons.clear, size: 15),
+                          onTap: () async {
+                            ref.refresh(_productControllerProvider);
+                            ref.refresh(_productProvider);
+
+                            //Notify UI
+                            filterReports(ref);
                           },
                         ),
                       ),
@@ -269,9 +276,11 @@ class SalesReportFilter extends ConsumerWidget {
                   );
                 },
                 onSuggestionSelected: (ItemMasterModel selectedItem) async {
-                  ref.read(_productProvider).text = selectedItem.itemName;
-                  ref.read(ScreenSalesReport.salesProvider.notifier).state = await getSalesByProduct(ref, selectedItem);
-                  log('selectedItem = ' + selectedItem.itemName);
+                  ref.read(_productControllerProvider).text = selectedItem.itemName;
+                  ref.read(_productProvider.notifier).state = selectedItem;
+
+                  //Notify UI
+                  filterReports(ref);
                 },
               ),
             ),
@@ -301,33 +310,11 @@ class SalesReportFilter extends ConsumerWidget {
                         ))
                     .toList(),
                 onChanged: (String? payment) {
-                  ref.read(_invoiceProvider).clear();
-
-                  ref.read(_paymentProvider.notifier).state = payment.toString();
+                  ref.refresh(_invoiceProvider);
                   ref.read(_paymentProvider.notifier).state = payment;
 
-                  if (payment != 'All') {
-                    if (ref.read(_fromDateControllerProvider).text.isNotEmpty) {
-                      ref.read(ScreenSalesReport.salesProvider.notifier).state =
-                          ref.read(ScreenSalesReport.salesProvider.notifier).state.where((sale) => sale.paymentStatus == payment).toList();
-                    } else if (ref.read(_salesByCustomerListProvider).isNotEmpty) {
-                      ref.read(ScreenSalesReport.salesProvider.notifier).state =
-                          ref.read(_salesByCustomerListProvider).where((sale) => sale.paymentStatus == payment).toList();
-                    } else {
-                      ref.read(ScreenSalesReport.salesProvider.notifier).state =
-                          ref.read(_salesListProvider).where((sale) => sale.paymentStatus == payment).toList();
-                    }
-                  } else {
-                    if (ref.read(_fromDateControllerProvider).text.isNotEmpty) {
-                      ref.read(ScreenSalesReport.salesProvider.notifier).state =
-                          ref.read(ScreenSalesReport.salesProvider.notifier).state.where((sale) => sale.paymentStatus != payment).toList();
-                    } else if (ref.read(_salesByCustomerListProvider).isNotEmpty) {
-                      ref.read(ScreenSalesReport.salesProvider.notifier).state =
-                          ref.read(_salesByCustomerListProvider).where((sale) => sale.paymentStatus != payment).toList();
-                    } else {
-                      ref.read(ScreenSalesReport.salesProvider.notifier).state = ref.read(_salesListProvider);
-                    }
-                  }
+                  //Notify UI
+                  filterReports(ref);
 
                   log('Payment filter = $payment');
                 },
@@ -352,15 +339,10 @@ class SalesReportFilter extends ConsumerWidget {
                   child: InkWell(
                     child: const Icon(Icons.clear, size: 15),
                     onTap: () async {
-                      // if (ref.read(_fromDateControllerProvider).text.isNotEmpty && ref.read(_salesByCustomerListProvider).isNotEmpty) {
-                      //   ref.read(ScreenSalesReport.salesProvider.notifier).state = ref.read(_salesByCustomerListProvider);
-                      // } else if (ref.read(_fromDateControllerProvider).text.isNotEmpty) {
-                      //   ref.read(ScreenSalesReport.salesProvider.notifier).state = _salesList;
-                      // }
-
-                      ref.read(_fromDateControllerProvider).clear();
+                      ref.refresh(_fromDateControllerProvider);
                       ref.refresh(_fromDateProvider);
-                      filterSalesByDate(ref);
+                      //Notify UI
+                      filterReports(ref);
                     },
                   ),
                 ),
@@ -374,28 +356,13 @@ class SalesReportFilter extends ConsumerWidget {
                   final _selectedDate = await DateTimeUtils.instance.datePicker(context, initDate: ref.read(_fromDateProvider));
 
                   if (_selectedDate != null) {
-                    ref.refresh(_paymentProvider);
-                    ref.read(_invoiceProvider).clear();
+                    ref.refresh(_invoiceProvider);
                     final parseDate = Converter.dateFormat.format(_selectedDate);
                     ref.read(_fromDateProvider.notifier).state = _selectedDate;
                     ref.read(_fromDateControllerProvider).text = parseDate.toString();
 
-                    filterSalesByDate(ref);
-
-                    // final List<SalesModel> _salesByDate = [];
-
-                    // final bool isFilter = ref.read(_salesByCustomerListProvider).isNotEmpty;
-
-                    // for (SalesModel transaction in isFilter ? ref.read(_salesByCustomerListProvider) : _salesList) {
-                    //   final DateTime _transactionDate = DateTime.parse(transaction.dateTime);
-
-                    //   final bool isSameDate = Converter.isSameDate(_selectedDate, _transactionDate);
-
-                    //   if (isSameDate) {
-                    //     _salesByDate.add(transaction);
-                    //   }
-                    // }
-                    // ref.read(ScreenSalesReport.salesProvider.notifier).state = _salesByDate;
+                    //Notify UI
+                    filterReports(ref);
                   }
                 },
               ),
@@ -415,15 +382,10 @@ class SalesReportFilter extends ConsumerWidget {
                   child: InkWell(
                     child: const Icon(Icons.clear, size: 15),
                     onTap: () async {
-                      // if (ref.read(_toDateControllerProvider).text.isNotEmpty && ref.read(_salesByCustomerListProvider).isNotEmpty) {
-                      //   ref.read(ScreenSalesReport.salesProvider.notifier).state = ref.read(_salesByCustomerListProvider);
-                      // } else if (ref.read(_toDateControllerProvider).text.isNotEmpty) {
-                      //   ref.read(ScreenSalesReport.salesProvider.notifier).state = _salesList;
-                      // }
-
-                      ref.read(_toDateControllerProvider).clear();
+                      ref.refresh(_toDateControllerProvider);
                       ref.refresh(_toDateProvier);
-                      filterSalesByDate(ref);
+                      //Notify UI
+                      filterReports(ref);
                     },
                   ),
                 ),
@@ -437,28 +399,13 @@ class SalesReportFilter extends ConsumerWidget {
                   final DateTime? _selectedDate = await DateTimeUtils.instance.datePicker(context, initDate: ref.read(_toDateProvier), endDate: true);
 
                   if (_selectedDate != null) {
-                    ref.refresh(_paymentProvider);
-                    ref.read(_invoiceProvider).clear();
+                    ref.refresh(_invoiceProvider);
                     final parseDate = Converter.dateFormat.format(_selectedDate);
                     ref.read(_toDateProvier.notifier).state = _selectedDate;
                     ref.read(_toDateControllerProvider).text = parseDate.toString();
 
-                    filterSalesByDate(ref);
-
-                    // final List<SalesModel> _salesByDate = [];
-
-                    // final bool isFilter = ref.read(_salesByCustomerListProvider).isNotEmpty;
-
-                    // for (SalesModel sale in isFilter ? ref.read(_salesByCustomerListProvider) : _salesList) {
-                    //   final DateTime _transactionDate = DateTime.parse(sale.dateTime);
-
-                    //   // final bool isSameDate = Converter.isSameDate(_selectedDate, _transactionDate);
-
-                    //   if (_transactionDate.isAfter(_selectedDate)) {
-                    //     _salesByDate.add(sale);
-                    //   }
-                    // }
-                    // ref.read(ScreenSalesReport.salesProvider.notifier).state = _salesByDate;
+                    //Notify UI
+                    filterReports(ref);
                   }
                 },
               ),
@@ -469,14 +416,17 @@ class SalesReportFilter extends ConsumerWidget {
     );
   }
 
+  //== == == == == Payment Filter == == == == ==
+  List<SalesModel> paymentFilter(String? payment, WidgetRef ref, List<SalesModel> sales) {
+    if (payment != 'All') {
+      return sales.where((sale) => sale.paymentStatus == payment).toList();
+    } else {
+      return sales;
+    }
+  }
+
   //== == == == == Get Sales by Product Id == == == == == ==
-  Future<List<SalesModel>> getSalesByProduct(WidgetRef ref, ItemMasterModel item) async {
-    final bool filter = ref.read(_salesByCustomerListProvider).isNotEmpty;
-
-    log('filter == $filter');
-
-    final List<SalesModel> sales = ref.read(ScreenSalesReport.salesProvider);
-    // final List<SalesModel> sales = filter ? ref.read(_salesByCustomerListProvider) : ref.read(_salesListProvider);
+  Future<List<SalesModel>> getSalesByProduct(WidgetRef ref, ItemMasterModel item, List<SalesModel> sales) async {
     final List<SalesModel> salesByProduct = [];
     for (var sale in sales) {
       final List<SalesItemsModel> saleItems = await SalesItemsDatabase.instance.getSalesItemBySaleId(sale.id!);
@@ -488,18 +438,14 @@ class SalesReportFilter extends ConsumerWidget {
         }
       }
     }
-    log('Sales by Product == $salesByProduct');
     return salesByProduct;
   }
 
-  //== == == == == Get Sale By Date == == == == == ==
-  void filterSalesByDate(WidgetRef ref) {
+  //=== === === === === Get Sale By Date === === === === ===
+  List<SalesModel> filterSalesByDate(WidgetRef ref, List<SalesModel> sales) {
     log('filterSalesByDate');
     final DateTime? _fromDate = ref.read(_fromDateProvider);
     final DateTime? _toDate = ref.read(_toDateProvier);
-
-    final List<SalesModel> salesList =
-        ref.read(_salesByCustomerListProvider).isNotEmpty ? ref.read(_salesByCustomerListProvider) : ref.read(_salesListProvider);
 
     final List<SalesModel> salesByDate = [];
 
@@ -508,7 +454,7 @@ class SalesReportFilter extends ConsumerWidget {
       if (_toDate != null) log('To Date = ' + Converter.dateTimeFormatAmPm.format(_toDate));
 
       //Sales Tax Summary ~ Filter
-      for (SalesModel sale in salesList) {
+      for (SalesModel sale in sales) {
         final DateTime _date = DateTime.parse(sale.dateTime);
 
         // if fromDate and toDate is selected
@@ -535,16 +481,56 @@ class SalesReportFilter extends ConsumerWidget {
         }
       }
 
-      ref.read(ScreenSalesReport.salesProvider.notifier).state = salesByDate;
+      return salesByDate;
     } else {
-      ref.read(ScreenSalesReport.salesProvider.notifier).state = salesList;
+      return sales;
     }
   }
 
-//== == == == == Refresh List Using Filter == == == == ==
-  void refreshList(WidgetRef ref) {
-    final bool filter = ref.read(_salesByCustomerListProvider).isNotEmpty;
+//=== === === === === Sales Report Filter === === === === ===
+  Future<void> filterReports(WidgetRef ref) async {
+    final List<SalesModel> _customerList = ref.read(_salesByCustomerListProvider);
+    final String? _payment = ref.read(_paymentProvider);
+    final ItemMasterModel? _product = ref.read(_productProvider);
+    final DateTime? _fromDate = ref.read(_fromDateProvider);
+    final DateTime? _toDate = ref.read(_toDateProvier);
 
-    ref.read(ScreenSalesReport.salesProvider.notifier).state = filter ? ref.read(_salesByCustomerListProvider) : ref.read(_salesListProvider);
+    List<SalesModel> filteredSales = ref.read(salesListProvider);
+
+    //Customer Filter
+    if (_customerList.isNotEmpty) filteredSales = _customerList;
+
+    //Product Filter
+    if (_product != null) {
+      filteredSales = await getSalesByProduct(ref, _product, filteredSales);
+    }
+
+    //Date Filter
+    if (_fromDate != null || _toDate != null) {
+      filteredSales = filterSalesByDate(ref, filteredSales);
+    }
+
+    //Payment Filter
+    if (_payment != null) filteredSales = paymentFilter(_payment, ref, filteredSales);
+
+    log('Filtered Sales = $filteredSales');
+
+    ref.read(ScreenSalesReport.salesProvider.notifier).state = filteredSales;
+  }
+
+//=== === === === === Refresh List Using Filter === === === === ===
+  void refreshList(WidgetRef ref) {
+    ref.refresh(_invoiceProvider);
+    ref.refresh(_customerProvider);
+    ref.refresh(_productControllerProvider);
+    ref.refresh(_paymentProvider);
+    ref.refresh(_fromDateControllerProvider);
+    ref.refresh(_toDateControllerProvider);
+
+    ref.refresh(_salesByCustomerListProvider);
+    ref.refresh(_fromDateProvider);
+    ref.refresh(_toDateProvier);
+
+    ref.read(ScreenSalesReport.salesProvider.notifier).state = ref.read(salesListProvider);
   }
 }

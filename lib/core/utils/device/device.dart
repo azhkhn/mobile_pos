@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 enum DeviceType { phone, smallPhone, tablet }
 
+final bool isTablet = DeviceUtil.isTablet;
+
 class DeviceUtil {
   //========== Singleton Instance ==========
   DeviceUtil._internal();

@@ -19,10 +19,10 @@ final AutoDisposeStateProvider<bool> _filterProvider = StateProvider.autoDispose
 final futureSalesProvider = FutureProvider.autoDispose<List<SalesModel>>((ref) async {
   // return await const ScreenSalesReport().futureSales(ref);
 
-  final salesList = await SalesDatabase.instance.getAllSales();
+  final List<SalesModel> salesList = await SalesDatabase.instance.getAllSales();
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    ref.read(ScreenSalesReport.salesProvider.notifier).state = salesList.reversed.toList();
-    ref.read(ScreenSalesReport.salesListProvider.notifier).state = salesList.reversed.toList();
+    // ref.read(ScreenSalesReport.salesProvider.notifier).state = salesList.reversed.toList();
+    ref.read(SalesReportFilter.salesListProvider.notifier).state = salesList.reversed.toList();
   });
 
   return salesList.reversed.toList();
@@ -34,7 +34,7 @@ class ScreenSalesReport extends StatelessWidget {
   }) : super(key: key);
 
   static final AutoDisposeStateProvider<List<SalesModel>> salesProvider = StateProvider.autoDispose<List<SalesModel>>((ref) => []);
-  static final AutoDisposeStateProvider<List<SalesModel>> salesListProvider = StateProvider.autoDispose<List<SalesModel>>((ref) => []);
+  static final AutoDisposeStateProvider<bool> isLoadedProvider = StateProvider.autoDispose<bool>((ref) => false);
 
   @override
   Widget build(BuildContext context) {
@@ -47,20 +47,22 @@ class ScreenSalesReport extends StatelessWidget {
         child: Column(
           children: [
             //========== Sales Filter Options ==========
-            Consumer(builder: (context, ref, _) {
-              final bool filter = ref.watch(_filterProvider);
-              return Visibility(
-                visible: filter,
-                maintainState: true,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    SalesReportFilter(),
-                    kHeight5,
-                  ],
-                ),
-              );
-            }),
+            Consumer(
+              builder: (context, ref, _) {
+                final bool filter = ref.watch(_filterProvider);
+                return Visibility(
+                  visible: filter,
+                  maintainState: true,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      SalesReportFilter(),
+                      kHeight5,
+                    ],
+                  ),
+                );
+              },
+            ),
 
             //========== List Sales ==========
             Expanded(
@@ -70,10 +72,19 @@ class ScreenSalesReport extends StatelessWidget {
 
                   return future.when(
                     data: (value) {
+                      List<SalesModel> sales = value;
+                      log('FutureProvider() => called!');
+
                       return value.isNotEmpty
                           ? Consumer(
                               builder: (context, ref, _) {
-                                final List<SalesModel> sales = ref.watch(salesProvider);
+                                log('SalesProvider() => called!');
+
+                                final List<SalesModel> filteredSales = ref.watch(salesProvider);
+                                final _isLoaded = ref.read(isLoadedProvider.notifier);
+                                if (_isLoaded.state) sales = filteredSales;
+                                WidgetsBinding.instance.addPostFrameCallback((_) => _isLoaded.state = true);
+
                                 return sales.isNotEmpty
                                     ? ListView.builder(
                                         itemCount: sales.length,
