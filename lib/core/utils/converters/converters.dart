@@ -26,6 +26,7 @@ class Converter {
   //==================== Convert Date and Time to readable Format ====================
   static final DateFormat dateFormat = DateFormat('dd-MM-yyyy');
   static final DateFormat dateFormatReverse = DateFormat('yyyy-MM-dd');
+  static final DateFormat dateForDatabase = DateFormat('yyyy-MM-dd HH:mm:ss');
   static final DateFormat dateFormatEInvoice = DateFormat('yyyy-MM-dd h:mm');
   static final DateFormat dateTimeFormatAmPm = DateFormat('dd-MM-yyyy h:mm a');
   static final DateFormat dateTimeFormatTransaction = DateFormat("dd MMMM yyyy 'at' hh:mm");

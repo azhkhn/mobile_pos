@@ -79,6 +79,16 @@ class PurchaseDatabase {
     log('Purchase Updated Successfully! ${purchase.id}');
   }
 
+  //========== Get Today's Purchase ==========
+  Future<List<PurchaseModel>> getTodayPurchase(String today) async {
+    final db = await dbInstance.database;
+    final _result = await db.rawQuery('''SELECT * FROM $tablePurchase WHERE ${PurchaseFields.dateTime} LIKE "$today%"''');
+    log('Purchase of Today === $_result');
+
+    final _todayPurchase = _result.map((json) => PurchaseModel.fromJson(json)).toList();
+    return _todayPurchase;
+  }
+
 //========== Get All Purchases ==========
   Future<List<PurchaseModel>> getAllPurchases() async {
     final db = await dbInstance.database;

@@ -265,27 +265,25 @@ class ScreenTaxSummaryReport extends StatelessWidget {
 
       //Sales Tax Summary ~ Filter
       for (SalesModel sale in salesList) {
-        final DateTime _date = DateTime.parse(sale.dateTime);
+        final DateTime _soldDate = DateTime.parse(sale.dateTime);
 
         // if fromDate and toDate is selected
         if (_fromDate != null && _toDate != null) {
-          if (_fromDate.isAtSameMomentAs(_toDate)) {
-            if (Converter.isSameDate(_fromDate, _date)) {
-              sales.add(sale);
-            }
-          } else if (_date.isAfter(_fromDate) && _date.isBefore(_toDate)) {
+          if (Converter.isSameDate(_fromDate, _toDate) && Converter.isSameDate(_fromDate, _soldDate)) {
+            sales.add(sale);
+          } else if (_soldDate.isAfter(_fromDate) && _soldDate.isBefore(_toDate)) {
             sales.add(sale);
           }
         }
 
         // if only fromDate is selected
         else if (_fromDate != null) {
-          if (_date.isAfter(_fromDate)) sales.add(sale);
+          if (_soldDate.isAfter(_fromDate)) sales.add(sale);
         }
 
         // if only toDate is selected
         else if (_toDate != null) {
-          if (_date.isBefore(_toDate)) sales.add(sale);
+          if (_soldDate.isBefore(_toDate)) sales.add(sale);
         }
       }
 

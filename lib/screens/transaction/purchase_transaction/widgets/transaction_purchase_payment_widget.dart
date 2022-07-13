@@ -10,7 +10,7 @@ import '../../../../core/constant/sizes.dart';
 import '../../../../widgets/text_field_widgets/text_field_widgets.dart';
 
 //========== DropDown Items ==========
-const List types = ['Cash', 'Card'];
+const List types = ['Cash', 'Bank'];
 
 class TransactionPurchasePayment extends StatelessWidget {
   const TransactionPurchasePayment({

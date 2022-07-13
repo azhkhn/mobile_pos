@@ -50,6 +50,7 @@ class PurchasesReportFilter extends ConsumerWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.watch(ScreenPurchasesReport.isLoadedProvider);
       ref.watch(_supplierProvider);
+      ref.watch(_productProvider);
       ref.watch(purchasesListProvider);
       ref.watch(_supplierControllerProvider);
       ref.watch(_invoiceProvider);
@@ -490,8 +491,8 @@ class PurchasesReportFilter extends ConsumerWidget {
 
 //=== === === === === purchases Report Filter === === === === ===
   Future<void> filterReports(WidgetRef ref) async {
+    ref.refresh(_invoiceProvider);
     final SupplierModel? _supplier = ref.read(_supplierProvider);
-
     final String? _payment = ref.read(_paymentProvider);
     final ItemMasterModel? _product = ref.read(_productProvider);
     final DateTime? _fromDate = ref.read(_fromDateProvider);

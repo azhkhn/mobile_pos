@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 
@@ -45,14 +47,34 @@ class SalesDatabase {
 //========== Get Today's Sales ==========
   Future<List<SalesModel>> getTodaySales(String today) async {
     final db = await dbInstance.database;
-    final _result = await db.rawQuery('''SELECT * FROM $tableSales WHERE ${SalesFields.dateTime} LIKE "%$today%"''');
+    final _result = await db.rawQuery('''SELECT * FROM $tableSales WHERE ${SalesFields.dateTime} LIKE "$today%"''');
     log('Sales of Today === $_result');
-    if (_result.isNotEmpty) {
-      final _todaySales = _result.map((json) => SalesModel.fromJson(json)).toList();
-      return _todaySales;
-    } else {
-      throw 'Sales of Today is Empty!';
+    final _todaySales = _result.map((json) => SalesModel.fromJson(json)).toList();
+    return _todaySales;
+  }
+
+  //========== Get Sales Date ==========
+  Future<List<SalesModel>> getSalesByDate({DateTime? fromDate, DateTime? toDate}) async {
+    final db = await dbInstance.database;
+    List _result = [];
+    String _fromDate = '';
+    String _toDate = '';
+    if (fromDate != null) _fromDate = Converter.dateForDatabase.format(fromDate.subtract(const Duration(seconds: 1)));
+    if (toDate != null) _toDate = Converter.dateForDatabase.format(toDate);
+
+    if (fromDate != null && toDate != null) {
+      _result = await db.rawQuery(
+          '''SELECT * FROM $tableSales WHERE DATE(${SalesFields.dateTime}) > ? AND DATE(${SalesFields.dateTime}) < ?''', [_fromDate, _toDate]);
+    } else if (fromDate != null) {
+      _result = await db.rawQuery('''SELECT * FROM $tableSales WHERE DATE(${SalesFields.dateTime}) > ?''', [_fromDate]);
+    } else if (toDate != null) {
+      _result = await db.rawQuery('''SELECT * FROM $tableSales WHERE DATE(${SalesFields.dateTime}) < ?''', [_toDate]);
     }
+
+    log('Sales By Date === $_result');
+
+    final _todaySales = _result.map((json) => SalesModel.fromJson(json)).toList();
+    return _todaySales;
   }
 
   //========== Get All Sales By Query ==========
