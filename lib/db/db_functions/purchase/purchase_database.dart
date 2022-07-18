@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/database.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 
@@ -101,6 +102,31 @@ class PurchaseDatabase {
     } else {
       throw 'Purchases is Empty!';
     }
+  }
+
+  //========== Get Purchases Date ==========
+  Future<List<PurchaseModel>> getPurchasesByDate({DateTime? fromDate, DateTime? toDate}) async {
+    final db = await dbInstance.database;
+    List _result = [];
+    String? _fromDate;
+    String? _toDate;
+    if (fromDate != null) _fromDate = Converter.dateForDatabase.format(fromDate.subtract(const Duration(seconds: 1)));
+    if (toDate != null) _toDate = Converter.dateForDatabase.format(toDate);
+
+    if (fromDate != null && toDate != null) {
+      _result = await db.rawQuery(
+          '''SELECT * FROM $tablePurchase WHERE DATE(${PurchaseFields.dateTime}) > ? AND DATE(${PurchaseFields.dateTime}) < ?''',
+          [_fromDate, _toDate]);
+    } else if (fromDate != null) {
+      _result = await db.rawQuery('''SELECT * FROM $tablePurchase WHERE DATE(${PurchaseFields.dateTime}) > ?''', [_fromDate]);
+    } else if (toDate != null) {
+      _result = await db.rawQuery('''SELECT * FROM $tablePurchase WHERE DATE(${PurchaseFields.dateTime}) < ?''', [_toDate]);
+    }
+
+    log('Purchases By Date === $_result');
+
+    final _todayPurchases = _result.map((json) => PurchaseModel.fromJson(json)).toList();
+    return _todayPurchases;
   }
 
   //========== Get Pending Payment Purchase ==========

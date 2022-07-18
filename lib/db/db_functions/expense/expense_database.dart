@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/database.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
 
@@ -34,6 +35,33 @@ class ExpenseDatabase {
 
     final _todayExpense = _result.map((json) => ExpenseModel.fromJson(json)).toList();
     return _todayExpense;
+  }
+
+  //========== Get Expenses Date ==========
+  Future<List<ExpenseModel>> getExpensesByDate({DateTime? fromDate, DateTime? toDate}) async {
+    final db = await dbInstance.database;
+    List _result = [];
+    String? _fromDate;
+    String? _toDate;
+    if (fromDate != null) _fromDate = Converter.dateForDatabase.format(fromDate.subtract(const Duration(seconds: 1)));
+    if (toDate != null) _toDate = Converter.dateForDatabase.format(toDate);
+
+    if (fromDate != null && toDate != null) {
+      log('message3');
+      _result = await db.rawQuery(
+          '''SELECT * FROM $tableExpense WHERE DATE(${ExpenseFields.date}) > ? AND DATE(${ExpenseFields.date}) < ?''', [_fromDate, _toDate]);
+    } else if (fromDate != null) {
+      log('message2');
+      _result = await db.rawQuery('''SELECT * FROM $tableExpense WHERE DATE(${ExpenseFields.date}) > ?''', [_fromDate]);
+    } else if (toDate != null) {
+      log('message');
+      _result = await db.rawQuery('''SELECT * FROM $tableExpense''');
+    }
+
+    log('Expenses By Date === $_result');
+
+    final _expensesByDate = _result.map((json) => ExpenseModel.fromJson(json)).toList();
+    return _expensesByDate;
   }
 
   //========== Get PayBy Suggestions ==========

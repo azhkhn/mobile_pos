@@ -1,5 +1,5 @@
-import 'dart:convert';
 import 'dart:developer';
+
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
@@ -57,8 +57,8 @@ class SalesDatabase {
   Future<List<SalesModel>> getSalesByDate({DateTime? fromDate, DateTime? toDate}) async {
     final db = await dbInstance.database;
     List _result = [];
-    String _fromDate = '';
-    String _toDate = '';
+    String? _fromDate;
+    String? _toDate;
     if (fromDate != null) _fromDate = Converter.dateForDatabase.format(fromDate.subtract(const Duration(seconds: 1)));
     if (toDate != null) _toDate = Converter.dateForDatabase.format(toDate);
 
@@ -73,8 +73,8 @@ class SalesDatabase {
 
     log('Sales By Date === $_result');
 
-    final _todaySales = _result.map((json) => SalesModel.fromJson(json)).toList();
-    return _todaySales;
+    final _salesByDate = _result.map((json) => SalesModel.fromJson(json)).toList();
+    return _salesByDate;
   }
 
   //========== Get All Sales By Query ==========

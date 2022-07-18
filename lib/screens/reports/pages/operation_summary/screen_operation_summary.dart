@@ -1,8 +1,9 @@
 import 'dart:developer';
-import 'package:collection/collection.dart';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
@@ -24,9 +25,11 @@ final _toDateController = Provider.autoDispose<TextEditingController>((ref) => T
 final _fromDateProvider = StateProvider.autoDispose<DateTime?>((ref) => null);
 final _toDateProvider = StateProvider.autoDispose<DateTime?>((ref) => null);
 
-final isLoadedProvider = StateProvider<bool>((ref) => false);
+final isLoadedProvider = StateProvider.autoDispose<bool>((ref) => false);
 
-final summaryProvider = FutureProvider.autoDispose<List<Map<String, num>>>((ref) async {
+final summaryProvider = StateProvider.autoDispose<List<Map<String, num>>>((ref) => []);
+
+final summaryFutureProvider = FutureProvider.autoDispose<List<Map<String, num>>>((ref) async {
   final _date = DateTime.now();
   final _today = Converter.dateFormatReverse.format(_date);
 
@@ -37,16 +40,13 @@ final summaryProvider = FutureProvider.autoDispose<List<Map<String, num>>>((ref)
   return await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
 });
 
-class ScreenOperationSummary extends ConsumerWidget {
+class ScreenOperationSummary extends StatelessWidget {
   const ScreenOperationSummary({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     log('Build()=> called!');
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.watch(_fromDateController);
-      ref.watch(_toDateController);
-    });
+
     return Scaffold(
       appBar: AppBarWidget(title: 'Operation Summary'),
       body: SafeArea(
@@ -56,177 +56,233 @@ class ScreenOperationSummary extends ConsumerWidget {
               //======================================================================
               //==================== From Date and To Date Filter Fields =============
               //======================================================================
-              Row(
-                children: [
-                  //==================== From Date Field ====================
-                  Flexible(
-                    flex: 1,
-                    child: TextFeildWidget(
-                      hintText: 'From Date ',
-                      controller: ref.read(_fromDateController),
-                      suffixIconConstraints: const BoxConstraints(
-                        minWidth: 10,
-                        minHeight: 10,
-                      ),
-                      suffixIcon: Padding(
-                        padding: kClearTextIconPadding,
-                        child: InkWell(
-                          child: const Icon(Icons.clear, size: 15),
+              Consumer(
+                builder: (context, ref, _) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ref.watch(_fromDateController);
+                    ref.watch(_toDateController);
+                    ref.watch(_fromDateProvider);
+                    ref.watch(_toDateProvider);
+                    ref.watch(isLoadedProvider);
+                  });
+                  return Row(
+                    children: [
+                      //==================== From Date Field ====================
+                      Flexible(
+                        flex: 1,
+                        child: TextFeildWidget(
+                          hintText: 'From Date ',
+                          controller: ref.read(_fromDateController),
+                          suffixIconConstraints: const BoxConstraints(
+                            minWidth: 10,
+                            minHeight: 10,
+                          ),
+                          suffixIcon: Padding(
+                            padding: kClearTextIconPadding,
+                            child: InkWell(
+                              child: const Icon(Icons.clear, size: 15),
+                              onTap: () async {
+                                ref.refresh(_fromDateController);
+                                ref.read(_fromDateProvider.notifier).state = null;
+                                if (ref.read(_toDateProvider) != null) {
+                                  final List<SalesModel> sales = await SalesDatabase.instance.getSalesByDate(toDate: ref.read(_toDateProvider));
+                                  final List<PurchaseModel> purchases =
+                                      await PurchaseDatabase.instance.getPurchasesByDate(toDate: ref.read(_toDateProvider));
+                                  final List<ExpenseModel> expenses =
+                                      await ExpenseDatabase.instance.getExpensesByDate(toDate: ref.read(_toDateProvider));
+                                  ref.read(summaryProvider.notifier).state =
+                                      await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
+                                } else {
+                                  final reset = ref.read(summaryFutureProvider);
+                                  ref.read(summaryProvider.notifier).state = reset.asData!.value;
+                                }
+                              },
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.all(10),
+                          hintStyle: kText12,
+                          readOnly: true,
+                          isDense: true,
+                          textStyle: kText12,
+                          inputBorder: const OutlineInputBorder(),
                           onTap: () async {
-                            ref.refresh(_fromDateController);
-                            ref.read(_fromDateProvider.notifier).state = null;
+                            final DateTime? _fromDate = await DateTimeUtils.instance.datePicker(context, initDate: ref.read(_fromDateProvider));
+                            if (_fromDate != null) {
+                              final String parseDate = Converter.dateFormat.format(_fromDate);
+                              ref.read(_fromDateController).text = parseDate.toString();
+                              ref.read(_fromDateProvider.notifier).state = _fromDate;
+
+                              final List<SalesModel> sales =
+                                  await SalesDatabase.instance.getSalesByDate(fromDate: _fromDate, toDate: ref.read(_toDateProvider));
+                              final List<PurchaseModel> purchases =
+                                  await PurchaseDatabase.instance.getPurchasesByDate(fromDate: _fromDate, toDate: ref.read(_toDateProvider));
+                              final List<ExpenseModel> expenses =
+                                  await ExpenseDatabase.instance.getExpensesByDate(fromDate: _fromDate, toDate: ref.read(_toDateProvider));
+
+                              ref.read(summaryProvider.notifier).state = await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
+                            }
                           },
                         ),
                       ),
-                      contentPadding: const EdgeInsets.all(10),
-                      hintStyle: kText12,
-                      readOnly: true,
-                      isDense: true,
-                      textStyle: kText12,
-                      inputBorder: const OutlineInputBorder(),
-                      onTap: () async {
-                        final DateTime? _fromDate = await DateTimeUtils.instance.datePicker(context, initDate: ref.read(_fromDateProvider));
-                        if (_fromDate != null) {
-                          final String parseDate = Converter.dateFormat.format(_fromDate);
-                          ref.read(_fromDateController).text = parseDate.toString();
-                          ref.read(_fromDateProvider.notifier).state = _fromDate;
 
-                          // final _date = Converter.dateForDatabase.format(_fromDate);
+                      kWidth5,
 
-                          // log('Date iso = ${_fromDate.toIso8601String()}');
+                      //=== === === === === To Date Field === === === === ===
+                      Flexible(
+                        flex: 1,
+                        child: TextFeildWidget(
+                          hintText: 'To Date ',
+                          controller: ref.read(_toDateController),
+                          suffixIconConstraints: const BoxConstraints(
+                            minWidth: 10,
+                            minHeight: 10,
+                          ),
+                          suffixIcon: Padding(
+                            padding: kClearTextIconPadding,
+                            child: InkWell(
+                              child: const Icon(Icons.clear, size: 15),
+                              onTap: () async {
+                                ref.refresh(_toDateController);
+                                ref.read(_toDateProvider.notifier).state = null;
 
-                          // log('formatted date = $_date');
-
-                          // final newDate = DateTime.parse(_fromDate.toIso8601String());
-
-                          // log('reversed date = $newDate');
-
-                          final _date = DateTime.now();
-                          final _today = Converter.dateFormatReverse.format(_date);
-
-                          final convertedFromDate = Converter.dateForDatabase.format(_fromDate.subtract(const Duration(seconds: 1)));
-                          log('_fromDate == $convertedFromDate');
-
-                          final List<SalesModel> sales = await SalesDatabase.instance.getSalesByDate(fromDate: _fromDate);
-                          final List<PurchaseModel> purchases = await PurchaseDatabase.instance.getTodayPurchase(_today);
-                          final List<ExpenseModel> expenses = await ExpenseDatabase.instance.getTodayExpense(_today);
-
-                          return await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
-                        }
-                      },
-                    ),
-                  ),
-
-                  kWidth5,
-
-                  //=== === === === === To Date Field === === === === ===
-                  Flexible(
-                    flex: 1,
-                    child: TextFeildWidget(
-                      hintText: 'To Date ',
-                      controller: ref.read(_toDateController),
-                      suffixIconConstraints: const BoxConstraints(
-                        minWidth: 10,
-                        minHeight: 10,
-                      ),
-                      suffixIcon: Padding(
-                        padding: kClearTextIconPadding,
-                        child: InkWell(
-                          child: const Icon(Icons.clear, size: 15),
+                                if (ref.read(_fromDateProvider) != null) {
+                                  final List<SalesModel> sales = await SalesDatabase.instance.getSalesByDate(fromDate: ref.read(_fromDateProvider));
+                                  final List<PurchaseModel> purchases =
+                                      await PurchaseDatabase.instance.getPurchasesByDate(fromDate: ref.read(_fromDateProvider));
+                                  final List<ExpenseModel> expenses =
+                                      await ExpenseDatabase.instance.getExpensesByDate(fromDate: ref.read(_fromDateProvider));
+                                  ref.read(summaryProvider.notifier).state =
+                                      await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
+                                } else {
+                                  final reset = ref.read(summaryFutureProvider);
+                                  ref.read(summaryProvider.notifier).state = reset.asData!.value;
+                                }
+                              },
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.all(10),
+                          hintStyle: kText12,
+                          readOnly: true,
+                          isDense: true,
+                          textStyle: kText12,
+                          inputBorder: const OutlineInputBorder(),
                           onTap: () async {
-                            ref.refresh(_toDateController);
-                            ref.read(_toDateProvider.notifier).state = null;
+                            final _toDate = await DateTimeUtils.instance.datePicker(context, initDate: ref.read(_toDateProvider), endDate: true);
+                            if (_toDate != null) {
+                              final parseDate = Converter.dateFormat.format(_toDate);
+                              ref.read(_toDateController).text = parseDate.toString();
+                              ref.read(_toDateProvider.notifier).state = _toDate;
+
+                              final List<SalesModel> sales =
+                                  await SalesDatabase.instance.getSalesByDate(fromDate: ref.read(_fromDateProvider), toDate: _toDate);
+                              final List<PurchaseModel> purchases =
+                                  await PurchaseDatabase.instance.getPurchasesByDate(fromDate: ref.read(_fromDateProvider), toDate: _toDate);
+                              final List<ExpenseModel> expenses =
+                                  await ExpenseDatabase.instance.getExpensesByDate(fromDate: ref.read(_fromDateProvider), toDate: _toDate);
+
+                              ref.read(summaryProvider.notifier).state = await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
+                            }
                           },
                         ),
-                      ),
-                      contentPadding: const EdgeInsets.all(10),
-                      hintStyle: kText12,
-                      readOnly: true,
-                      isDense: true,
-                      textStyle: kText12,
-                      inputBorder: const OutlineInputBorder(),
-                      onTap: () async {
-                        final _selectedDate = await DateTimeUtils.instance.datePicker(context, initDate: ref.read(_toDateProvider), endDate: true);
-                        if (_selectedDate != null) {
-                          final parseDate = Converter.dateFormat.format(_selectedDate);
-                          ref.read(_toDateController).text = parseDate.toString();
-                          ref.read(_toDateProvider.notifier).state = _selectedDate;
-                        }
-                      },
-                    ),
-                  )
-                ],
+                      )
+                    ],
+                  );
+                },
               ),
 
               kHeight10,
               Consumer(
                 builder: (context, ref, _) {
-                  final futureSummary = ref.watch(summaryProvider);
+                  log('FutureProvider()=> called');
+                  final futureSummary = ref.watch(summaryFutureProvider);
 
                   return futureSummary.when(
                     data: (value) {
-                      final Map<String, num> sale = value.first;
-                      final Map<String, num> purchase = value[1];
-                      final Map<String, num> expense = value[2];
+                      Map<String, num> sale = value[0];
+                      Map<String, num> purchase = value[1];
+                      Map<String, num> expense = value[2];
 
-                      return Column(
-                        children: [
-                          //== == == == == Sales Summary Card == == == == ==
-                          Card(
-                            elevation: 5,
-                            child: ListTile(
-                              title: const Text('Sales', style: TextStyle(decoration: TextDecoration.underline), textAlign: TextAlign.center),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  kHeight5,
-                                  summaryRow(name: 'Total Sales', amount: sale['totalAmount']!),
-                                  summaryRow(name: 'Cash Sales', amount: sale['cashAmount']!),
-                                  summaryRow(name: 'Bank Sales', amount: sale['bankAmount']!),
-                                  summaryRow(name: 'Sales VAT', amount: sale['vatAmount']!),
-                                  summaryRow(name: 'Receivable Amount', amount: sale['receivable']!),
-                                ],
-                              ),
-                            ),
-                          ),
+                      return Consumer(
+                        builder: (context, ref, _) {
+                          final isLoaded = ref.read(isLoadedProvider.notifier);
+                          log('isLoaded = ${isLoaded.state}');
+                          final List<Map<String, num>> summary = ref.watch(summaryProvider);
+                          if (isLoaded.state) {
+                            sale = summary[0];
+                            purchase = summary[1];
+                            expense = summary[2];
+                          }
 
-                          kHeight10,
-                          //== == == == == Purchases Summary Card == == == == ==
-                          Card(
-                            elevation: 5,
-                            child: ListTile(
-                              title: const Text('Purchases', style: TextStyle(decoration: TextDecoration.underline), textAlign: TextAlign.center),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  kHeight5,
-                                  summaryRow(name: 'Total Purchases', amount: purchase['totalAmount']!),
-                                  summaryRow(name: 'Cash Purchases', amount: purchase['cashAmount']!),
-                                  summaryRow(name: 'Bank Purchases', amount: purchase['bankAmount']!),
-                                  summaryRow(name: 'Purchases VAT', amount: purchase['vatAmount']!),
-                                  summaryRow(name: 'Payable Amount', amount: purchase['payable']!),
-                                ],
-                              ),
-                            ),
-                          ),
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            isLoaded.state = true;
+                          });
 
-                          kHeight10,
-                          //== == == == == Expenses Summary Card == == == == ==
-                          Card(
-                            elevation: 5,
-                            child: ListTile(
-                              title: const Text('Expenses', style: TextStyle(decoration: TextDecoration.underline), textAlign: TextAlign.center),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  kHeight5,
-                                  summaryRow(name: 'Total Expenses', amount: expense['totalAmount']!),
-                                  summaryRow(name: 'Expenses VAT', amount: expense['vatAmount']!),
-                                ],
+                          return Column(
+                            children: [
+                              //== == == == == Sales Summary Card == == == == ==
+                              Card(
+                                elevation: 5,
+                                child: ListTile(
+                                  title: const Text('Sales', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.start),
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Divider(color: kBlack),
+                                      kHeight5,
+                                      summaryRow(name: 'Total Sales', amount: sale['totalAmount']!),
+                                      summaryRow(name: 'Cash Sales', amount: sale['cashAmount']!),
+                                      summaryRow(name: 'Bank Sales', amount: sale['bankAmount']!),
+                                      summaryRow(name: 'Sales VAT', amount: sale['vatAmount']!),
+                                      summaryRow(name: 'Receivable Amount', amount: sale['receivable']!),
+                                      kHeight5,
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ],
+
+                              kHeight10,
+                              //== == == == == Purchases Summary Card == == == == ==
+                              Card(
+                                elevation: 5,
+                                child: ListTile(
+                                  title: const Text('Purchases', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.start),
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Divider(color: kBlack),
+                                      kHeight5,
+                                      summaryRow(name: 'Total Purchases', amount: purchase['totalAmount']!),
+                                      summaryRow(name: 'Cash Purchases', amount: purchase['cashAmount']!),
+                                      summaryRow(name: 'Bank Purchases', amount: purchase['bankAmount']!),
+                                      summaryRow(name: 'Purchases VAT', amount: purchase['vatAmount']!),
+                                      summaryRow(name: 'Payable Amount', amount: purchase['payable']!),
+                                      kHeight5,
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              kHeight10,
+                              //== == == == == Expenses Summary Card == == == == ==
+                              Card(
+                                elevation: 5,
+                                child: ListTile(
+                                  title: const Text('Expenses', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.start),
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Divider(color: kBlack),
+                                      kHeight5,
+                                      summaryRow(name: 'Total Expenses', amount: expense['totalAmount']!),
+                                      summaryRow(name: 'Expenses VAT', amount: expense['vatAmount']!),
+                                      kHeight5,
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
                     error: (_, __) => const Center(child: Text('Something went wrong!')),
@@ -245,7 +301,7 @@ class ScreenOperationSummary extends ConsumerWidget {
   Row summaryRow({required String name, required num amount}) {
     return Row(
       children: [
-        Expanded(flex: 6, child: Text(name, textAlign: TextAlign.end, style: kText12)),
+        Expanded(flex: 6, child: Text(name, textAlign: TextAlign.start, style: kText12)),
         const Expanded(flex: 1, child: Text(' : ', textAlign: TextAlign.center)),
         Expanded(flex: 6, child: Text(Converter.currency.format(amount), style: kText12Black)),
         kHeight2,
