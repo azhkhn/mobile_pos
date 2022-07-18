@@ -418,12 +418,13 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
   }
 
   Future<void> addExpense() async {
-    final String? expenseCategory, expenseTitle, amount, date, note, voucherNumber, payBy, documents;
+    final String? expenseCategory, expenseTitle, amount, dateTime, date, note, voucherNumber, payBy, documents;
 
     //retieving values from TextFields to String
     expenseCategory = _expenseCategoryController.trim();
     expenseTitle = _expenseTitleController.text.trim();
     amount = _amountController.text.trim();
+    dateTime = DateTime.now().toIso8601String();
     date = _selectedDate.trim();
     note = _noteController.text.isEmpty ? null : _noteController.text.trim();
     voucherNumber = _voucherNumberController.text.isEmpty ? null : _voucherNumberController.text.trim();
@@ -460,6 +461,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
         vatId: _vatId,
         vatMethod: _vathMethod,
         vatAmount: _vatAmount,
+        dateTime: dateTime,
         date: date,
         note: note,
         voucherNumber: voucherNumber,

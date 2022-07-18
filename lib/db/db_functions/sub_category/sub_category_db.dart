@@ -56,6 +56,12 @@ class SubCategoryDatabase {
   //========== Update Sub-Category ==========
   Future<void> updateSubCategory({required SubCategoryModel subCategory, required String subCategoryName}) async {
     final db = await dbInstance.database;
+
+    final _result =
+        await db.rawQuery('''select * from $tableSubCategory where ${SubCategoryFields.subCategory} = "$subCategoryName" COLLATE NOCASE''');
+
+    if (_result.isNotEmpty && subCategory.subCategory != subCategoryName) throw 'SubCategory Name Already Exist!';
+
     final updatedsubCategory = subCategory.copyWith(subCategory: subCategoryName);
     await db.update(
       tableSubCategory,

@@ -16,8 +16,7 @@ class UnitDatabase {
 //========== Create Unit ==========
   Future<void> createUnit(UnitModel _unitModel) async {
     final db = await dbInstance.database;
-    final unit = await db.rawQuery(
-        '''select * from $tableUnit where ${UnitFields.unit} = "${_unitModel.unit}" COLLATE NOCASE''');
+    final unit = await db.rawQuery('''select * from $tableUnit where ${UnitFields.unit} = "${_unitModel.unit}" COLLATE NOCASE''');
     if (unit.isNotEmpty) {
       log('Unit already exist!');
       throw Exception('Unit Already Exist!');
@@ -31,9 +30,13 @@ class UnitDatabase {
   }
 
   //========== Update Unit ==========
-  Future<void> updateUnit(
-      {required UnitModel unit, required String unitName}) async {
+  Future<void> updateUnit({required UnitModel unit, required String unitName}) async {
     final db = await dbInstance.database;
+
+    final _result = await db.rawQuery('''select * from $tableUnit where ${UnitFields.unit} = "$unitName" COLLATE NOCASE''');
+
+    if (_result.isNotEmpty && unit.unit != unitName) throw 'Unit Name Already Exist!';
+
     final updatedUnit = unit.copyWith(unit: unitName);
     await db.update(
       tableUnit,

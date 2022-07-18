@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:developer';
-import 'package:shop_ez/core/utils/converters/converters.dart';
+
+import 'package:path/path.dart';
+import 'package:shop_ez/model/auth/user_model.dart';
 import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:shop_ez/model/category/category_model.dart';
@@ -22,10 +24,8 @@ import 'package:shop_ez/model/sub-category/sub_category_model.dart';
 import 'package:shop_ez/model/supplier/supplier_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
 import 'package:shop_ez/model/unit/unit_model.dart';
-import 'package:shop_ez/model/auth/user_model.dart';
 import 'package:shop_ez/model/vat/vat_model.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
 class EzDatabase {
   static final EzDatabase instance = EzDatabase._init();
@@ -43,26 +43,22 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 9, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 10, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
 
     // const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    // const textNotNull = 'TEXT NOT NULL';
+    const textNotNull = 'TEXT NOT NULL';
     // const textNull = 'TEXT';
     // const intNull = 'INTEGER';
     // const idLogin = 'INTEGER NOT NULL';
     // const intNotNull = 'INTEGER NOT NULL';
 
-    // await db.execute("ALTER TABLE $tableExpense ADD COLUMN ${ExpenseFields.vatId} $intNull DEFAULT NULL");
-    // await db.execute("ALTER TABLE $tableExpense ADD COLUMN ${ExpenseFields.vatMethod} $textNull DEFAULT NULL");
-    // await db.execute("ALTER TABLE $tableExpense ADD COLUMN ${ExpenseFields.vatAmount} $textNull DEFAULT NULL");
+    final dateTime = DateTime.now().toIso8601String();
 
-    // await db.execute("ALTER TABLE $tableTransactions ADD COLUMN ${TransactionsField.customerId} $intNull");
-    // await db.execute("ALTER TABLE $tableTransactions ADD COLUMN ${TransactionsField.supplierId} $intNull");
-    // await db.execute("ALTER TABLE $tableTransactions ADD COLUMN ${TransactionsField.payBy} $textNull");
+    await db.execute("ALTER TABLE $tableExpense ADD COLUMN ${ExpenseFields.dateTime} $textNotNull DEFAULT '$dateTime'");
 
 //     await db.execute('DROP TABLE IF EXISTS $tableUser');
 //     await db.execute('DROP TABLE IF EXISTS $tableLogin');
@@ -201,6 +197,7 @@ class EzDatabase {
     //   ${ExpenseFields.vatId} $intNull,
     //   ${ExpenseFields.vatMethod} $textNull,
     //   ${ExpenseFields.vatAmount} $textNull,
+    //   ${ExpenseFields.dateTime} $textNotNull,
     //   ${ExpenseFields.date} $textNotNull,
     //   ${ExpenseFields.note} $textNull,
     //   ${ExpenseFields.voucherNumber} $textNull,
@@ -348,37 +345,14 @@ class EzDatabase {
     //================================================================================================================
     //================================================================================================================
 
-    final _sales = await db.query(tableSales, where: '${SalesFields.paymentType} = ?', whereArgs: ['Card']);
+    // final _sales = await db.query(tableSales, where: '${SalesFields.paymentType} = ?', whereArgs: ['Card']);
 
-    final List<SalesModel> sales = _sales.map((json) => SalesModel.fromJson(json)).toList();
+    // final List<SalesModel> sales = _sales.map((json) => SalesModel.fromJson(json)).toList();
 
-    for (SalesModel sale in sales) {
-      final newSale = sale.copyWith(paymentType: 'Bank');
-      await db.update(tableSales, newSale.toJson(), where: '${SalesFields.id} = ?', whereArgs: [sale.id]);
-    }
-
-    final _purchases = await db.query(tablePurchase, where: '${PurchaseFields.paymentType} = ?', whereArgs: ['Card']);
-
-    final List<PurchaseModel> purchases = _purchases.map((json) => PurchaseModel.fromJson(json)).toList();
-
-    for (PurchaseModel purchase in purchases) {
-      final newPurchase = purchase.copyWith(paymentType: 'Bank');
-      await db.update(tablePurchase, newPurchase.toJson(), where: '${PurchaseFields.id} = ?', whereArgs: [purchase.id]);
-    }
-
-    final _salesDates = await db.query(tableSales);
-
-    final List<SalesModel> salesDates = _salesDates.map((json) => SalesModel.fromJson(json)).toList();
-
-    for (SalesModel sale in salesDates) {
-      final currentDate = DateTime.parse(sale.dateTime);
-      log('current Date = ${sale.dateTime}');
-      final changedDate = Converter.dateForDatabase.format(currentDate);
-      log('formatted Date = $changedDate');
-
-      final newSale = sale.copyWith(dateTime: changedDate);
-      await db.update(tableSales, newSale.toJson(), where: '${SalesFields.id} = ?', whereArgs: [sale.id]);
-    }
+    // for (SalesModel sale in sales) {
+    //   final newSale = sale.copyWith(paymentType: 'Bank');
+    //   await db.update(tableSales, newSale.toJson(), where: '${SalesFields.id} = ?', whereArgs: [sale.id]);
+    // }
 
     //**
     //    await db.execute(
@@ -553,6 +527,7 @@ class EzDatabase {
       ${ExpenseFields.vatId} $intNull,
       ${ExpenseFields.vatMethod} $textNull,
       ${ExpenseFields.vatAmount} $textNull,
+      ${ExpenseFields.dateTime} $textNotNull,
       ${ExpenseFields.date} $textNotNull,
       ${ExpenseFields.note} $textNull,
       ${ExpenseFields.voucherNumber} $textNull,

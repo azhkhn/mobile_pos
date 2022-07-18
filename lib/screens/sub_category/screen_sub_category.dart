@@ -189,15 +189,22 @@ class SubCategoryScreen extends StatelessWidget {
                                                                 if (subCategoryName == subCategories[index].subCategory) {
                                                                   return Navigator.pop(context);
                                                                 }
-                                                                await subCategoryDB.updateSubCategory(
-                                                                    subCategory: subCategories[index], subCategoryName: subCategoryName);
-                                                                Navigator.pop(context);
 
-                                                                kSnackBar(
-                                                                  context: context,
-                                                                  content: 'Sub-Category updated successfully',
-                                                                  update: true,
-                                                                );
+                                                                try {
+                                                                  await subCategoryDB.updateSubCategory(
+                                                                      subCategory: subCategories[index], subCategoryName: subCategoryName);
+                                                                  Navigator.pop(context);
+
+                                                                  kSnackBar(
+                                                                      context: context, content: 'Sub-Category updated successfully', update: true);
+                                                                } catch (e) {
+                                                                  if (e == 'SubCategory Name Already Exist!') {
+                                                                    return kSnackBar(
+                                                                        context: context, error: true, content: 'Sub-Category Name Already Exist!');
+                                                                  }
+                                                                  log(e.toString());
+                                                                  log('Something went wrong!');
+                                                                }
                                                               },
                                                               buttonText: 'Update'),
                                                         ],

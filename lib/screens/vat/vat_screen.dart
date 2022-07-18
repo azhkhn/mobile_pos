@@ -256,15 +256,21 @@ class VatScreen extends StatelessWidget {
                                                                     vatType == vats[index].type) {
                                                                   return Navigator.pop(context);
                                                                 }
-                                                                await vatDB.updateVAT(
-                                                                    vat: vats[index], vatName: vatName, vatRate: vatRate, vatType: vatType);
-                                                                Navigator.pop(context);
+                                                                try {
+                                                                  final VatModel updatedVat =
+                                                                      vat.copyWith(name: vatName, rate: vatRate, type: vatType);
+                                                                  await vatDB.updateVAT(updatedVat: updatedVat, oldVat: vat, index: index);
+                                                                  Navigator.pop(context);
 
-                                                                kSnackBar(
-                                                                  context: context,
-                                                                  content: 'VAT updated successfully',
-                                                                  update: true,
-                                                                );
+                                                                  kSnackBar(context: context, content: 'VAT updated successfully', update: true);
+                                                                } catch (e) {
+                                                                  if (e == 'VAT Name Already Exist!') {
+                                                                    kSnackBar(context: context, error: true, content: 'VAT name already exist!');
+                                                                    return;
+                                                                  }
+                                                                  log(e.toString());
+                                                                  log('Something went wrong!');
+                                                                }
                                                               },
                                                               buttonText: 'Update'),
                                                         ],

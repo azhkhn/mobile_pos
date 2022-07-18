@@ -97,8 +97,7 @@ class CategoryScreen extends StatelessWidget {
                             builder: (context, List<CategoryModel> categories, _) {
                               return ListView.separated(
                                 itemBuilder: (context, index) {
-                                  final item = categories[index];
-                                  log('item == $item');
+                                  final CategoryModel category = categories[index];
                                   return ListTile(
                                     leading: CircleAvatar(
                                       backgroundColor: kTransparentColor,
@@ -107,13 +106,13 @@ class CategoryScreen extends StatelessWidget {
                                         style: const TextStyle(color: kTextColorBlack),
                                       ),
                                     ),
-                                    title: Text(item.category),
+                                    title: Text(category.category),
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         IconButton(
                                           onPressed: () async {
-                                            final _categoryController = TextEditingController(text: categories[index].category);
+                                            final _categoryController = TextEditingController(text: category.category);
 
                                             showDialog(
                                                 context: context,
@@ -137,17 +136,22 @@ class CategoryScreen extends StatelessWidget {
                                                       CustomMaterialBtton(
                                                           onPressed: () async {
                                                             final String categoryName = _categoryController.text.trim();
-                                                            if (categoryName == categories[index].category) {
+                                                            if (categoryName == category.category) {
                                                               return Navigator.pop(context);
                                                             }
-                                                            await categoryDB.updateCategory(category: categories[index], categoryName: categoryName);
-                                                            Navigator.pop(context);
+                                                            try {
+                                                              await categoryDB.updateCategory(category: category, categoryName: categoryName);
+                                                              Navigator.pop(context);
 
-                                                            kSnackBar(
-                                                              context: context,
-                                                              content: 'Category updated successfully',
-                                                              update: true,
-                                                            );
+                                                              kSnackBar(context: context, content: 'Category updated successfully', update: true);
+                                                            } catch (e) {
+                                                              if (e == 'Category Name Already Exist!') {
+                                                                kSnackBar(context: context, error: true, content: 'Category name already exist!');
+                                                                return;
+                                                              }
+                                                              log(e.toString());
+                                                              log('Something went wrong!');
+                                                            }
                                                           },
                                                           buttonText: 'Update')
                                                     ])));
@@ -169,7 +173,7 @@ class CategoryScreen extends StatelessWidget {
                                                   ),
                                                   TextButton(
                                                     onPressed: () async {
-                                                      await categoryDB.deleteCategory(item.id!);
+                                                      await categoryDB.deleteCategory(category.id!);
                                                       Navigator.pop(context);
 
                                                       kSnackBar(

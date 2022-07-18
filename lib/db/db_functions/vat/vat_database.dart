@@ -62,17 +62,20 @@ class VatDatabase {
   }
 
   //========== Update VAT ==========
-  Future<void> updateVAT({required VatModel vat, required String vatName, required int vatRate, required String vatType}) async {
+  Future<void> updateVAT({required VatModel updatedVat, required VatModel oldVat, required int index}) async {
     final db = await dbInstance.database;
-    final updatedVat = vat.copyWith(name: vatName, rate: vatRate, type: vatType);
+
+    final _vat = await db.rawQuery('''SELECT * FROM $tableVat WHERE ${VatFields.name} = "${updatedVat.name}" COLLATE NOCASE''');
+    if (_vat.isNotEmpty && oldVat.name != updatedVat.name) throw 'VAT Name Already Exist!';
+
     await db.update(
       tableVat,
       updatedVat.toJson(),
       where: '${VatFields.id} = ?',
-      whereArgs: [vat.id],
+      whereArgs: [updatedVat.id],
     );
-    log('VAT ${vat.id} Updated Successfully');
-    final index = vatNotifer.value.indexOf(vat);
+    log('VAT ${updatedVat.id} Updated Successfully');
+
     vatNotifer.value[index] = updatedVat;
     vatNotifer.notifyListeners();
     VatUtils().getVats();

@@ -6,6 +6,7 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/icons.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/db/db_functions/brand/brand_database.dart';
 import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -95,23 +96,24 @@ class BrandScreen extends StatelessWidget {
                             builder: (context, List<BrandModel> brands, _) {
                               return ListView.separated(
                                 itemBuilder: (context, index) {
-                                  final item = brands[index];
-                                  log('item == $item');
+                                  final BrandModel brand = brands[index];
+                                  log('Brand == $brand');
                                   return ListTile(
+                                    dense: isThermal,
                                     leading: CircleAvatar(
                                       backgroundColor: kTransparentColor,
                                       child: Text(
                                         '${index + 1}'.toString(),
-                                        style: const TextStyle(color: kTextColorBlack),
+                                        style: kTextNo12,
                                       ),
                                     ),
-                                    title: Text(item.brand),
+                                    title: Text(brand.brand),
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         IconButton(
                                           onPressed: () async {
-                                            final _brandController = TextEditingController(text: brands[index].brand);
+                                            final _brandController = TextEditingController(text: brand.brand);
 
                                             showDialog(
                                                 context: context,
@@ -140,14 +142,19 @@ class BrandScreen extends StatelessWidget {
                                                               if (brandName == brands[index].brand) {
                                                                 return Navigator.pop(context);
                                                               }
-                                                              await brandDB.updateBrand(brand: brands[index], brandName: brandName);
-                                                              Navigator.pop(context);
+                                                              try {
+                                                                await brandDB.updateBrand(brand: brands[index], brandName: brandName);
+                                                                Navigator.pop(context);
 
-                                                              kSnackBar(
-                                                                context: context,
-                                                                content: 'Brand updated successfully',
-                                                                update: true,
-                                                              );
+                                                                kSnackBar(context: context, content: 'Brand updated successfully', update: true);
+                                                              } catch (e) {
+                                                                if (e == 'Brand Name Already Exist!') {
+                                                                  kSnackBar(context: context, error: true, content: 'Brand name already exist!');
+                                                                  return;
+                                                                }
+                                                                log(e.toString());
+                                                                log('Something went wrong!');
+                                                              }
                                                             },
                                                             buttonText: 'Update'),
                                                       ],
@@ -169,7 +176,7 @@ class BrandScreen extends StatelessWidget {
                                                       child: kTextCancel),
                                                   TextButton(
                                                       onPressed: () async {
-                                                        await brandDB.deleteBrand(item.id!);
+                                                        await brandDB.deleteBrand(brand.id!);
                                                         Navigator.pop(context);
                                                         kSnackBar(
                                                           context: context,
@@ -189,7 +196,7 @@ class BrandScreen extends StatelessWidget {
                                   );
                                 },
                                 separatorBuilder: (context, index) => const Divider(
-                                  thickness: 1,
+                                  height: 2,
                                 ),
                                 itemCount: snapshot.data.length,
                               );

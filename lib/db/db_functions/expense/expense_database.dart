@@ -30,7 +30,7 @@ class ExpenseDatabase {
   //========== Get Today's Expense ==========
   Future<List<ExpenseModel>> getTodayExpense(String today) async {
     final db = await dbInstance.database;
-    final _result = await db.rawQuery('''SELECT * FROM $tableExpense WHERE ${ExpenseFields.date} LIKE "$today%"''');
+    final _result = await db.rawQuery('''SELECT * FROM $tableExpense WHERE ${ExpenseFields.dateTime} LIKE "$today%"''');
     log('Expense of Today === $_result');
 
     final _todayExpense = _result.map((json) => ExpenseModel.fromJson(json)).toList();
@@ -47,14 +47,11 @@ class ExpenseDatabase {
     if (toDate != null) _toDate = Converter.dateForDatabase.format(toDate);
 
     if (fromDate != null && toDate != null) {
-      log('message3');
       _result = await db.rawQuery(
-          '''SELECT * FROM $tableExpense WHERE DATE(${ExpenseFields.date}) > ? AND DATE(${ExpenseFields.date}) < ?''', [_fromDate, _toDate]);
+          '''SELECT * FROM $tableExpense WHERE DATE(${ExpenseFields.dateTime}) > ? AND DATE(${ExpenseFields.dateTime}) < ?''', [_fromDate, _toDate]);
     } else if (fromDate != null) {
-      log('message2');
-      _result = await db.rawQuery('''SELECT * FROM $tableExpense WHERE DATE(${ExpenseFields.date}) > ?''', [_fromDate]);
+      _result = await db.rawQuery('''SELECT * FROM $tableExpense WHERE DATE(${ExpenseFields.dateTime}) > ?''', [_fromDate]);
     } else if (toDate != null) {
-      log('message');
       _result = await db.rawQuery('''SELECT * FROM $tableExpense''');
     }
 
