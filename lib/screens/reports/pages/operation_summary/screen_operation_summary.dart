@@ -213,9 +213,7 @@ class ScreenOperationSummary extends StatelessWidget {
                             expense = summary[2];
                           }
 
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            isLoaded.state = true;
-                          });
+                          WidgetsBinding.instance.addPostFrameCallback((_) => isLoaded.state = true);
 
                           return Column(
                             children: [
@@ -275,6 +273,26 @@ class ScreenOperationSummary extends StatelessWidget {
                                       kHeight5,
                                       summaryRow(name: 'Total Expenses', amount: expense['totalAmount']!),
                                       summaryRow(name: 'Expenses VAT', amount: expense['vatAmount']!),
+                                      kHeight5,
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              //== == == == == Outstanding Amount == == == == ==
+                              Card(
+                                elevation: 5,
+                                child: ListTile(
+                                  title: const Text('Outstanding Amount', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.center),
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      const Divider(color: kBlack),
+                                      Text(
+                                        Converter.currency.format(sale['cashAmount']! - purchase['cashAmount']! - expense['totalAmount']!),
+                                        style: kTextBlack,
+                                        textAlign: TextAlign.center,
+                                      ),
                                       kHeight5,
                                     ],
                                   ),

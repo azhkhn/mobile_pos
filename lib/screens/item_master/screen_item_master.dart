@@ -655,7 +655,7 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
       vatRate = _itemVatRate!;
       productVAT = _productVatController!;
       unit = _itemUnit!;
-      expiryDate = _selectedDate;
+      expiryDate = _selectedDate ?? '';
       openingStock = _openingStockController.text.isEmpty ? '0' : _openingStockController.text.trim();
       vatMethod = vatMethodNotifier.value!;
       alertQuantity = _alertQuantityController.text.trim();
