@@ -5,6 +5,7 @@ import 'package:path/path.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
 import 'package:shop_ez/model/brand/brand_model.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
+import 'package:shop_ez/model/cash_register/cash_register_model.dart';
 import 'package:shop_ez/model/category/category_model.dart';
 import 'package:shop_ez/model/customer/customer_model.dart';
 import 'package:shop_ez/model/expense/expense_category_model.dart';
@@ -43,22 +44,18 @@ class EzDatabase {
     const filePath = 'user.db';
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 10, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 11, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
     log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
 
-    // const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const textNotNull = 'TEXT NOT NULL';
     // const textNull = 'TEXT';
     // const intNull = 'INTEGER';
     // const idLogin = 'INTEGER NOT NULL';
-    // const intNotNull = 'INTEGER NOT NULL';
-
-    final dateTime = DateTime.now().toIso8601String();
-
-    await db.execute("ALTER TABLE $tableExpense ADD COLUMN ${ExpenseFields.dateTime} $textNotNull DEFAULT '$dateTime'");
+    const intNotNull = 'INTEGER NOT NULL';
 
 //     await db.execute('DROP TABLE IF EXISTS $tableUser');
 //     await db.execute('DROP TABLE IF EXISTS $tableLogin');
@@ -105,7 +102,7 @@ class EzDatabase {
 //       ${GroupFields.name} $textNotNull,
 //       ${GroupFields.description} $textNotNull)''');
 
-//     //========== Table Permission ==========
+// //========== Table Permission ==========
 //     await db.execute('''CREATE TABLE $tablePermission (
 //       ${PermissionFields.id} $idAuto,
 //       ${PermissionFields.groupId} $intNotNull,
@@ -344,6 +341,14 @@ class EzDatabase {
     //================================================================================================================
     //================================================================================================================
     //================================================================================================================
+
+    //========== Table Cash Register ==========
+    await db.execute('''CREATE TABLE $tableCashRegister (
+      ${CashRegisterFields.id} $idAuto, 
+      ${CashRegisterFields.dateTime} $textNotNull,
+      ${CashRegisterFields.amount} $textNotNull,
+      ${CashRegisterFields.userId} $intNotNull,
+      ${CashRegisterFields.action} $textNotNull)''');
 
     // final _sales = await db.query(tableSales, where: '${SalesFields.paymentType} = ?', whereArgs: ['Card']);
 
@@ -760,5 +765,13 @@ class EzDatabase {
       ${PurchaseReturnItemsFields.unitCode} $textNotNull,
       ${PurchaseReturnItemsFields.netUnitPrice} $textNotNull,
       ${PurchaseReturnItemsFields.vatPercentage} $textNotNull)''');
+
+//========== Table Cash Register ==========
+    await db.execute('''CREATE TABLE $tableCashRegister (
+      ${CashRegisterFields.id} $idAuto, 
+      ${CashRegisterFields.dateTime} $textNotNull,
+      ${CashRegisterFields.amount} $textNotNull,
+      ${CashRegisterFields.userId} $intNotNull,
+      ${CashRegisterFields.action} $textNotNull)''');
   }
 }

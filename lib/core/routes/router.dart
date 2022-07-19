@@ -20,6 +20,9 @@ const String routeListGroup = '/list_group';
 //Business Profile
 const String routeBusinessProfile = '/business_profile';
 
+//Cash Register
+const String routeCashRegister = '/cash_register';
+
 //Item Master
 const String routeItemMaster = '/item_master';
 const String routeManageItemMaster = '/manage_item_master';

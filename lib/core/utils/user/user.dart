@@ -1,9 +1,11 @@
 import 'dart:developer' show log;
 import 'package:shop_ez/db/db_functions/busiess_profile/business_profile_database.dart';
 import 'package:shop_ez/db/db_functions/auth/user_db.dart';
+import 'package:shop_ez/db/db_functions/cash_register/cash_register_database.dart';
 import 'package:shop_ez/db/db_functions/group/group_database.dart';
 import 'package:shop_ez/db/db_functions/permission/permission_database.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
+import 'package:shop_ez/model/cash_register/cash_register_model.dart';
 import 'package:shop_ez/model/group/group_model.dart';
 import 'package:shop_ez/model/permission/permission_model.dart';
 import 'package:shop_ez/screens/home/home_screen.dart';
@@ -22,6 +24,7 @@ class UserUtils {
   BusinessProfileModel? businessProfileModel;
   GroupModel? groupModel;
   PermissionModel? permissionModel;
+  CashRegisterModel? cashRegisterModel;
 
 //========== Load all User Details ==========
   Future<void> fetchUserDetails() async {
@@ -29,6 +32,7 @@ class UserUtils {
     await userGroup;
     await permission;
     await businessProfile;
+    await cashRegister;
   }
 
   //========== Unload all User Details ==========
@@ -38,6 +42,7 @@ class UserUtils {
     businessProfileModel = null;
     groupModel = null;
     permissionModel = null;
+    cashRegisterModel = null;
   }
 
   //========== Reload all User Details ==========
@@ -104,6 +109,13 @@ class UserUtils {
     await businessProfile;
   }
 
+  //========== Get User Details ==========
+  Future<CashRegisterModel?> get cashRegister async {
+    if (cashRegisterModel != null) return cashRegisterModel!;
+    await getLastCashRegister();
+    return cashRegisterModel;
+  }
+
 //Business Profile details (Access User details all over the Application)
   Future<void> getBusinessProfile() async {
     log('Fetching Business Profile details..');
@@ -146,6 +158,16 @@ class UserUtils {
 
     final _permission = await permissionDB.getPermissionByGroupId(userModel!.groupId);
     permissionModel = _permission;
+    log('Done!');
+  }
+
+  //Latest Cash Register details (Access User details all over the Application)
+  Future<void> getLastCashRegister() async {
+    log('Fetching latest CashRegister details..');
+    final CashRegisterDatabase cashDatabase = CashRegisterDatabase.instance;
+    await cashDatabase.getAllCashRegisters();
+    final _cashRegister = await cashDatabase.getLastRegister();
+    cashRegisterModel = _cashRegister;
     log('Done!');
   }
 }

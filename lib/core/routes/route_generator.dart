@@ -1,19 +1,27 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
+import 'package:shop_ez/core/utils/validators/validators.dart';
+import 'package:shop_ez/db/db_functions/cash_register/cash_register_database.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
+import 'package:shop_ez/model/cash_register/cash_register_model.dart';
 import 'package:shop_ez/model/group/group_model.dart';
 import 'package:shop_ez/model/permission/permission_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/barcode/screen_barcode.dart';
+import 'package:shop_ez/screens/cash_register/screen_cash_register.dart';
 import 'package:shop_ez/screens/customer/screen_manage_customer.dart';
 import 'package:shop_ez/screens/database/pages/screen_list_database.dart';
 import 'package:shop_ez/screens/database/screen_database.dart';
 import 'package:shop_ez/screens/expense/manage_expense/screen_manage_expense.dart';
 import 'package:shop_ez/screens/invoices/screen_sales_invoice.dart';
 import 'package:shop_ez/screens/item_master/screen_manage_item_master.dart';
+import 'package:shop_ez/screens/pos/screen_pos.dart';
 import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return.dart';
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return_list.dart';
@@ -42,6 +50,8 @@ import 'package:shop_ez/screens/user_manage/pages/group/screen_list_groups.dart'
 import 'package:shop_ez/screens/user_manage/pages/user/screen_add_user.dart';
 import 'package:shop_ez/screens/user_manage/pages/user/screen_list_users.dart';
 import 'package:shop_ez/screens/user_manage/screen_user_module.dart';
+import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
+import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 import '../../screens/auth/pages/login_screen.dart';
 import '../../screens/auth/pages/signup_screen.dart';
@@ -54,7 +64,6 @@ import '../../screens/expense/add_expense_category/screen_add_expense_category.d
 import '../../screens/home/home_screen.dart';
 import '../../screens/item_master/screen_item_master.dart';
 import '../../screens/payments/partial_payment/screen_partial_payment.dart';
-import '../../screens/pos/screen_pos.dart';
 import '../../screens/purchase/pages/screen_add_purchase.dart';
 import '../../screens/purchase/pages/screen_purchase.dart';
 import '../../screens/sales/pages/screen_sales.dart';
@@ -75,10 +84,18 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ScreenSplash());
       case routeHome:
         return MaterialPageRoute(builder: (_) => ScreenHome());
+
+      //==========================================================================================
+      //===================================== Authentication =====================================
+      //==========================================================================================
       case routeLogin:
         return MaterialPageRoute(builder: (_) => ScreenLogin());
       case routeSignUp:
         return MaterialPageRoute(builder: (_) => ScreenSignUp());
+
+      //=======================================================================================
+      //===================================== Item Master =====================================
+      //=======================================================================================
       case routeItemMaster:
         if (args is Map) {
           if (permission!.products.contains('3')) {
@@ -87,13 +104,20 @@ class RouteGenerator {
                     ScreenItemMaster(from: args.containsKey('from'), itemMasterModel: args.containsKey('product') ? args['product'] : null));
           }
           return _errorPermission();
-        } else {
-          if (permission!.products.contains('2')) return MaterialPageRoute(builder: (_) => const ScreenItemMaster());
-          return _errorPermission();
         }
+        if (permission!.products.contains('2')) return MaterialPageRoute(builder: (_) => const ScreenItemMaster());
+        return _errorPermission();
+
       case routeManageItemMaster:
         if (permission!.products.contains('1')) return MaterialPageRoute(builder: (_) => ScreenItemMasterManage());
         return _errorPermission();
+
+      case routeStock:
+        return MaterialPageRoute(builder: (_) => ScreenStock());
+
+      //=====================================================================================
+      //===================================== Suppliers =====================================
+      //=====================================================================================
       case routeAddSupplier:
         if (args is Map) {
           if (permission!.supplier.contains('3')) {
@@ -102,20 +126,33 @@ class RouteGenerator {
                     SupplierAddScreen(from: args.containsKey('from'), supplierModel: args.containsKey('supplier') ? args['supplier'] : null));
           }
           return _errorPermission();
-        } else {
-          if (permission!.supplier.contains('2')) return MaterialPageRoute(builder: (_) => SupplierAddScreen(from: args is bool));
-          return _errorPermission();
         }
+        if (permission!.supplier.contains('2')) return MaterialPageRoute(builder: (_) => SupplierAddScreen(from: args is bool));
+        return _errorPermission();
 
       case routeManageSupplier:
         if (permission!.supplier.contains('1')) return MaterialPageRoute(builder: (_) => SupplierManageScreen());
         return _errorPermission();
+
+      //======================================================================================
+      //===================================== Categories =====================================
+      //======================================================================================
       case routeCategory:
         return MaterialPageRoute(builder: (_) => CategoryScreen());
       case routeSubCategory:
         return MaterialPageRoute(builder: (_) => SubCategoryScreen());
       case routeBrand:
         return MaterialPageRoute(builder: (_) => BrandScreen());
+      case routeUnit:
+        return MaterialPageRoute(builder: (_) => UnitScreen());
+      case routeVat:
+        return MaterialPageRoute(builder: (_) => VatScreen());
+      case routeBarcode:
+        return MaterialPageRoute(builder: (_) => const ScreenBarcode());
+
+      //======================================================================================
+      //===================================== Customers ======================================
+      //======================================================================================
       case routeAddCustomer:
         if (args is Map) {
           if (permission!.customer.contains('3')) {
@@ -124,82 +161,93 @@ class RouteGenerator {
                     CustomerAddScreen(from: args.containsKey('from'), customerModel: args.containsKey('customer') ? args['customer'] : null));
           }
           return _errorPermission();
-        } else {
-          if (permission!.customer.contains('2')) return MaterialPageRoute(builder: (_) => CustomerAddScreen(from: args is bool));
-          return _errorPermission();
         }
+        if (permission!.customer.contains('2')) return MaterialPageRoute(builder: (_) => CustomerAddScreen(from: args is bool));
+        return _errorPermission();
+
       case routeManageCustomer:
         if (permission!.customer.contains('1')) return MaterialPageRoute(builder: (_) => CustomerManageScreen());
         return _errorPermission();
-      case routeUnit:
-        return MaterialPageRoute(builder: (_) => UnitScreen());
+
+      //======================================================================================
+      //===================================== Expenses =======================================
+      //======================================================================================
+      case routeAddExpenseCategory:
+        return MaterialPageRoute(builder: (_) => const ScreenAddExpenseCategory());
       case routeAddExpense:
         return MaterialPageRoute(builder: (_) => const ScreenAddExpense());
       case routeManageExpense:
         return MaterialPageRoute(builder: (_) => ScreenManageExpense());
-      case routeBusinessProfile:
-        return MaterialPageRoute(builder: (_) => const BusinessProfile());
-      case routeVat:
-        return MaterialPageRoute(builder: (_) => VatScreen());
-      case routeAddExpenseCategory:
-        return MaterialPageRoute(builder: (_) => const ScreenAddExpenseCategory());
+
+      //======================================================================================
+      //===================================== Sales =======================================
+      //======================================================================================
       case routePos:
-        if (permission!.sale.contains('2')) return MaterialPageRoute(builder: (_) => const PosScreen());
+        if (permission!.sale.contains('2')) {
+          final CashRegisterModel? _cashModel = UserUtils.instance.cashRegisterModel;
+          if (_cashModel == null || _cashModel.action == 'close') return _cashRegister();
+          return MaterialPageRoute(builder: (_) => const PosScreen());
+        }
         return _errorPermission();
+
+      case routeSales:
+        return MaterialPageRoute(builder: (_) => ScreenSales());
+      case routeSalesList:
+        if (permission!.sale.contains('1')) return MaterialPageRoute(builder: (_) => const ScreenSalesList());
+        return _errorPermission();
+
+      case routeSalesReturn:
+        return MaterialPageRoute(builder: (_) => const SalesReturn());
+
+      case routeSalesReturnList:
+        return MaterialPageRoute(builder: (_) => const SalesReturnList());
+
       case routePartialPayment:
         if (args is Map) {
           return MaterialPageRoute(
               builder: (_) => PartialPayment(paymentDetails: args, purchase: args.containsKey('purchase'), isVertical: args['isVertical']));
         }
         return _errorRoute();
+
       case routeTransactionSale:
         if (args is SalesModel) {
-          return MaterialPageRoute(
-              builder: (_) => TransactionScreenSale(
-                    salesModel: args,
-                  ));
+          return MaterialPageRoute(builder: (_) => TransactionScreenSale(salesModel: args));
         }
         return _errorRoute();
-      case routeTransactionPurchase:
-        if (args is PurchaseModel) {
-          return MaterialPageRoute(
-              builder: (_) => TransactionScreenPurchase(
-                    purchaseModel: args,
-                  ));
-        }
-        return _errorRoute();
-      case routeSales:
-        return MaterialPageRoute(builder: (_) => ScreenSales());
-      case routeSalesList:
-        if (permission!.sale.contains('1')) return MaterialPageRoute(builder: (_) => const ScreenSalesList());
-        return _errorPermission();
-      case routePurchase:
-        return MaterialPageRoute(builder: (_) => ScreenPurchase());
 
-      case routeAddPurchase:
-        if (permission!.purchase.contains('2')) return MaterialPageRoute(builder: (_) => const Purchase());
-        return _errorPermission();
-      case routeListPurchase:
-        if (permission!.purchase.contains('1')) return MaterialPageRoute(builder: (_) => const ScreenPurchasesList());
-        return _errorPermission();
-      case routeStock:
-        return MaterialPageRoute(builder: (_) => ScreenStock());
-      case routeBarcode:
-        return MaterialPageRoute(builder: (_) => const ScreenBarcode());
-      case routeSalesReturn:
-        return MaterialPageRoute(builder: (_) => const SalesReturn());
-      case routeSalesReturnList:
-        return MaterialPageRoute(builder: (_) => const SalesReturnList());
-      case routePurchaseReturn:
-        return MaterialPageRoute(builder: (_) => const PurchaseReturn());
-      case routePurchaseReturnList:
-        return MaterialPageRoute(builder: (_) => const PurchaseReturnList());
       case routeSalesInvoice:
         if (args is List) {
           return MaterialPageRoute(
               builder: (_) => args.last
                   ? ScreenSalesInvoice(salesReturnModal: args.first, isReturn: args.last)
                   : ScreenSalesInvoice(salesModel: args.first, isReturn: args.last));
+        }
+        return _errorRoute();
+
+      //======================================================================================
+      //===================================== Purchases ======================================
+      //======================================================================================
+
+      case routePurchase:
+        return MaterialPageRoute(builder: (_) => ScreenPurchase());
+
+      case routeAddPurchase:
+        if (permission!.purchase.contains('2')) return MaterialPageRoute(builder: (_) => const Purchase());
+        return _errorPermission();
+
+      case routeListPurchase:
+        if (permission!.purchase.contains('1')) return MaterialPageRoute(builder: (_) => const ScreenPurchasesList());
+        return _errorPermission();
+
+      case routePurchaseReturn:
+        return MaterialPageRoute(builder: (_) => const PurchaseReturn());
+
+      case routePurchaseReturnList:
+        return MaterialPageRoute(builder: (_) => const PurchaseReturnList());
+
+      case routeTransactionPurchase:
+        if (args is PurchaseModel) {
+          return MaterialPageRoute(builder: (_) => TransactionScreenPurchase(purchaseModel: args));
         }
         return _errorRoute();
 
@@ -218,6 +266,7 @@ class RouteGenerator {
         if (permission!.user.contains('0')) return _errorPermission();
         if (permission.user.contains('1')) return MaterialPageRoute(builder: (_) => const ScreenUserManage());
         return _errorPermission();
+
       case routeAddUser:
         if (args is UserModel) {
           if (permission!.user.contains('3')) return MaterialPageRoute(builder: (_) => ScreenAddUser(userModel: args));
@@ -225,6 +274,9 @@ class RouteGenerator {
         }
         if (permission!.user.contains('2')) return MaterialPageRoute(builder: (_) => ScreenAddUser());
         return _errorPermission();
+
+      case routeBusinessProfile:
+        return MaterialPageRoute(builder: (_) => const BusinessProfile());
 
       case routeListUser:
         if (permission!.user.contains('1')) return MaterialPageRoute(builder: (_) => ScreenUserList());
@@ -240,6 +292,9 @@ class RouteGenerator {
       case routeListGroup:
         if (permission!.user.contains('1')) return MaterialPageRoute(builder: (_) => ScreenGroupList());
         return _errorPermission();
+
+      case routeCashRegister:
+        return MaterialPageRoute(builder: (_) => const ScreenCashRegister());
 
       //=========================================================================================
       //======================================== Reports ========================================
@@ -311,6 +366,66 @@ class RouteGenerator {
               )),
         ],
       ),
+    );
+  }
+
+  //========== Error Page if not permitted ==========
+  static Route<dynamic> _cashRegister() {
+    return PageRouteBuilder(
+      opaque: false,
+      barrierColor: kColorDim,
+      pageBuilder: (context, __, ___) {
+        final TextEditingController _cashController = TextEditingController();
+        final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Form(
+                key: _formKey,
+                child: TextFeildWidget(
+                  labelText: 'Cash in hand',
+                  controller: _cashController,
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  inputBorder: const OutlineInputBorder(),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  inputFormatters: Validators.digitsOnly,
+                  isDense: true,
+                  textInputType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty || value == '.') {
+                      return 'This field is required*';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              kHeight5,
+              CustomMaterialBtton(
+                  onPressed: () async {
+                    if (!_formKey.currentState!.validate()) return;
+
+                    Navigator.pop(context);
+
+                    final String amount = _cashController.text;
+                    final String dateTime = DateTime.now().toIso8601String();
+                    final int userId = UserUtils.instance.userModel!.id!;
+                    const String action = 'open';
+
+                    log('Amount = $amount');
+                    log('DateTime = $dateTime');
+                    log('User Id =  $userId');
+                    log('Action = $action');
+
+                    final CashRegisterModel cashRegisterModel = CashRegisterModel(dateTime: dateTime, amount: amount, userId: userId, action: action);
+
+                    CashRegisterDatabase.instance.createCashRegister(cashRegisterModel);
+                  },
+                  buttonText: 'Submit'),
+            ],
+          ),
+        );
+      },
     );
   }
 }

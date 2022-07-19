@@ -33,10 +33,8 @@ class ScreenSales extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await getSalesDetails(sale: true);
       final List<TransactionsModel> _transaction = await TransactionDatabase.instance.getAllTransactions();
-
       num totalExpense = 0;
       num totalIncome = 0;
-
       for (var transaction in _transaction) {
         if (transaction.transactionType == 'Income') {
           totalIncome += num.parse(transaction.amount);
@@ -44,16 +42,20 @@ class ScreenSales extends StatelessWidget {
           totalExpense += num.parse(transaction.amount);
         }
       }
-
       log('Total Income == $totalIncome');
       log('Total Expense == $totalExpense');
-
       log('In the Money == ${totalIncome - totalExpense}');
     });
 
     return Scaffold(
       appBar: AppBarWidget(
         title: 'Sales',
+        actions: [
+          IconButton(
+            onPressed: () => Navigator.pushNamed(context, routeCashRegister),
+            icon: const Icon(Icons.point_of_sale),
+          )
+        ],
       ),
       body: BackgroundContainerWidget(
         child: ItemScreenPaddingWidget(
