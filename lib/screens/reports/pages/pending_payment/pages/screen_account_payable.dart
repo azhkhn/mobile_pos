@@ -188,7 +188,7 @@ class ScreenAccountPayable extends StatelessWidget {
                       return const Center(child: CircularProgressIndicator());
                     case ConnectionState.done:
                     default:
-                      if (!snapshot.hasData) return const Center(child: Text('No Payable Payments!'));
+                      if (!snapshot.hasData) return const Center(child: Text('No recent payable'));
 
                       final List<PurchaseModel> _recentPayments = snapshot.data as List<PurchaseModel>;
                       payableNotifier.value = _recentPayments;
@@ -207,7 +207,7 @@ class ScreenAccountPayable extends StatelessWidget {
                                   },
                                 );
                               })
-                          : const Center(child: Text('No Payable Payments!'));
+                          : const Center(child: Text('No recent payable'));
                   }
                 },
               ),

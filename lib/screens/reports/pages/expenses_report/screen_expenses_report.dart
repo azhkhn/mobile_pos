@@ -272,7 +272,7 @@ class ScreenExpensesReport extends StatelessWidget {
 
                         default:
                           if (!snapshot.hasData) {
-                            return const Center(child: Text('No recent expenses!'));
+                            return const Center(child: Text('No recent expenses'));
                           }
                           expensesNotifer.value = snapshot.data!;
 
@@ -295,7 +295,7 @@ class ScreenExpensesReport extends StatelessWidget {
                                           );
                                         },
                                       )
-                                    : const Center(child: Text('No expenses found!'));
+                                    : const Center(child: Text('No recent expenses'));
                               });
                       }
                     }),

@@ -7,14 +7,21 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
+import 'package:shop_ez/core/utils/debouncer/debouncer.dart';
+import 'package:shop_ez/core/utils/user/user.dart';
+import 'package:shop_ez/core/utils/validators/validators.dart';
+import 'package:shop_ez/db/db_functions/cash_register/cash_register_database.dart';
 import 'package:shop_ez/db/db_functions/expense/expense_database.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
+import 'package:shop_ez/model/cash_register/cash_register_model.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
+import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
+import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 //=-=-=-=-=-=-=-=-=-= Providers =-=-=-=-=-=-=-=-=-=
 final isLoadedProvider = StateProvider.autoDispose<bool>((ref) => false);
@@ -43,128 +50,232 @@ class ScreenCashRegister extends StatelessWidget {
       appBar: AppBarWidget(title: 'Cash Register'),
       body: SafeArea(
         child: ItemScreenPaddingWidget(
-          child: Column(
-            children: [
-              Consumer(
-                builder: (context, ref, _) {
-                  log('FutureProvider()=> called');
-                  final futureSummary = ref.watch(summaryFutureProvider);
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Consumer(
+                  builder: (context, ref, _) {
+                    log('FutureProvider()=> called');
+                    final futureSummary = ref.watch(summaryFutureProvider);
 
-                  return futureSummary.when(
-                    data: (value) {
-                      Map<String, num> sale = value[0];
-                      Map<String, num> purchase = value[1];
-                      Map<String, num> expense = value[2];
+                    return futureSummary.when(
+                      data: (value) {
+                        Map<String, num> sale = value[0];
+                        Map<String, num> purchase = value[1];
+                        Map<String, num> expense = value[2];
 
-                      return Consumer(
-                        builder: (context, ref, _) {
-                          final isLoaded = ref.read(isLoadedProvider.notifier);
-                          log('isLoaded = ${isLoaded.state}');
-                          final List<Map<String, num>> summary = ref.watch(summaryProvider);
-                          if (isLoaded.state) {
-                            sale = summary[0];
-                            purchase = summary[1];
-                            expense = summary[2];
-                          }
+                        return Consumer(
+                          builder: (context, ref, _) {
+                            final isLoaded = ref.read(isLoadedProvider.notifier);
+                            log('isLoaded = ${isLoaded.state}');
+                            final List<Map<String, num>> summary = ref.watch(summaryProvider);
+                            if (isLoaded.state) {
+                              sale = summary[0];
+                              purchase = summary[1];
+                              expense = summary[2];
+                            }
 
-                          final num netAmount = Converter.amountRounder(sale['cashAmount']! - purchase['cashAmount']!);
+                            final CashRegisterModel _cashModel = UserUtils.instance.cashRegisterModel!;
 
-                          WidgetsBinding.instance.addPostFrameCallback((_) => isLoaded.state = true);
+                            final num openingBalance = num.parse(_cashModel.amount);
 
-                          return Column(
-                            children: [
-                              //== == == == == Sales Summary Card == == == == ==
-                              Card(
-                                elevation: 5,
-                                child: ListTile(
-                                  title: const Text('Sales', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.start),
-                                  subtitle: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Divider(color: kBlack),
-                                      kHeight5,
-                                      summaryRow(name: 'Total Sales', amount: sale['totalAmount']!),
-                                      summaryRow(name: 'Cash Sales', amount: sale['cashAmount']!),
-                                      summaryRow(name: 'Bank Sales', amount: sale['bankAmount']!),
-                                      summaryRow(name: 'Sales VAT', amount: sale['vatAmount']!),
-                                      summaryRow(name: 'Receivable Amount', amount: sale['receivable']!),
-                                      kHeight5,
-                                    ],
+                            final num netAmount = Converter.amountRounder(sale['cashAmount']! - purchase['cashAmount']! - expense['cashAmount']!);
+
+                            WidgetsBinding.instance.addPostFrameCallback((_) => isLoaded.state = true);
+
+                            return Column(
+                              children: [
+                                //== == == == == Sales Summary Card == == == == ==
+                                Card(
+                                  elevation: 5,
+                                  child: ListTile(
+                                    title: const Text('Sales', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.start),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Divider(color: kBlack),
+                                        kHeight5,
+                                        summaryRow(name: 'Total Sales', amount: sale['totalAmount']!),
+                                        summaryRow(name: 'Cash Sales', amount: sale['cashAmount']!),
+                                        summaryRow(name: 'Bank Sales', amount: sale['bankAmount']!),
+                                        summaryRow(name: 'Sales VAT', amount: sale['vatAmount']!),
+                                        summaryRow(name: 'Receivable Amount', amount: sale['receivable']!),
+                                        kHeight5,
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
 
-                              kHeight10,
-                              //== == == == == Purchases Summary Card == == == == ==
-                              Card(
-                                elevation: 5,
-                                child: ListTile(
-                                  title: const Text('Purchases', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.start),
-                                  subtitle: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Divider(color: kBlack),
-                                      kHeight5,
-                                      summaryRow(name: 'Total Purchases', amount: purchase['totalAmount']!),
-                                      summaryRow(name: 'Cash Purchases', amount: purchase['cashAmount']!),
-                                      summaryRow(name: 'Bank Purchases', amount: purchase['bankAmount']!),
-                                      summaryRow(name: 'Purchases VAT', amount: purchase['vatAmount']!),
-                                      summaryRow(name: 'Payable Amount', amount: purchase['payable']!),
-                                      kHeight5,
-                                    ],
+                                //== == == == == Purchases Summary Card == == == == ==
+                                Card(
+                                  elevation: 5,
+                                  child: ListTile(
+                                    title: const Text('Purchases', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.start),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Divider(color: kBlack),
+                                        kHeight5,
+                                        summaryRow(name: 'Total Purchases', amount: purchase['totalAmount']!),
+                                        summaryRow(name: 'Cash Purchases', amount: purchase['cashAmount']!),
+                                        summaryRow(name: 'Bank Purchases', amount: purchase['bankAmount']!),
+                                        summaryRow(name: 'Purchases VAT', amount: purchase['vatAmount']!),
+                                        summaryRow(name: 'Payable Amount', amount: purchase['payable']!),
+                                        kHeight5,
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
 
-                              kHeight10,
-                              //== == == == == Expenses Summary Card == == == == ==
-                              Card(
-                                elevation: 5,
-                                child: ListTile(
-                                  title: const Text('Expenses', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.start),
-                                  subtitle: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Divider(color: kBlack),
-                                      kHeight5,
-                                      summaryRow(name: 'Total Expenses', amount: expense['totalAmount']!),
-                                      summaryRow(name: 'Expenses VAT', amount: expense['vatAmount']!),
-                                      kHeight5,
-                                    ],
+                                //== == == == == Expenses Summary Card == == == == ==
+                                Card(
+                                  elevation: 5,
+                                  child: ListTile(
+                                    title: const Text('Expenses', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.start),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Divider(color: kBlack),
+                                        kHeight5,
+                                        summaryRow(name: 'Total Expenses', amount: expense['totalAmount']!),
+                                        summaryRow(name: 'Cash Expenses', amount: expense['cashAmount']!),
+                                        summaryRow(name: 'Bank Expenses', amount: expense['bankAmount']!),
+                                        summaryRow(name: 'Expenses VAT', amount: expense['vatAmount']!),
+                                        kHeight5,
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
 
-                              //== == == == == Outstanding Amount == == == == ==
-                              Card(
-                                elevation: 5,
-                                child: ListTile(
-                                  title: const Text('Outstanding Amount', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.center),
-                                  subtitle: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      const Divider(color: kBlack),
-                                      Text(
-                                        Converter.currency.format(netAmount),
-                                        style: kTextBlack,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      kHeight5,
-                                    ],
+                                //== == == == == Balance Amount == == == == ==
+                                Card(
+                                  elevation: 5,
+                                  child: ListTile(
+                                    title: const Text('Balance Amount', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.center),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        const Divider(color: kBlack),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [const Text('Net Amount : '), Text('$netAmount', style: kTextBlack, textAlign: TextAlign.center)],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text('Opening Balance : '),
+                                            Text('$openingBalance', style: kTextBlack, textAlign: TextAlign.center)
+                                          ],
+                                        ),
+                                        kHeight5,
+                                        Text(Converter.currency.format(netAmount + openingBalance),
+                                            style: kTextBlackW700, textAlign: TextAlign.center),
+                                        kHeight5,
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    error: (_, __) => const Center(child: Text('Something went wrong!')),
-                    loading: () => const SingleChildScrollView(),
-                  );
-                },
-              ),
-            ],
+
+                                kHeight5,
+
+                                //== == == == == Take Home == == == == ==
+                                CustomMaterialBtton(
+                                  onPressed: () {
+                                    final TextEditingController _cashController = TextEditingController(text: netAmount.toString());
+                                    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+                                    final closingProvider = StateProvider.autoDispose<num>((ref) => netAmount);
+                                    showDialog(
+                                        context: context,
+                                        builder: (_) {
+                                          return AlertDialog(
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Form(
+                                                  key: _formKey,
+                                                  child: TextFeildWidget(
+                                                    labelText: 'Take Home',
+                                                    controller: _cashController,
+                                                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                    inputBorder: const OutlineInputBorder(),
+                                                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                                                    inputFormatters: Validators.digitsOnly,
+                                                    isDense: true,
+                                                    textInputType: TextInputType.number,
+                                                    validator: (value) {
+                                                      if (value == null || value.isEmpty || value == '.') {
+                                                        return 'This field is required*';
+                                                      }
+                                                      if (num.parse(value) > netAmount) return 'Amount cannot exceed the balance*';
+                                                      return null;
+                                                    },
+                                                    onChanged: (value) {
+                                                      Debouncer().run(() {
+                                                        ref.read(closingProvider.notifier).state = netAmount - num.parse(value!);
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                                kHeight5,
+                                                Consumer(
+                                                  builder: (context, ref, _) {
+                                                    final num closingBalance = ref.watch(closingProvider);
+                                                    return Row(
+                                                      children: [
+                                                        const Text('Closing Balance : '),
+                                                        Expanded(
+                                                          child: Text(
+                                                            Converter.currency.format(closingBalance),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    );
+                                                  },
+                                                ),
+                                                kHeight5,
+                                                CustomMaterialBtton(
+                                                    onPressed: () async {
+                                                      if (!_formKey.currentState!.validate()) return;
+
+                                                      final num closingBalance = Converter.amountRounder(netAmount - num.parse(_cashController.text));
+
+                                                      final String amount = closingBalance.toString();
+                                                      final String dateTime = DateTime.now().toIso8601String();
+                                                      final int userId = UserUtils.instance.userModel!.id!;
+                                                      const String action = 'close';
+
+                                                      log('Amount = $closingBalance');
+                                                      log('DateTime = $dateTime');
+                                                      log('User Id =  $userId');
+                                                      log('Action = $action');
+
+                                                      final CashRegisterModel cashRegisterModel =
+                                                          CashRegisterModel(dateTime: dateTime, amount: amount, userId: userId, action: action);
+
+                                                      CashRegisterDatabase.instance.createCashRegister(cashRegisterModel);
+                                                      Navigator.pop(context);
+                                                      Navigator.pop(context);
+                                                    },
+                                                    buttonText: 'Submit'),
+                                              ],
+                                            ),
+                                          );
+                                        });
+                                  },
+                                  buttonText: 'Close Register',
+                                )
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      error: (_, __) => const Center(child: Text('Something went wrong!')),
+                      loading: () => const SingleChildScrollView(),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -246,11 +357,15 @@ Future<List<Map<String, num>>> _getSummaries({
   //== == == == == Expenses Summary == == == == ==
   for (ExpenseModel expense in expenses) {
     totalAmount.add(num.parse(expense.amount));
+    if (expense.paymentMethod == 'Cash') cashAmount.add(num.parse(expense.amount));
+    if (expense.paymentMethod == 'Bank') bankAmount.add(num.parse(expense.amount));
     vatAmount.add(num.parse(expense.vatAmount ?? '0'));
   }
 
   final Map<String, num> expensesSummary = {
     'totalAmount': totalAmount.sum,
+    'cashAmount': cashAmount.sum,
+    'bankAmount': bankAmount.sum,
     'vatAmount': vatAmount.sum,
   };
 

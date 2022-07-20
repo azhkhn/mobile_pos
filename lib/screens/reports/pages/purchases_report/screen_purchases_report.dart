@@ -93,10 +93,10 @@ class ScreenPurchasesReport extends StatelessWidget {
                                     : const Center(child: Text('Purchases Not Found!'));
                               },
                             )
-                          : const Center(child: Text('No recent Purchases!'));
+                          : const Center(child: Text('No recent purchases'));
                     },
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (_, __) => const Center(child: Text('No recent Purchases!')),
+                    error: (_, __) => const Center(child: Text('No recent purchases')),
                   );
                 },
               ),

@@ -2,10 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/routes/route_generator.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
+import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
+import 'package:shop_ez/model/cash_register/cash_register_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
@@ -52,7 +55,16 @@ class ScreenSales extends StatelessWidget {
         title: 'Sales',
         actions: [
           IconButton(
-            onPressed: () => Navigator.pushNamed(context, routeCashRegister),
+            onPressed: () {
+              final CashRegisterModel? _cashModel = UserUtils.instance.cashRegisterModel;
+              if (_cashModel == null || _cashModel.action == 'close') {
+                log('message');
+
+                Navigator.push(context, RouteGenerator.cashRegister());
+              } else {
+                Navigator.pushNamed(context, routeCashRegister);
+              }
+            },
             icon: const Icon(Icons.point_of_sale),
           )
         ],

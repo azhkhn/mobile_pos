@@ -349,7 +349,7 @@ class ScreenTransactionsReport extends StatelessWidget {
                       return const Center(child: CircularProgressIndicator());
                     case ConnectionState.done:
                     default:
-                      if (!snapshot.hasData) return const Center(child: Text('No recent Transactions!'));
+                      if (!snapshot.hasData) return const Center(child: Text('No recent transactions'));
 
                       final List<TransactionsModel> _recentPayments = snapshot.data as List<TransactionsModel>;
                       transactionsNotifier.value = _recentPayments;
@@ -368,7 +368,7 @@ class ScreenTransactionsReport extends StatelessWidget {
                                   },
                                 );
                               })
-                          : const Center(child: Text('No recent Transactions!'));
+                          : const Center(child: Text('No recent transactions'));
                   }
                 },
               ),

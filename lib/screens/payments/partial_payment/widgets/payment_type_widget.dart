@@ -10,7 +10,7 @@ import '../../../../core/constant/sizes.dart';
 import '../../../../widgets/text_field_widgets/text_field_widgets.dart';
 
 //========== DropDown Items ==========
-const List types = ['Cash', 'Bank'];
+const List _types = ['Cash', 'Bank'];
 
 class PaymentTypeWidget extends StatelessWidget {
   const PaymentTypeWidget({
@@ -104,7 +104,7 @@ class PaymentTypeWidget extends StatelessWidget {
                           label: Text('Paying By *', style: TextStyle(color: klabelColorBlack)),
                           border: OutlineInputBorder(),
                         ),
-                        items: types
+                        items: _types
                             .map((values) => DropdownMenuItem<String>(
                                   value: values,
                                   child: Text(values),

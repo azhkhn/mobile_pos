@@ -185,7 +185,7 @@ class RouteGenerator {
       case routePos:
         if (permission!.sale.contains('2')) {
           final CashRegisterModel? _cashModel = UserUtils.instance.cashRegisterModel;
-          if (_cashModel == null || _cashModel.action == 'close') return _cashRegister();
+          if (_cashModel == null || _cashModel.action == 'close') return cashRegister();
           return MaterialPageRoute(builder: (_) => const PosScreen());
         }
         return _errorPermission();
@@ -370,12 +370,16 @@ class RouteGenerator {
   }
 
   //========== Error Page if not permitted ==========
-  static Route<dynamic> _cashRegister() {
+  static Route<dynamic> cashRegister() {
     return PageRouteBuilder(
       opaque: false,
       barrierColor: kColorDim,
       pageBuilder: (context, __, ___) {
-        final TextEditingController _cashController = TextEditingController();
+        final CashRegisterModel _cashModel = UserUtils.instance.cashRegisterModel!;
+
+        final String balanceAmount = _cashModel.amount;
+
+        final TextEditingController _cashController = TextEditingController(text: balanceAmount);
         final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
         return AlertDialog(
           content: Column(
@@ -421,7 +425,7 @@ class RouteGenerator {
 
                     CashRegisterDatabase.instance.createCashRegister(cashRegisterModel);
                   },
-                  buttonText: 'Submit'),
+                  buttonText: 'Start Register'),
             ],
           ),
         );

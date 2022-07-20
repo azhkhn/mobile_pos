@@ -154,7 +154,7 @@ class ScreenPurchasesTaxReport extends StatelessWidget {
 
                         default:
                           if (!snapshot.hasData) {
-                            return const Center(child: Text('No recent Purchases!'));
+                            return const Center(child: Text('No recent purchases'));
                           }
                           purchasesNotifier.value = snapshot.data!;
                           return ValueListenableBuilder(
@@ -170,7 +170,7 @@ class ScreenPurchasesTaxReport extends StatelessWidget {
                                           );
                                         },
                                       )
-                                    : const Center(child: Text('No recent Purchases!'));
+                                    : const Center(child: Text('No recent purchases'));
                               });
                       }
                     }),

@@ -155,7 +155,7 @@ class ScreenSalesTaxReport extends StatelessWidget {
 
                         default:
                           if (!snapshot.hasData) {
-                            return const Center(child: Text('No recent Sales!'));
+                            return const Center(child: Text('No recent sales'));
                           }
                           salesNotifier.value = snapshot.data!;
                           return ValueListenableBuilder(
@@ -176,7 +176,7 @@ class ScreenSalesTaxReport extends StatelessWidget {
                                           );
                                         },
                                       )
-                                    : const Center(child: Text('No recent Sales!'));
+                                    : const Center(child: Text('No recent sales'));
                               });
                       }
                     }),

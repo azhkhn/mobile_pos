@@ -97,8 +97,8 @@ class ScreenStockReOrderReport extends StatelessWidget {
                       case ConnectionState.done:
 
                       default:
-                        if (!snapshot.hasData) return const Center(child: Text('No re-order stocks!'));
-                        if (snapshot.data!.isEmpty) return const Center(child: Text('No re-order stocks!'));
+                        if (!snapshot.hasData) return const Center(child: Text('No re-order stocks'));
+                        if (snapshot.data!.isEmpty) return const Center(child: Text('No re-order stocks'));
                         itemsNotifier.value = snapshot.data!;
 
                         if (stableItemsNotifier.value.isEmpty) {
@@ -117,7 +117,7 @@ class ScreenStockReOrderReport extends StatelessWidget {
                                         );
                                       },
                                     )
-                                  : const Center(child: Text('No re-order stocks!'));
+                                  : const Center(child: Text('No re-order stocks'));
                             });
                     }
                   }),

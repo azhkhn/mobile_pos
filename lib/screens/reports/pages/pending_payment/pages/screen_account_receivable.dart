@@ -191,7 +191,7 @@ class ScreenAccountReceivable extends StatelessWidget {
                       return const Center(child: CircularProgressIndicator());
                     case ConnectionState.done:
                     default:
-                      if (!snapshot.hasData) return const Center(child: Text('No Receivable Payments!'));
+                      if (!snapshot.hasData) return const Center(child: Text('No recent receivable!'));
 
                       final List<SalesModel> _recentPayments = snapshot.data as List<SalesModel>;
                       receivableNotifier.value = _recentPayments;
@@ -234,7 +234,7 @@ class ScreenAccountReceivable extends StatelessWidget {
                                   },
                                 );
                               })
-                          : const Center(child: Text('No Receivable Payments!'));
+                          : const Center(child: Text('No recent receivable'));
                   }
                 },
               ),

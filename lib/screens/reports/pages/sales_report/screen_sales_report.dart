@@ -99,10 +99,10 @@ class ScreenSalesReport extends StatelessWidget {
                                     : const Center(child: Text('Sales Not Found!'));
                               },
                             )
-                          : const Center(child: Text('No recent Sales!'));
+                          : const Center(child: Text('No recent sales'));
                     },
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (_, __) => const Center(child: Text('No recent Sales!')),
+                    error: (_, __) => const Center(child: Text('No recent sales')),
                   );
                 },
               ),

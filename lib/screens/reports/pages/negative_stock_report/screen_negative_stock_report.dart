@@ -97,8 +97,8 @@ class ScreenNegativeStockReport extends StatelessWidget {
                       case ConnectionState.done:
 
                       default:
-                        if (!snapshot.hasData) return const Center(child: Text('No negative stocks!'));
-                        if (snapshot.data!.isEmpty) return const Center(child: Text('No negative stocks!'));
+                        if (!snapshot.hasData) return const Center(child: Text('No negative stocks'));
+                        if (snapshot.data!.isEmpty) return const Center(child: Text('No negative stocks'));
 
                         itemsNotifier.value = snapshot.data!;
 
@@ -118,7 +118,7 @@ class ScreenNegativeStockReport extends StatelessWidget {
                                         );
                                       },
                                     )
-                                  : const Center(child: Text('No negative stocks!'));
+                                  : const Center(child: Text('No negative stocks'));
                             });
                     }
                   }),

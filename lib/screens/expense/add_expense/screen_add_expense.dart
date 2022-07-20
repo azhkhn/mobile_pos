@@ -64,6 +64,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
   bool jpgOrNot = false;
   String documentName = 'Document';
   String? documentExtension;
+  String _paymentMethod = 'Cash';
 
   final _expenseTitleController = TextEditingController();
   final _amountController = TextEditingController();
@@ -163,6 +164,32 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
                       textInputType: TextInputType.number,
                       validator: (value) => Validators.nullValidator(value),
                     ),
+                    kHeight10,
+
+                    //========== Payment Method Dropdown ==========
+                    DropdownButtonFormField(
+                      decoration: const InputDecoration(
+                        label: Text(
+                          'Payment Method',
+                          style: TextStyle(color: klabelColorGrey),
+                        ),
+                        contentPadding: EdgeInsets.all(10),
+                      ),
+                      isExpanded: true,
+                      value: _paymentMethod,
+                      items: ['Cash', 'Bank'].map((value) => DropdownMenuItem(value: value, child: Text(value))).toList(),
+                      onChanged: (value) {
+                        _paymentMethod = value.toString();
+                        log('Payment Method = $_paymentMethod');
+                      },
+                      validator: (value) {
+                        if (value == null) {
+                          return 'This field is required*';
+                        }
+                        return null;
+                      },
+                    ),
+
                     kHeight10,
 
                     //========== Product VAT Dropdown ==========
@@ -418,12 +445,13 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
   }
 
   Future<void> addExpense() async {
-    final String? expenseCategory, expenseTitle, amount, dateTime, date, note, voucherNumber, payBy, documents;
+    final String? expenseCategory, expenseTitle, amount, paymentMethod, dateTime, date, note, voucherNumber, payBy, documents;
 
     //retieving values from TextFields to String
     expenseCategory = _expenseCategoryController.trim();
     expenseTitle = _expenseTitleController.text.trim();
     amount = _amountController.text.trim();
+    paymentMethod = _paymentMethod;
     dateTime = DateTime.now().toIso8601String();
     date = _selectedDate.trim();
     note = _noteController.text.isEmpty ? null : _noteController.text.trim();
@@ -458,6 +486,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
         expenseCategory: expenseCategory,
         expenseTitle: expenseTitle,
         amount: amount,
+        paymentMethod: paymentMethod,
         vatId: _vatId,
         vatMethod: _vathMethod,
         vatAmount: _vatAmount,
