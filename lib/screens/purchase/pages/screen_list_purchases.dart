@@ -4,12 +4,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 
 import 'package:shop_ez/screens/purchase/widgets/purchase_card_widget.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_list_filter.dart';
+import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
 
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
@@ -70,10 +73,41 @@ class ScreenPurchasesList extends StatelessWidget {
                                       ? ListView.builder(
                                           itemCount: purchases.length,
                                           itemBuilder: (BuildContext context, int index) {
-                                            return PurchaseCardWidget(
-                                              index: index,
-                                              purchases: purchases[index],
-                                            );
+                                            return InkWell(
+                                                child: PurchaseCardWidget(
+                                                  index: index,
+                                                  purchases: purchases[index],
+                                                ),
+                                                onTap: () {
+                                                  final bool payable =
+                                                      purchases[index].paymentStatus == 'Partial' || purchases[index].paymentStatus == 'Credit';
+
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (ctx) => CustomPopupOptions(
+                                                      options: [
+                                                        //========== Make Payment ==========
+                                                        if (payable)
+                                                          {
+                                                            'title': 'Make Payment',
+                                                            'color': kTeal400,
+                                                            'icon': Icons.payment_outlined,
+                                                            'action': () async {
+                                                              final dynamic updatedPurchase = await Navigator.pushNamed(
+                                                                  context, routeTransactionPurchase,
+                                                                  arguments: purchases[index]);
+                                                              if (updatedPurchase != null) {
+                                                                List<PurchaseModel> updatesPurchases = purchases;
+                                                                updatesPurchases[index] = updatedPurchase;
+
+                                                                ref.read(purchasesProvider.notifier).state = updatesPurchases;
+                                                              }
+                                                            }
+                                                          },
+                                                      ],
+                                                    ),
+                                                  );
+                                                });
                                           },
                                         )
                                       : const Center(child: Text('Purchases Not Found!'));

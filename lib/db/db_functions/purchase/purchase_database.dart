@@ -81,13 +81,31 @@ class PurchaseDatabase {
   }
 
   //========== Get Today's Purchase ==========
-  Future<List<PurchaseModel>> getTodayPurchase(String today) async {
+  Future<List<PurchaseModel>> getTodayPurchases(String today) async {
     final db = await dbInstance.database;
     final _result = await db.rawQuery('''SELECT * FROM $tablePurchase WHERE ${PurchaseFields.dateTime} LIKE "$today%"''');
     log('Purchase of Today === $_result');
 
     final _todayPurchase = _result.map((json) => PurchaseModel.fromJson(json)).toList();
     return _todayPurchase;
+  }
+
+  //========== Get New Purchase ==========
+  Future<List<PurchaseModel>> getNewPurchases(DateTime date) async {
+    final db = await dbInstance.database;
+    final String _date = Converter.dateForDatabase.format(date.subtract(const Duration(days: 1)));
+    final _result = await db.rawQuery('''SELECT * FROM $tablePurchase WHERE DATE(${PurchaseFields.dateTime}) > ?''', [_date]);
+    log('Purchase of $date === $_result');
+
+    final _todayPurchase = _result.map((json) => PurchaseModel.fromJson(json)).toList();
+
+    final List<PurchaseModel> filterdPurchases = [];
+    for (PurchaseModel purchase in _todayPurchase) {
+      final DateTime _purchasedDate = DateTime.parse(purchase.dateTime);
+      if (_purchasedDate.isAfter(date)) filterdPurchases.add(purchase);
+    }
+
+    return filterdPurchases;
   }
 
 //========== Get All Purchases ==========

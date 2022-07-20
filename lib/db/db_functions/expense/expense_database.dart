@@ -37,6 +37,24 @@ class ExpenseDatabase {
     return _todayExpense;
   }
 
+  //========== Get New Expense ==========
+  Future<List<ExpenseModel>> getNewExpense(DateTime date) async {
+    final db = await dbInstance.database;
+    final String _date = Converter.dateForDatabase.format(date.subtract(const Duration(days: 1)));
+    final _result = await db.rawQuery('''SELECT * FROM $tableExpense WHERE DATE(${ExpenseFields.dateTime}) > ?''', [_date]);
+    log('Expense of $date === $_result');
+
+    final _todayExpenses = _result.map((json) => ExpenseModel.fromJson(json)).toList();
+
+    final List<ExpenseModel> filterdExpenses = [];
+    for (ExpenseModel expense in _todayExpenses) {
+      final DateTime expenseDate = DateTime.parse(expense.dateTime);
+      if (expenseDate.isAfter(date)) filterdExpenses.add(expense);
+    }
+
+    return filterdExpenses;
+  }
+
   //========== Get Expenses Date ==========
   Future<List<ExpenseModel>> getExpensesByDate({DateTime? fromDate, DateTime? toDate}) async {
     final db = await dbInstance.database;

@@ -34,7 +34,7 @@ final summaryFutureProvider = FutureProvider.autoDispose<List<Map<String, num>>>
   final _today = Converter.dateFormatReverse.format(_date);
 
   final List<SalesModel> sales = await SalesDatabase.instance.getTodaySales(_today);
-  final List<PurchaseModel> purchases = await PurchaseDatabase.instance.getTodayPurchase(_today);
+  final List<PurchaseModel> purchases = await PurchaseDatabase.instance.getTodayPurchases(_today);
   final List<ExpenseModel> expenses = await ExpenseDatabase.instance.getTodayExpense(_today);
 
   return await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
@@ -272,6 +272,8 @@ class ScreenOperationSummary extends StatelessWidget {
                                       const Divider(color: kBlack),
                                       kHeight5,
                                       summaryRow(name: 'Total Expenses', amount: expense['totalAmount']!),
+                                      summaryRow(name: 'Cash Expenses', amount: expense['cashAmount']!),
+                                      summaryRow(name: 'Bank Expenses', amount: expense['bankAmount']!),
                                       summaryRow(name: 'Expenses VAT', amount: expense['vatAmount']!),
                                       kHeight5,
                                     ],
@@ -289,7 +291,7 @@ class ScreenOperationSummary extends StatelessWidget {
                                     children: [
                                       const Divider(color: kBlack),
                                       Text(
-                                        Converter.currency.format(sale['cashAmount']! - purchase['cashAmount']! - expense['totalAmount']!),
+                                        Converter.currency.format(sale['cashAmount']! - purchase['cashAmount']! - expense['cashAmount']!),
                                         style: kTextBlack,
                                         textAlign: TextAlign.center,
                                       ),
@@ -390,11 +392,15 @@ Future<List<Map<String, num>>> _getSummaries({
   //== == == == == Expenses Summary == == == == ==
   for (ExpenseModel expense in expenses) {
     totalAmount.add(num.parse(expense.amount));
+    if (expense.paymentMethod == 'Cash') cashAmount.add(num.parse(expense.amount));
+    if (expense.paymentMethod == 'Bank') bankAmount.add(num.parse(expense.amount));
     vatAmount.add(num.parse(expense.vatAmount ?? '0'));
   }
 
   final Map<String, num> expensesSummary = {
     'totalAmount': totalAmount.sum,
+    'cashAmount': cashAmount.sum,
+    'bankAmount': bankAmount.sum,
     'vatAmount': vatAmount.sum,
   };
 

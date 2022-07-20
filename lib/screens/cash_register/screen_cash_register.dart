@@ -29,12 +29,13 @@ final isLoadedProvider = StateProvider.autoDispose<bool>((ref) => false);
 final summaryProvider = StateProvider.autoDispose<List<Map<String, num>>>((ref) => []);
 
 final summaryFutureProvider = FutureProvider.autoDispose<List<Map<String, num>>>((ref) async {
-  final _date = DateTime.now();
-  final _today = Converter.dateFormatReverse.format(_date);
+  final CashRegisterModel? _cashModel = UserUtils.instance.cashRegisterModel;
 
-  final List<SalesModel> sales = await SalesDatabase.instance.getTodaySales(_today);
-  final List<PurchaseModel> purchases = await PurchaseDatabase.instance.getTodayPurchase(_today);
-  final List<ExpenseModel> expenses = await ExpenseDatabase.instance.getTodayExpense(_today);
+  final DateTime _date = DateTime.parse(_cashModel!.dateTime);
+
+  final List<SalesModel> sales = await SalesDatabase.instance.getNewSales(_date);
+  final List<PurchaseModel> purchases = await PurchaseDatabase.instance.getNewPurchases(_date);
+  final List<ExpenseModel> expenses = await ExpenseDatabase.instance.getNewExpense(_date);
 
   return await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
 });
@@ -77,7 +78,7 @@ class ScreenCashRegister extends StatelessWidget {
 
                             final CashRegisterModel _cashModel = UserUtils.instance.cashRegisterModel!;
 
-                            final num openingBalance = num.parse(_cashModel.amount);
+                            final num openingCash = num.parse(_cashModel.amount);
 
                             final num netAmount = Converter.amountRounder(sale['cashAmount']! - purchase['cashAmount']! - expense['cashAmount']!);
 
@@ -147,29 +148,28 @@ class ScreenCashRegister extends StatelessWidget {
                                   ),
                                 ),
 
-                                //== == == == == Balance Amount == == == == ==
+                                //== == == == == Register Summary == == == == ==
                                 Card(
                                   elevation: 5,
                                   child: ListTile(
-                                    title: const Text('Balance Amount', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.center),
+                                    title: const Text('Register Summary', style: TextStyle(fontWeight: FontWeight.w700), textAlign: TextAlign.center),
                                     subtitle: Column(
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         const Divider(color: kBlack),
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [const Text('Net Amount : '), Text('$netAmount', style: kTextBlack, textAlign: TextAlign.center)],
+                                          children: [const Text('Net Cash : '), Text('$netAmount', style: kTextBlack, textAlign: TextAlign.center)],
                                         ),
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            const Text('Opening Balance : '),
-                                            Text('$openingBalance', style: kTextBlack, textAlign: TextAlign.center)
+                                            const Text('Opening Cash : '),
+                                            Text('$openingCash', style: kTextBlack, textAlign: TextAlign.center)
                                           ],
                                         ),
                                         kHeight5,
-                                        Text(Converter.currency.format(netAmount + openingBalance),
-                                            style: kTextBlackW700, textAlign: TextAlign.center),
+                                        Text(Converter.currency.format(netAmount + openingCash), style: kTextBlackW700, textAlign: TextAlign.center),
                                         kHeight5,
                                       ],
                                     ),
@@ -181,9 +181,10 @@ class ScreenCashRegister extends StatelessWidget {
                                 //== == == == == Take Home == == == == ==
                                 CustomMaterialBtton(
                                   onPressed: () {
-                                    final TextEditingController _cashController = TextEditingController(text: netAmount.toString());
+                                    final num balanceAmount = netAmount + openingCash;
+                                    final TextEditingController _cashController = TextEditingController(text: '$balanceAmount');
                                     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-                                    final closingProvider = StateProvider.autoDispose<num>((ref) => netAmount);
+                                    final closingProvider = StateProvider.autoDispose<num>((ref) => 0);
                                     showDialog(
                                         context: context,
                                         builder: (_) {
@@ -191,6 +192,33 @@ class ScreenCashRegister extends StatelessWidget {
                                             content: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    const Text('Net Cash : ', style: kText12),
+                                                    Text(
+                                                      Converter.currency.format(balanceAmount),
+                                                      style: kText12,
+                                                    )
+                                                  ],
+                                                ),
+                                                kHeight5,
+                                                Consumer(
+                                                  builder: (context, ref, _) {
+                                                    final num closingCash = ref.watch(closingProvider);
+                                                    return Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        const Text('Closing Cash : ', style: kText12),
+                                                        Text(
+                                                          Converter.currency.format(closingCash),
+                                                          style: kText12,
+                                                        )
+                                                      ],
+                                                    );
+                                                  },
+                                                ),
+                                                kHeight15,
                                                 Form(
                                                   key: _formKey,
                                                   child: TextFeildWidget(
@@ -206,38 +234,23 @@ class ScreenCashRegister extends StatelessWidget {
                                                       if (value == null || value.isEmpty || value == '.') {
                                                         return 'This field is required*';
                                                       }
-                                                      if (num.parse(value) > netAmount) return 'Amount cannot exceed the balance*';
+                                                      if (num.parse(value) > balanceAmount) return 'Amount cannot exceed the balance*';
                                                       return null;
                                                     },
                                                     onChanged: (value) {
                                                       Debouncer().run(() {
-                                                        ref.read(closingProvider.notifier).state = netAmount - num.parse(value!);
+                                                        ref.read(closingProvider.notifier).state =
+                                                            Converter.amountRounder(balanceAmount - num.parse(value!));
                                                       });
                                                     },
                                                   ),
-                                                ),
-                                                kHeight5,
-                                                Consumer(
-                                                  builder: (context, ref, _) {
-                                                    final num closingBalance = ref.watch(closingProvider);
-                                                    return Row(
-                                                      children: [
-                                                        const Text('Closing Balance : '),
-                                                        Expanded(
-                                                          child: Text(
-                                                            Converter.currency.format(closingBalance),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    );
-                                                  },
                                                 ),
                                                 kHeight5,
                                                 CustomMaterialBtton(
                                                     onPressed: () async {
                                                       if (!_formKey.currentState!.validate()) return;
 
-                                                      final num closingBalance = Converter.amountRounder(netAmount - num.parse(_cashController.text));
+                                                      final num closingBalance = ref.read(closingProvider);
 
                                                       final String amount = closingBalance.toString();
                                                       final String dateTime = DateTime.now().toIso8601String();

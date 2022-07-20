@@ -4,12 +4,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/sales/widgets/sales_card_widget.dart';
 import 'package:shop_ez/screens/sales/widgets/sales_list_filter.dart';
+import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
@@ -75,7 +77,46 @@ class ScreenSalesList extends StatelessWidget {
                                                 sales: sales[index],
                                               ),
                                               onTap: () async {
-                                                await Navigator.pushNamed(context, routeSalesInvoice, arguments: [sales[index], false]);
+                                                final bool payable =
+                                                    sales[index].paymentStatus == 'Partial' || sales[index].paymentStatus == 'Credit';
+
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (ctx) => CustomPopupOptions(
+                                                    options: [
+                                                      //========== View Invoice ==========
+                                                      {
+                                                        'title': 'View Invoice',
+                                                        'color': kBlueGrey400,
+                                                        'icon': Icons.receipt_outlined,
+                                                        'action': () async {
+                                                          await Navigator.pushNamed(
+                                                            context,
+                                                            routeSalesInvoice,
+                                                            arguments: [sales[index], false],
+                                                          );
+                                                        },
+                                                      },
+                                                      //========== Make Payment ==========
+                                                      if (payable)
+                                                        {
+                                                          'title': 'Make Payment',
+                                                          'color': kTeal400,
+                                                          'icon': Icons.payment_outlined,
+                                                          'action': () async {
+                                                            final dynamic updatedSale =
+                                                                await Navigator.pushNamed(context, routeTransactionSale, arguments: sales[index]);
+                                                            if (updatedSale != null) {
+                                                              List<SalesModel> updatesSales = sales;
+                                                              updatesSales[index] = updatedSale;
+
+                                                              ref.read(salesProvider.notifier).state = updatesSales;
+                                                            }
+                                                          }
+                                                        },
+                                                    ],
+                                                  ),
+                                                );
                                               },
                                             );
                                           },

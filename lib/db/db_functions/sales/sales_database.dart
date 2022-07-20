@@ -44,6 +44,24 @@ class SalesDatabase {
     }
   }
 
+//========== Get New Sales ==========
+  Future<List<SalesModel>> getNewSales(DateTime date) async {
+    final db = await dbInstance.database;
+    final String _date = Converter.dateForDatabase.format(date.subtract(const Duration(days: 1)));
+
+    final _result = await db.rawQuery('''SELECT * FROM $tableSales WHERE DATE(${SalesFields.dateTime}) > ?''', [_date]);
+    log('Sales of $date === $_result');
+    final List<SalesModel> _todaySales = _result.map((json) => SalesModel.fromJson(json)).toList();
+
+    final List<SalesModel> filterdSale = [];
+    for (SalesModel sale in _todaySales) {
+      final DateTime _soldDate = DateTime.parse(sale.dateTime);
+      if (_soldDate.isAfter(date)) filterdSale.add(sale);
+    }
+
+    return filterdSale;
+  }
+
 //========== Get Today's Sales ==========
   Future<List<SalesModel>> getTodaySales(String today) async {
     final db = await dbInstance.database;

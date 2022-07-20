@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/cash_register/cash_register_database.dart';
@@ -375,16 +377,27 @@ class RouteGenerator {
       opaque: false,
       barrierColor: kColorDim,
       pageBuilder: (context, __, ___) {
-        final CashRegisterModel _cashModel = UserUtils.instance.cashRegisterModel!;
+        final CashRegisterModel? _cashModel = UserUtils.instance.cashRegisterModel;
 
-        final String balanceAmount = _cashModel.amount;
+        final String? cashInHand = _cashModel?.amount;
 
-        final TextEditingController _cashController = TextEditingController(text: balanceAmount);
+        final TextEditingController _cashController = TextEditingController(text: cashInHand);
         final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
         return AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Cash In Hand : ', style: kText12),
+                  Text(
+                    Converter.currency.format(num.parse(cashInHand!)),
+                    style: kText12,
+                  )
+                ],
+              ),
+              kHeight15,
               Form(
                 key: _formKey,
                 child: TextFeildWidget(
@@ -400,6 +413,8 @@ class RouteGenerator {
                     if (value == null || value.isEmpty || value == '.') {
                       return 'This field is required*';
                     }
+                    if (num.parse(value) < num.parse(cashInHand)) return 'Amount cannot be lower*';
+
                     return null;
                   },
                 ),
