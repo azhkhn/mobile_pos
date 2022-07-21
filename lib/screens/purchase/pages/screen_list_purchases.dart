@@ -55,7 +55,7 @@ class ScreenPurchasesList extends StatelessWidget {
 
                     return future.when(
                       data: (value) {
-                        List<PurchaseModel> purchases = value;
+                        List<PurchaseModel> _purchases = value;
                         log('FutureProvider() => called!');
 
                         return value.isNotEmpty
@@ -64,49 +64,50 @@ class ScreenPurchasesList extends StatelessWidget {
                                   log('PurchasesProvider() => called!');
 
                                   final List<PurchaseModel> filteredPurchases = ref.watch(purchasesProvider);
-                                  final _isLoaded = ref.read(isLoadedProvider.state);
+                                  final _isLoaded = ref.read(isLoadedProvider.notifier);
                                   log('is Loaded == ' + _isLoaded.state.toString());
-                                  if (_isLoaded.state) purchases = filteredPurchases;
+                                  if (_isLoaded.state) _purchases = filteredPurchases;
                                   WidgetsBinding.instance.addPostFrameCallback((_) => _isLoaded.state = true);
 
-                                  return purchases.isNotEmpty
+                                  return _purchases.isNotEmpty
                                       ? ListView.builder(
-                                          itemCount: purchases.length,
+                                          itemCount: _purchases.length,
                                           itemBuilder: (BuildContext context, int index) {
                                             return InkWell(
                                                 child: PurchaseCardWidget(
                                                   index: index,
-                                                  purchases: purchases[index],
+                                                  purchases: _purchases[index],
                                                 ),
-                                                onTap: () {
+                                                onTap: () async {
                                                   final bool payable =
-                                                      purchases[index].paymentStatus == 'Partial' || purchases[index].paymentStatus == 'Credit';
+                                                      _purchases[index].paymentStatus == 'Partial' || _purchases[index].paymentStatus == 'Credit';
 
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (ctx) => CustomPopupOptions(
-                                                      options: [
-                                                        //========== Make Payment ==========
-                                                        if (payable)
+                                                  if (payable) {
+                                                    await showDialog(
+                                                      context: context,
+                                                      builder: (ctx) => CustomPopupOptions(
+                                                        options: [
+                                                          //========== Make Payment ==========
                                                           {
                                                             'title': 'Make Payment',
                                                             'color': kTeal400,
                                                             'icon': Icons.payment_outlined,
                                                             'action': () async {
-                                                              final dynamic updatedPurchase = await Navigator.pushNamed(
+                                                              final dynamic _updatedPurchase = await Navigator.pushNamed(
                                                                   context, routeTransactionPurchase,
-                                                                  arguments: purchases[index]);
-                                                              if (updatedPurchase != null) {
-                                                                List<PurchaseModel> updatesPurchases = purchases;
-                                                                updatesPurchases[index] = updatedPurchase;
+                                                                  arguments: _purchases[index]);
+                                                              if (_updatedPurchase != null) {
+                                                                _purchases[index] = _updatedPurchase;
 
-                                                                ref.read(purchasesProvider.notifier).state = updatesPurchases;
+                                                                ref.read(purchasesProvider.notifier).state = [];
+                                                                ref.read(purchasesProvider.notifier).state = _purchases;
                                                               }
                                                             }
                                                           },
-                                                      ],
-                                                    ),
-                                                  );
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }
                                                 });
                                           },
                                         )

@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable
-
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -701,11 +699,13 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
         alertQuantity: alertQuantity,
         itemImage: itemImage,
       );
+
       try {
         if (!isUpdate) {
           await itemMasterDB.createItem(_itemMasterModel);
           log('Item $itemName Added!');
           kSnackBar(context: context, success: true, content: 'Product added successfully!');
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => super.widget));
         } else {
           final ItemMasterModel? _item = await itemMasterDB.updateProduct(_itemMasterModel);
           kSnackBar(context: context, update: true, content: "Product updated successfully!");
@@ -776,4 +776,6 @@ class _ScreenItemMasterState extends State<ScreenItemMaster> {
       selectedImageNotifier.value = File(product.itemImage!);
     }
   }
+
+  resetItemMaster() {}
 }

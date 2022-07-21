@@ -53,7 +53,7 @@ class ScreenSalesList extends StatelessWidget {
 
                     return future.when(
                       data: (value) {
-                        List<SalesModel> sales = value;
+                        List<SalesModel> _sales = value;
                         log('FutureProvider() => called!');
 
                         return value.isNotEmpty
@@ -64,21 +64,21 @@ class ScreenSalesList extends StatelessWidget {
                                   final List<SalesModel> filteredSales = ref.watch(salesProvider);
                                   final _isLoaded = ref.read(isLoadedProvider.state);
                                   log('is Loaded == ' + _isLoaded.state.toString());
-                                  if (_isLoaded.state) sales = filteredSales;
+                                  if (_isLoaded.state) _sales = filteredSales;
                                   WidgetsBinding.instance.addPostFrameCallback((_) => _isLoaded.state = true);
 
-                                  return sales.isNotEmpty
+                                  return _sales.isNotEmpty
                                       ? ListView.builder(
-                                          itemCount: sales.length,
+                                          itemCount: _sales.length,
                                           itemBuilder: (BuildContext context, int index) {
                                             return InkWell(
                                               child: SalesCardWidget(
                                                 index: index,
-                                                sales: sales[index],
+                                                sales: _sales[index],
                                               ),
                                               onTap: () async {
                                                 final bool payable =
-                                                    sales[index].paymentStatus == 'Partial' || sales[index].paymentStatus == 'Credit';
+                                                    _sales[index].paymentStatus == 'Partial' || _sales[index].paymentStatus == 'Credit';
 
                                                 showDialog(
                                                   context: context,
@@ -93,7 +93,7 @@ class ScreenSalesList extends StatelessWidget {
                                                           await Navigator.pushNamed(
                                                             context,
                                                             routeSalesInvoice,
-                                                            arguments: [sales[index], false],
+                                                            arguments: [_sales[index], false],
                                                           );
                                                         },
                                                       },
@@ -104,13 +104,13 @@ class ScreenSalesList extends StatelessWidget {
                                                           'color': kTeal400,
                                                           'icon': Icons.payment_outlined,
                                                           'action': () async {
-                                                            final dynamic updatedSale =
-                                                                await Navigator.pushNamed(context, routeTransactionSale, arguments: sales[index]);
-                                                            if (updatedSale != null) {
-                                                              List<SalesModel> updatesSales = sales;
-                                                              updatesSales[index] = updatedSale;
+                                                            final dynamic _updatedSale =
+                                                                await Navigator.pushNamed(context, routeTransactionSale, arguments: _sales[index]);
+                                                            if (_updatedSale != null) {
+                                                              _sales[index] = _updatedSale;
 
-                                                              ref.read(salesProvider.notifier).state = updatesSales;
+                                                              ref.read(salesProvider.notifier).state = [];
+                                                              ref.read(salesProvider.notifier).state = _sales;
                                                             }
                                                           }
                                                         },
@@ -121,13 +121,13 @@ class ScreenSalesList extends StatelessWidget {
                                             );
                                           },
                                         )
-                                      : const Center(child: Text('Sales Not Found!'));
+                                      : const Center(child: Text('No sales found'));
                                 },
                               )
-                            : const Center(child: Text('No recent Sales!'));
+                            : const Center(child: Text('No recent sales'));
                       },
                       loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (_, __) => const Center(child: Text('No recent Sales!')),
+                      error: (_, __) => const Center(child: Text('No recent sales')),
                     );
                   },
                 ),

@@ -143,10 +143,16 @@ class TransactionScreenSale extends StatelessWidget {
       final String _dateTime = DateTime.now().toIso8601String();
 
       final num _payable = Converter.amountRounder(num.parse(sale.balance));
-      final num _paid = Converter.amountRounder(num.parse(sale.balance));
+      final num _paid = Converter.amountRounder(num.parse(sale.paid));
       final num _paying = Converter.amountRounder(num.parse(TransactionSalePayment.amountController.text.trim()));
       final num _updatedPaid = Converter.amountRounder(_paid + _paying);
       final num _updatedBalance = Converter.amountRounder(_payable - _paying);
+
+      // log('_payable = $_payable');
+      // log('_paid = $_paid');
+      // log('_paying = $_paying');
+      // log('_updatedPaid = $_updatedPaid');
+      // log('_updatedBalance = $_updatedBalance');
 
       final TransactionsModel _transaction = TransactionsModel(
         category: 'Sales',

@@ -330,7 +330,7 @@ class PurchaseListFilter extends ConsumerWidget {
     //Payment Filter
     if (_payment != null) filteredPurchases = paymentFilter(_payment, ref, filteredPurchases);
 
-    log('Filtered Purchases = $filteredPurchases');
+    // log('Filtered Purchases = $filteredPurchases');
 
     ref.read(ScreenPurchasesList.purchasesProvider.notifier).state = filteredPurchases;
   }

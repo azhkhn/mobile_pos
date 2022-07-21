@@ -77,7 +77,7 @@ class PurchaseDatabase {
   Future<void> updatePurchaseByPurchaseId({required final PurchaseModel purchase}) async {
     final db = await dbInstance.database;
     await db.update(tablePurchase, purchase.toJson(), where: '${PurchaseFields.id} = ?', whereArgs: [purchase.id]);
-    log('Purchase Updated Successfully! ${purchase.id}');
+    log('Purchase (${purchase.id}) Updated Successfully!');
   }
 
   //========== Get Today's Purchase ==========
@@ -113,7 +113,7 @@ class PurchaseDatabase {
     final db = await dbInstance.database;
     final _result = await db.query(tablePurchase);
     // db.delete(tablePurchase);
-    log('Purchases == $_result');
+    log('Fetching purchases from the database');
     if (_result.isNotEmpty) {
       final _purchases = _result.map((json) => PurchaseModel.fromJson(json)).toList();
       return _purchases;

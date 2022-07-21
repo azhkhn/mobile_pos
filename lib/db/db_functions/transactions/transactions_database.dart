@@ -18,7 +18,7 @@ class TransactionDatabase {
   Future<List<TransactionsModel>> getAllTransactions() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableTransactions);
-    log('Transactions == $_result');
+    log('Fetching transactions from the database');
     final _transactions = _result.map((json) => TransactionsModel.fromJson(json)).toList();
 
     return _transactions;
@@ -28,7 +28,7 @@ class TransactionDatabase {
   Future<List<TransactionsModel>> getAllTransactionsBySalesId(int salesId) async {
     final db = await dbInstance.database;
     final _result = await db.query(tableTransactions, where: '${TransactionsField.salesId} = ?', whereArgs: [salesId]);
-    log('Transactions by Sales Id ($salesId) == $_result');
+    log('Fetching Transactions by Sales Id ($salesId)');
     final _transactions = _result.map((json) => TransactionsModel.fromJson(json)).toList();
     return _transactions;
   }
@@ -37,7 +37,7 @@ class TransactionDatabase {
   Future<List<TransactionsModel>> getAllTransactionsByPurchaseId(int purchaseId) async {
     final db = await dbInstance.database;
     final _result = await db.query(tableTransactions, where: '${TransactionsField.purchaseId} = ?', whereArgs: [purchaseId]);
-    log('Transactions by Purchase Id ($purchaseId) == $_result');
+    log('Fetching Transactions by Purchase Id ($purchaseId)');
     final _transactions = _result.map((json) => TransactionsModel.fromJson(json)).toList();
     return _transactions;
   }
@@ -46,7 +46,7 @@ class TransactionDatabase {
   Future<List<TransactionsModel>> getAllTransactionsByCustomerId(int customerId) async {
     final db = await dbInstance.database;
     final _result = await db.query(tableTransactions, where: '${TransactionsField.customerId} = ?', whereArgs: [customerId]);
-    log('Transactions by Customer Id ($customerId) == $_result');
+    log('Fetching Transactions by Customer Id ($customerId)');
     final _transactions = _result.map((json) => TransactionsModel.fromJson(json)).toList();
     return _transactions;
   }
@@ -55,7 +55,7 @@ class TransactionDatabase {
   Future<List<TransactionsModel>> getAllTransactionsBySupplierId(int supplierId) async {
     final db = await dbInstance.database;
     final _result = await db.query(tableTransactions, where: '${TransactionsField.supplierId} = ?', whereArgs: [supplierId]);
-    log('Transactions by Supplier Id ($supplierId) == $_result');
+    log('Fetching Transactions by Supplier Id ($supplierId)');
     final _transactions = _result.map((json) => TransactionsModel.fromJson(json)).toList();
     return _transactions;
   }

@@ -149,6 +149,12 @@ class TransactionScreenPurchase extends StatelessWidget {
       final num _updatedPaid = Converter.amountRounder(_paid + _paying);
       final num _updatedBalance = Converter.amountRounder(_payable - _paying);
 
+      // log('_payable = $_payable');
+      // log('_paid = $_paid');
+      // log('_paying = $_paying');
+      // log('_updatedPaid = $_updatedPaid');
+      // log('_updatedBalance = $_updatedBalance');
+
       final TransactionsModel _transaction = TransactionsModel(
         category: 'Purchase',
         transactionType: 'Expense',
