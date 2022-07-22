@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
 import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_details_table_widget.dart';
@@ -11,7 +12,7 @@ import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import '../../../core/constant/sizes.dart';
 import 'widgets/payment_type_widget.dart';
 
-class PartialPayment extends StatelessWidget {
+class PartialPayment extends ConsumerWidget {
   const PartialPayment({
     Key? key,
     required this.paymentDetails,
@@ -23,7 +24,7 @@ class PartialPayment extends StatelessWidget {
   final bool purchase;
   final bool isVertical;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     log('isVetical == $isVertical');
     final Size _screenSize = MediaQuery.of(context).size;
     return Scaffold(
@@ -129,6 +130,7 @@ class PartialPayment extends StatelessWidget {
                                         //========== Sale Payment ==========
                                         salesModel = await const PaymentButtonsWidget().addSale(
                                           context,
+                                          ref,
                                           argBalance: _balance,
                                           argPaymentStatus: _paymentStatus,
                                           argPaymentType: _paymentType,

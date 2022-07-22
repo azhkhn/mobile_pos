@@ -62,6 +62,5 @@ class VatUtils {
     log('Fetching Vats from database to in-memmory');
     final VatDatabase userDB = VatDatabase.instance;
     vats = await userDB.getAllVats();
-    log('Vat fetched successfully!');
   }
 }

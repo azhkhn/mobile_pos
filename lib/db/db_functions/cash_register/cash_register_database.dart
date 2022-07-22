@@ -20,10 +20,10 @@ class CashRegisterDatabase {
   }
 
   //========== Get Latest CashRegister ==========
-  Future<CashRegisterModel?> getLastRegister() async {
+  Future<CashRegisterModel?> getLatestRegister() async {
     final Database db = await dbInstance.database;
     final _result = await db.query(tableCashRegister, orderBy: '${CashRegisterFields.id} DESC', limit: 1);
-    log('CashRegister === $_result');
+    log('Fetching latest CashRegister details..');
     if (_result.isNotEmpty) {
       final _cashRegisters = CashRegisterModel.fromJson(_result.first);
       return _cashRegisters;
@@ -36,7 +36,7 @@ class CashRegisterDatabase {
   Future<List<CashRegisterModel>> getAllCashRegisters() async {
     final Database db = await dbInstance.database;
     final _result = await db.query(tableCashRegister);
-    log('CashRegisters === $_result');
+    log('Fetching CashRegisters from Database..');
     final _cashRegisters = _result.map((json) => CashRegisterModel.fromJson(json)).toList();
     // db.delete(tableCashRegister);
     return _cashRegisters;

@@ -28,9 +28,10 @@ class ExpenseDatabase {
   }
 
   //========== Get Today's Expense ==========
-  Future<List<ExpenseModel>> getTodayExpense(String today) async {
+  Future<List<ExpenseModel>> getExpensesByDay(DateTime day) async {
+    final String _today = Converter.dateFormatReverse.format(day);
     final db = await dbInstance.database;
-    final _result = await db.rawQuery('''SELECT * FROM $tableExpense WHERE ${ExpenseFields.dateTime} LIKE "$today%"''');
+    final _result = await db.rawQuery('''SELECT * FROM $tableExpense WHERE ${ExpenseFields.dateTime} LIKE "$_today%"''');
     log('Expense of Today === $_result');
 
     final _todayExpense = _result.map((json) => ExpenseModel.fromJson(json)).toList();

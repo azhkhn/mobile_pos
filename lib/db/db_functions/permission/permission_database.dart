@@ -32,7 +32,8 @@ class PermissionDatabase {
   Future<PermissionModel> getPermissionByGroupId(int groupId) async {
     final db = await dbInstance.database;
     final _result = await db.query(tablePermission, where: '${PermissionFields.groupId} = ?', whereArgs: [groupId]);
-    log('Permission by GroupId = $_result');
+    log('Fetching Permissions by GroupId($groupId) details..');
+
     final _permission = PermissionModel.fromJson(_result.first);
     return _permission;
   }

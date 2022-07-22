@@ -37,7 +37,7 @@ class VatDatabase {
   Future<List<VatModel>> getAllVats() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableVat);
-    log('VATs == $_result');
+    log("Fetching VAT's from Database..");
     // await db.delete(tableVat);
     final _vats = _result.map((json) => VatModel.fromJson(json)).toList();
     return _vats;

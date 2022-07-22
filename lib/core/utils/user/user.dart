@@ -118,39 +118,30 @@ class UserUtils {
 
 //Business Profile details (Access User details all over the Application)
   Future<void> getBusinessProfile() async {
-    log('Fetching Business Profile details..');
     final BusinessProfileDatabase businessProfileDB = BusinessProfileDatabase.instance;
     final _businessProfile = await businessProfileDB.getBusinessProfile();
     businessProfileModel = _businessProfile;
     ScreenHome.businessNotifier.value = businessProfileModel;
-    log('Done!');
   }
 
 //Logged user details (Access User details all over the Application)
   Future<void> getUser() async {
-    log('Fetching Logged User details..');
     final UserDatabase userDB = UserDatabase.instance;
     final _user = await userDB.getUser();
     userModel = _user;
-    log('Done!');
   }
 
   //Logged user group details (Access User details all over the Application)
   Future<void> getGroup() async {
-    log('Fetching Group details..');
     final GroupDatabase groupDB = GroupDatabase.instance;
-
     //get user details for groupId
     await loggedUser;
-
     final _group = await groupDB.getGroupById(userModel!.groupId);
     groupModel = _group;
-    log('Done!');
   }
 
   //Logged user group details (Access User details all over the Application)
   Future<void> getPermissions() async {
-    log('Fetching Permissions details..');
     final PermissionDatabase permissionDB = PermissionDatabase.instance;
 
     //get user details for groupId
@@ -158,16 +149,12 @@ class UserUtils {
 
     final _permission = await permissionDB.getPermissionByGroupId(userModel!.groupId);
     permissionModel = _permission;
-    log('Done!');
   }
 
   //Latest Cash Register details (Access User details all over the Application)
   Future<void> getLastCashRegister() async {
-    log('Fetching latest CashRegister details..');
     final CashRegisterDatabase cashDatabase = CashRegisterDatabase.instance;
-    await cashDatabase.getAllCashRegisters();
-    final _cashRegister = await cashDatabase.getLastRegister();
+    final _cashRegister = await cashDatabase.getLatestRegister();
     cashRegisterModel = _cashRegister;
-    log('Done!');
   }
 }

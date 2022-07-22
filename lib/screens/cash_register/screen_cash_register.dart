@@ -24,9 +24,9 @@ import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 //=-=-=-=-=-=-=-=-=-= Providers =-=-=-=-=-=-=-=-=-=
-final isLoadedProvider = StateProvider.autoDispose<bool>((ref) => false);
+final _isLoadedProvider = StateProvider.autoDispose<bool>((ref) => false);
 
-final summaryProvider = StateProvider.autoDispose<List<Map<String, num>>>((ref) => []);
+final _summaryProvider = StateProvider.autoDispose<List<Map<String, num>>>((ref) => []);
 
 final summaryFutureProvider = FutureProvider.autoDispose<List<Map<String, num>>>((ref) async {
   final CashRegisterModel? _cashModel = UserUtils.instance.cashRegisterModel;
@@ -67,9 +67,9 @@ class ScreenCashRegister extends StatelessWidget {
 
                         return Consumer(
                           builder: (context, ref, _) {
-                            final isLoaded = ref.read(isLoadedProvider.notifier);
+                            final isLoaded = ref.read(_isLoadedProvider.notifier);
                             log('isLoaded = ${isLoaded.state}');
-                            final List<Map<String, num>> summary = ref.watch(summaryProvider);
+                            final List<Map<String, num>> summary = ref.watch(_summaryProvider);
                             if (isLoaded.state) {
                               sale = summary[0];
                               purchase = summary[1];

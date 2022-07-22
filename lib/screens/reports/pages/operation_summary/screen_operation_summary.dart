@@ -30,12 +30,11 @@ final isLoadedProvider = StateProvider.autoDispose<bool>((ref) => false);
 final summaryProvider = StateProvider.autoDispose<List<Map<String, num>>>((ref) => []);
 
 final summaryFutureProvider = FutureProvider.autoDispose<List<Map<String, num>>>((ref) async {
-  final _date = DateTime.now();
-  final _today = Converter.dateFormatReverse.format(_date);
+  final DateTime _today = DateTime.now();
 
-  final List<SalesModel> sales = await SalesDatabase.instance.getTodaySales(_today);
-  final List<PurchaseModel> purchases = await PurchaseDatabase.instance.getTodayPurchases(_today);
-  final List<ExpenseModel> expenses = await ExpenseDatabase.instance.getTodayExpense(_today);
+  final List<SalesModel> sales = await SalesDatabase.instance.getSalesByDay(_today);
+  final List<PurchaseModel> purchases = await PurchaseDatabase.instance.getPurchasesByDay(_today);
+  final List<ExpenseModel> expenses = await ExpenseDatabase.instance.getExpensesByDay(_today);
 
   return await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
 });

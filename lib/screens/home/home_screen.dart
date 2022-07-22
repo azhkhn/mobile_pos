@@ -34,8 +34,7 @@ class ScreenHome extends StatelessWidget {
         log(e.toString());
       }
     });
-    // UserDatabase.instance.getAllUsers();
-    if (DeviceUtil.isTablet) {
+    if (isTablet) {
       log("You're Using a Tablet!");
     } else {
       log("You're Using a Phone!");

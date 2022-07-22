@@ -40,7 +40,7 @@ class GroupDatabase {
   Future<GroupModel> getGroupById(int id) async {
     final db = await dbInstance.database;
     final _result = await db.query(tableGroup, where: '${GroupFields.id} = ?', whereArgs: [id]);
-    log('Group === $_result');
+    log('Fetching Group($id) details..');
     final GroupModel _groups = GroupModel.fromJson(_result.first);
     // db.delete(tableGroup);
     return _groups;

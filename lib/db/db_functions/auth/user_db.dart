@@ -83,7 +83,7 @@ class UserDatabase {
   Future<UserModel> getUser() async {
     final db = await dbInstance.database;
     final _userList = await db.query(tableLogin);
-    log('User ==  $_userList');
+    log('Fetching Logged User details..');
     final _user = _userList.map((json) => UserModel.fromJson(json)).toList();
     return _user.first;
   }

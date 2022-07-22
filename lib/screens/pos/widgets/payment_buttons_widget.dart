@@ -1,9 +1,9 @@
 import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
@@ -21,11 +21,12 @@ import 'package:shop_ez/model/transactions/transactions_model.dart';
 import 'package:shop_ez/screens/home/widgets/home_card_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/product_side_widget.dart';
 import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
+import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 
 import '../../../core/constant/sizes.dart';
 import '../../../core/utils/converters/converters.dart';
 
-class PaymentButtonsWidget extends StatelessWidget {
+class PaymentButtonsWidget extends ConsumerWidget {
   const PaymentButtonsWidget({
     Key? key,
     this.isVertical = false,
@@ -34,7 +35,7 @@ class PaymentButtonsWidget extends StatelessWidget {
   final bool isVertical;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final Size _screenSize = MediaQuery.of(context).size;
     final bool isSmall = DeviceUtil.isSmall;
 
@@ -151,6 +152,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                                       //========== Adding Sale ==========
                                       final SalesModel? salesModel = await addSale(
                                         context,
+                                        ref,
                                         argPaid: '0',
                                         argBalance: _balance,
                                         argPaymentStatus: 'Credit',
@@ -237,7 +239,7 @@ class PaymentButtonsWidget extends StatelessWidget {
                                 TextButton(
                                     onPressed: () async {
                                       Navigator.pop(ctx);
-                                      final SalesModel? salesModel = await addSale(context);
+                                      final SalesModel? salesModel = await addSale(context, ref);
                                       if (salesModel != null) {
                                         await OrientationMode.toPortrait();
                                         await Navigator.pushNamed(
@@ -390,7 +392,8 @@ class PaymentButtonsWidget extends StatelessWidget {
 //======================================== Add Sale ========================================
 //========================================          ========================================
   Future<SalesModel?> addSale(
-    BuildContext context, {
+    BuildContext context,
+    WidgetRef ref, {
     String? argBalance,
     String? argPaymentStatus,
     String? argPaymentType,
@@ -587,7 +590,8 @@ class PaymentButtonsWidget extends StatelessWidget {
         await transactionDB.createTransaction(_transaction);
       }
 
-      HomeCardWidget.detailsCardLoaded = false;
+      ref.refresh(HomeCardWidget.homeCardProvider);
+
       const SaleSideWidget().resetPos(notify: true);
 
       ProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();

@@ -63,9 +63,10 @@ class SalesDatabase {
   }
 
 //========== Get Today's Sales ==========
-  Future<List<SalesModel>> getTodaySales(String today) async {
+  Future<List<SalesModel>> getSalesByDay(DateTime day) async {
+    final String _today = Converter.dateFormatReverse.format(day);
     final db = await dbInstance.database;
-    final _result = await db.rawQuery('''SELECT * FROM $tableSales WHERE ${SalesFields.dateTime} LIKE "$today%"''');
+    final _result = await db.rawQuery('''SELECT * FROM $tableSales WHERE ${SalesFields.dateTime} LIKE "$_today%"''');
     log('Sales of Today === $_result');
     final _todaySales = _result.map((json) => SalesModel.fromJson(json)).toList();
     return _todaySales;
