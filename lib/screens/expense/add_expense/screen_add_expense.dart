@@ -259,7 +259,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
                       labelText: 'Date *',
                       controller: _dateController,
                       suffixIcon: IconButton(
-                        icon: const Icon(Icons.calendar_month_outlined),
+                        icon: const Icon(Icons.calendar_month_outlined, color: klabelColorGrey),
                         color: kSuffixIconColorBlack,
                         onPressed: () {},
                       ),
@@ -291,10 +291,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
                       maxLines: 3,
                       suffixIcon: IconButton(
                         onPressed: () {},
-                        icon: const Icon(
-                          Icons.edit_note,
-                          color: klabelColorGrey,
-                        ),
+                        icon: const Icon(Icons.edit_note, color: klabelColorGrey),
                       ),
                       inputBorder: const OutlineInputBorder(),
                     ),

@@ -15,25 +15,27 @@ class HomeCardWidget extends ConsumerWidget {
 
   static final homeCardProvider = FutureProvider<List<num>>((ref) async {
     log('Updating Sales Card..');
-    // final List<SalesModel> _todaySales = await SalesDatabase.instance.getSalesByDay(DateTime.now());
     final List<SalesModel> sales = await SalesDatabase.instance.getAllSales();
+    num _todaySale = 0;
+    num _todaysCash = 0;
+    num _totalCash = 0;
 
     final List<SalesModel> _todaySales = sales.where((sale) {
       final DateTime soldDate = DateTime.parse(sale.dateTime);
       return Converter.isSameDate(DateTime.now(), soldDate);
     }).toList();
 
-    num _todaysCash = 0;
+    _todaySale = _todaySales.length;
+
     for (var i = 0; i < _todaySales.length; i++) {
       _todaysCash += num.parse(_todaySales[i].grantTotal);
     }
 
-    num _totalCash = 0;
     for (var i = 0; i < sales.length; i++) {
       _totalCash += num.parse(sales[i].grantTotal);
     }
 
-    return [_todaySales.length, _todaysCash, _totalCash];
+    return [_todaySale, _todaysCash, _totalCash];
   });
 
   @override
@@ -48,6 +50,8 @@ class HomeCardWidget extends ConsumerWidget {
         ),
         child: _future.when(
           data: (_salesDetails) {
+            log('sales Details = $_salesDetails');
+
             final num _todaySale = _salesDetails[0];
             final num _todayCash = _salesDetails[1];
             final num _totalCash = _salesDetails[2];

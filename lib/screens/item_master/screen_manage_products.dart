@@ -13,8 +13,8 @@ import 'package:shop_ez/screens/item_master/widgets/item_card_widget.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 
-class ScreenItemMasterManage extends StatelessWidget {
-  ScreenItemMasterManage({Key? key}) : super(key: key);
+class ScreenManageProducts extends StatelessWidget {
+  ScreenManageProducts({Key? key}) : super(key: key);
 
   //==================== TextEditing Controllers ====================
   final TextEditingController productController = TextEditingController();
@@ -29,7 +29,7 @@ class ScreenItemMasterManage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBarWidget(title: 'Manage Item Master'),
+        appBar: AppBarWidget(title: 'Manage Products'),
         body: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
@@ -115,7 +115,7 @@ class ScreenItemMasterManage extends StatelessWidget {
                         ),
                         onPressed: () async {
                           final ItemMasterModel? addedProduct =
-                              await Navigator.pushNamed(context, routeItemMaster, arguments: {'from': true}) as ItemMasterModel;
+                              await Navigator.pushNamed(context, routeAddProduct, arguments: {'from': true}) as ItemMasterModel;
 
                           if (addedProduct != null) {
                             productsNotifier.value.add(addedProduct);
@@ -177,7 +177,7 @@ class ScreenItemMasterManage extends StatelessWidget {
                                                             'color': Colors.teal[400],
                                                             'icon': Icons.personal_injury,
                                                             'action': () async {
-                                                              final updatedItem = await Navigator.pushNamed(context, routeItemMaster, arguments: {
+                                                              final updatedItem = await Navigator.pushNamed(context, routeAddProduct, arguments: {
                                                                 'product': items[index],
                                                                 'from': true,
                                                               });

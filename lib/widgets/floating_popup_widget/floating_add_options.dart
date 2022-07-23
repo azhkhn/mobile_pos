@@ -22,9 +22,9 @@ class FloatingAddOptions extends StatelessWidget {
       openCloseDial: isDialOpen,
       children: [
         SpeedDialChild(
-          child: const Icon(Icons.receipt_long_rounded),
-          label: 'Item Master',
-          onTap: () => Navigator.pushNamed(context, routeItemMaster),
+          child: const Icon(Icons.add_shopping_cart_outlined),
+          label: 'Add Product',
+          onTap: () => Navigator.pushNamed(context, routeAddProduct),
         ),
         SpeedDialChild(
           child: const Icon(Icons.add_business_outlined),
@@ -36,12 +36,7 @@ class FloatingAddOptions extends StatelessWidget {
           label: 'Customer',
           onTap: () => Navigator.pushNamed(context, routeAddCustomer),
         ),
-
-        SpeedDialChild(
-          child: const Icon(Icons.playlist_add),
-          label: 'Sub-Category',
-          onTap: () => Navigator.pushNamed(context, routeSubCategory),
-        ),
+        SpeedDialChild(child: const Icon(Icons.playlist_add), label: 'Sub-Category', onTap: () => Navigator.pushNamed(context, routeSubCategory)),
         SpeedDialChild(
           child: const Icon(Icons.category_outlined),
           label: 'Category',
@@ -67,11 +62,11 @@ class FloatingAddOptions extends StatelessWidget {
           label: 'Tax Rate',
           onTap: () => Navigator.pushNamed(context, routeVat),
         ),
-        SpeedDialChild(
-          child: const Icon(Icons.qr_code_2_outlined),
-          label: 'Barcode',
-          onTap: () => Navigator.pushNamed(context, routeBarcode),
-        ),
+        // SpeedDialChild(
+        //   child: const Icon(Icons.qr_code_2_outlined),
+        //   label: 'Barcode',
+        //   onTap: () => Navigator.pushNamed(context, routeBarcode),
+        // ),
       ],
     );
   }

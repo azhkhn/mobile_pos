@@ -22,7 +22,8 @@ import 'package:shop_ez/screens/database/pages/screen_list_database.dart';
 import 'package:shop_ez/screens/database/screen_database.dart';
 import 'package:shop_ez/screens/expense/manage_expense/screen_manage_expense.dart';
 import 'package:shop_ez/screens/invoices/screen_sales_invoice.dart';
-import 'package:shop_ez/screens/item_master/screen_manage_item_master.dart';
+import 'package:shop_ez/screens/item_master/screen_item_master.dart';
+import 'package:shop_ez/screens/item_master/screen_manage_products.dart';
 import 'package:shop_ez/screens/pos/screen_pos.dart';
 import 'package:shop_ez/screens/purchase/pages/screen_list_purchases.dart';
 import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return.dart';
@@ -51,7 +52,7 @@ import 'package:shop_ez/screens/user_manage/pages/group/screen_add_group.dart';
 import 'package:shop_ez/screens/user_manage/pages/group/screen_list_groups.dart';
 import 'package:shop_ez/screens/user_manage/pages/user/screen_add_user.dart';
 import 'package:shop_ez/screens/user_manage/pages/user/screen_list_users.dart';
-import 'package:shop_ez/screens/user_manage/screen_user_module.dart';
+import 'package:shop_ez/screens/user_manage/screen_user_manage.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
@@ -64,7 +65,7 @@ import '../../screens/customer/screen_add_customer.dart';
 import '../../screens/expense/add_expense/screen_add_expense.dart';
 import '../../screens/expense/add_expense_category/screen_add_expense_category.dart';
 import '../../screens/home/home_screen.dart';
-import '../../screens/item_master/screen_item_master.dart';
+import '../../screens/item_master/screen_add_product.dart';
 import '../../screens/payments/partial_payment/screen_partial_payment.dart';
 import '../../screens/purchase/pages/screen_add_purchase.dart';
 import '../../screens/purchase/pages/screen_purchase.dart';
@@ -98,20 +99,24 @@ class RouteGenerator {
       //=======================================================================================
       //===================================== Item Master =====================================
       //=======================================================================================
+
       case routeItemMaster:
+        return MaterialPageRoute(builder: (_) => const ScreenItemMaster());
+
+      case routeAddProduct:
         if (args is Map) {
           if (permission!.products.contains('3')) {
             return MaterialPageRoute(
                 builder: (_) =>
-                    ScreenItemMaster(from: args.containsKey('from'), itemMasterModel: args.containsKey('product') ? args['product'] : null));
+                    ScreenAddProduct(from: args.containsKey('from'), itemMasterModel: args.containsKey('product') ? args['product'] : null));
           }
           return _errorPermission();
         }
-        if (permission!.products.contains('2')) return MaterialPageRoute(builder: (_) => const ScreenItemMaster());
+        if (permission!.products.contains('2')) return MaterialPageRoute(builder: (_) => ScreenAddProduct());
         return _errorPermission();
 
-      case routeManageItemMaster:
-        if (permission!.products.contains('1')) return MaterialPageRoute(builder: (_) => ScreenItemMasterManage());
+      case routeManageProducts:
+        if (permission!.products.contains('1')) return MaterialPageRoute(builder: (_) => ScreenManageProducts());
         return _errorPermission();
 
       case routeStock:

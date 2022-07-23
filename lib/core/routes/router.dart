@@ -25,7 +25,8 @@ const String routeCashRegister = '/cash_register';
 
 //Item Master
 const String routeItemMaster = '/item_master';
-const String routeManageItemMaster = '/manage_item_master';
+const String routeAddProduct = '/add_product';
+const String routeManageProducts = '/manage_products';
 
 //Customer
 const String routeAddCustomer = '/add_customer';

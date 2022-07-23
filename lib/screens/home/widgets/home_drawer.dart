@@ -28,15 +28,15 @@ const List drawerListItemImage = [
 const List drawerListItem = [
   'Sales',
   'POS',
-  'Purchase',
-  'Manage Expense',
-  'Manage Item Master',
-  'Manage Customer',
-  'Manage Supplier',
-  'Manage Category',
+  'Purchases',
+  'Manage Expenses',
+  'Manage Products',
+  'Manage Customers',
+  'Manage Suppliers',
+  'Manage Categories',
   'Manage Brands',
   'Settings',
-  'Manage Database',
+  'Manage Databases',
   'Reports',
   'About Software',
   'Terms and Conditions',
@@ -151,7 +151,7 @@ class DrawerItemsWidget extends StatelessWidget {
             Navigator.pushNamed(context, routeManageExpense);
             break;
           case 4:
-            Navigator.pushNamed(context, routeManageItemMaster);
+            Navigator.pushNamed(context, routeManageProducts);
             break;
           case 5:
             Navigator.pushNamed(context, routeManageCustomer);
