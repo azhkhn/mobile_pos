@@ -107,48 +107,50 @@ class ScreenSalesInvoice extends StatelessWidget {
                   icon: const Icon(Icons.print)),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(5),
-        child: Card(
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(5),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FutureBuilder(
-                    future: getDetails(),
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return const Center(child: CircularProgressIndicator());
-                        case ConnectionState.done:
+      body: InteractiveViewer(
+        child: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Card(
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(5),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FutureBuilder(
+                      future: getDetails(),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return const Center(child: CircularProgressIndicator());
+                          case ConnectionState.done:
 
-                        default:
-                          // if (!snapshot.hasData) {
-                          //   return const Center(child: Text('Not Found!'));
-                          // }
+                          default:
+                            // if (!snapshot.hasData) {
+                            //   return const Center(child: Text('Not Found!'));
+                            // }
 
-                          return Expanded(
-                            child: ListView(
-                              shrinkWrap: true,
-                              children: [
-                                buildHeader(businessProfileModel: businessProfile!),
-                                kHeight5,
-                                buildTitle(businessProfile!, isReturn, sale),
-                                kHeight2,
-                                buildCustomerInfo(sale, customer!, isReturn),
-                                kHeight5,
-                                buildInvoice(items),
-                                const Divider(),
-                                buildTotal(sale, isReturn),
-                              ],
-                            ),
-                          );
-                      }
-                    }),
-              ],
+                            return Expanded(
+                              child: ListView(
+                                shrinkWrap: true,
+                                children: [
+                                  buildHeader(businessProfileModel: businessProfile!),
+                                  kHeight5,
+                                  buildTitle(businessProfile!, isReturn, sale),
+                                  kHeight2,
+                                  buildCustomerInfo(sale, customer!, isReturn),
+                                  kHeight5,
+                                  buildInvoice(items),
+                                  const Divider(),
+                                  buildTotal(sale, isReturn),
+                                ],
+                              ),
+                            );
+                        }
+                      }),
+                ],
+              ),
             ),
           ),
         ),

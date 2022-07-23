@@ -182,7 +182,7 @@ class RouteGenerator {
       case routeAddExpenseCategory:
         return MaterialPageRoute(builder: (_) => const ScreenAddExpenseCategory());
       case routeAddExpense:
-        return MaterialPageRoute(builder: (_) => const ScreenAddExpense());
+        return MaterialPageRoute(builder: (_) => ScreenAddExpense());
       case routeManageExpense:
         return MaterialPageRoute(builder: (_) => ScreenManageExpense());
 

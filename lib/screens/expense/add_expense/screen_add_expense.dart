@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
+// ignore_for_file: must_be_immutable
 
 import 'dart:convert';
 import 'dart:developer';
@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shop_ez/core/constant/colors.dart';
@@ -33,17 +34,16 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
 import '../../../core/utils/snackbar/snackbar.dart';
 
-class ScreenAddExpense extends StatefulWidget {
-  const ScreenAddExpense({Key? key}) : super(key: key);
+final _futureExpenseCategoriesProvider =
+    FutureProvider.autoDispose<List<ExpenseCategoryModel>>((ref) async => ExpenseCategoryDatabase.instance.getAllExpenseCategories());
+final _futureVatsProvider = FutureProvider.autoDispose<List<VatModel>>((ref) async => VatDatabase.instance.getAllVats());
 
-  @override
-  State<ScreenAddExpense> createState() => _ScreenAddExpenseState();
-}
+final _selectedDocumentProvider = StateProvider.autoDispose<String?>((ref) => null);
 
-class _ScreenAddExpenseState extends State<ScreenAddExpense> {
-  late Size _screenSize;
+class ScreenAddExpense extends ConsumerWidget {
+  ScreenAddExpense({Key? key}) : super(key: key);
 
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormFieldState> _dropdownKey = GlobalKey<FormFieldState>();
 
   //========== Lists ==========
@@ -57,44 +57,29 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
 
   //========== Value Notifiers ==========
   final ValueNotifier<bool> isDialOpen = ValueNotifier(false);
-  final ValueNotifier<List<ExpenseCategoryModel>> expenseCategoriesNotifier = ValueNotifier([]);
 
   Color? textColor = Colors.black;
-  dynamic selectedDocument;
   bool jpgOrNot = false;
   String documentName = 'Document';
   String? documentExtension;
   String _paymentMethod = 'Cash';
 
-  final _expenseTitleController = TextEditingController();
-  final _amountController = TextEditingController();
-  final _payByController = TextEditingController();
-  final _noteController = TextEditingController();
-  final _voucherNumberController = TextEditingController();
-  final _dateController = TextEditingController();
+  final TextEditingController _expenseTitleController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _payByController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
+  final TextEditingController _voucherNumberController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
 
-  //========== Integers ==========
   int? _vatId, _vatRate;
   String? _vathMethod, _vatAmount;
-  // final _dateController = TextEditingController();
 
   String _expenseCategoryController = '';
   String _selectedDate = '';
 
-  Future<List<ExpenseCategoryModel>>? futureExpenceCategories;
-  Future<List<VatModel>>? futureVat;
-
   @override
-  void initState() {
-    super.initState();
-    expenseDB.getAllExpense();
-    futureExpenceCategories = expenseCategoryDB.getAllExpenseCategories();
-    futureVat = vatDB.getAllVats();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _screenSize = MediaQuery.of(context).size;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         if (isDialOpen.value) {
@@ -105,7 +90,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
         }
       },
       child: Scaffold(
-        appBar: AppBarWidget(title: 'Expenses'),
+        appBar: AppBarWidget(title: 'Add Expense'),
         body: BackgroundContainerWidget(
           child: ItemScreenPaddingWidget(
             child: Form(
@@ -114,36 +99,31 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
                 child: Column(
                   children: [
                     //========== Expense Category ==========
-                    FutureBuilder(
-                      future: futureExpenceCategories,
-                      builder: (context, dynamic snapshot) {
-                        final snap = snapshot as AsyncSnapshot;
-                        switch (snap.connectionState) {
-                          case ConnectionState.waiting:
-                            return const CircularProgressIndicator();
-                          case ConnectionState.done:
-                          default:
-                            expenseCategoriesNotifier.value = snap.data;
-                            return ValueListenableBuilder(
-                                valueListenable: expenseCategoriesNotifier,
-                                builder: (context, expenseCateogory, __) {
-                                  return CustomDropDownField(
-                                    dropdownKey: _dropdownKey,
-                                    labelText: 'Choose Expense *',
-                                    snapshot: expenseCategoriesNotifier.value,
-                                    onChanged: (value) {
-                                      final ExpenseCategoryModel expenseCategory = ExpenseCategoryModel.fromJson(jsonDecode(value));
-                                      _expenseCategoryController = expenseCategory.expense.toString();
-                                    },
-                                    validator: (value) {
-                                      if (value == null || _expenseCategoryController == 'null') {
-                                        return 'This field is required*';
-                                      }
-                                      return null;
-                                    },
-                                  );
-                                });
-                        }
+                    Consumer(
+                      builder: (context, ref, _) {
+                        final AsyncValue<List<ExpenseCategoryModel>> _futureExpenseCategories = ref.watch(_futureExpenseCategoriesProvider);
+
+                        return _futureExpenseCategories.when(
+                            data: (value) {
+                              final List<ExpenseCategoryModel> _expenseCategories = value;
+                              return CustomDropDownField(
+                                dropdownKey: _dropdownKey,
+                                labelText: 'Choose Expense *',
+                                snapshot: _expenseCategories,
+                                onChanged: (value) {
+                                  final ExpenseCategoryModel expenseCategory = ExpenseCategoryModel.fromJson(jsonDecode(value));
+                                  _expenseCategoryController = expenseCategory.expense.toString();
+                                },
+                                validator: (value) {
+                                  if (value == null || _expenseCategoryController == 'null') {
+                                    return 'This field is required*';
+                                  }
+                                  return null;
+                                },
+                              );
+                            },
+                            error: (_, __) => const Text('Something went wrong!'),
+                            loading: () => const CircularProgressIndicator());
                       },
                     ),
                     kHeight10,
@@ -193,34 +173,34 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
                     kHeight10,
 
                     //========== Product VAT Dropdown ==========
-                    FutureBuilder(
-                      future: futureVat,
-                      builder: (context, dynamic snapshot) {
-                        final snap = snapshot as AsyncSnapshot;
-                        switch (snap.connectionState) {
-                          case ConnectionState.waiting:
-                            return const CircularProgressIndicator();
-                          case ConnectionState.done:
-                          default:
-                            return CustomDropDownField(
-                              labelText: 'Expense VAT',
-                              snapshot: snapshot.data,
-                              contentPadding: const EdgeInsets.all(10),
-                              onChanged: (value) async {
-                                final _vat = VatModel.fromJson(jsonDecode(value!));
-                                _vatId = _vat.id;
-                                _vatRate = _vat.rate;
+                    Consumer(
+                      builder: (context, ref, _) {
+                        final AsyncValue<List<VatModel>> _futureVats = ref.watch(_futureVatsProvider);
 
-                                log('VAT id = $_vatId');
-                              },
-                              validator: (value) {
-                                if (_vatId == null && _vathMethod != null) {
-                                  return 'This field is required*';
-                                }
-                                return null;
-                              },
-                            );
-                        }
+                        return _futureVats.when(
+                            data: (value) {
+                              final List<VatModel> _vats = value;
+                              return CustomDropDownField(
+                                labelText: 'Expense VAT',
+                                snapshot: _vats,
+                                contentPadding: const EdgeInsets.all(10),
+                                onChanged: (value) async {
+                                  final _vat = VatModel.fromJson(jsonDecode(value!));
+                                  _vatId = _vat.id;
+                                  _vatRate = _vat.rate;
+
+                                  log('VAT id = $_vatId');
+                                },
+                                validator: (value) {
+                                  if (_vatId == null && _vathMethod != null) {
+                                    return 'This field is required*';
+                                  }
+                                  return null;
+                                },
+                              );
+                            },
+                            error: (_, __) => const Text('Something went wrong!'),
+                            loading: () => const CircularProgressIndicator());
                       },
                     ),
                     kHeight10,
@@ -276,8 +256,6 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
 
                           final parseDate = Converter.dateFormat.format(_date);
                           _dateController.text = parseDate.toString();
-
-                          setState(() {});
                         }
                       },
                       validator: (value) => Validators.nullValidator(value),
@@ -313,110 +291,109 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
                     kHeight20,
 
                     //========== Item Image ==========
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        kHeight10,
-                        SizedBox(
-                          width: _screenSize.width / 2.2,
-                          height: _screenSize.width / 2.4,
-                          child: InkWell(
-                            onTap: () {
-                              if (selectedDocument != null) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    contentPadding: kPadding0,
-                                    content: SizedBox(
-                                      height: 100,
-                                      width: 100,
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                    Consumer(
+                      builder: (context, ref, _) {
+                        final StateController<String?> _selectedDocument = ref.watch(_selectedDocumentProvider.state);
+
+                        // final StateController<String?> _selectedDocument = ref.read(_selectedDocumentProvider.notifier);
+
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            kHeight10,
+                            SizedBox(
+                              width: _screenSize.width / 2.2,
+                              height: _screenSize.width / 2.4,
+                              child: InkWell(
+                                onTap: () {
+                                  if (_selectedDocument.state != null) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        contentPadding: kPadding0,
+                                        content: SizedBox(
+                                          height: 100,
+                                          width: 100,
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                                            children: [
+                                              Expanded(
+                                                  child: MaterialButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                        imagePopUp(context, ref);
+                                                      },
+                                                      color: kWhite,
+                                                      child: const Text('Edit', style: TextStyle(fontWeight: FontWeight.bold)))),
+                                              Expanded(
+                                                  child: MaterialButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                        _selectedDocument.state = null;
+                                                        documentName = 'Document';
+                                                      },
+                                                      color: Colors.red[300],
+                                                      child: const Text('Delete', style: TextStyle(color: kWhite, fontWeight: FontWeight.bold)))),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    imagePopUp(context, ref);
+                                  }
+                                },
+                                child: _selectedDocument.state != null && jpgOrNot
+                                    ? Stack(
                                         children: [
-                                          Expanded(
-                                            child: MaterialButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                  imagePopUp(context);
-                                                },
-                                                color: kWhite,
-                                                child: const Text(
-                                                  'Edit',
-                                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                                )),
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child: Image.file(
+                                              File(_selectedDocument.state!),
+                                              width: _screenSize.width / 2.5,
+                                              height: _screenSize.width / 2.5,
+                                              fit: BoxFit.fill,
+                                            ),
                                           ),
-                                          Expanded(
-                                            child: MaterialButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                  selectedDocument = null;
-                                                  documentName = 'Document';
-                                                  setState(() {});
-                                                },
-                                                color: Colors.red[300],
-                                                child: const Text(
-                                                  'Delete',
-                                                  style: TextStyle(color: kWhite, fontWeight: FontWeight.bold),
-                                                )),
-                                          ),
+                                          const Align(
+                                            alignment: Alignment.topRight,
+                                            child: Icon(
+                                              Icons.edit,
+                                              color: klabelColorGrey,
+                                            ),
+                                          )
                                         ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                imagePopUp(context);
-                              }
-                            },
-                            child: selectedDocument != null && jpgOrNot
-                                ? Stack(
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.center,
-                                        child: Image.file(
-                                          File(selectedDocument!),
-                                          width: _screenSize.width / 2.5,
-                                          height: _screenSize.width / 2.5,
-                                          fit: BoxFit.fill,
-                                        ),
-                                      ),
-                                      const Align(
-                                        alignment: Alignment.topRight,
-                                        child: Icon(
-                                          Icons.edit,
-                                          color: klabelColorGrey,
-                                        ),
                                       )
-                                    ],
-                                  )
-                                : Icon(
-                                    Icons.add_photo_alternate_outlined,
-                                    color: klabelColorGrey,
-                                    size: _screenSize.width / 10,
-                                  ),
-                          ),
-                        ),
-                        kHeight10,
-                        Text(
-                          documentName,
-                          maxLines: 1,
-                          softWrap: false,
-                          overflow: TextOverflow.fade,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: selectedDocument != null ? textColor : klabelColorGrey,
-                          ),
-                        ),
-                      ],
+                                    : Icon(
+                                        Icons.add_photo_alternate_outlined,
+                                        color: klabelColorGrey,
+                                        size: _screenSize.width / 10,
+                                      ),
+                              ),
+                            ),
+                            kHeight10,
+                            Text(
+                              documentName,
+                              maxLines: 1,
+                              softWrap: false,
+                              overflow: TextOverflow.fade,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: _selectedDocument.state != null ? textColor : klabelColorGrey,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                     kHeight20,
 
                     //========== Submit Button ==========
                     CustomMaterialBtton(
                       buttonText: 'Submit',
-                      onPressed: () async => await addExpense(),
+                      onPressed: () async => await addExpense(context, ref),
                     ),
                     kHeight10,
                   ],
@@ -429,9 +406,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             await Navigator.pushNamed(context, routeAddExpenseCategory);
-            _dropdownKey.currentState!.reset();
-            expenseCategoriesNotifier.value = await expenseCategoryDB.getAllExpenseCategories();
-            expenseCategoriesNotifier.notifyListeners();
+            ref.refresh(_futureExpenseCategoriesProvider);
           },
           child: const Icon(Icons.add),
           backgroundColor: Colors.blueGrey,
@@ -441,8 +416,9 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
     );
   }
 
-  Future<void> addExpense() async {
+  Future<void> addExpense(BuildContext context, WidgetRef ref) async {
     final String? expenseCategory, expenseTitle, amount, paymentMethod, dateTime, date, note, voucherNumber, payBy, documents;
+    final StateController<String?> _selectedDocument = ref.read(_selectedDocumentProvider.notifier);
 
     //retieving values from TextFields to String
     expenseCategory = _expenseCategoryController.trim();
@@ -455,7 +431,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
     voucherNumber = _voucherNumberController.text.isEmpty ? null : _voucherNumberController.text.trim();
     payBy = _payByController.text.trim();
 
-    if (selectedDocument != null) {
+    if (_selectedDocument.state != null) {
       //========== Getting Directory Path ==========
       final Directory extDir = await getApplicationDocumentsDirectory();
       String dirPath = extDir.path;
@@ -465,7 +441,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
       final String filePath = '$dirPath/$fileName$documentExtension';
 
       //========== Coping Image to new path ==========
-      File image = await File(selectedDocument).copy(filePath);
+      File image = await File(_selectedDocument.state!).copy(filePath);
       documents = image.path;
     } else {
       documents = null;
@@ -502,7 +478,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
         await expenseDB.createExpense(_expenseModel);
         await transactionDatabase.createTransaction(_transactionModel);
         _formState.reset();
-        expenseReset();
+        expenseReset(ref);
         kSnackBar(context: context, success: true, content: 'Expense "$expenseTitle" added!');
       } catch (e) {
         kSnackBar(
@@ -527,7 +503,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
   }
 
 //========== Image PopUp ==========
-  void imagePopUp(BuildContext context) async {
+  void imagePopUp(BuildContext context, WidgetRef ref) async {
     return await showModalBottomSheet(
       context: context,
       builder: (ctx) {
@@ -538,7 +514,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
               leading: const Icon(Icons.camera_alt),
               title: const Text('Camera'),
               onTap: () {
-                imagePicker(ImageSource.camera);
+                imagePicker(ImageSource.camera, ref);
                 Navigator.of(ctx).pop();
               },
             ),
@@ -546,7 +522,7 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
               leading: const Icon(Icons.folder),
               title: const Text('Files'),
               onTap: () {
-                filePicker();
+                filePicker(ref);
                 Navigator.of(ctx).pop();
               },
             ),
@@ -557,19 +533,19 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
   }
 
 //========== Image Picker ==========
-  void imagePicker(ImageSource imageSource) async {
+  void imagePicker(ImageSource imageSource, WidgetRef ref) async {
     final imagePicker = ImagePicker();
     try {
       final imageFile = await imagePicker.pickImage(source: imageSource);
       if (imageFile == null) return;
 
-      selectedDocument = imageFile.path;
+      final StateController<String?> _selectedDocument = ref.read(_selectedDocumentProvider.notifier);
+
+      _selectedDocument.state = imageFile.path;
       documentName = '';
       documentExtension = '.jpg';
       jpgOrNot = true;
-      log('selected Image = $selectedDocument');
-
-      setState(() {});
+      log('selected Image = ${_selectedDocument.state}');
 
       // blobImage = await selectedDocument.readAsBytes();
     } on PlatformException catch (e) {
@@ -578,8 +554,10 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
   }
 
   //========== File Picker ==========
-  void filePicker() async {
+  void filePicker(WidgetRef ref) async {
     try {
+      final StateController<String?> _selectedDocument = ref.read(_selectedDocumentProvider.notifier);
+
       final _results = await FilePicker.platform.pickFiles();
       if (_results == null) return;
 
@@ -596,12 +574,10 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
         textColor = Colors.blue;
       }
 
-      selectedDocument = _file.path;
+      _selectedDocument.state = _file.path;
       documentName = _file.name;
 
-      log('selected Document = $selectedDocument');
-
-      setState(() {});
+      log('selected Document = ${_selectedDocument.state}');
 
       // blobImage = await selectedDocument.readAsBytes();
     } on PlatformException catch (e) {
@@ -609,7 +585,9 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
     }
   }
 
-  expenseReset() {
+  expenseReset(WidgetRef ref) {
+    final StateController<String?> _selectedDocument = ref.read(_selectedDocumentProvider.notifier);
+
     _expenseTitleController.clear();
     _amountController.clear();
     _payByController.clear();
@@ -618,8 +596,8 @@ class _ScreenAddExpenseState extends State<ScreenAddExpense> {
     _dateController.clear();
     _expenseCategoryController = '';
     _selectedDate = '';
-    selectedDocument = null;
+    _paymentMethod = 'Cash';
+    _selectedDocument.state = null;
     documentName = 'Document';
-    setState(() {});
   }
 }

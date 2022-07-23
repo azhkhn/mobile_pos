@@ -33,6 +33,119 @@ final _filesProvider = FutureProvider.autoDispose<List<FileSystemEntity>>((ref) 
   return dbFiles.reversed.toList();
 });
 
+class ScreenDatabaseList extends ConsumerWidget {
+  const ScreenDatabaseList({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final future = ref.watch(_filesProvider);
+    return Scaffold(
+      appBar: AppBarWidget(title: 'Databases'),
+      body: SafeArea(
+        child: future.when(
+          data: (files) {
+            return files.isNotEmpty
+                ? ListView.builder(
+                    itemCount: files.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final file = files[index];
+                      return Card(
+                          child: ListTile(
+                        dense: false,
+                        leading: CircleAvatar(backgroundColor: kTransparentColor, child: Text('${index + 1}'.toString(), style: kTextNo12)),
+                        title: Text(p.basename(file.path).replaceAll('.db', ''), style: kText12),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            //== == == == == Share Database == == == == ==
+                            Flexible(
+                              child: IconButton(
+                                onPressed: () async {
+                                  await Share.shareFiles([file.path]);
+                                },
+                                icon: kIconShare,
+                              ),
+                            ),
+
+                            //== == == == == Restore Database == == == == ==
+                            Flexible(
+                              child: IconButton(
+                                onPressed: () async {
+                                  showDialog(
+                                    context: context,
+                                    builder: (ctx) => KAlertDialog(
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: const [
+                                          Text('Are you sure you want to restore the database?'),
+                                          kHeight5,
+                                          Text(
+                                            'NB: Your current database will be replaced with the one you restore. Make sure you backup your current one before restore.',
+                                            style: kText12Lite,
+                                          )
+                                        ],
+                                      ),
+                                      submitText: 'Restore',
+                                      submitAction: () async {
+                                        final String databasesPath = await getDatabasesPath();
+                                        final String dbPath = p.join(databasesPath, 'user.db');
+                                        File source = File(file.path);
+                                        await source.copy(dbPath);
+
+                                        Navigator.pop(ctx);
+                                        log('Database restored successfully');
+                                        kSnackBar(context: context, update: true, content: 'Database restored successfully');
+                                        await UserUtils.instance.reloadUserDetails();
+                                      },
+                                    ),
+                                  );
+                                },
+                                icon: kIconUpdate,
+                              ),
+                            ),
+                            //== == == == == Delete Database == == == == ==
+                            Flexible(
+                              child: IconButton(
+                                onPressed: () async {
+                                  showDialog(
+                                      context: context,
+                                      builder: (ctx) => KAlertDialog(
+                                            content: const Text('Are you sure you want to delete this item?'),
+                                            submitAction: () {
+                                              file.deleteSync();
+                                              ref.refresh(_filesProvider);
+                                              Navigator.pop(context);
+                                              log('Database deleted successfully');
+                                              kSnackBar(context: context, content: 'Database deleted successfully', delete: true);
+                                            },
+                                          ));
+                                },
+                                icon: kIconDelete,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ));
+                    },
+                  )
+                : const Center(child: Text('No recent database backups'));
+          },
+          error: (Object o, StackTrace? e) {
+            log('Error : ' + e.toString() + 'Exception : ' + o.toString());
+
+            if (o == 'Insufficient Storage Permission') {
+              requestPermission(context, ref);
+              return const Center(child: Text('Something went wrong'));
+            }
+            return const Center(child: Text('No recent database backups'));
+          },
+          loading: () => const Center(child: SingleChildScrollView()),
+        ),
+      ),
+    );
+  }
+}
+
 Future<void> requestPermission(
   BuildContext context,
   WidgetRef ref,
@@ -61,117 +174,6 @@ Future<void> requestPermission(
       error: true,
       content: 'Please allow permissions manually from settings',
       action: SnackBarAction(label: 'Open', textColor: kWhite, onPressed: () async => await openAppSettings()),
-    );
-  }
-}
-
-class ScreenDatabaseList extends ConsumerWidget {
-  const ScreenDatabaseList({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final future = ref.watch(_filesProvider);
-    return Scaffold(
-      appBar: AppBarWidget(title: 'Databases'),
-      body: SafeArea(
-          child: future.when(
-              data: (files) {
-                return files.isNotEmpty
-                    ? ListView.builder(
-                        itemCount: files.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final file = files[index];
-                          return Card(
-                              child: ListTile(
-                            dense: false,
-                            leading: CircleAvatar(backgroundColor: kTransparentColor, child: Text('${index + 1}'.toString(), style: kTextNo12)),
-                            title: Text(p.basename(file.path).replaceAll('.db', ''), style: kText12),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                //== == == == == Share Database == == == == ==
-                                Flexible(
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      await Share.shareFiles([file.path]);
-                                    },
-                                    icon: kIconShare,
-                                  ),
-                                ),
-
-                                //== == == == == Restore Database == == == == ==
-                                Flexible(
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      showDialog(
-                                        context: context,
-                                        builder: (ctx) => KAlertDialog(
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: const [
-                                              Text('Are you sure you want to restore the database?'),
-                                              kHeight5,
-                                              Text(
-                                                'NB: Your current database will be replaced with the one you restore. Make sure you backup your current one before restore.',
-                                                style: kText12Lite,
-                                              )
-                                            ],
-                                          ),
-                                          submitText: 'Restore',
-                                          submitAction: () async {
-                                            final String databasesPath = await getDatabasesPath();
-                                            final String dbPath = p.join(databasesPath, 'user.db');
-                                            File source = File(file.path);
-                                            await source.copy(dbPath);
-
-                                            Navigator.pop(ctx);
-                                            log('Database restored successfully');
-                                            kSnackBar(context: context, update: true, content: 'Database restored successfully');
-                                            await UserUtils.instance.reloadUserDetails();
-                                          },
-                                        ),
-                                      );
-                                    },
-                                    icon: kIconUpdate,
-                                  ),
-                                ),
-                                //== == == == == Delete Database == == == == ==
-                                Flexible(
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      showDialog(
-                                          context: context,
-                                          builder: (ctx) => KAlertDialog(
-                                                content: const Text('Are you sure you want to delete this item?'),
-                                                submitAction: () {
-                                                  file.deleteSync();
-                                                  ref.refresh(_filesProvider);
-                                                  Navigator.pop(context);
-                                                  log('Database deleted successfully');
-                                                  kSnackBar(context: context, content: 'Database deleted successfully', delete: true);
-                                                },
-                                              ));
-                                    },
-                                    icon: kIconDelete,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ));
-                        },
-                      )
-                    : const Center(child: Text('No recent database backups'));
-              },
-              error: (Object o, StackTrace? e) {
-                log('Error : ' + e.toString() + 'Exception : ' + o.toString());
-
-                if (o == 'Insufficient Storage Permission') {
-                  requestPermission(context, ref);
-                  return const Center(child: Text('Something went wrong'));
-                }
-                return const Center(child: Text('No recent database backups'));
-              },
-              loading: () => const Center(child: SingleChildScrollView()))),
     );
   }
 }
