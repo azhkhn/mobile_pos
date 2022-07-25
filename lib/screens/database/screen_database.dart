@@ -47,9 +47,12 @@ class ScreenDatabase extends StatelessWidget {
                             children: const [
                               Text('Are you sure you want to backup database?'),
                               kHeight5,
-                              Text(
-                                'location : "storage/emulated/0/MobilePOS"',
-                                style: kText12Lite,
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  'location : "storage/emulated/0/MobilePOS"',
+                                  style: kText12Lite,
+                                ),
                               )
                             ],
                           ),

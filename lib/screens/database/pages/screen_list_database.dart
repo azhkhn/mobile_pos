@@ -15,6 +15,7 @@ import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
+import 'package:sizer/sizer.dart';
 import 'package:sqflite/sqflite.dart';
 
 final _filesProvider = FutureProvider.autoDispose<List<FileSystemEntity>>((ref) async {
@@ -52,8 +53,20 @@ class ScreenDatabaseList extends ConsumerWidget {
                       return Card(
                           child: ListTile(
                         dense: false,
-                        leading: CircleAvatar(backgroundColor: kTransparentColor, child: Text('${index + 1}'.toString(), style: kTextNo12)),
-                        title: Text(p.basename(file.path).replaceAll('.db', ''), style: kText12),
+                        minLeadingWidth: 10,
+                        leading: CircleAvatar(
+                          backgroundColor: kTransparentColor,
+                          maxRadius: 12,
+                          child: Text('${index + 1}'.toString(), style: kTextNo12),
+                        ),
+                        title: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            p.basename(file.path).replaceAll('.db', ''),
+                            style: TextStyle(fontSize: 10.sp),
+                          ),
+                        ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -64,6 +77,8 @@ class ScreenDatabaseList extends ConsumerWidget {
                                   await Share.shareFiles([file.path]);
                                 },
                                 icon: kIconShare,
+                                iconSize: 15.sp,
+                                constraints: const BoxConstraints(minHeight: 35, minWidth: 35),
                               ),
                             ),
 
@@ -101,6 +116,8 @@ class ScreenDatabaseList extends ConsumerWidget {
                                   );
                                 },
                                 icon: kIconUpdate,
+                                iconSize: 17.sp,
+                                constraints: const BoxConstraints(minHeight: 35, minWidth: 35),
                               ),
                             ),
                             //== == == == == Delete Database == == == == ==
@@ -121,6 +138,8 @@ class ScreenDatabaseList extends ConsumerWidget {
                                           ));
                                 },
                                 icon: kIconDelete,
+                                iconSize: 17.sp,
+                                constraints: const BoxConstraints(minHeight: 35, minWidth: 35),
                               ),
                             ),
                           ],

@@ -1,4 +1,5 @@
 import 'dart:developer' show log;
+
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/icons.dart';
@@ -58,7 +59,7 @@ class _ScreenAddExpenseCategoryState extends State<ScreenAddExpenseCategory> {
                   },
                 ),
               ),
-              kHeight20,
+              kHeight10,
 
               //========== Submit Button ==========
               CustomMaterialBtton(
@@ -82,8 +83,8 @@ class _ScreenAddExpenseCategoryState extends State<ScreenAddExpenseCategory> {
                 },
               ),
 
+              kHeight15,
               //========== Expense List Field ==========
-              kHeight50,
               Expanded(
                 child: FutureBuilder<dynamic>(
                   future: expenseCategoryDB.getAllExpenseCategories(),
@@ -108,12 +109,10 @@ class _ScreenAddExpenseCategoryState extends State<ScreenAddExpenseCategory> {
                                         final expenseCategory = expenseCategories[index];
                                         log('item == $expenseCategory');
                                         return ListTile(
+                                          dense: true,
                                           leading: CircleAvatar(
                                             backgroundColor: kTransparentColor,
-                                            child: Text(
-                                              '${index + 1}'.toString(),
-                                              style: const TextStyle(color: kTextColorBlack),
-                                            ),
+                                            child: Text('${index + 1}'.toString(), style: kTextNo12),
                                           ),
                                           title: Text(expenseCategory.expense),
                                           trailing: Row(

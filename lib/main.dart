@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/routes/route_generator.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/db/database.dart';
+import 'package:sizer/sizer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,14 +21,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "MobilePOS",
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      initialRoute: routeRoot,
-      onGenerateRoute: RouteGenerator.generateRoute,
+    return Sizer(
+      builder: (BuildContext context, Orientation orientation, DeviceType deviceType) {
+        return MaterialApp(
+          title: "MobilePOS",
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          initialRoute: routeRoot,
+          onGenerateRoute: RouteGenerator.generateRoute,
+        );
+      },
     );
   }
 }

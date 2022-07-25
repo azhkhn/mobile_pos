@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
+import 'package:sizer/sizer.dart';
 
 //==================== Constant Text ====================
 class ContstantTexts {
@@ -20,6 +21,7 @@ const kText13 = TextStyle(fontSize: 13);
 const kText13Bold = TextStyle(fontSize: 13, fontWeight: FontWeight.bold);
 const kText12Black = TextStyle(fontSize: 12, color: kBlack);
 const kText12Lite = TextStyle(color: kTextColor, fontSize: 12);
+final kText12LiteSp = TextStyle(color: kTextColor, fontSize: 10.sp);
 const kText10Lite = TextStyle(color: kTextColor, fontSize: 10);
 const kText12Bold = TextStyle(fontSize: 12, fontWeight: FontWeight.bold);
 const kText16 = TextStyle(fontSize: 16);

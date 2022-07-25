@@ -47,12 +47,13 @@ class CustomMaterialBtton extends StatelessWidget {
                     if (icon != null) kWidth10,
                     Flexible(
                       child: FittedBox(
+                          fit: BoxFit.scaleDown,
                           child: Text(
-                        buttonText!,
-                        style: TextStyle(
-                          color: textColor ?? kButtonTextWhite,
-                        ),
-                      )),
+                            buttonText!,
+                            style: TextStyle(
+                              color: textColor ?? kButtonTextWhite,
+                            ),
+                          )),
                     ),
                   ],
                 )

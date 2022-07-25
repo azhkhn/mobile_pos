@@ -4,6 +4,7 @@ import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
+import 'package:sizer/sizer.dart';
 
 const List homeGridIcons = [
   'assets/images/stock_module.png',
@@ -90,8 +91,7 @@ class HomeGrid extends StatelessWidget {
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   style: TextStyle(
-                    fontSize: screenSize.width / 45,
-                    // fontSize: screenSize.width * 0.025,
+                    fontSize: 7.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

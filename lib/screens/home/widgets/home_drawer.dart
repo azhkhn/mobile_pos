@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
+import 'package:sizer/sizer.dart';
 
 const List drawerListItemImage = [
   'assets/images/sales_module.png',
@@ -26,8 +28,8 @@ const List drawerListItemImage = [
 ];
 
 const List drawerListItem = [
-  'Sales',
   'POS',
+  'Sales',
   'Purchases',
   'Manage Expenses',
   'Manage Products',
@@ -98,13 +100,13 @@ class HomeDrawer extends StatelessWidget {
               await Navigator.pushNamed(context, routeBusinessProfile);
             }),
         Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: List.generate(
-                15,
-                (index) => DrawerItemsWidget(
-                  index: index,
-                ),
+          child: ListView(
+            padding: kPadding0,
+            itemExtent: isThermal ? 40 : 45,
+            children: List.generate(
+              15,
+              (index) => DrawerItemsWidget(
+                index: index,
               ),
             ),
           ),
@@ -126,23 +128,22 @@ class DrawerItemsWidget extends StatelessWidget {
     return ListTile(
       dense: true,
       leading: Image(
-        // color: Colors.white,
         image: AssetImage(drawerListItemImage[index]),
       ),
       title: Text(
         drawerListItem[index],
-        style: const TextStyle(color: kTextColorBlack),
+        style: TextStyle(color: kTextColorBlack, fontSize: 8.sp),
       ),
       onTap: () async {
         Navigator.pop(context);
         switch (index) {
           case 0:
-            Navigator.pushNamed(context, routeSales);
-            break;
-          case 1:
             await OrientationMode.toLandscape();
             await Navigator.pushNamed(context, routePos);
             await OrientationMode.toPortrait();
+            break;
+          case 1:
+            Navigator.pushNamed(context, routeSales);
             break;
           case 2:
             Navigator.pushNamed(context, routePurchase);

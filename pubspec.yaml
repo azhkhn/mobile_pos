@@ -52,6 +52,7 @@ dependencies:
   printing: ^5.8.0
   share_plus: ^4.0.10
   shared_preferences: ^2.0.15
+  sizer: ^2.0.15
   sqflite: ^2.0.2
 
 dev_dependencies:

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
@@ -42,12 +43,9 @@ class HomeCardWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final _future = ref.watch(homeCardProvider);
 
-    final Size _screenSize = MediaQuery.of(context).size;
-    return Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: _screenSize.width * 0.07,
-          vertical: _screenSize.height * 0.01,
-        ),
+    return FractionallySizedBox(
+        widthFactor: .93,
+        alignment: Alignment.center,
         child: _future.when(
           data: (_salesDetails) {
             log('sales Details = $_salesDetails');
@@ -57,110 +55,113 @@ class HomeCardWidget extends ConsumerWidget {
             final num _totalCash = _salesDetails[2];
 
             return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Card(
-                  elevation: 5,
-                  color: Colors.red[300],
-                  child: SizedBox(
-                    width: _screenSize.width / 4,
-                    height: _screenSize.width / 12,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const FittedBox(
-                          child: Text(
-                            "Today's Sale",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: kButtonTextWhite, fontWeight: FontWeight.bold, fontSize: 10),
-                          ),
-                        ),
-                        // kHeight5,
-                        FittedBox(
-                          child: Text(
-                            '$_todaySale',
-                            textAlign: TextAlign.center,
-                            softWrap: false,
-                            overflow: TextOverflow.fade,
-                            style: const TextStyle(
-                              color: kButtonTextWhite,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 11,
+                Expanded(
+                  child: Card(
+                    elevation: 5,
+                    color: kRed300,
+                    child: Padding(
+                      padding: kPadding2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const FittedBox(
+                            child: Text(
+                              "Today's Sale",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: kButtonTextWhite, fontWeight: FontWeight.bold, fontSize: 10),
                             ),
                           ),
-                        )
-                      ],
+                          // kHeight5,
+                          FittedBox(
+                            child: Text(
+                              '$_todaySale',
+                              textAlign: TextAlign.center,
+                              softWrap: false,
+                              overflow: TextOverflow.fade,
+                              style: const TextStyle(
+                                color: kButtonTextWhite,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                Card(
-                  elevation: 5,
-                  color: Colors.blue[300],
-                  child: SizedBox(
-                    width: _screenSize.width / 4,
-                    height: _screenSize.width / 12,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const FittedBox(
-                          child: Text(
-                            "Today's Cash",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: kButtonTextWhite,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10,
+                Expanded(
+                  child: Card(
+                    elevation: 5,
+                    color: Colors.blue[300],
+                    child: Padding(
+                      padding: kPadding2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const FittedBox(
+                            child: Text(
+                              "Today's Cash",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: kButtonTextWhite,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                              ),
                             ),
                           ),
-                        ),
-                        FittedBox(
-                          child: Text(
-                            Converter.currency.format(_todayCash),
-                            textAlign: TextAlign.center,
-                            softWrap: false,
-                            overflow: TextOverflow.fade,
-                            style: const TextStyle(
-                              color: kButtonTextWhite,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 11,
+                          FittedBox(
+                            child: Text(
+                              Converter.currency.format(_todayCash),
+                              textAlign: TextAlign.center,
+                              softWrap: false,
+                              overflow: TextOverflow.fade,
+                              style: const TextStyle(
+                                color: kButtonTextWhite,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                              ),
                             ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                Card(
-                  elevation: 5,
-                  color: Colors.green[300],
-                  child: SizedBox(
-                    width: _screenSize.width / 4,
-                    height: _screenSize.width / 12,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const FittedBox(
-                          child: Text(
-                            'Total Cash',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: kButtonTextWhite, fontWeight: FontWeight.bold, fontSize: 10),
-                          ),
-                        ),
-                        // kHeight5,
-                        FittedBox(
-                          child: Text(
-                            Converter.currency.format(_totalCash),
-                            textAlign: TextAlign.center,
-                            softWrap: false,
-                            overflow: TextOverflow.fade,
-                            style: const TextStyle(
-                              color: kButtonTextWhite,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 11,
+                Expanded(
+                  child: Card(
+                    elevation: 5,
+                    color: kGreen300,
+                    child: Padding(
+                      padding: kPadding2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const FittedBox(
+                            child: Text(
+                              'Total Cash',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: kButtonTextWhite, fontWeight: FontWeight.bold, fontSize: 10),
                             ),
                           ),
-                        )
-                      ],
+                          // kHeight5,
+                          FittedBox(
+                            child: Text(
+                              Converter.currency.format(_totalCash),
+                              textAlign: TextAlign.center,
+                              softWrap: false,
+                              overflow: TextOverflow.fade,
+                              style: const TextStyle(
+                                color: kButtonTextWhite,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),

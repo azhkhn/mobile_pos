@@ -2,6 +2,7 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/utils/vat/vat.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
+import 'package:sizer/sizer.dart';
 
 import '../../core/constant/colors.dart';
 import '../../core/routes/router.dart';
@@ -15,8 +16,7 @@ import 'widgets/home_drawer.dart';
 import 'widgets/home_grid.dart';
 
 class ScreenHome extends StatelessWidget {
-  ScreenHome({this.initialEntry, Key? key}) : super(key: key);
-  final int? initialEntry;
+  ScreenHome({Key? key}) : super(key: key);
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final isDialOpen = ValueNotifier(false);
   static final ValueNotifier<BusinessProfileModel?> businessNotifier = ValueNotifier(null);
@@ -24,8 +24,6 @@ class ScreenHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // await SystemChrome.setPreferredOrientations(
-      //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
       try {
         await UserUtils.instance.fetchUserDetails();
         businessNotifier.value = await UserUtils.instance.businessProfile;
@@ -51,12 +49,13 @@ class ScreenHome extends StatelessWidget {
       },
       child: Scaffold(
         key: _scaffoldKey,
-
+        resizeToAvoidBottomInset: false,
         //========== Drawer Widget ==========
         drawer: ValueListenableBuilder(
             valueListenable: businessNotifier,
             builder: (context, BusinessProfileModel? business, _) {
               return Drawer(
+                width: 78.w,
                 child: HomeDrawer(
                   businessProfile: business,
                 ),
@@ -106,16 +105,14 @@ class ScreenHome extends StatelessWidget {
         //========== Background Image ==========
         body: SafeArea(
           child: Container(
-            width: _screenSize.width,
-            height: _screenSize.height,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage('assets/images/home.jpg'),
+                fit: isThermal ? BoxFit.fill : BoxFit.cover,
+                image: const AssetImage('assets/images/home.jpg'),
               ),
             ),
             child: Padding(
-              padding: EdgeInsets.only(top: _screenSize.height / 6),
+              padding: EdgeInsets.only(top: 20.h),
               child: Column(
                 children: [
                   //========== Home Card Widget ==========
@@ -124,7 +121,7 @@ class ScreenHome extends StatelessWidget {
                   //========== Home GridView Widget ==========
                   Expanded(
                     child: GridView.count(
-                      padding: EdgeInsets.all(_screenSize.width / 50),
+                      padding: const EdgeInsets.all(10),
                       crossAxisCount: 3,
                       mainAxisSpacing: _screenSize.width / 50,
                       crossAxisSpacing: _screenSize.width / 50,

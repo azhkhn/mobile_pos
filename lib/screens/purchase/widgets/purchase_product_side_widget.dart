@@ -536,7 +536,10 @@ class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
                                                           child: Text(
                                                             'Qty : ' + itemList[index].openingStock,
                                                             textAlign: TextAlign.center,
-                                                            style: kItemsTextStyle,
+                                                            style: TextStyle(
+                                                              fontSize: DeviceUtil.isTablet ? 10 : 8,
+                                                              color: num.parse(itemList[index].openingStock) <= 0 ? kTextErrorColor : kTextColor,
+                                                            ),
                                                             maxLines: 1,
                                                           ),
                                                         ),

@@ -38,8 +38,6 @@ final _selectedImageProvider = StateProvider.autoDispose<File?>((ref) => null);
 final _productTypeProvider = StateProvider.autoDispose<String?>((ref) => null);
 final _vatMethodProvider = StateProvider.autoDispose<String?>((ref) => null);
 
-final isDialProvider = StateProvider<bool>((ref) => false);
-
 class ScreenAddProduct extends ConsumerWidget {
   ScreenAddProduct({Key? key, this.from = false, this.itemMasterModel}) : super(key: key);
 
@@ -54,7 +52,6 @@ class ScreenAddProduct extends ConsumerWidget {
 
   //========== Providers ==========
   static final itemCategoryIdProvider = StateProvider.autoDispose<int>((ref) => 0);
-
   static final futureCategoriesProvider =
       FutureProvider.autoDispose<List<CategoryModel>>((ref) async => await CategoryDatabase.instance.getAllCategories());
   static final futureSubCategoriesByCategoryIdProvider = FutureProvider.autoDispose.family<List<SubCategoryModel>, int>(
