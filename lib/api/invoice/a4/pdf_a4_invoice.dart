@@ -535,33 +535,80 @@ class PdfSalesInvoice {
       ];
     }).toList();
 
-    return pw.Table.fromTextArray(
-      headers: headers,
-      data: data,
+    final int tableLength = data.length + 1;
+    log('Table Length == $tableLength');
+
+    return pw.Table(
+      defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
       border: null,
-      cellStyle: pw.TextStyle(
-        fontSize: 8,
-        fontWeight: pw.FontWeight.normal,
-      ),
-      headerStyle: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold, font: arabicFont),
-      headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
-      cellHeight: 10,
       columnWidths: const {
-        1: pw.FractionColumnWidth(0.30),
-        2: pw.FractionColumnWidth(0.10),
+        0: pw.FractionColumnWidth(0.10),
+        1: pw.FractionColumnWidth(0.35),
+        2: pw.FractionColumnWidth(0.13),
         3: pw.FractionColumnWidth(0.15),
         4: pw.FractionColumnWidth(0.15),
         5: pw.FractionColumnWidth(0.15),
       },
-      cellAlignments: {
-        0: pw.Alignment.centerLeft,
-        1: pw.Alignment.centerLeft,
-        2: pw.Alignment.centerRight,
-        3: pw.Alignment.centerRight,
-        4: pw.Alignment.centerRight,
-        5: pw.Alignment.centerRight,
-      },
+      children: List<pw.TableRow>.generate(tableLength, (index) {
+        return index == 0
+            ?
+            //========== Header ==========
+            pw.TableRow(
+                decoration: const pw.BoxDecoration(color: PdfColors.grey300),
+                children: List.generate(
+                  headers.length,
+                  (_i) => pw.Padding(
+                    padding: const pw.EdgeInsets.all(2),
+                    child: pw.Text(
+                      headers[_i],
+                      textDirection: pw.TextDirection.rtl,
+                      textAlign: _i == 0 || _i == 1 ? pw.TextAlign.right : pw.TextAlign.left,
+                      style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold, font: arabicFont),
+                    ),
+                  ),
+                ))
+            :
+            //========== Cell ==========
+            pw.TableRow(
+                children: List.generate(
+                headers.length,
+                (_i) => pw.Padding(
+                  padding: const pw.EdgeInsets.all(2),
+                  child: pw.Text(
+                    data[index - 1][_i],
+                    textDirection: pw.TextDirection.ltr,
+                    textAlign: _i == 0 || _i == 1 ? pw.TextAlign.left : pw.TextAlign.right,
+                    style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.normal),
+                  ),
+                ),
+              ));
+      }),
     );
+
+    // return pw.Table.fromTextArray(
+    //   headers: headers,
+    //   data: data,
+    //   border: null,
+    //   cellStyle: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.normal),
+    //   headerStyle: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold, font: arabicFont),
+    //   headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
+    //   cellHeight: 10,
+    //   columnWidths: const {
+    //     1: pw.FractionColumnWidth(0.30),
+    //     2: pw.FractionColumnWidth(0.10),
+    //     3: pw.FractionColumnWidth(0.15),
+    //     4: pw.FractionColumnWidth(0.15),
+    //     5: pw.FractionColumnWidth(0.15),
+    //   },
+    //   cellAlignments: {
+    //     0: pw.Alignment.centerLeft,
+    //     1: pw.Alignment.centerLeft,
+    //     2: pw.Alignment.centerRight,
+    //     3: pw.Alignment.centerRight,
+    //     4: pw.Alignment.centerRight,
+    //     5: pw.Alignment.centerRight,
+    //   },
+    // );
   }
 
 //==================== Total Section ====================

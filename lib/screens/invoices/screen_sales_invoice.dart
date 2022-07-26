@@ -577,10 +577,7 @@ class ScreenSalesInvoice extends StatelessWidget {
                     child: Text(
                       headers[_i],
                       textAlign: _i == 0 || _i == 1 ? TextAlign.left : TextAlign.right,
-                      style: const TextStyle(
-                        fontSize: 8,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ))
@@ -592,10 +589,7 @@ class ScreenSalesInvoice extends StatelessWidget {
                   child: Text(
                     data[index - 1][_i],
                     textAlign: _i == 0 || _i == 1 ? TextAlign.left : TextAlign.right,
-                    style: const TextStyle(
-                      fontSize: 7,
-                      fontWeight: FontWeight.normal,
-                    ),
+                    style: const TextStyle(fontSize: 7, fontWeight: FontWeight.normal),
                   ),
                 ),
               ));

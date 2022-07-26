@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'dart:developer' show log;
 import 'dart:io' show File;
 import 'dart:typed_data' show ByteData, Uint8List;
@@ -108,8 +109,8 @@ class PdfSalesReceipt {
         pw.Align(
           alignment: pw.Alignment.center,
           child: pw.Container(
-            height: PdfPageFormat.roll57.availableWidth * 0.65,
-            width: PdfPageFormat.roll57.availableWidth * 0.65,
+            height: PdfPageFormat.roll57.availableWidth * 0.60,
+            width: PdfPageFormat.roll57.availableWidth * 0.60,
             child: pw.BarcodeWidget(
               barcode: pw.Barcode.qrCode(),
               data: EInvoiceGenerator.getEInvoiceCode(
@@ -395,43 +396,92 @@ class PdfSalesReceipt {
       ];
     }).toList();
 
-    return pw.Directionality(
-        textDirection: pw.TextDirection.rtl,
-        child: pw.Table.fromTextArray(
-          headers: headers,
-          headerPadding: const pw.EdgeInsets.all(1),
-          cellPadding: const pw.EdgeInsets.all(1),
-          data: data,
-          border: null,
-          headerStyle: pw.TextStyle(fontSize: 6, fontWeight: pw.FontWeight.normal, font: arabicFont),
-          cellStyle: pw.TextStyle(fontSize: 6.2, fontWeight: pw.FontWeight.normal),
-          headerDecoration: pw.BoxDecoration(border: pw.Border.all(width: .5)),
-          cellHeight: 12,
-          columnWidths: const {
-            0: pw.FractionColumnWidth(0.10),
-            1: pw.FractionColumnWidth(0.35),
-            2: pw.FractionColumnWidth(0.13),
-            3: pw.FractionColumnWidth(0.15),
-            4: pw.FractionColumnWidth(0.15),
-            5: pw.FractionColumnWidth(0.15),
-          },
-          headerAlignments: {
-            0: pw.Alignment.centerLeft,
-            1: pw.Alignment.centerLeft,
-            2: pw.Alignment.centerRight,
-            3: pw.Alignment.centerRight,
-            4: pw.Alignment.centerRight,
-            5: pw.Alignment.centerRight,
-          },
-          cellAlignments: {
-            0: pw.Alignment.centerLeft,
-            1: pw.Alignment.centerLeft,
-            2: pw.Alignment.centerRight,
-            3: pw.Alignment.centerRight,
-            4: pw.Alignment.centerRight,
-            5: pw.Alignment.centerRight,
-          },
-        ));
+    final int tableLength = data.length + 1;
+    log('Table Length == $tableLength');
+
+    return pw.Table(
+      defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
+      border: null,
+      columnWidths: const {
+        0: pw.FractionColumnWidth(0.10),
+        1: pw.FractionColumnWidth(0.35),
+        2: pw.FractionColumnWidth(0.13),
+        3: pw.FractionColumnWidth(0.15),
+        4: pw.FractionColumnWidth(0.15),
+        5: pw.FractionColumnWidth(0.15),
+      },
+      children: List<pw.TableRow>.generate(tableLength, (index) {
+        return index == 0
+            ?
+            //========== Header ==========
+            pw.TableRow(
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(
+                    width: .5,
+                    color: PdfColors.grey,
+                  ),
+                ),
+                children: List.generate(
+                  headers.length,
+                  (_i) => pw.Text(
+                    headers[_i],
+                    textDirection: pw.TextDirection.rtl,
+                    textAlign: _i == 0 || _i == 1 ? pw.TextAlign.right : pw.TextAlign.left,
+                    style: pw.TextStyle(fontSize: 6, fontWeight: pw.FontWeight.normal, font: arabicFont),
+                  ),
+                ))
+            :
+            //========== Cell ==========
+            pw.TableRow(
+                children: List.generate(
+                headers.length,
+                (_i) => pw.Text(
+                  data[index - 1][_i],
+                  textDirection: pw.TextDirection.ltr,
+                  textAlign: _i == 0 || _i == 1 ? pw.TextAlign.left : pw.TextAlign.right,
+                  style: pw.TextStyle(fontSize: 6, fontWeight: pw.FontWeight.normal),
+                ),
+              ));
+      }),
+    );
+
+    // return pw.Directionality(
+    //     textDirection: pw.TextDirection.rtl,
+    //     child: pw.Table.fromTextArray(
+    //       headers: headers,
+    //       headerPadding: const pw.EdgeInsets.all(1),
+    //       cellPadding: const pw.EdgeInsets.all(1),
+    //       data: data,
+    //       border: null,
+    //       headerStyle: pw.TextStyle(fontSize: 6, fontWeight: pw.FontWeight.normal, font: arabicFont),
+    //       cellStyle: pw.TextStyle(fontSize: 6.2, fontWeight: pw.FontWeight.normal),
+    //       headerDecoration: pw.BoxDecoration(border: pw.Border.all(width: .5)),
+    //       cellHeight: 12,
+    //       columnWidths: const {
+    //         0: pw.FractionColumnWidth(0.10),
+    //         1: pw.FractionColumnWidth(0.35),
+    //         2: pw.FractionColumnWidth(0.13),
+    //         3: pw.FractionColumnWidth(0.15),
+    //         4: pw.FractionColumnWidth(0.15),
+    //         5: pw.FractionColumnWidth(0.15),
+    //       },
+    //       headerAlignments: {
+    //         0: pw.Alignment.centerLeft,
+    //         1: pw.Alignment.centerLeft,
+    //         2: pw.Alignment.centerRight,
+    //         3: pw.Alignment.centerRight,
+    //         4: pw.Alignment.centerRight,
+    //         5: pw.Alignment.centerRight,
+    //       },
+    //       cellAlignments: {
+    //         0: pw.Alignment.centerLeft,
+    //         1: pw.Alignment.centerLeft,
+    //         2: pw.Alignment.centerRight,
+    //         3: pw.Alignment.centerRight,
+    //         4: pw.Alignment.centerRight,
+    //         5: pw.Alignment.centerRight,
+    //       },
+    //     ));
   }
 
   //==================== Total Section ====================

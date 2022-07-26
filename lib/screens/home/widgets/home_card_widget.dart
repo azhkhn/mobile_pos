@@ -48,7 +48,7 @@ class HomeCardWidget extends ConsumerWidget {
         alignment: Alignment.center,
         child: _future.when(
           data: (_salesDetails) {
-            log('sales Details = $_salesDetails');
+            log('${'Todays Sale == ${_salesDetails[0]}'} | ${'Todays Cash == ${_salesDetails[1]}'} | ${'Total Cash == ${_salesDetails[2]}'}');
 
             final num _todaySale = _salesDetails[0];
             final num _todayCash = _salesDetails[1];
