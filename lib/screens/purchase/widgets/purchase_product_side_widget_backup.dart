@@ -1,11 +1,9 @@
-// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member, must_be_immutable
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
@@ -19,8 +17,6 @@ import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_side_widget.dart';
 import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
-import 'package:sizer/sizer.dart';
-
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
 import '../../../db/db_functions/brand/brand_database.dart';
@@ -30,35 +26,48 @@ import '../../../db/db_functions/sub_category/sub_category_db.dart';
 import '../../../model/item_master/item_master_model.dart';
 import '../../../widgets/button_widgets/material_button_widget.dart';
 
-//==== ==== ==== ==== ==== Providers ==== ==== ==== ==== ====
-final _futureProductsProvider = FutureProvider.autoDispose<List<ItemMasterModel>>((ref) async {
-  return ItemMasterDatabase.instance.getAllItems();
-});
-final _isLoadedProvider = StateProvider.autoDispose<bool>((ref) => false);
-
-class PurchaseProductSideWidget extends ConsumerWidget {
-  PurchaseProductSideWidget({
+class PurchaseProductSideWidget extends StatefulWidget {
+  const PurchaseProductSideWidget({
     this.isVertical = false,
     Key? key,
   }) : super(key: key);
 
   final bool isVertical;
 
-  //========== Providers ==========
-  static final itemsProvider = StateProvider.autoDispose<List<dynamic>>((ref) => []);
-  static final builderModelProvider = StateProvider.autoDispose<int?>((ref) => null);
-
-  //========== Lists ==========
-  List categories = [], subCategories = [], brands = [], _stableItemsList = [];
-
-  //========== TextEditing Controllers ==========
-  final TextEditingController _productController = TextEditingController();
+  //========== Value Notifiers ==========
+  static final ValueNotifier<List<dynamic>> itemsNotifier = ValueNotifier([]);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  State<PurchaseProductSideWidget> createState() => _PurchaseProductSideWidgetState();
+}
+
+class _PurchaseProductSideWidgetState extends State<PurchaseProductSideWidget> {
+  //========== Database Instances ==========
+  final categoryDB = CategoryDatabase.instance;
+  final subCategoryDB = SubCategoryDatabase.instance;
+  final brandDB = BrandDatabase.instance;
+  final itemMasterDB = ItemMasterDatabase.instance;
+
+  //========== FutureBuilder Database ==========
+  Future<List<dynamic>>? futureGrid = ItemMasterDatabase.instance.getAllItems();
+
+  //========== FutureBuilder ModelClass by Integer ==========
+  int? _builderModel;
+
+  //========== Lists ==========
+  List categories = [], subCategories = [], brands = [], itemsList = [];
+
+  //========== TextEditing Controllers ==========
+  final _productController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    final Size _screenSize = MediaQuery.of(context).size;
+    final bool isSmall = DeviceUtil.isSmall;
+
     return SizedBox(
-      width: isVertical ? double.infinity : SizerUtil.width / 1.9,
-      height: isVertical ? SizerUtil.height / 2.25 : double.infinity,
+      width: widget.isVertical ? double.infinity : _screenSize.width / 1.9,
+      height: widget.isVertical ? _screenSize.height / 2.25 : double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -81,7 +90,6 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                       hideSuggestionsOnKeyboardHide: true,
                       textFieldConfiguration: TextFieldConfiguration(
                           controller: _productController,
-                          onTap: () {},
                           style: kText_10_12,
                           decoration: InputDecoration(
                             fillColor: Colors.white,
@@ -97,19 +105,25 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                                 child: const Icon(Icons.clear, size: 15),
                                 onTap: () async {
                                   _productController.clear();
-                                  ref.read(builderModelProvider.notifier).state = null;
-                                  ref.read(itemsProvider.notifier).state = _stableItemsList;
+                                  _builderModel = null;
+                                  futureGrid = ItemMasterDatabase.instance.getAllItems();
+                                  if (itemsList.isNotEmpty) {
+                                    PurchaseProductSideWidget.itemsNotifier.value = itemsList;
+                                  } else {
+                                    itemsList = await itemMasterDB.getAllItems();
+                                    PurchaseProductSideWidget.itemsNotifier.value = itemsList;
+                                  }
                                 },
                               ),
                             ),
-                            contentPadding: EdgeInsets.all(isThermal ? 8 : 10),
+                            contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
                             hintText: 'Search product by name/code',
                             hintStyle: kText_10_12,
                             border: const OutlineInputBorder(),
                           )),
                       noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
                       suggestionsCallback: (pattern) async {
-                        return ItemMasterDatabase.instance.getProductSuggestions(pattern);
+                        return itemMasterDB.getProductSuggestions(pattern);
                       },
                       itemBuilder: (context, ItemMasterModel suggestion) {
                         return ListTile(
@@ -123,9 +137,10 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                       },
                       onSuggestionSelected: (ItemMasterModel selectedItem) async {
                         _productController.clear();
-
-                        ref.read(builderModelProvider.notifier).state = null;
-                        ref.read(itemsProvider.notifier).state = [selectedItem];
+                        Future<List<dynamic>> future() async => [selectedItem];
+                        futureGrid = future();
+                        _builderModel = null;
+                        PurchaseProductSideWidget.itemsNotifier.value = [selectedItem];
 
                         log(selectedItem.itemName);
                       },
@@ -144,11 +159,11 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                           minHeight: 20,
                           maxHeight: 20,
                         ),
-                        onPressed: () async => await onBarcodeScan(ref),
+                        onPressed: () async => await onBarcodeScan(),
                         icon: Icon(
                           Icons.qr_code,
                           color: Colors.blue,
-                          size: isThermal ? 22 : 25,
+                          size: isSmall ? 22 : 25,
                         ),
                       ),
                     ),
@@ -156,7 +171,7 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                 ],
               ),
               kHeight3,
-              isVertical
+              widget.isVertical
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -188,7 +203,7 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                                       },
                                     ),
                                   ),
-                                  contentPadding: EdgeInsets.all(isThermal ? 8 : 10),
+                                  contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
                                   hintText: 'Supplier',
                                   hintStyle: kText_10_12,
                                   border: const OutlineInputBorder(),
@@ -241,7 +256,7 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                             textInputType: TextInputType.text,
                             constraints: const BoxConstraints(maxHeight: 40),
                             hintStyle: kText_10_12,
-                            contentPadding: EdgeInsets.all(isThermal ? 8 : 10),
+                            contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
                             errorStyle: true,
                             autovalidateMode: AutovalidateMode.onUserInteraction,
                           ),
@@ -282,7 +297,7 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                                 icon: Icon(
                                   Icons.visibility,
                                   color: Colors.blue,
-                                  size: isThermal ? 25 : 25,
+                                  size: isSmall ? 25 : 25,
                                 )),
                           ),
                         ),
@@ -314,7 +329,7 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                                 icon: Icon(
                                   Icons.person_add,
                                   color: Colors.blue,
-                                  size: isThermal ? 25 : 25,
+                                  size: isSmall ? 25 : 25,
                                 )),
                           ),
                         ),
@@ -326,9 +341,9 @@ class PurchaseProductSideWidget extends ConsumerWidget {
 
           //==================== Quick Filter Buttons ====================
           Padding(
-            padding: isVertical ? const EdgeInsets.only(top: 4.0, bottom: 2.0) : const EdgeInsets.only(bottom: 5),
+            padding: widget.isVertical ? const EdgeInsets.only(top: 4.0, bottom: 2.0) : const EdgeInsets.only(bottom: 5),
             child: SizedBox(
-              height: isThermal ? 22 : 30,
+              height: isSmall ? 22 : 30,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -337,15 +352,17 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                     child: CustomMaterialBtton(
                         color: Colors.blue,
                         onPressed: () async {
-                          ref.read(builderModelProvider.notifier).state = 0;
+                          _builderModel = 0;
 
                           if (categories.isNotEmpty) {
                             log('loading Categories..');
-                            ref.read(itemsProvider.notifier).state = categories;
+                            PurchaseProductSideWidget.itemsNotifier.value = categories;
+                            PurchaseProductSideWidget.itemsNotifier.notifyListeners();
                           } else {
                             log('fetching Categories..');
-                            categories = await CategoryDatabase.instance.getAllCategories();
-                            ref.read(itemsProvider.notifier).state = categories;
+                            categories = await categoryDB.getAllCategories();
+                            PurchaseProductSideWidget.itemsNotifier.value = categories;
+                            PurchaseProductSideWidget.itemsNotifier.notifyListeners();
                           }
                         },
                         padding: kPadding0,
@@ -357,12 +374,12 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                     flex: 5,
                     child: CustomMaterialBtton(
                         onPressed: () async {
-                          ref.read(builderModelProvider.notifier).state = 1;
+                          _builderModel = 1;
                           if (subCategories.isNotEmpty) {
-                            ref.read(itemsProvider.notifier).state = subCategories;
+                            PurchaseProductSideWidget.itemsNotifier.value = subCategories;
                           } else {
-                            subCategories = await SubCategoryDatabase.instance.getAllSubCategories();
-                            ref.read(itemsProvider.notifier).state = subCategories;
+                            subCategories = await subCategoryDB.getAllSubCategories();
+                            PurchaseProductSideWidget.itemsNotifier.value = subCategories;
                           }
                         },
                         padding: kPadding0,
@@ -375,12 +392,12 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                     flex: 3,
                     child: CustomMaterialBtton(
                       onPressed: () async {
-                        ref.read(builderModelProvider.notifier).state = 2;
+                        _builderModel = 2;
                         if (brands.isNotEmpty) {
-                          ref.read(itemsProvider.notifier).state = brands;
+                          PurchaseProductSideWidget.itemsNotifier.value = brands;
                         } else {
-                          brands = await BrandDatabase.instance.getAllBrands();
-                          ref.read(itemsProvider.notifier).state = brands;
+                          brands = await brandDB.getAllBrands();
+                          PurchaseProductSideWidget.itemsNotifier.value = brands;
                         }
                       },
                       padding: kPadding0,
@@ -395,8 +412,14 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                     child: MaterialButton(
                       onPressed: () async {
                         _productController.clear();
-                        ref.read(builderModelProvider.notifier).state = null;
-                        ref.read(itemsProvider.notifier).state = _stableItemsList;
+                        _builderModel = null;
+
+                        if (itemsList.isNotEmpty) {
+                          PurchaseProductSideWidget.itemsNotifier.value = itemsList;
+                        } else {
+                          itemsList = await itemMasterDB.getAllItems();
+                          PurchaseProductSideWidget.itemsNotifier.value = itemsList;
+                        }
                       },
                       color: Colors.blue,
                       child: const FittedBox(
@@ -413,68 +436,75 @@ class PurchaseProductSideWidget extends ConsumerWidget {
             ),
           ),
 
-          //========================================                      ========================================
-          //======================================== Product Listing Grid ========================================
-          //========================================                      ========================================
+          //==================== Product Listing Grid ====================
           Expanded(
-            flex: isVertical ? 1 : 1,
+            flex: widget.isVertical ? 1 : 1,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Consumer(
-                builder: (context, ref, _) {
-                  final _futureProducts = ref.watch(_futureProductsProvider);
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: FutureBuilder(
+                  future: futureGrid,
+                  builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                    log('Future Builder() => Called!');
 
-                  return _futureProducts.when(
-                      loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (_, __) => const Center(child: Text('No items found')),
-                      data: (items) {
-                        log('Future Provider() => called!');
-                        _stableItemsList = items;
-                        return Consumer(
-                          builder: (context, ref, _) {
-                            log('Items Provider() => called!');
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      case ConnectionState.done:
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
+                            child: Text('No Item Found!'),
+                          );
+                        }
+                        if (snapshot.hasData) {
+                          if (PurchaseProductSideWidget.itemsNotifier.value.isEmpty) {
+                            PurchaseProductSideWidget.itemsNotifier.value = snapshot.data!;
+                          }
+                        } else {
+                          PurchaseProductSideWidget.itemsNotifier.value = [];
+                        }
 
-                            List<dynamic> _itemList = ref.watch(itemsProvider);
+                        return ValueListenableBuilder(
+                          valueListenable: PurchaseProductSideWidget.itemsNotifier,
+                          builder: (context, List<dynamic> itemList, _) {
+                            log('Total Products == ${PurchaseProductSideWidget.itemsNotifier.value.length}');
 
-                            final _isLoaded = ref.read(_isLoadedProvider.notifier);
-                            // log('isLoaded = ${_isLoaded.state}');
-
-                            if (!_isLoaded.state) {
-                              _itemList = items;
-                              WidgetsBinding.instance.addPostFrameCallback((_) => _isLoaded.state = true);
-                            }
-
-                            return _itemList.isNotEmpty
+                            return PurchaseProductSideWidget.itemsNotifier.value.isNotEmpty
                                 ? GridView.builder(
                                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: isVertical ? 4 : 5,
+                                      crossAxisCount: widget.isVertical ? 4 : 5,
                                       childAspectRatio: (1 / .75),
                                     ),
-                                    itemCount: _itemList.length,
+                                    itemCount: itemList.length,
                                     itemBuilder: (context, index) {
                                       return InkWell(
                                         onTap: () async {
-                                          final int? _builderModel = ref.read(builderModelProvider);
                                           if (_builderModel == 0) {
-                                            log(_itemList[index].category);
-                                            final categoryId = _itemList[index].id;
-                                            ref.read(builderModelProvider.notifier).state = null;
-                                            ref.read(itemsProvider.notifier).state =
-                                                await ItemMasterDatabase.instance.getProductByCategoryId(categoryId);
+                                            log(itemList[index].category);
+                                            final categoryId = itemList[index].id;
+                                            _builderModel = null;
+                                            PurchaseProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByCategoryId(categoryId);
                                           } else if (_builderModel == 1) {
-                                            log(_itemList[index].subCategory);
-                                            final subCategoryId = _itemList[index].id;
-                                            ref.read(builderModelProvider.notifier).state = null;
-                                            ref.read(itemsProvider.notifier).state =
-                                                await ItemMasterDatabase.instance.getProductBySubCategoryId(subCategoryId);
+                                            log(itemList[index].subCategory);
+                                            final subCategoryId = itemList[index].id;
+                                            _builderModel = null;
+                                            PurchaseProductSideWidget.itemsNotifier.value =
+                                                await itemMasterDB.getProductBySubCategoryId(subCategoryId);
                                           } else if (_builderModel == 2) {
-                                            log(_itemList[index].brand);
-                                            final brandId = _itemList[index].id;
-                                            ref.read(builderModelProvider.notifier).state = null;
-                                            ref.read(itemsProvider.notifier).state = await ItemMasterDatabase.instance.getProductByBrandId(brandId);
+                                            log(itemList[index].brand);
+                                            final brandId = itemList[index].id;
+                                            _builderModel = null;
+                                            PurchaseProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByBrandId(brandId);
                                           } else {
 //===================================== if the Product Already Added ====================================
-                                            isProductAlreadyAdded(_itemList, index);
+                                            isProductAlreadyAdded(itemList, index);
 //=======================================================================================================
 
                                             PurchaseSideWidget.selectedProductsNotifier.notifyListeners();
@@ -486,13 +516,13 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                                           elevation: 10,
                                           child: Padding(
                                               padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-                                              child: ref.read(builderModelProvider) == null
+                                              child: _builderModel == null
                                                   ? Column(
                                                       children: [
                                                         Expanded(
                                                           flex: 4,
                                                           child: Text(
-                                                            _itemList[index].itemName ?? '',
+                                                            itemList[index].itemName ?? '',
                                                             textAlign: TextAlign.center,
                                                             softWrap: true,
                                                             style: kItemsTextStyle,
@@ -504,11 +534,11 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                                                         Expanded(
                                                           flex: 2,
                                                           child: Text(
-                                                            'Qty : ' + _itemList[index].openingStock,
+                                                            'Qty : ' + itemList[index].openingStock,
                                                             textAlign: TextAlign.center,
                                                             style: TextStyle(
                                                               fontSize: DeviceUtil.isTablet ? 10 : 8,
-                                                              color: num.parse(_itemList[index].openingStock) <= 0 ? kTextErrorColor : kTextColor,
+                                                              color: num.parse(itemList[index].openingStock) <= 0 ? kTextErrorColor : kTextColor,
                                                             ),
                                                             maxLines: 1,
                                                           ),
@@ -516,7 +546,7 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                                                         Expanded(
                                                           flex: 2,
                                                           child: Text(
-                                                            Converter.currency.format(num.tryParse(_itemList[index].itemCost)),
+                                                            Converter.currency.format(num.tryParse(itemList[index].itemCost)),
                                                             style: kItemsTextStyle,
                                                             maxLines: 1,
                                                           ),
@@ -527,25 +557,22 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                                                       mainAxisAlignment: MainAxisAlignment.center,
                                                       children: [
                                                         Text(
-                                                          ref.read(builderModelProvider) == 0
-                                                              ? _itemList[index].category
-                                                              : ref.read(builderModelProvider) == 1
-                                                                  ? _itemList[index].subCategory
-                                                                  : ref.read(builderModelProvider) == 2
-                                                                      ? _itemList[index].brand
+                                                          _builderModel == 0
+                                                              ? itemList[index].category
+                                                              : _builderModel == 1
+                                                                  ? itemList[index].subCategory
+                                                                  : _builderModel == 2
+                                                                      ? itemList[index].brand
                                                                       : '',
                                                           textAlign: TextAlign.center,
                                                           softWrap: true,
                                                           style: kItemsTextStyle,
                                                           overflow: TextOverflow.ellipsis,
-                                                          maxLines: ref.read(builderModelProvider) == 0 &&
-                                                                  _itemList[index].category.toString().contains(' ')
+                                                          maxLines: _builderModel == 0 && itemList[index].category.toString().contains(' ')
                                                               ? 2
-                                                              : ref.read(builderModelProvider) == 1 &&
-                                                                      _itemList[index].subCategory.toString().contains(' ')
+                                                              : _builderModel == 1 && itemList[index].subCategory.toString().contains(' ')
                                                                   ? 2
-                                                                  : ref.read(builderModelProvider) == 2 &&
-                                                                          _itemList[index].brand.toString().contains(' ')
+                                                                  : _builderModel == 2 && itemList[index].brand.toString().contains(' ')
                                                                       ? 2
                                                                       : 1,
                                                         ),
@@ -556,21 +583,14 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                                     },
                                   )
                                 : const Center(
-                                    child: Text('No items found'),
+                                    child: Text('No Item Found!'),
                                   );
                           },
                         );
-                      });
-                },
-              ),
-            ),
-          ),
-          //== == == == == Provider Listeners == == == == ==
-          Consumer(builder: (context, ref, _) {
-            ref.watch(_isLoadedProvider);
-            ref.watch(builderModelProvider);
-            return kNone;
-          }),
+                    }
+                  },
+                )),
+          )
         ],
       ),
     );
@@ -621,7 +641,7 @@ class PurchaseProductSideWidget extends ConsumerWidget {
     const PurchaseSideWidget().getTotalPayable();
   }
 
-  Future onBarcodeScan(WidgetRef ref) async {
+  Future onBarcodeScan() async {
     final String _scanResult;
 
     try {
@@ -634,14 +654,14 @@ class PurchaseProductSideWidget extends ConsumerWidget {
       log('Item Code == $_scanResult');
       if (_scanResult == '-1') return;
       final String _itemCode = _scanResult;
-      ref.read(builderModelProvider.notifier).state = null;
-      ref.read(itemsProvider.notifier).state = await ItemMasterDatabase.instance.getProductByItemCode(_itemCode);
+      _builderModel = null;
+      PurchaseProductSideWidget.itemsNotifier.value = await itemMasterDB.getProductByItemCode(_itemCode);
     } on PlatformException catch (_) {
       log('Failed to get Platform version!');
     } catch (e) {
       log(e.toString());
     }
 
-    // if (!mounted) return;
+    if (!mounted) return;
   }
 }

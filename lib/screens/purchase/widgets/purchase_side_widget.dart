@@ -2,10 +2,12 @@
 
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
+import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/debouncer/debouncer.dart';
@@ -24,7 +26,7 @@ import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';
 import '../../../core/utils/snackbar/snackbar.dart';
 
-class PurchaseSideWidget extends StatelessWidget {
+class PurchaseSideWidget extends ConsumerWidget {
   const PurchaseSideWidget({
     this.isVertical = false,
     Key? key,
@@ -51,14 +53,14 @@ class PurchaseSideWidget extends StatelessWidget {
   static final TextEditingController referenceNumberController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     Size _screenSize = MediaQuery.of(context).size;
     final bool isSmall = DeviceUtil.isSmall;
 
     return WillPopScope(
       onWillPop: () async {
         if (selectedProductsNotifier.value.isEmpty) {
-          resetPurchase();
+          resetPurchase(ref);
           return true;
         } else {
           showDialog(
@@ -67,7 +69,7 @@ class PurchaseSideWidget extends StatelessWidget {
                     content: const Text('Are you sure want to cancel the purchase?'),
                     submitAction: () {
                       Navigator.pop(context);
-                      resetPurchase();
+                      resetPurchase(ref);
                       Navigator.pop(context);
                     },
                   ));
@@ -583,7 +585,7 @@ class PurchaseSideWidget extends StatelessWidget {
   }
 
   //==================== Reset All Values ====================
-  void resetPurchase({bool notify = false}) {
+  Future<void> resetPurchase(WidgetRef ref, {bool notify = false}) async {
     selectedProductsNotifier.value.clear();
     subTotalNotifier.value.clear();
     vatRateNotifier.value.clear();
@@ -598,9 +600,12 @@ class PurchaseSideWidget extends StatelessWidget {
     totalVatNotifier.value = 0;
     totalPayableNotifier.value = 0;
     supplierNotifier.value = null;
-    PurchaseProductSideWidget.itemsNotifier.value.clear();
+    // PurchaseProductSideWidget.itemsNotifier.value.clear();
+    ref.refresh(PurchaseProductSideWidget.itemsProvider);
 
     if (notify) {
+      ref.read(PurchaseProductSideWidget.builderModelProvider.notifier).state = null;
+      ref.read(PurchaseProductSideWidget.itemsProvider.notifier).state = await ItemMasterDatabase.instance.getAllItems();
       selectedProductsNotifier.notifyListeners();
       subTotalNotifier.notifyListeners();
       vatRateNotifier.notifyListeners();

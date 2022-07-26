@@ -1,10 +1,10 @@
 import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
@@ -16,13 +16,13 @@ import 'package:shop_ez/model/purchase/purchase_items_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
 import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_type_widget.dart';
-import 'package:shop_ez/screens/purchase/widgets/purchase_product_side_widget.dart';
 import 'package:shop_ez/screens/purchase/widgets/purchase_side_widget.dart';
+import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 
 import '../../../core/constant/sizes.dart';
 import '../../../core/utils/converters/converters.dart';
 
-class PurchaseButtonsWidget extends StatelessWidget {
+class PurchaseButtonsWidget extends ConsumerWidget {
   const PurchaseButtonsWidget({
     this.isVertical = false,
     Key? key,
@@ -30,7 +30,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
 
   final bool isVertical;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     Size _screenSize = MediaQuery.of(context).size;
     final bool isSmall = DeviceUtil.isSmall;
 
@@ -99,7 +99,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
                 child: MaterialButton(
                   onPressed: () {
                     if (PurchaseSideWidget.selectedProductsNotifier.value.isEmpty) {
-                      const PurchaseSideWidget().resetPurchase();
+                      const PurchaseSideWidget().resetPurchase(ref);
                       Navigator.of(context).pop();
                     } else {
                       showDialog(
@@ -108,7 +108,7 @@ class PurchaseButtonsWidget extends StatelessWidget {
                                 content: const Text('Are you sure want to cancel the purchase?'),
                                 submitAction: () {
                                   Navigator.of(context).pop();
-                                  const PurchaseSideWidget().resetPurchase();
+                                  const PurchaseSideWidget().resetPurchase(ref);
                                   Navigator.of(context).pop();
                                 },
                               ));
@@ -192,7 +192,8 @@ class PurchaseButtonsWidget extends StatelessWidget {
 //======================================== Add Purchase ========================================
 //========================================          ========================================
   addPurchase(
-    BuildContext context, {
+    BuildContext context,
+    WidgetRef ref, {
     required String argBalance,
     required String argPaymentStatus,
     required String argPaymentType,
@@ -363,11 +364,9 @@ class PurchaseButtonsWidget extends StatelessWidget {
 
       PaymentTypeWidget.amountController.clear();
 
-      const PurchaseSideWidget().resetPurchase(notify: true);
+      await const PurchaseSideWidget().resetPurchase(ref, notify: true);
 
       PaymentTypeWidget.formKey.currentState!.reset();
-
-      PurchaseProductSideWidget.itemsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
 
       Navigator.pop(context);
     } catch (e) {

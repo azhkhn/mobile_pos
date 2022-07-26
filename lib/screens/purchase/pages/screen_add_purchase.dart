@@ -27,11 +27,11 @@ class Purchase extends StatelessWidget {
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       //========================================                  ========================================
                       //======================================== Purchase Side Widget ========================================
                       //========================================                  ========================================
-                      PurchaseSideWidget(),
+                      const PurchaseSideWidget(),
 
                       //==================== Constant Width ====================
                       kWidth20,
@@ -45,19 +45,19 @@ class Purchase extends StatelessWidget {
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       //========================================                     ========================================
                       //======================================== Purchase Product Side Widget ========================================
                       //========================================                     ========================================
                       PurchaseProductSideWidget(isVertical: true),
 
                       //==================== Divider ====================
-                      Divider(thickness: 1, height: 10),
+                      const Divider(thickness: 1, height: 10),
 
                       //========================================                  ========================================
                       //======================================== Purchase Side Widget ========================================
                       //========================================                  ========================================
-                      PurchaseSideWidget(isVertical: true),
+                      const PurchaseSideWidget(isVertical: true),
                     ],
                   ),
           ),

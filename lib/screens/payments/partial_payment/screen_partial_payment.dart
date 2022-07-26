@@ -120,7 +120,7 @@ class PartialPayment extends ConsumerWidget {
                                       SalesModel? salesModel;
                                       if (purchase) {
                                         //========== Purchase Payment ==========
-                                        await const PurchaseButtonsWidget().addPurchase(context,
+                                        await const PurchaseButtonsWidget().addPurchase(context, ref,
                                             argBalance: _balance,
                                             argPaymentStatus: _paymentStatus,
                                             argPaymentType: _paymentType,

@@ -239,7 +239,7 @@ class ItemMasterDatabase {
   Future<List<ItemMasterModel>> getAllItems() async {
     final db = await dbInstance.database;
     final _result = await db.query(tableItemMaster);
-    log('Items from Database  === $_result');
+    log('Fetching Products from Database..');
     // db.delete(tableItemMaster);
     final _items = _result.map((json) => ItemMasterModel.fromJson(json)).toList();
     return _items;

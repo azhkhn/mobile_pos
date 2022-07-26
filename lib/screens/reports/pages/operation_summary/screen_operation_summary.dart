@@ -25,11 +25,11 @@ final _toDateController = Provider.autoDispose<TextEditingController>((ref) => T
 final _fromDateProvider = StateProvider.autoDispose<DateTime?>((ref) => null);
 final _toDateProvider = StateProvider.autoDispose<DateTime?>((ref) => null);
 
-final isLoadedProvider = StateProvider.autoDispose<bool>((ref) => false);
+final _isLoadedProvider = StateProvider.autoDispose<bool>((ref) => false);
 
-final summaryProvider = StateProvider.autoDispose<List<Map<String, num>>>((ref) => []);
+final _summaryProvider = StateProvider.autoDispose<List<Map<String, num>>>((ref) => []);
 
-final summaryFutureProvider = FutureProvider.autoDispose<List<Map<String, num>>>((ref) async {
+final _summaryFutureProvider = FutureProvider.autoDispose<List<Map<String, num>>>((ref) async {
   final DateTime _today = DateTime.now();
 
   final List<SalesModel> sales = await SalesDatabase.instance.getSalesByDay(_today);
@@ -63,7 +63,7 @@ class ScreenOperationSummary extends StatelessWidget {
                       ref.watch(_toDateController);
                       ref.watch(_fromDateProvider);
                       ref.watch(_toDateProvider);
-                      ref.watch(isLoadedProvider);
+                      ref.watch(_isLoadedProvider);
                     });
                     return Row(
                       children: [
@@ -90,11 +90,11 @@ class ScreenOperationSummary extends StatelessWidget {
                                         await PurchaseDatabase.instance.getPurchasesByDate(toDate: ref.read(_toDateProvider));
                                     final List<ExpenseModel> expenses =
                                         await ExpenseDatabase.instance.getExpensesByDate(toDate: ref.read(_toDateProvider));
-                                    ref.read(summaryProvider.notifier).state =
+                                    ref.read(_summaryProvider.notifier).state =
                                         await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
                                   } else {
-                                    final reset = ref.read(summaryFutureProvider);
-                                    ref.read(summaryProvider.notifier).state = reset.asData!.value;
+                                    final reset = ref.read(_summaryFutureProvider);
+                                    ref.read(_summaryProvider.notifier).state = reset.asData!.value;
                                   }
                                 },
                               ),
@@ -119,7 +119,7 @@ class ScreenOperationSummary extends StatelessWidget {
                                 final List<ExpenseModel> expenses =
                                     await ExpenseDatabase.instance.getExpensesByDate(fromDate: _fromDate, toDate: ref.read(_toDateProvider));
 
-                                ref.read(summaryProvider.notifier).state =
+                                ref.read(_summaryProvider.notifier).state =
                                     await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
                               }
                             },
@@ -152,11 +152,11 @@ class ScreenOperationSummary extends StatelessWidget {
                                         await PurchaseDatabase.instance.getPurchasesByDate(fromDate: ref.read(_fromDateProvider));
                                     final List<ExpenseModel> expenses =
                                         await ExpenseDatabase.instance.getExpensesByDate(fromDate: ref.read(_fromDateProvider));
-                                    ref.read(summaryProvider.notifier).state =
+                                    ref.read(_summaryProvider.notifier).state =
                                         await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
                                   } else {
-                                    final reset = ref.read(summaryFutureProvider);
-                                    ref.read(summaryProvider.notifier).state = reset.asData!.value;
+                                    final reset = ref.read(_summaryFutureProvider);
+                                    ref.read(_summaryProvider.notifier).state = reset.asData!.value;
                                   }
                                 },
                               ),
@@ -181,7 +181,7 @@ class ScreenOperationSummary extends StatelessWidget {
                                 final List<ExpenseModel> expenses =
                                     await ExpenseDatabase.instance.getExpensesByDate(fromDate: ref.read(_fromDateProvider), toDate: _toDate);
 
-                                ref.read(summaryProvider.notifier).state =
+                                ref.read(_summaryProvider.notifier).state =
                                     await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
                               }
                             },
@@ -196,7 +196,7 @@ class ScreenOperationSummary extends StatelessWidget {
                 Consumer(
                   builder: (context, ref, _) {
                     log('FutureProvider()=> called');
-                    final futureSummary = ref.watch(summaryFutureProvider);
+                    final futureSummary = ref.watch(_summaryFutureProvider);
 
                     return futureSummary.when(
                       data: (value) {
@@ -206,9 +206,9 @@ class ScreenOperationSummary extends StatelessWidget {
 
                         return Consumer(
                           builder: (context, ref, _) {
-                            final isLoaded = ref.read(isLoadedProvider.notifier);
+                            final isLoaded = ref.read(_isLoadedProvider.notifier);
                             log('isLoaded = ${isLoaded.state}');
-                            final List<Map<String, num>> summary = ref.watch(summaryProvider);
+                            final List<Map<String, num>> summary = ref.watch(_summaryProvider);
                             if (isLoaded.state) {
                               sale = summary[0];
                               purchase = summary[1];
