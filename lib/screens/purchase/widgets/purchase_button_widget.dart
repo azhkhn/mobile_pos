@@ -12,6 +12,7 @@ import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_items_database.dart';
 import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
 import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
+import 'package:shop_ez/model/item_master/item_master_model.dart';
 import 'package:shop_ez/model/purchase/purchase_items_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/transactions/transactions_model.dart';
@@ -98,7 +99,9 @@ class PurchaseButtonsWidget extends ConsumerWidget {
                     : _screenSize.width / 25,
                 child: MaterialButton(
                   onPressed: () {
-                    if (PurchaseSideWidget.selectedProductsNotifier.value.isEmpty) {
+                    final List<ItemMasterModel> _selectedProducts = ref.read(PurchaseSideWidget.selectedProductProvider);
+
+                    if (_selectedProducts.isEmpty) {
                       const PurchaseSideWidget().resetPurchase(ref);
                       Navigator.of(context).pop();
                     } else {
@@ -274,25 +277,25 @@ class PurchaseButtonsWidget extends ConsumerWidget {
       purchaseId = await _purchaseDB.createPurchase(_purchaseModel);
 
       final num items = PurchaseSideWidget.totalItemsNotifier.value;
-      for (var i = 0; i < items; i++) {
-        final vatMethod = PurchaseSideWidget.selectedProductsNotifier.value[i].vatMethod;
-        final int categoryId = PurchaseSideWidget.selectedProductsNotifier.value[i].itemCategoryId,
-            vatId = PurchaseSideWidget.selectedProductsNotifier.value[i].vatId,
-            productId = PurchaseSideWidget.selectedProductsNotifier.value[i].id!;
+      final List<ItemMasterModel> _selectedProducts = ref.read(PurchaseSideWidget.selectedProductProvider);
 
-        final String productType = PurchaseSideWidget.selectedProductsNotifier.value[i].productType,
-            productCode = PurchaseSideWidget.selectedProductsNotifier.value[i].itemCode,
-            productName = PurchaseSideWidget.selectedProductsNotifier.value[i].itemName,
-            productCost = PurchaseSideWidget.selectedProductsNotifier.value[i].itemCost,
-            unitPrice = PurchaseSideWidget.selectedProductsNotifier.value[i].itemCost,
+      for (var i = 0; i < items; i++) {
+        final vatMethod = _selectedProducts[i].vatMethod;
+        final int categoryId = _selectedProducts[i].itemCategoryId, vatId = _selectedProducts[i].vatId, productId = _selectedProducts[i].id!;
+
+        final String productType = _selectedProducts[i].productType,
+            productCode = _selectedProducts[i].itemCode,
+            productName = _selectedProducts[i].itemName,
+            productCost = _selectedProducts[i].itemCost,
+            unitPrice = _selectedProducts[i].itemCost,
             netUnitPrice = vatMethod == 'Inclusive'
-                ? '${const PurchaseSideWidget().getExclusiveAmount(itemCost: unitPrice, vatRate: PurchaseSideWidget.selectedProductsNotifier.value[i].vatRate)}'
+                ? '${const PurchaseSideWidget().getExclusiveAmount(itemCost: unitPrice, vatRate: _selectedProducts[i].vatRate)}'
                 : unitPrice,
             quantity = PurchaseSideWidget.quantityNotifier.value[i].text,
             subTotal = PurchaseSideWidget.subTotalNotifier.value[i],
-            vatPercentage = PurchaseSideWidget.selectedProductsNotifier.value[i].productVAT,
+            vatPercentage = _selectedProducts[i].productVAT,
             vatTotal = PurchaseSideWidget.itemTotalVatNotifier.value[i],
-            unitCode = PurchaseSideWidget.selectedProductsNotifier.value[i].unit;
+            unitCode = _selectedProducts[i].unit;
 
         final vat = await VatDatabase.instance.getVatById(vatId);
         final vatRate = vat.rate;
@@ -337,7 +340,7 @@ class PurchaseButtonsWidget extends ConsumerWidget {
         await _purchaseItemsDB.createPurchaseItems(_purchaseItemsModel);
 
         //==================== Update Item Cost and Quantity ====================
-        await _itemMasterDB.updateItemCostAndQty(itemMaster: PurchaseSideWidget.selectedProductsNotifier.value[i], purchasedQty: num.parse(quantity));
+        await _itemMasterDB.updateItemCostAndQty(itemMaster: _selectedProducts[i], purchasedQty: num.parse(quantity));
       }
 
       if (paymentStatus != 'Credit') {

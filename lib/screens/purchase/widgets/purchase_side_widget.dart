@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
 
 import 'dart:developer';
 import 'package:flutter/material.dart';
@@ -22,9 +22,38 @@ import 'package:shop_ez/screens/purchase/widgets/purchase_price_section_widget.d
 import 'package:shop_ez/screens/purchase/widgets/purchase_product_side_widget.dart';
 import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
-import '../../../core/constant/colors.dart';
-import '../../../core/constant/sizes.dart';
-import '../../../core/utils/snackbar/snackbar.dart';
+import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
+
+class SelectedProductsNotifier extends StateNotifier<List<ItemMasterModel>> {
+  SelectedProductsNotifier() : super([]);
+
+  //== == == == == Notify UI by updating state == == == == ==
+  get updateState => state = [...state];
+
+  //== == == == == Update Item == == == == ==
+  void updateItem({required int index, required ItemMasterModel item}) {
+    state[index] = item;
+    updateState;
+  }
+
+  //== == == == == Update Items == == == == ==
+  void update({required List<ItemMasterModel> items}) {
+    state = [...items];
+  }
+
+  //== == == == == Add Item == == == == ==
+  void addItem({required ItemMasterModel item}) {
+    state = [...state, item];
+  }
+
+  //== == == == == Remove Item == == == == ==
+  void removeItem({required int index}) {
+    state.removeAt(index);
+    updateState;
+  }
+}
 
 class PurchaseSideWidget extends ConsumerWidget {
   const PurchaseSideWidget({
@@ -33,8 +62,13 @@ class PurchaseSideWidget extends ConsumerWidget {
   }) : super(key: key);
 
   final bool isVertical;
+
+  //==================== Providers ====================
+  static final selectedProductProvider =
+      StateNotifierProvider.autoDispose<SelectedProductsNotifier, List<ItemMasterModel>>((ref) => SelectedProductsNotifier());
+
   //==================== Value Notifiers ====================
-  static final ValueNotifier<List<ItemMasterModel>> selectedProductsNotifier = ValueNotifier([]);
+  // static final ValueNotifier<List<ItemMasterModel>> selectedProductsNotifier = ValueNotifier([]);
   static final ValueNotifier<List<String>> subTotalNotifier = ValueNotifier([]);
   static final ValueNotifier<List<String>> itemTotalVatNotifier = ValueNotifier([]);
   static final ValueNotifier<List<TextEditingController>> quantityNotifier = ValueNotifier([]);
@@ -59,7 +93,7 @@ class PurchaseSideWidget extends ConsumerWidget {
 
     return WillPopScope(
       onWillPop: () async {
-        if (selectedProductsNotifier.value.isEmpty) {
+        if (ref.read(selectedProductProvider).isEmpty) {
           resetPurchase(ref);
           return true;
         } else {
@@ -254,9 +288,10 @@ class PurchaseSideWidget extends ConsumerWidget {
               //==================== Product Items Table ====================
               Expanded(
                 child: SingleChildScrollView(
-                  child: ValueListenableBuilder(
-                    valueListenable: selectedProductsNotifier,
-                    builder: (context, List<ItemMasterModel> selectedProducts, child) {
+                  child: Consumer(
+                    builder: (context, ref, _) {
+                      log('selectedProvider()=> called!');
+                      final List<ItemMasterModel> selectedProducts = ref.watch(selectedProductProvider);
                       return Table(
                         columnWidths: const {
                           0: FractionColumnWidth(0.30),
@@ -313,10 +348,10 @@ class PurchaseSideWidget extends ConsumerWidget {
                                   onChanged: (value) {
                                     if (value.isNotEmpty) {
                                       Debouncer().run(() {
-                                        onItemCostChanged(cost: value, index: index);
+                                        onItemCostChanged(ref, cost: value, index: index);
                                       });
                                     } else {
-                                      onItemCostChanged(cost: '0', index: index);
+                                      onItemCostChanged(ref, cost: '0', index: index);
                                     }
                                   },
                                 ),
@@ -363,7 +398,7 @@ class PurchaseSideWidget extends ConsumerWidget {
                                           if (value.isNotEmpty && value != '.') {
                                             final num _newQuantity = num.parse(value);
 
-                                            onItemQuantityChanged(value, selectedProducts, index);
+                                            onItemQuantityChanged(ref, value, selectedProducts[index], index);
 
                                             log('new Quantity == ' + _newQuantity.toString());
                                           }
@@ -371,7 +406,7 @@ class PurchaseSideWidget extends ConsumerWidget {
                                       }
                                     } else {
                                       if (value.isEmpty) {
-                                        onItemQuantityChanged('0', selectedProducts, index);
+                                        onItemQuantityChanged(ref, '0', selectedProducts[index], index);
                                       }
                                     }
                                   },
@@ -400,17 +435,16 @@ class PurchaseSideWidget extends ConsumerWidget {
                                   alignment: Alignment.center,
                                   child: IconButton(
                                     onPressed: () {
-                                      selectedProducts.removeAt(index);
+                                      // selectedProducts.removeAt(index);
+                                      ref.read(selectedProductProvider.notifier).removeItem(index: index);
                                       subTotalNotifier.value.removeAt(index);
                                       vatRateNotifier.value.removeAt(index);
                                       itemTotalVatNotifier.value.removeAt(index);
                                       costNotifier.value.removeAt(index);
                                       quantityNotifier.value.removeAt(index);
-                                      subTotalNotifier.notifyListeners();
-                                      selectedProductsNotifier.notifyListeners();
                                       totalItemsNotifier.value -= 1;
-                                      getTotalQuantity();
-                                      getTotalAmount();
+                                      getTotalQuantity(ref);
+                                      getTotalAmount(ref);
                                       getTotalVAT();
                                       getTotalPayable();
                                     },
@@ -442,40 +476,40 @@ class PurchaseSideWidget extends ConsumerWidget {
   }
 
   //==================== On Item Cost Changed ====================
-  void onItemCostChanged({required String cost, required int index}) {
+  void onItemCostChanged(WidgetRef ref, {required String cost, required int index}) {
     final qty = num.tryParse(quantityNotifier.value[index].text);
     final itemCost = num.tryParse(cost);
     log('Item Cost == $cost');
 
     if (qty != null && itemCost != null) {
-      selectedProductsNotifier.value[index] = selectedProductsNotifier.value[index].copyWith(itemCost: cost);
-      selectedProductsNotifier.notifyListeners();
-      getSubTotal(selectedProductsNotifier.value, index, qty);
-      getTotalAmount();
+      final SelectedProductsNotifier selectedProducts = ref.read(selectedProductProvider.notifier);
+      selectedProducts.updateItem(index: index, item: selectedProducts.state[index].copyWith(itemCost: cost));
+      getSubTotal(selectedProducts.state[index], index, qty);
+      getTotalAmount(ref);
       getTotalVAT();
       getTotalPayable();
     }
   }
 
   //==================== On Item Quantity Changed ====================
-  void onItemQuantityChanged(String value, List<ItemMasterModel> selectedProducts, int index) {
+  void onItemQuantityChanged(WidgetRef ref, String value, ItemMasterModel selectedProducts, int index) {
     final qty = num.tryParse(value);
     if (qty != null) {
-      getTotalQuantity();
+      getTotalQuantity(ref);
       getSubTotal(selectedProducts, index, qty);
-      getTotalAmount();
+      getTotalAmount(ref);
       getTotalVAT();
       getTotalPayable();
     }
   }
 
   //==================== Get SubTotal Amount ====================
-  void getSubTotal(List<ItemMasterModel> selectedProducts, int index, num qty) async {
-    final cost = num.tryParse(selectedProducts[index].itemCost);
+  void getSubTotal(ItemMasterModel selectedProducts, int index, num qty) async {
+    final cost = num.tryParse(selectedProducts.itemCost);
 
     final vatRate = vatRateNotifier.value[index];
-    if (selectedProducts[index].vatMethod == 'Inclusive') {
-      final _exclusiveCost = getExclusiveAmount(itemCost: selectedProducts[index].itemCost, vatRate: vatRate);
+    if (selectedProducts.vatMethod == 'Inclusive') {
+      final _exclusiveCost = getExclusiveAmount(itemCost: selectedProducts.itemCost, vatRate: vatRate);
       final _subTotal = _exclusiveCost * qty;
       subTotalNotifier.value[index] = '$_subTotal';
     } else {
@@ -487,10 +521,10 @@ class PurchaseSideWidget extends ConsumerWidget {
   }
 
   //==================== Get Total Quantity ====================
-  void getTotalQuantity() async {
+  void getTotalQuantity(WidgetRef ref) async {
     num? _totalQuantiy = 0;
 
-    for (var i = 0; i < selectedProductsNotifier.value.length; i++) {
+    for (var i = 0; i < ref.read(selectedProductProvider).length; i++) {
       _totalQuantiy = _totalQuantiy! + num.parse(quantityNotifier.value[i].value.text.isNotEmpty ? quantityNotifier.value[i].value.text : '0');
     }
     await Future.delayed(const Duration(milliseconds: 0));
@@ -498,14 +532,14 @@ class PurchaseSideWidget extends ConsumerWidget {
   }
 
   //==================== Get Total Amount ====================
-  void getTotalAmount() {
+  void getTotalAmount(WidgetRef ref) {
     num? _totalAmount = 0;
     num? subTotal = 0;
     if (subTotalNotifier.value.isEmpty) {
       totalAmountNotifier.value = 0;
     } else {
       for (var i = 0; i < subTotalNotifier.value.length; i++) {
-        if (selectedProductsNotifier.value[i].vatMethod == 'Inclusive') {
+        if (ref.read(selectedProductProvider)[i].vatMethod == 'Inclusive') {
           subTotal = num.tryParse(subTotalNotifier.value[i]);
         } else {
           subTotal = num.tryParse(subTotalNotifier.value[i]);
@@ -586,7 +620,7 @@ class PurchaseSideWidget extends ConsumerWidget {
 
   //==================== Reset All Values ====================
   Future<void> resetPurchase(WidgetRef ref, {bool notify = false}) async {
-    selectedProductsNotifier.value.clear();
+    ref.refresh(selectedProductProvider);
     subTotalNotifier.value.clear();
     vatRateNotifier.value.clear();
     itemTotalVatNotifier.value.clear();
@@ -600,13 +634,11 @@ class PurchaseSideWidget extends ConsumerWidget {
     totalVatNotifier.value = 0;
     totalPayableNotifier.value = 0;
     supplierNotifier.value = null;
-    // PurchaseProductSideWidget.itemsNotifier.value.clear();
     ref.refresh(PurchaseProductSideWidget.itemsProvider);
 
     if (notify) {
       ref.read(PurchaseProductSideWidget.builderModelProvider.notifier).state = null;
       ref.read(PurchaseProductSideWidget.itemsProvider.notifier).state = await ItemMasterDatabase.instance.getAllItems();
-      selectedProductsNotifier.notifyListeners();
       subTotalNotifier.notifyListeners();
       vatRateNotifier.notifyListeners();
       itemTotalVatNotifier.notifyListeners();

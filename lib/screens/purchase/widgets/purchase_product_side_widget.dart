@@ -474,10 +474,8 @@ class PurchaseProductSideWidget extends ConsumerWidget {
                                             ref.read(itemsProvider.notifier).state = await ItemMasterDatabase.instance.getProductByBrandId(brandId);
                                           } else {
 //===================================== if the Product Already Added ====================================
-                                            isProductAlreadyAdded(_itemList, index);
+                                            isProductAlreadyAdded(ref, _itemList, index);
 //=======================================================================================================
-
-                                            PurchaseSideWidget.selectedProductsNotifier.notifyListeners();
 
                                             PurchaseSideWidget.totalQuantityNotifier.value++;
                                           }
@@ -578,27 +576,31 @@ class PurchaseProductSideWidget extends ConsumerWidget {
 
 // Checking if the product already added then Increasing the Quantity
 //====================================================================
-  void isProductAlreadyAdded(itemList, int index) async {
+  void isProductAlreadyAdded(WidgetRef ref, itemList, int index) async {
     final vatMethod = itemList[index].vatMethod;
     final _vat = await VatUtils.instance.getVatById(vatId: itemList[index].vatId);
     log('VAT Method = ' + vatMethod);
 
-    for (var i = 0; i < PurchaseSideWidget.selectedProductsNotifier.value.length; i++) {
-      if (PurchaseSideWidget.selectedProductsNotifier.value[i].id == itemList[index].id) {
+    final _selectedProducts = ref.read(PurchaseSideWidget.selectedProductProvider.notifier);
+
+    for (var i = 0; i < _selectedProducts.state.length; i++) {
+      if (_selectedProducts.state[i].id == itemList[index].id) {
         final _currentQty = num.tryParse(PurchaseSideWidget.quantityNotifier.value[i].value.text);
 
         PurchaseSideWidget.quantityNotifier.value[i].text = '${_currentQty! + 1}';
 
 //==================== On Item Quantity Changed ====================
         const PurchaseSideWidget().onItemQuantityChanged(
+          ref,
           PurchaseSideWidget.quantityNotifier.value[i].text,
-          PurchaseSideWidget.selectedProductsNotifier.value,
+          _selectedProducts.state[i],
           i,
         );
         return;
       }
     }
-    PurchaseSideWidget.selectedProductsNotifier.value.add(itemList[index]);
+
+    _selectedProducts.addItem(item: itemList[index]);
     PurchaseSideWidget.vatRateNotifier.value.add(_vat.rate);
 
     final String _itemCost = vatMethod == 'Inclusive'
@@ -616,7 +618,7 @@ class PurchaseProductSideWidget extends ConsumerWidget {
     PurchaseSideWidget.totalItemsNotifier.value++;
 
     const PurchaseSideWidget().getItemVat(vatMethod: vatMethod, amount: itemList[index].itemCost, vatRate: _vat.rate);
-    const PurchaseSideWidget().getTotalAmount();
+    const PurchaseSideWidget().getTotalAmount(ref);
     const PurchaseSideWidget().getTotalVAT();
     const PurchaseSideWidget().getTotalPayable();
   }
