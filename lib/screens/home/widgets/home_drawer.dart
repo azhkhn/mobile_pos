@@ -19,9 +19,9 @@ const List drawerListItemImage = [
   'assets/images/manage_user.png',
   'assets/images/purchase.png',
   'assets/images/item_master.png',
-  'assets/images/settings_module.png',
   'assets/images/sales_module.png',
   'assets/images/transportation.png',
+  'assets/images/settings_module.png',
   'assets/images/stock_module.png',
   'assets/images/manage_user.png',
   'assets/images/stock_module.png',
@@ -37,9 +37,9 @@ const List drawerListItem = [
   'Manage Suppliers',
   'Manage Categories',
   'Manage Brands',
-  'Settings',
   'Manage Databases',
   'Reports',
+  'Device Mode',
   'About Software',
   'Terms and Conditions',
   'Privacy Policy',
@@ -90,10 +90,7 @@ class HomeDrawer extends StatelessWidget {
                     ),
               decoration: const BoxDecoration(color: mainColor),
               accountName: Text(businessProfile?.business ?? 'Business Name'),
-              accountEmail: Text(
-                businessProfile?.vatNumber ?? 'Vat Number',
-                style: kText12,
-              ),
+              accountEmail: Text(businessProfile?.vatNumber ?? 'Vat Number', style: kText12),
             ),
             onTap: () async {
               Navigator.pop(context);
@@ -127,9 +124,15 @@ class DrawerItemsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       dense: true,
-      leading: Image(
-        image: AssetImage(drawerListItemImage[index]),
-      ),
+      leading: index != 11
+          ? Image(
+              fit: BoxFit.scaleDown,
+              image: AssetImage(drawerListItemImage[index]),
+            )
+          : const IconButton(
+              icon: Icon(Icons.devices, color: kBlue),
+              onPressed: null,
+            ),
       title: Text(
         drawerListItem[index],
         style: TextStyle(color: kTextColorBlack, fontSize: 8.sp),
@@ -166,11 +169,14 @@ class DrawerItemsWidget extends StatelessWidget {
           case 8:
             Navigator.pushNamed(context, routeBrand);
             break;
-          case 10:
+          case 9:
             Navigator.pushNamed(context, routeDatabase);
             break;
-          case 11:
+          case 10:
             Navigator.pushNamed(context, routeReports);
+            break;
+          case 11:
+            OrientationMode.changeDeviceMode(context);
             break;
           default:
         }

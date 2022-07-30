@@ -21,6 +21,7 @@ const kText13 = TextStyle(fontSize: 13);
 const kText13Bold = TextStyle(fontSize: 13, fontWeight: FontWeight.bold);
 const kText12Black = TextStyle(fontSize: 12, color: kBlack);
 const kText12Lite = TextStyle(color: kTextColor, fontSize: 12);
+const kTextLite = TextStyle(color: kTextColor);
 final kText12LiteSp = TextStyle(color: kTextColor, fontSize: 10.sp);
 const kText10Lite = TextStyle(color: kTextColor, fontSize: 10);
 const kText12Bold = TextStyle(fontSize: 12, fontWeight: FontWeight.bold);

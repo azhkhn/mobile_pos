@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
 
 enum DeviceType { phone, smallPhone, tablet }
 
@@ -86,5 +88,81 @@ class OrientationMode {
       isLandscape = true;
       await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     }
+  }
+
+//=== === === === === Change Device Orientation Mode === === === === ===
+  static Future<void> changeDeviceMode(BuildContext context) async {
+    // prefs = await SharedPreferences.getInstance();
+    // prefs!.remove(OrientationMode.deviceModeKey);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => WillPopScope(
+        onWillPop: () async => false,
+        child: Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Choose a Mode from below to continue. The application will be shown based on your choice!, You can change it later from the settings menu.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  kHeight10,
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: MaterialButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            prefs.setString(OrientationMode.deviceModeKey, OrientationMode.verticalMode);
+                            OrientationMode.deviceMode = OrientationMode.verticalMode;
+                          },
+                          child: const FittedBox(
+                            child: Text(
+                              'Vertical Mode',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: kWhite),
+                            ),
+                          ),
+                          color: Colors.blueGrey[300],
+                        ),
+                      ),
+                      kWidth5,
+                      Expanded(
+                        child: MaterialButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            prefs.setString(OrientationMode.deviceModeKey, OrientationMode.normalMode);
+                            OrientationMode.deviceMode = OrientationMode.normalMode;
+                          },
+                          child: const FittedBox(
+                            child: Text(
+                              'Normal Mode',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: kWhite),
+                            ),
+                          ),
+                          color: mainColor.withOpacity(.8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            )),
+      ),
+    );
   }
 }

@@ -4,13 +4,13 @@ import 'package:shop_ez/core/utils/vat/vat.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../core/constant/colors.dart';
-import '../../core/routes/router.dart';
-import '../../core/utils/device/device.dart';
-import '../../core/utils/user/user.dart';
-import '../../db/db_functions/auth/user_db.dart';
+import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/routes/router.dart';
+import 'package:shop_ez/core/utils/device/device.dart';
+import 'package:shop_ez/core/utils/user/user.dart';
+import 'package:shop_ez/db/db_functions/auth/user_db.dart';
 
-import '../../widgets/floating_popup_widget/floating_add_options.dart';
+import 'package:shop_ez/widgets/floating_popup_widget/floating_add_options.dart';
 import 'widgets/home_card_widget.dart';
 import 'widgets/home_drawer.dart';
 import 'widgets/home_grid.dart';

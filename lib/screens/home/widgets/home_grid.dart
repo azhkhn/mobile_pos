@@ -1,10 +1,17 @@
+import 'dart:developer';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
+import 'package:shop_ez/infrastructure/api_service.dart';
 import 'package:sizer/sizer.dart';
+
+final _futureValidateUser = FutureProvider.autoDispose.family((ref, String phoneNumber) async {
+  return await ref.read(apiProvider).validateUser(phoneNumber);
+});
 
 const List homeGridIcons = [
   'assets/images/stock_module.png',
@@ -15,7 +22,7 @@ const List homeGridIcons = [
   'assets/images/offers.png',
   'assets/images/stock_module.png',
   'assets/images/transportation.png',
-  'assets/images/settings_module.png',
+  'assets/images/database.png',
 ];
 
 const List homeGridName = [
@@ -27,10 +34,10 @@ const List homeGridName = [
   'EXPENSES',
   'STOCKS',
   'REPORTS',
-  'SETTINGS',
+  'MANAGE DATABASES',
 ];
 
-class HomeGrid extends StatelessWidget {
+class HomeGrid extends ConsumerWidget {
   const HomeGrid({
     Key? key,
     required this.index,
@@ -40,52 +47,57 @@ class HomeGrid extends StatelessWidget {
   final int index;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 3,
       child: Container(
-          decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(20.0)),
-          child: InkWell(
-            onTap: () async {
-              switch (index) {
-                case 0:
-                  await OrientationMode.toLandscape();
-                  await Navigator.pushNamed(context, routePos);
-                  await OrientationMode.toPortrait();
-                  break;
-                case 1:
-                  Navigator.pushNamed(context, routeSales);
-                  break;
-                case 2:
-                  Navigator.pushNamed(context, routeItemMaster);
-                  break;
-                case 3:
-                  Navigator.pushNamed(context, routeUserManage);
-                  break;
-                case 4:
-                  Navigator.pushNamed(context, routePurchase);
-                  break;
-                case 5:
-                  Navigator.pushNamed(context, routeAddExpense);
-                  break;
-                case 6:
-                  await OrientationMode.toLandscape();
-                  await Navigator.pushNamed(context, routeStock);
-                  await OrientationMode.toPortrait();
-                  break;
-                case 7:
-                  await Navigator.pushNamed(context, routeReports);
-                  break;
-                case 8:
-                  await changeDeviceMode(context);
-                  break;
-                default:
-              }
-            },
-            child: GridTile(
-              footer: Padding(
-                padding: const EdgeInsets.all(5.0),
+        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(20.0)),
+        child: InkWell(
+          onTap: () async {
+            switch (index) {
+              case 0:
+                await OrientationMode.toLandscape();
+                await Navigator.pushNamed(context, routePos);
+                await OrientationMode.toPortrait();
+                break;
+              case 1:
+                Navigator.pushNamed(context, routeSales);
+                break;
+              case 2:
+                Navigator.pushNamed(context, routeItemMaster);
+                break;
+              case 3:
+                Navigator.pushNamed(context, routeUserManage);
+                break;
+              case 4:
+                Navigator.pushNamed(context, routePurchase);
+                break;
+              case 5:
+                Navigator.pushNamed(context, routeAddExpense);
+                break;
+              case 6:
+                await OrientationMode.toLandscape();
+                await Navigator.pushNamed(context, routeStock);
+                await OrientationMode.toPortrait();
+                break;
+              case 7:
+                await Navigator.pushNamed(context, routeReports);
+                break;
+              case 8:
+                await getDeviceId(context, ref);
+
+                // await Navigator.pushNamed(context, routeDatabase);
+
+                break;
+              default:
+            }
+          },
+          child: GridTile(
+            footer: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
                 child: Text(
                   homeGridName[index],
                   textAlign: TextAlign.center,
@@ -96,88 +108,75 @@ class HomeGrid extends StatelessWidget {
                   ),
                 ),
               ),
-              child: Image(
-                image: AssetImage(
-                  homeGridIcons[index],
-                ),
+            ),
+            child: Image(
+              color: index == 8 ? kTeal400 : null,
+              image: AssetImage(
+                homeGridIcons[index],
               ),
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
 
-  Future<void> changeDeviceMode(BuildContext context) async {
-    // prefs = await SharedPreferences.getInstance();
-    // prefs!.remove(OrientationMode.deviceModeKey);
+  Future<void> getDeviceId(BuildContext context, WidgetRef ref) async {
+    try {
+      final AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
+      final String? androidId = androidInfo.androidId;
+      log('androidId = $androidId');
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+      final _future = ref.watch(_futureValidateUser('12121111').future);
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => WillPopScope(
-        onWillPop: () async => false,
-        child: Dialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Choose a Mode from below to continue. The application will be shown based on your choice!, You can change it later from the settings menu.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  kHeight10,
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                        child: MaterialButton(
-                          onPressed: () async {
-                            Navigator.pop(context);
-                            prefs.setString(OrientationMode.deviceModeKey, OrientationMode.verticalMode);
-                            OrientationMode.deviceMode = OrientationMode.verticalMode;
-                          },
-                          child: const FittedBox(
-                            child: Text(
-                              'Vertical Mode',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: kWhite),
-                            ),
-                          ),
-                          color: Colors.blueGrey[300],
-                        ),
-                      ),
-                      kWidth5,
-                      Expanded(
-                        child: MaterialButton(
-                          onPressed: () async {
-                            Navigator.pop(context);
-                            prefs.setString(OrientationMode.deviceModeKey, OrientationMode.normalMode);
-                            OrientationMode.deviceMode = OrientationMode.normalMode;
-                          },
-                          child: const FittedBox(
-                            child: Text(
-                              'Normal Mode',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: kWhite),
-                            ),
-                          ),
-                          color: mainColor.withOpacity(.8),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )),
-      ),
-    );
+      _future.then((value) => log('status = $value'));
+
+      // final wifeMac = await GetMac.macAddress;
+      // log('WIFI MAC = $wifeMac');
+
+      // MacadressGen macadressGen = MacadressGen();
+      // final String mac = await macadressGen.getMac();
+      // log('WIFI MAC = $mac');
+
+      // final PermissionStatus _permissionStatus = await Permission.phone.request();
+      // if (_permissionStatus.isGranted) {
+      //   final String imei = await DeviceInformation.deviceIMEINumber;
+      //   log('Imei Number = $imei');
+
+      //   final String? mobileNumber = await MobileNumber.mobileNumber;
+      //   final List<SimCard>? simCards = await MobileNumber.getSimCards;
+
+      //   log('Mobile Number == $mobileNumber');
+
+      //   if (simCards != null) {
+      //     for (SimCard sim in simCards) {
+      //       log('carrierName = ${sim.carrierName}');
+      //       log('countryIso = ${sim.countryIso}');
+      //       log('countryPhonePrefix = ${sim.countryPhonePrefix}');
+      //       log('displayName = ${sim.displayName}');
+      //       log('number = ${sim.number}');
+      //       log('slotIndex = ${sim.slotIndex}');
+      //       log('=======================================\n');
+      //     }
+      //   } else {
+      //     log('simCards is Null');
+      //   }
+      // }
+
+      // if (_permissionStatus.isDenied) {
+      //   log("Phone permission is denied.");
+      //   return kSnackBar(context: context, error: true, content: 'Please allow required permissions');
+      // } else if (_permissionStatus.isPermanentlyDenied) {
+      //   log("Storage permission is permanently denied.");
+      //   return kSnackBar(
+      //       context: context,
+      //       duration: 4,
+      //       error: true,
+      //       content: 'Please allow permissions manually from settings',
+      //       action: SnackBarAction(label: 'Open', textColor: kWhite, onPressed: () async => await openAppSettings()));
+      // }
+    } catch (e) {
+      log('Exception : $e');
+    }
   }
 }
