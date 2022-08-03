@@ -19,10 +19,14 @@ import 'package:sizer/sizer.dart';
 import 'package:sqflite/sqflite.dart';
 
 final _filesProvider = FutureProvider.autoDispose<List<FileSystemEntity>>((ref) async {
-  final Directory backupDirectory = Directory("storage/emulated/0/MobilePOS");
+  final Directory backupDirectory = Directory("/storage/emulated/0/Android/media/com.example.shop_ez/Databases/");
   final PermissionStatus _permStorageStatus = await Permission.storage.status;
 
-  if (await backupDirectory.exists() == true && !_permStorageStatus.isGranted) throw 'Insufficient Storage Permission';
+  if (!_permStorageStatus.isGranted) throw 'Insufficient Storage Permission';
+
+  //creates the directory if it doesn't exist
+  backupDirectory.createSync(recursive: true);
+
   final List<FileSystemEntity> allFiles = backupDirectory.listSync();
   final List<FileSystemEntity> dbFiles = [];
   for (FileSystemEntity file in allFiles) {
@@ -150,7 +154,7 @@ class ScreenDatabaseList extends ConsumerWidget {
                 : const Center(child: Text('No recent database backups'));
           },
           error: (Object o, StackTrace? e) {
-            log('Error : ' + e.toString() + 'Exception : ' + o.toString());
+            log('Error: ' + e.toString() + 'Exception: ' + o.toString());
 
             if (o == 'Insufficient Storage Permission') {
               requestPermission(context, ref);

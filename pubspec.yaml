@@ -42,9 +42,9 @@ dependencies:
   freezed_annotation: ^2.0.3
   image_cropper: ^1.5.0
   image_picker: 0.8.4+11
+  internet_connection_checker: ^0.0.1+4
   intl: ^0.17.0
   json_annotation: ^4.5.0
-  mobile_number: ^1.0.4
   open_file: ^3.2.1
   path: ^1.8.1
   path_provider: ^2.0.9

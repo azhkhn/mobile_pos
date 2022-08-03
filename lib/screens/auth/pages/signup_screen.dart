@@ -1,32 +1,44 @@
 import 'dart:developer';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/mobile_number/mobile_number.dart';
-import 'package:shop_ez/core/utils/permissions/permissions.dart';
+import 'package:shop_ez/core/utils/connection/connection.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/auth/user_db.dart';
 import 'package:shop_ez/db/db_functions/group/group_database.dart';
 import 'package:shop_ez/db/db_functions/permission/permission_database.dart';
-import 'package:shop_ez/infrastructure/api_service.dart';
+import 'package:shop_ez/infrastructure/api_service/api_service.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
 import 'package:shop_ez/model/group/group_model.dart';
 import 'package:shop_ez/model/permission/permission_model.dart';
-import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
+import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
+import 'package:shop_ez/widgets/contact_us/contact_us_popup.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import 'package:shop_ez/widgets/wave_clip.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:sizer/sizer.dart';
 
-final _futureValidateUser = FutureProvider.family.autoDispose((ref, String phoneNumber) async {
-  final bool status = await ref.read(apiProvider).validateUser(phoneNumber);
-  return status;
+class VerifyUserNotifier extends StateNotifier<AsyncValue<int?>> {
+  VerifyUserNotifier() : super(const AsyncData(null));
+
+  //== == == == == Verify User == == == == ==
+  Future<void> verifyUser(WidgetRef ref, {required String phoneNumber, required String secretKey}) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() => ref.read(apiProvider).validateUser(phoneNumber: phoneNumber, secretKey: secretKey));
+  }
+
+  //== == == == == Start Loading == == == == ==
+  void get startLoading => state = const AsyncValue.loading();
+
+  //== == == == == Stop Loading == == == == ==
+  void get stopLoading => state = const AsyncData(null);
+}
+
+final _verifyUserProvider = StateNotifierProvider.autoDispose<VerifyUserNotifier, AsyncValue<int?>>((ref) {
+  return VerifyUserNotifier();
 });
 
 class ScreenSignUp extends ConsumerWidget {
@@ -48,15 +60,14 @@ class ScreenSignUp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Size _screenSise = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(
         children: [
           ClipPath(
             clipper: WaveClip(),
             child: Container(
-              width: _screenSise.width,
-              height: _screenSise.height / 2,
+              width: SizerUtil.width,
+              height: SizerUtil.height / 2,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -77,11 +88,11 @@ class ScreenSignUp extends ConsumerWidget {
                 child: Center(
                   child: Image.asset(
                     'assets/images/pos.png',
-                    width: _screenSise.width / 5,
-                    // height: _screenSise.width / 3,
+                    width: SizerUtil.width / 5,
+                    // height: SizerUtil.width / 3,
                   ),
                 ),
-                height: _screenSise.height / 4,
+                height: SizerUtil.height / 4,
               ),
 
               //========== SignUp Feilds ==========
@@ -89,10 +100,10 @@ class ScreenSignUp extends ConsumerWidget {
                 child: Padding(
                   //========== Dividing Screen Half and Half ==========
                   padding: EdgeInsets.only(
-                    right: _screenSise.width * 0.05,
-                    left: _screenSise.width * 0.05,
-                    top: _screenSise.width * 0.10,
-                    bottom: _screenSise.width * 0.10,
+                    right: SizerUtil.width * 0.05,
+                    left: SizerUtil.width * 0.05,
+                    top: SizerUtil.width * 0.10,
+                    bottom: SizerUtil.width * 0.10,
                   ),
                   child: SingleChildScrollView(
                     child: Form(
@@ -307,10 +318,83 @@ class ScreenSignUp extends ConsumerWidget {
           minWidth: 150,
           color: mainColor,
           onPressed: () async {
-            final bool _isGranted = await PermissionUtils.requestPermission(context, permission: Permission.phone);
-            if (_isGranted) onSignUp(context, ref);
+            final FormState _isFormValid = _formStateKey.currentState!;
+            final TextEditingController _secretKeyController = TextEditingController();
+            final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+            if (_isFormValid.validate()) {
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                    content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Form(
+                      key: _formKey,
+                      child: TextFeildWidget(
+                        labelText: 'Security Key',
+                        controller: _secretKeyController,
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        inputBorder: const OutlineInputBorder(),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        isDense: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'This field is required*';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    kHeight5,
+                    CustomMaterialBtton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          Navigator.pop(ctx);
+                          final String _secretKey = _secretKeyController.text.trim();
+
+                          ref.read(_verifyUserProvider.notifier).startLoading;
+                          if (await ConnectionUtil.isConnected()) {
+                            onSignUp(context, ref, secretKey: _secretKey);
+                          } else {
+                            ref.read(_verifyUserProvider.notifier).stopLoading;
+                            kSnackBar(context: context, error: true, content: 'No internet connection. Please try again');
+                          }
+                        }
+                      },
+                      buttonText: 'Verify',
+                    ),
+                  ],
+                )),
+              );
+            }
           },
-          child: const Text('Sign Up', style: TextStyle(color: Colors.white)),
+          child: Consumer(
+            builder: (context, ref, _) {
+              log('SignUp Button()=> called!');
+              final _state = ref.watch(_verifyUserProvider);
+
+              ref.listen(_verifyUserProvider, (previous, AsyncValue<int?> next) {
+                next.whenOrNull(
+                  error: (error, stackTrace) {
+                    kSnackBar(context: context, error: true, content: 'Something went wrong. Please try again later');
+                  },
+                );
+              });
+
+              return _state.when(
+                data: (value) {
+                  return const Text('Sign Up', style: TextStyle(color: Colors.white));
+                },
+                error: (e, _) {
+                  return const Text('Sign Up', style: TextStyle(color: Colors.white));
+                },
+                loading: () {
+                  return const CircularProgressIndicator(color: kWhite, strokeWidth: 1.5);
+                },
+              );
+            },
+          ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -334,9 +418,7 @@ class ScreenSignUp extends ConsumerWidget {
   }
 
   //========== SignUp and Verification ==========
-  Future<void> onSignUp(BuildContext context, WidgetRef ref) async {
-    final isFormValid = _formStateKey.currentState!;
-
+  Future<void> onSignUp(BuildContext context, WidgetRef ref, {required String secretKey}) async {
     final String username = usernameController.text.trim(),
         password = passwordController.text,
         mobileNumber = mobileNumberController.text.trim(),
@@ -345,144 +427,73 @@ class ScreenSignUp extends ConsumerWidget {
         countryName = countryNameController.text.trim(),
         shopCategory = shopCategoryController.text.trim();
 
-    if (isFormValid.validate()) {
-      log('shopName = $shopName, countryName = $countryName, shopCategory = $shopCategory, phoneNumber = $mobileNumber, email = $email, username = $username, password = $password');
+    log('shopName = $shopName, countryName = $countryName, shopCategory = $shopCategory, phoneNumber = $mobileNumber, email = $email, username = $username, password = $password');
 
-      final _future = ref.watch(_futureValidateUser(mobileNumber).future);
+    await ref.read(_verifyUserProvider.notifier).verifyUser(ref, phoneNumber: mobileNumber, secretKey: secretKey);
 
-      _future.then((bool status) async {
-        if (status == true) {
-          //==== ==== ==== ==== ==== Verify User ==== ==== ==== ==== ====
-          final bool _isVerified = await MobileNumberUtils.verifyMobileNumber(mobileNumber: mobileNumber);
-          if (_isVerified) {
-            // Create group and permission for Owner if not exist
-            await createGroupOwner();
+    final int? _userStatus = await ref.read(_verifyUserProvider.future);
+    log('is Verified = $_userStatus');
 
-            final _user = UserModel(
-              groupId: 1,
-              shopName: shopName,
-              countryName: countryName,
-              shopCategory: shopCategory,
-              mobileNumber: mobileNumber,
-              email: email,
-              username: username,
-              password: password,
-              status: 1,
-            );
+    //==== ==== ==== ==== ==== Verify User ==== ==== ==== ==== ====
+    if (_userStatus == 0) {
+      // Create group and permission for Owner if not exist
+      await createGroupOwner();
 
-            try {
-              await UserDatabase.instance.createUser(_user);
-              kSnackBar(
-                context: context,
-                success: true,
-                content: "User Registered Successfully!",
-              );
-              Navigator.pushReplacementNamed(context, routeHome);
-              return;
-            } catch (e) {
-              kSnackBar(context: context, error: true, content: e.toString());
-              return;
-            }
-          } else {
-            kSnackBar(context: context, error: true, content: 'User verification failed. Please try again.');
-          }
-        } else {
-          log('User not found. Please Contact Admin for Membership.');
-          await contactUs(context);
-        }
-      });
-    }
-  }
+      final _user = UserModel(
+        groupId: 1,
+        shopName: shopName,
+        countryName: countryName,
+        shopCategory: shopCategory,
+        mobileNumber: mobileNumber,
+        email: email,
+        username: username,
+        password: password,
+        status: 1,
+      );
 
-//==== ==== ==== ==== ==== Contact US ==== ==== ==== ==== ====
-  contactUs(BuildContext context) async {
-    return showDialog(
+      try {
+        await UserDatabase.instance.createUser(_user);
+        kSnackBar(
+          context: context,
+          success: true,
+          content: "User Registered Successfully!",
+        );
+        Navigator.pushReplacementNamed(context, routeHome);
+        return;
+      } catch (e) {
+        kSnackBar(context: context, error: true, content: e.toString());
+        return;
+      }
+    } else if (_userStatus == 1) {
+      log('User not found!');
+      await showDialog(context: context, builder: (ctx) => const ContactUsPopup(headline: 'User not found. Please Contact Admin for Membership.'));
+    } else if (_userStatus == 2) {
+      log('User verification failed. Secret Key does not match!');
+      kSnackBar(
         context: context,
-        builder: (ctx) {
-          return KAlertDialog(
-              submitText: 'Okay',
-              submitAction: () => Navigator.pop(ctx),
-              submitColor: kBlack,
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('User not found. Please Contact Admin for Membership.'),
-                  kHeight10,
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        textAlign: TextAlign.start,
-                        text: TextSpan(
-                          text: 'Site: ',
-                          style: kTextLite,
-                          children: [
-                            TextSpan(
-                              text: 'https://www.systemsexpert.com.sa',
-                              style: const TextStyle(color: kBlue),
-                              recognizer: TapGestureRecognizer()..onTap = () async => await launchUrl(Uri.parse('https://www.systemsexpert.com.sa')),
-                            )
-                          ],
-                        ),
-                      ),
-                      kHeight10,
-                      RichText(
-                        textAlign: TextAlign.start,
-                        text: TextSpan(
-                          text: 'Email: ',
-                          style: kTextLite,
-                          children: [
-                            TextSpan(
-                              text: 'info@systemsexpert.com.sa',
-                              style: const TextStyle(color: kBlue),
-                              recognizer: TapGestureRecognizer()..onTap = () async => await launchUrl(Uri.parse('mailto:info@systemsexpert.com.sa')),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  kHeight20,
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        textAlign: TextAlign.start,
-                        text: TextSpan(
-                          text: 'Site: ',
-                          style: kTextLite,
-                          children: [
-                            TextSpan(
-                              text: 'https://cignes.com',
-                              style: const TextStyle(color: kBlue),
-                              recognizer: TapGestureRecognizer()..onTap = () async => await launchUrl(Uri.parse('https://cignes.com')),
-                            )
-                          ],
-                        ),
-                      ),
-                      kHeight10,
-                      RichText(
-                        textAlign: TextAlign.start,
-                        text: TextSpan(
-                          text: 'Email: ',
-                          style: kTextLite,
-                          children: [
-                            TextSpan(
-                              text: 'info@cignes.com',
-                              style: const TextStyle(color: kBlue),
-                              recognizer: TapGestureRecognizer()..onTap = () async => await launchUrl(Uri.parse('mailto:info@cignes.com')),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ));
-        });
+        error: true,
+        content: 'User verification failed. Contact us',
+        duration: 10,
+        action: SnackBarAction(
+          label: 'Contact',
+          textColor: kWhite,
+          onPressed: () async => await showDialog(context: context, builder: (ctx) => const ContactUsPopup()),
+        ),
+      );
+    } else if (_userStatus == 3) {
+      log('The user already exists!');
+      kSnackBar(
+        context: context,
+        error: true,
+        content: 'The user already exists. Contact us',
+        duration: 10,
+        action: SnackBarAction(
+          label: 'Contact',
+          textColor: kWhite,
+          onPressed: () async => await showDialog(context: context, builder: (ctx) => const ContactUsPopup()),
+        ),
+      );
+    }
   }
 
   //========== Create Owner Group ==========

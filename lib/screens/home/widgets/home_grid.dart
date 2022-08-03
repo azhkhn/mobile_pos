@@ -1,17 +1,9 @@
-import 'dart:developer';
-
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/infrastructure/api_service.dart';
 import 'package:sizer/sizer.dart';
-
-final _futureValidateUser = FutureProvider.autoDispose.family((ref, String phoneNumber) async {
-  return await ref.read(apiProvider).validateUser(phoneNumber);
-});
 
 const List homeGridIcons = [
   'assets/images/stock_module.png',
@@ -85,10 +77,7 @@ class HomeGrid extends ConsumerWidget {
                 await Navigator.pushNamed(context, routeReports);
                 break;
               case 8:
-                await getDeviceId(context, ref);
-
-                // await Navigator.pushNamed(context, routeDatabase);
-
+                await Navigator.pushNamed(context, routeDatabase);
                 break;
               default:
             }
@@ -119,64 +108,5 @@ class HomeGrid extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  Future<void> getDeviceId(BuildContext context, WidgetRef ref) async {
-    try {
-      final AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
-      final String? androidId = androidInfo.androidId;
-      log('androidId = $androidId');
-
-      final _future = ref.watch(_futureValidateUser('12121111').future);
-
-      _future.then((value) => log('status = $value'));
-
-      // final wifeMac = await GetMac.macAddress;
-      // log('WIFI MAC = $wifeMac');
-
-      // MacadressGen macadressGen = MacadressGen();
-      // final String mac = await macadressGen.getMac();
-      // log('WIFI MAC = $mac');
-
-      // final PermissionStatus _permissionStatus = await Permission.phone.request();
-      // if (_permissionStatus.isGranted) {
-      //   final String imei = await DeviceInformation.deviceIMEINumber;
-      //   log('Imei Number = $imei');
-
-      //   final String? mobileNumber = await MobileNumber.mobileNumber;
-      //   final List<SimCard>? simCards = await MobileNumber.getSimCards;
-
-      //   log('Mobile Number == $mobileNumber');
-
-      //   if (simCards != null) {
-      //     for (SimCard sim in simCards) {
-      //       log('carrierName = ${sim.carrierName}');
-      //       log('countryIso = ${sim.countryIso}');
-      //       log('countryPhonePrefix = ${sim.countryPhonePrefix}');
-      //       log('displayName = ${sim.displayName}');
-      //       log('number = ${sim.number}');
-      //       log('slotIndex = ${sim.slotIndex}');
-      //       log('=======================================\n');
-      //     }
-      //   } else {
-      //     log('simCards is Null');
-      //   }
-      // }
-
-      // if (_permissionStatus.isDenied) {
-      //   log("Phone permission is denied.");
-      //   return kSnackBar(context: context, error: true, content: 'Please allow required permissions');
-      // } else if (_permissionStatus.isPermanentlyDenied) {
-      //   log("Storage permission is permanently denied.");
-      //   return kSnackBar(
-      //       context: context,
-      //       duration: 4,
-      //       error: true,
-      //       content: 'Please allow permissions manually from settings',
-      //       action: SnackBarAction(label: 'Open', textColor: kWhite, onPressed: () async => await openAppSettings()));
-      // }
-    } catch (e) {
-      log('Exception : $e');
-    }
   }
 }

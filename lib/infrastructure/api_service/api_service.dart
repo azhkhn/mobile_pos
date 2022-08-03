@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,21 +11,21 @@ const String _endPoint = "https://mobilepos.systemsexpert.com.sa/Example/verifyU
 class ApiService {
   final Dio dio = Dio(BaseOptions());
   //==================== Validate User ====================
-  Future<bool> validateUser(String phoneNumber) async {
+  Future<int> validateUser({required String phoneNumber, required String secretKey}) async {
     try {
-      Map params = {"PhoneNumber": phoneNumber};
+      Map params = {"phoneNumber": phoneNumber, "secretKey": secretKey};
       final Response response = await dio.post(_endPoint, data: jsonEncode(params));
       log('response == ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final bool status = response.data['status'];
+        final int status = response.data['status'];
         return status;
       } else {
-        return false;
+        throw SocketException;
       }
-    } on Exception catch (e) {
-      log('Exception : $e');
-      return false;
+    } catch (_) {
+      // log('Exception : $e');
+      rethrow;
     }
   }
 }

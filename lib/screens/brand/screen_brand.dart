@@ -116,49 +116,50 @@ class BrandScreen extends StatelessWidget {
                                             final _brandController = TextEditingController(text: brand.brand);
 
                                             showDialog(
-                                                context: context,
-                                                builder: (context) => AlertDialog(
-                                                        content: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      children: [
-                                                        TextFeildWidget(
-                                                          labelText: 'Brand Name',
-                                                          controller: _brandController,
-                                                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                                                          inputBorder: const OutlineInputBorder(),
-                                                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                                                          isDense: true,
-                                                          validator: (value) {
-                                                            if (value == null || value.isEmpty) {
-                                                              return 'This field is required*';
-                                                            }
-                                                            return null;
-                                                          },
-                                                        ),
-                                                        kHeight5,
-                                                        CustomMaterialBtton(
-                                                            onPressed: () async {
-                                                              final String brandName = _brandController.text.trim();
-                                                              if (brandName == brands[index].brand) {
-                                                                return Navigator.pop(context);
-                                                              }
-                                                              try {
-                                                                await brandDB.updateBrand(brand: brands[index], brandName: brandName);
-                                                                Navigator.pop(context);
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                  content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  TextFeildWidget(
+                                                    labelText: 'Brand Name',
+                                                    controller: _brandController,
+                                                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                    inputBorder: const OutlineInputBorder(),
+                                                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                                                    isDense: true,
+                                                    validator: (value) {
+                                                      if (value == null || value.isEmpty) {
+                                                        return 'This field is required*';
+                                                      }
+                                                      return null;
+                                                    },
+                                                  ),
+                                                  kHeight5,
+                                                  CustomMaterialBtton(
+                                                      onPressed: () async {
+                                                        final String brandName = _brandController.text.trim();
+                                                        if (brandName == brands[index].brand) {
+                                                          return Navigator.pop(context);
+                                                        }
+                                                        try {
+                                                          await brandDB.updateBrand(brand: brands[index], brandName: brandName);
+                                                          Navigator.pop(context);
 
-                                                                kSnackBar(context: context, content: 'Brand updated successfully', update: true);
-                                                              } catch (e) {
-                                                                if (e == 'Brand Name Already Exist!') {
-                                                                  kSnackBar(context: context, error: true, content: 'Brand name already exist!');
-                                                                  return;
-                                                                }
-                                                                log(e.toString());
-                                                                log('Something went wrong!');
-                                                              }
-                                                            },
-                                                            buttonText: 'Update'),
-                                                      ],
-                                                    )));
+                                                          kSnackBar(context: context, content: 'Brand updated successfully', update: true);
+                                                        } catch (e) {
+                                                          if (e == 'Brand Name Already Exist!') {
+                                                            kSnackBar(context: context, error: true, content: 'Brand name already exist!');
+                                                            return;
+                                                          }
+                                                          log(e.toString());
+                                                          log('Something went wrong!');
+                                                        }
+                                                      },
+                                                      buttonText: 'Update'),
+                                                ],
+                                              )),
+                                            );
                                           },
                                           icon: kIconEdit,
                                         ),

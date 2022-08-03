@@ -45,14 +45,11 @@ class ScreenDatabase extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const [
-                              Text('Are you sure you want to backup database?'),
+                              Text('Are you sure you want to backup the database?'),
                               kHeight5,
-                              FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  'location : "storage/emulated/0/MobilePOS"',
-                                  style: kText12Lite,
-                                ),
+                              Text(
+                                'Location: "/Android/media/com.example.shop_ez/Databases/"',
+                                style: kText12Lite,
                               )
                             ],
                           ),
@@ -81,7 +78,7 @@ class ScreenDatabase extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (ctx) => KAlertDialog(
-                          content: const Text("Select any .db file from previous backup to restore the database."),
+                          content: const Text("Select any .db file from the previous backups to restore the database."),
                           submitColor: ContstantTexts.kColorEditText,
                           submitText: 'Select',
                           submitAction: () async {
@@ -125,7 +122,14 @@ class ScreenDatabase extends StatelessWidget {
     // final Directory documentDirectory = await getApplicationDocumentsDirectory();
     // final String backupFolderPath = join(documentDirectory.path, 'db_backup');
     // final Directory backupDirectory = Directory(backupPath);
-    Directory backupDirectory = Directory("storage/emulated/0/MobilePOS");
+
+    // log('getApplicationDocumentsDirectory == ' + (await p.getApplicationDocumentsDirectory()).path);
+    // log('getApplicationSupportDirectory == ' + (await p.getApplicationSupportDirectory()).path);
+    // log('getExternalCacheDirectories == ' + (await p.getExternalCacheDirectories()).toString());
+    // log('getExternalStorageDirectory == ' + (await p.getExternalStorageDirectory())!.path.toString());
+    // log('getTemporaryDirectory == ' + (await p.getTemporaryDirectory()).path);
+
+    Directory backupDirectory = Directory("/storage/emulated/0/Android/media/com.example.shop_ez/Databases/");
 
     final String dbBackupName = 'DB-' + Converter.dateTimeForFileName.format(DateTime.now()).trim() + '.db';
     log('Database backup name == $dbBackupName');
@@ -133,11 +137,8 @@ class ScreenDatabase extends StatelessWidget {
     final String dbBackupPath = join(backupDirectory.path, dbBackupName);
     log('Database backup path == $dbBackupPath');
 
-    //Checking if backup directory already exist or not
-    if ((await backupDirectory.exists() != true)) {
-      //Creating backup directory
-      await backupDirectory.create();
-    }
+    //creates the directory if it doesn't exist
+    backupDirectory.createSync(recursive: true);
 
     try {
       await dbFile.copy(dbBackupPath);
@@ -197,21 +198,22 @@ class ScreenDatabase extends StatelessWidget {
     }
   }
 
+  //==================== Permission Handler ====================
   Future<void> requestPermission(BuildContext context, {required final String action}) async {
     final AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
     final num osVersion = num.parse(androidInfo.version.release!);
     log('Android OS Version = $osVersion');
 
-    if (action == 'backup') {
-      if (osVersion > 10) {
-        log('OS version is > 10 ');
-        final PermissionStatus _permissionStatus = await Permission.manageExternalStorage.request();
-        if (_permissionStatus.isDenied) {
-          log("ManageExternalStorage permission is denied.");
-          return kSnackBar(context: context, error: true, content: 'Please allow required permissions to $action');
-        }
-      }
-    }
+    // if (action == 'backup') {
+    //   if (osVersion > 10) {
+    //     log('OS version is > 10 ');
+    //     final PermissionStatus _permissionStatus = await Permission.manageExternalStorage.request();
+    //     if (_permissionStatus.isDenied) {
+    //       log("ManageExternalStorage permission is denied.");
+    //       return kSnackBar(context: context, error: true, content: 'Please allow required permissions to $action');
+    //     }
+    //   }
+    // }
 
     final PermissionStatus _permissionStatus = await Permission.storage.request();
     final bool check = await Permission.storage.shouldShowRequestRationale;
