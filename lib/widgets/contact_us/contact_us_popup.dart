@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 class ContactUsPopup extends StatelessWidget {
   const ContactUsPopup({
     Key? key,
-    this.headline = 'Contact us',
+    this.headline = 'Contact Us',
   }) : super(key: key);
 
   final String headline;

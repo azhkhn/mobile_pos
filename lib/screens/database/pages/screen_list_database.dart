@@ -19,7 +19,7 @@ import 'package:sizer/sizer.dart';
 import 'package:sqflite/sqflite.dart';
 
 final _filesProvider = FutureProvider.autoDispose<List<FileSystemEntity>>((ref) async {
-  final Directory backupDirectory = Directory("/storage/emulated/0/Android/media/com.example.shop_ez/Databases/");
+  final Directory backupDirectory = Directory("/storage/emulated/0/Android/media/com.cignes.mobilepos/Databases/");
   final PermissionStatus _permStorageStatus = await Permission.storage.status;
 
   if (!_permStorageStatus.isGranted) throw 'Insufficient Storage Permission';

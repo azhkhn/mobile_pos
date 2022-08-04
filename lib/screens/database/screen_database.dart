@@ -48,7 +48,7 @@ class ScreenDatabase extends StatelessWidget {
                               Text('Are you sure you want to backup the database?'),
                               kHeight5,
                               Text(
-                                'Location: "/Android/media/com.example.shop_ez/Databases/"',
+                                'Location: "/Android/media/com.cignes.mobilepos/Databases/"',
                                 style: kText12Lite,
                               )
                             ],
@@ -129,7 +129,7 @@ class ScreenDatabase extends StatelessWidget {
     // log('getExternalStorageDirectory == ' + (await p.getExternalStorageDirectory())!.path.toString());
     // log('getTemporaryDirectory == ' + (await p.getTemporaryDirectory()).path);
 
-    Directory backupDirectory = Directory("/storage/emulated/0/Android/media/com.example.shop_ez/Databases/");
+    Directory backupDirectory = Directory("/storage/emulated/0/Android/media/com.cignes.mobilepos/Databases/");
 
     final String dbBackupName = 'DB-' + Converter.dateTimeForFileName.format(DateTime.now()).trim() + '.db';
     log('Database backup name == $dbBackupName');

@@ -472,11 +472,11 @@ class ScreenSignUp extends ConsumerWidget {
       kSnackBar(
         context: context,
         error: true,
-        content: 'User verification failed. Contact us',
+        content: 'User verification failed.',
         duration: 10,
         action: SnackBarAction(
-          label: 'Contact',
-          textColor: kWhite,
+          label: 'Contact Us',
+          textColor: kCyan,
           onPressed: () async => await showDialog(context: context, builder: (ctx) => const ContactUsPopup()),
         ),
       );
@@ -485,11 +485,11 @@ class ScreenSignUp extends ConsumerWidget {
       kSnackBar(
         context: context,
         error: true,
-        content: 'The user already exists. Contact us',
+        content: 'The user is already exists.',
         duration: 10,
         action: SnackBarAction(
-          label: 'Contact',
-          textColor: kWhite,
+          label: 'Contact Us',
+          textColor: kCyan,
           onPressed: () async => await showDialog(context: context, builder: (ctx) => const ContactUsPopup()),
         ),
       );

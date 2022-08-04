@@ -11,6 +11,7 @@ const Color kTransparentColor = Colors.transparent;
 const Color kWhite = Colors.white;
 const Color kBlack = Colors.black;
 const Color kBlue = Colors.blue;
+const Color kCyan = Colors.cyan;
 const Color kRed = Colors.red;
 const Color kGreen = Colors.green;
 const Color kOrange = Colors.orange;

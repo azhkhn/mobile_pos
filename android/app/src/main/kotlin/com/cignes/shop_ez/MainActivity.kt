@@ -1,4 +1,4 @@
-package com.example.shop_ez
+package com.cignes.mobilepos
 
 import io.flutter.embedding.android.FlutterActivity
 
