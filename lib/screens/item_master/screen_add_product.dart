@@ -61,7 +61,7 @@ class ScreenAddProduct extends ConsumerWidget {
   static final futureUnitsProvider = FutureProvider.autoDispose<List<UnitModel>>((ref) async => await UnitDatabase.instance.getAllUnits());
 
   //========== Global Keys ==========
-  final GlobalKey<FormFieldState> _dropdownKey = GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> _subCategoryDropdownKey = GlobalKey<FormFieldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   //========== Lists ==========
@@ -221,13 +221,15 @@ class ScreenAddProduct extends ConsumerWidget {
                       return futureCategory.when(
                         data: (value) {
                           final List<CategoryModel> _categories = value;
+                          if (!_categories.any((category) => category.id == _itemCategoryId)) _itemCategoryId = null;
+
                           return CustomDropDownField(
                             labelText: 'Item Category *',
                             snapshot: _categories,
                             value: _itemCategoryId != null ? jsonEncode(_categories.where((cat) => cat.id == _itemCategoryId).toList().first) : null,
                             contentPadding: const EdgeInsets.all(10),
                             onChanged: (value) {
-                              _dropdownKey.currentState!.reset();
+                              _subCategoryDropdownKey.currentState?.reset();
                               final CategoryModel category = CategoryModel.fromJson(jsonDecode(value!));
                               log('Category Id == ' + category.id.toString());
                               log('Category == ' + category.category);
@@ -258,12 +260,13 @@ class ScreenAddProduct extends ConsumerWidget {
                       return _futureSubCategories.when(
                         data: (value) {
                           final List<SubCategoryModel> _subCategories = value;
-                          final subCat = _subCategories.where((subCat) => subCat.id == _itemSubCategoryId).toList();
+                          final List<SubCategoryModel> subCat = _subCategories.where((subCat) => subCat.id == _itemSubCategoryId).toList();
+                          if (!_subCategories.any((subCategory) => subCategory.id == _itemSubCategoryId)) _itemSubCategoryId = null;
                           return CustomDropDownField(
-                            dropdownKey: _dropdownKey,
+                            dropdownKey: _subCategoryDropdownKey,
                             labelText: 'Item Sub-Category',
                             snapshot: _subCategories,
-                            value: itemMasterModel != null && subCat.isNotEmpty ? jsonEncode(subCat.first) : null,
+                            value: _itemSubCategoryId != null && subCat.isNotEmpty ? jsonEncode(subCat.first) : null,
                             contentPadding: const EdgeInsets.all(10),
                             onChanged: (value) {
                               final SubCategoryModel subCategory = SubCategoryModel.fromJson(jsonDecode(value!));
@@ -288,6 +291,7 @@ class ScreenAddProduct extends ConsumerWidget {
                       return _futureBrands.when(
                         data: (value) {
                           final List<BrandModel> _brands = value;
+                          if (!_brands.any((_brand) => _brand.id == _itemBrandId)) _itemBrandId = null;
 
                           return CustomDropDownField(
                             labelText: 'Item Brand',
@@ -359,6 +363,8 @@ class ScreenAddProduct extends ConsumerWidget {
                       return _futureVats.when(
                         data: (value) {
                           final List<VatModel> _vats = value;
+                          if (!_vats.any((_vat) => _vat.id == _itemVatId)) _itemVatId = null;
+
                           return CustomDropDownField(
                             labelText: 'Product VAT *',
                             snapshot: _vats,
@@ -430,6 +436,8 @@ class ScreenAddProduct extends ConsumerWidget {
                       return _futureUnits.when(
                         data: (value) {
                           final List<UnitModel> _units = value;
+                          if (!_units.any((_unit) => Converter.modelToJsonString(_unit) == _itemUnit)) _itemUnit = null;
+
                           return CustomDropDownField(
                             labelText: 'Unit *',
                             snapshot: _units,

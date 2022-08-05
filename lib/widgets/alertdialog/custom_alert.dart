@@ -23,18 +23,19 @@ class KAlertDialog extends StatelessWidget {
     return AlertDialog(
       title: title,
       content: content,
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('Cancel', style: TextStyle(color: ContstantTexts.kColorCancelText, fontWeight: FontWeight.normal)),
-        ),
-        TextButton(
-          onPressed: submitAction,
-          child: Text(submitText ?? 'Yes', style: TextStyle(color: submitColor ?? ContstantTexts.kColorDeleteText, fontWeight: FontWeight.bold)),
-        ),
-      ],
+      actions: actions ??
+          [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel', style: TextStyle(color: ContstantTexts.kColorCancelText, fontWeight: FontWeight.normal)),
+            ),
+            TextButton(
+              onPressed: submitAction,
+              child: Text(submitText ?? 'Yes', style: TextStyle(color: submitColor ?? ContstantTexts.kColorDeleteText, fontWeight: FontWeight.bold)),
+            ),
+          ],
     );
   }
 }

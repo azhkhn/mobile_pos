@@ -22,10 +22,16 @@ const kText13Bold = TextStyle(fontSize: 13, fontWeight: FontWeight.bold);
 const kText12Black = TextStyle(fontSize: 12, color: kBlack);
 const kText12Lite = TextStyle(color: kTextColor, fontSize: 12);
 const kTextLite = TextStyle(color: kTextColor);
-final kText10LiteSp = TextStyle(color: kTextColor, fontSize: 10.sp);
 const kText10Lite = TextStyle(color: kTextColor, fontSize: 10);
 const kText12Bold = TextStyle(fontSize: 12, fontWeight: FontWeight.bold);
 const kText16 = TextStyle(fontSize: 16);
+
+//==================== Responsive TextStyles ====================
+final kText8sp = TextStyle(fontSize: 8.sp);
+final kText9sp = TextStyle(fontSize: 9.sp);
+final kText10sp = TextStyle(fontSize: 10.sp);
+final kText12sp = TextStyle(fontSize: 12.sp);
+final kText10LiteSp = TextStyle(color: kTextColor, fontSize: 10.sp);
 final kText_10_12 = TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10);
 final kText_10_12Black = TextStyle(fontSize: DeviceUtil.isTablet ? 12 : 10, color: kBlack);
 

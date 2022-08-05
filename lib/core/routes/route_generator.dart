@@ -10,6 +10,7 @@ import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/db/db_functions/cash_register/cash_register_database.dart';
 import 'package:shop_ez/model/auth/user_model.dart';
+import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:shop_ez/model/cash_register/cash_register_model.dart';
 import 'package:shop_ez/model/group/group_model.dart';
 import 'package:shop_ez/model/permission/permission_model.dart';
@@ -53,6 +54,7 @@ import 'package:shop_ez/screens/user_manage/pages/group/screen_list_groups.dart'
 import 'package:shop_ez/screens/user_manage/pages/user/screen_add_user.dart';
 import 'package:shop_ez/screens/user_manage/pages/user/screen_list_users.dart';
 import 'package:shop_ez/screens/user_manage/screen_user_manage.dart';
+import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 
@@ -192,6 +194,8 @@ class RouteGenerator {
       case routePos:
         if (permission!.sale.contains('2')) {
           final CashRegisterModel? _cashModel = UserUtils.instance.cashRegisterModel;
+          final BusinessProfileModel? _businessModel = UserUtils.instance.businessProfileModel;
+          if (_businessModel == null) return registerBusiness();
           if (_cashModel == null || _cashModel.action == 'close') return cashRegister();
           return MaterialPageRoute(builder: (_) => const PosScreen());
         }
@@ -234,11 +238,12 @@ class RouteGenerator {
       //======================================================================================
       //===================================== Purchases ======================================
       //======================================================================================
-
       case routePurchase:
         return MaterialPageRoute(builder: (_) => ScreenPurchase());
 
       case routeAddPurchase:
+        final BusinessProfileModel? _businessModel = UserUtils.instance.businessProfileModel;
+        if (_businessModel == null) return registerBusiness();
         if (permission!.purchase.contains('2')) return MaterialPageRoute(builder: (_) => const Purchase());
         return _errorPermission();
 
@@ -376,7 +381,7 @@ class RouteGenerator {
     );
   }
 
-  //========== Error Page if not permitted ==========
+  //========== Cash Register ==========
   static Route<dynamic> cashRegister() {
     return PageRouteBuilder(
       opaque: false,
@@ -384,7 +389,7 @@ class RouteGenerator {
       pageBuilder: (context, __, ___) {
         final CashRegisterModel? _cashModel = UserUtils.instance.cashRegisterModel;
 
-        final String? cashInHand = _cashModel?.amount;
+        final String cashInHand = _cashModel?.amount ?? '0';
 
         final TextEditingController _cashController = TextEditingController(text: cashInHand);
         final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -397,7 +402,7 @@ class RouteGenerator {
                 children: [
                   const Text('Cash In Hand : ', style: kText12),
                   Text(
-                    Converter.currency.format(num.parse(cashInHand!)),
+                    Converter.currency.format(num.parse(cashInHand)),
                     style: kText12,
                   )
                 ],
@@ -448,6 +453,27 @@ class RouteGenerator {
                   buttonText: 'Start Register'),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  static Route registerBusiness() {
+    return PageRouteBuilder(
+      opaque: false,
+      barrierColor: kColorDim,
+      pageBuilder: (context, __, ___) {
+        return KAlertDialog(
+          content: Text('Please fill out business information in the Business Profile to access it throughout the application.', style: kText12sp),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, routeBusinessProfile);
+              },
+              child: const Text('Business Profile'),
+            )
+          ],
         );
       },
     );

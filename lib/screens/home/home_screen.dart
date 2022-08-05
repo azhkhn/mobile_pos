@@ -1,24 +1,24 @@
 import 'dart:developer' show log;
-import 'package:flutter/material.dart';
-import 'package:shop_ez/core/utils/vat/vat.dart';
-import 'package:shop_ez/model/business_profile/business_profile_model.dart';
-import 'package:sizer/sizer.dart';
 
+import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
+import 'package:shop_ez/core/utils/vat/vat.dart';
 import 'package:shop_ez/db/db_functions/auth/user_db.dart';
-
+import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:shop_ez/widgets/floating_popup_widget/floating_add_options.dart';
+import 'package:sizer/sizer.dart';
+
 import 'widgets/home_card_widget.dart';
 import 'widgets/home_drawer.dart';
 import 'widgets/home_grid.dart';
 
 class ScreenHome extends StatelessWidget {
   ScreenHome({Key? key}) : super(key: key);
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final isDialOpen = ValueNotifier(false);
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final ValueNotifier<bool> isDialOpen = ValueNotifier(false);
   static final ValueNotifier<BusinessProfileModel?> businessNotifier = ValueNotifier(null);
 
   @override
@@ -29,7 +29,7 @@ class ScreenHome extends StatelessWidget {
         businessNotifier.value = await UserUtils.instance.businessProfile;
         if (VatUtils.instance.vats.isEmpty) await VatUtils.instance.getVats();
       } catch (e) {
-        log(e.toString());
+        log('', error: e);
       }
     });
     if (isTablet) {

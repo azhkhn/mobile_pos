@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
 
 class Converter {
@@ -19,6 +21,11 @@ class Converter {
   //==================== Compare Dates ====================
   static bool isSameDate(DateTime date1, DateTime date2) {
     return date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
+  }
+
+  //==================== Model to Json String ====================
+  static String modelToJsonString(dynamic model) {
+    return jsonEncode(model.toJson());
   }
 
   // static final NumberFormat roundNumber = NumberFormat("###.0#", "en_US");

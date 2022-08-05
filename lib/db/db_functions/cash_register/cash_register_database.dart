@@ -25,7 +25,7 @@ class CashRegisterDatabase {
     final _result = await db.query(tableCashRegister, orderBy: '${CashRegisterFields.id} DESC', limit: 1);
     log('Fetching latest CashRegister details..');
     if (_result.isNotEmpty) {
-      final _cashRegisters = CashRegisterModel.fromJson(_result.first);
+      final CashRegisterModel _cashRegisters = CashRegisterModel.fromJson(_result.first);
       return _cashRegisters;
     } else {
       return null;
