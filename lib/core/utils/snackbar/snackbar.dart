@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/text.dart';
 
 import '../../constant/sizes.dart';
 
@@ -54,6 +55,7 @@ void kSnackBar({
                 softWrap: false,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
+                style: kText11sp,
               ),
             ),
           ],

@@ -62,6 +62,7 @@ class ScreenAddUser extends StatelessWidget {
               key: _formKey,
               child: Column(
                 children: [
+                  kHeight5,
                   //==================== User Group Field ====================
                   FutureBuilder(
                     future: GroupDatabase.instance.getAllGroups(),

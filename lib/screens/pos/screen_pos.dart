@@ -17,7 +17,7 @@ class PosScreen extends StatelessWidget {
         return true;
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
         backgroundColor: kBackgroundGrey,
         body: SafeArea(
           child: Align(

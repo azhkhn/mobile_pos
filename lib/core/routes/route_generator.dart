@@ -471,7 +471,7 @@ class RouteGenerator {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, routeBusinessProfile);
               },
-              child: const Text('Business Profile'),
+              child: Text('Business Profile', style: kText12sp),
             )
           ],
         );

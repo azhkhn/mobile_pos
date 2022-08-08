@@ -44,7 +44,7 @@ final _verifyUserProvider = StateNotifierProvider.autoDispose<VerifyUserNotifier
 class ScreenSignUp extends ConsumerWidget {
   ScreenSignUp({Key? key}) : super(key: key);
 
-  final List<String> items = ['Hyper Market', 'IT Company', 'Stationary', 'Mobile Shop', 'Bakery', 'Restaurent', 'Pharmacy', 'Other'];
+  final List<String> items = ['Hyper Market', 'IT Company', 'Stationary', 'Mobile Shop', 'Bakery', 'Restaurant', 'Pharmacy', 'Other'];
 
   final GlobalKey<FormState> _formStateKey = GlobalKey<FormState>();
   final TextEditingController shopNameController = TextEditingController();

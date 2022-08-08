@@ -94,6 +94,7 @@ class ScreenAddGroup extends StatelessWidget {
               key: _formKey,
               child: Column(
                 children: [
+                  kHeight5,
                   //========== Name Field ==========
                   TextFeildWidget(
                     controller: _nameController,

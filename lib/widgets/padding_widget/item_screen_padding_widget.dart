@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
 
 class ItemScreenPaddingWidget extends StatelessWidget {
   const ItemScreenPaddingWidget({
@@ -10,7 +11,7 @@ class ItemScreenPaddingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: kPadding10,
       child: child,
     );
   }

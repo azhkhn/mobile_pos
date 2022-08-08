@@ -12,9 +12,9 @@ import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
 import 'package:shop_ez/model/vat/vat_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
-import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
+import 'package:sizer/sizer.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';
 
@@ -45,11 +45,12 @@ class VatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(title: 'TAX Rate'),
-      body: BackgroundContainerWidget(
-        child: ItemScreenPaddingWidget(
-          child: Form(
-            key: _formKey,
+      body: ItemScreenPaddingWidget(
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 //========== Name Field ==========
                 TextFeildWidget(
@@ -136,9 +137,10 @@ class VatScreen extends StatelessWidget {
                   buttonText: 'Submit',
                 ),
 
+                SizedBox(height: .5.h),
+
                 //========== VAT List Field ==========
-                kHeight50,
-                Expanded(
+                Flexible(
                   child: FutureBuilder<List<VatModel>>(
                     future: vatDB.getAllVats(),
                     builder: (context, snapshot) {
@@ -156,6 +158,8 @@ class VatScreen extends StatelessWidget {
                               valueListenable: vatNotifier,
                               builder: (context, List<VatModel> vats, _) {
                                 return ListView.separated(
+                                  primary: false,
+                                  shrinkWrap: true,
                                   itemBuilder: (context, index) {
                                     final vat = vats[index];
                                     log('vat == $vat');
@@ -296,11 +300,7 @@ class VatScreen extends StatelessWidget {
                                                           await vatDB.deleteVAT(vat.id!);
                                                           Navigator.pop(context);
 
-                                                          kSnackBar(
-                                                            context: context,
-                                                            content: 'VAT deleted successfully',
-                                                            delete: true,
-                                                          );
+                                                          kSnackBar(context: context, content: 'VAT deleted successfully', delete: true);
                                                         },
                                                         child: kTextDelete,
                                                       ),
@@ -313,9 +313,7 @@ class VatScreen extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  separatorBuilder: (context, index) => const Divider(
-                                    thickness: 1,
-                                  ),
+                                  separatorBuilder: (context, index) => const Divider(thickness: 1),
                                   itemCount: vats.length,
                                 );
                               });
@@ -332,7 +330,7 @@ class VatScreen extends StatelessWidget {
   }
 
   //========== Add VAT ==========
-  addVat(BuildContext context) async {
+  void addVat(BuildContext context) async {
     final String name, code, type;
     final int rate;
 

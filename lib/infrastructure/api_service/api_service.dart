@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final apiProvider = Provider((ref) => ApiService());
-const String _endPoint = "https://mobilepos.systemsexpert.com.sa/Example/verifyUser";
+const String _endPoint = "http://mobilepos.systemsexpert.com.sa/Example/verifyUser";
 
 class ApiService {
   final Dio dio = Dio(BaseOptions());

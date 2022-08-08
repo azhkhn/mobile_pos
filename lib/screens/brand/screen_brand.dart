@@ -14,6 +14,7 @@ import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/container/background_container_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
+import 'package:sizer/sizer.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';
 
@@ -74,8 +75,9 @@ class BrandScreen extends StatelessWidget {
                 },
               ),
 
+              SizedBox(height: .5.h),
+
               //========== Brand List Field ==========
-              kHeight50,
               Expanded(
                 child: FutureBuilder<dynamic>(
                   future: brandDB.getAllBrands(),
