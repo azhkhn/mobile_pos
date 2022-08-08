@@ -638,8 +638,7 @@ class PurchaseReturnSideWidget extends StatelessWidget {
     //==================== Adding purchased items to UI ====================
     for (var i = 0; i < purchasedItems.length; i++) {
       PurchaseItemsModel purchasedItem = purchasedItems[i];
-      final List<ItemMasterModel> items = await itemDB.getProductById(purchasedItem.productId);
-      final ItemMasterModel item = items.first;
+      final ItemMasterModel item = await itemDB.getProductById(purchasedItem.productId);
 
       final List<PurchaseItemsReturnModel> returnedItems =
           purchaseReturnedItems.where((returnedItem) => returnedItem.productId == purchasedItem.productId).toList();

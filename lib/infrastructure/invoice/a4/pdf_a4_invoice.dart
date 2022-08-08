@@ -514,7 +514,7 @@ class PdfSalesInvoice {
       'Total Amount\n المبلغ الإجمالي',
     ];
     int i = 0;
-    final data = saleItems.map((item) {
+    final items = saleItems.map((item) {
       i++;
       final num exclusiveAmount;
       if (item.vatMethod == 'Inclusive') {
@@ -535,7 +535,9 @@ class PdfSalesInvoice {
       ];
     }).toList();
 
-    final int tableLength = data.length + 1;
+    final List<String> arabicLabel = saleItems.map((item) => item.productNameArabic.toString()).toList();
+
+    final int tableLength = items.length + 1;
     log('Table Length == $tableLength');
 
     return pw.Table(
@@ -550,38 +552,52 @@ class PdfSalesInvoice {
         5: pw.FractionColumnWidth(0.15),
       },
       children: List<pw.TableRow>.generate(tableLength, (index) {
-        return index == 0
-            ?
-            //========== Header ==========
-            pw.TableRow(
-                decoration: const pw.BoxDecoration(color: PdfColors.grey300),
-                children: List.generate(
-                  headers.length,
-                  (_i) => pw.Padding(
-                    padding: const pw.EdgeInsets.all(2),
-                    child: pw.Text(
-                      headers[_i],
-                      textDirection: pw.TextDirection.rtl,
-                      textAlign: _i == 0 || _i == 1 ? pw.TextAlign.right : pw.TextAlign.left,
-                      style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold, font: arabicFont),
-                    ),
-                  ),
-                ))
-            :
-            //========== Cell ==========
-            pw.TableRow(
-                children: List.generate(
+        final int _itemIndex = index - 1;
+
+        if (index == 0) {
+          return pw.TableRow(
+              decoration: const pw.BoxDecoration(color: PdfColors.grey300),
+              children: List.generate(
                 headers.length,
                 (_i) => pw.Padding(
                   padding: const pw.EdgeInsets.all(2),
                   child: pw.Text(
-                    data[index - 1][_i],
-                    textDirection: pw.TextDirection.ltr,
-                    textAlign: _i == 0 || _i == 1 ? pw.TextAlign.left : pw.TextAlign.right,
-                    style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.normal),
+                    headers[_i],
+                    textDirection: pw.TextDirection.rtl,
+                    textAlign: _i == 0 || _i == 1 ? pw.TextAlign.right : pw.TextAlign.left,
+                    style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold, font: arabicFont),
                   ),
                 ),
               ));
+        } else {
+          return pw.TableRow(
+              children: List.generate(
+            headers.length,
+            (_i) => pw.Padding(
+                padding: const pw.EdgeInsets.all(2),
+                child: pw.Column(
+                  mainAxisSize: pw.MainAxisSize.min,
+                  crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                  children: [
+                    pw.Text(
+                      items[_itemIndex][_i],
+                      textDirection: pw.TextDirection.ltr,
+                      maxLines: 2,
+                      textAlign: _i == 0 || _i == 1 ? pw.TextAlign.left : pw.TextAlign.right,
+                      style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.normal),
+                    ),
+                    if (_i == 1)
+                      pw.Text(
+                        arabicLabel[_itemIndex],
+                        textDirection: pw.TextDirection.rtl,
+                        maxLines: 2,
+                        style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.normal, font: arabicFont),
+                      )
+                  ],
+                )),
+          ));
+        }
       }),
     );
 

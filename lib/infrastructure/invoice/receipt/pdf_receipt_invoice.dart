@@ -375,7 +375,7 @@ class PdfSalesReceipt {
       'Amount\n المبلغ',
     ];
     int i = 0;
-    final data = saleItems.map((item) {
+    final items = saleItems.map((item) {
       i++;
       final num exclusiveAmount;
       if (item.vatMethod == 'Inclusive') {
@@ -396,7 +396,9 @@ class PdfSalesReceipt {
       ];
     }).toList();
 
-    final int tableLength = data.length + 1;
+    final List<String> arabicLabel = saleItems.map((item) => item.productNameArabic.toString()).toList();
+
+    final int tableLength = items.length + 1;
     log('Table Length == $tableLength');
 
     return pw.Table(
@@ -411,6 +413,8 @@ class PdfSalesReceipt {
         5: pw.FractionColumnWidth(0.15),
       },
       children: List<pw.TableRow>.generate(tableLength, (index) {
+        final int _itemIndex = index - 1;
+
         return index == 0
             ?
             //========== Header ==========
@@ -435,11 +439,28 @@ class PdfSalesReceipt {
             pw.TableRow(
                 children: List.generate(
                 headers.length,
-                (_i) => pw.Text(
-                  data[index - 1][_i],
-                  textDirection: pw.TextDirection.ltr,
-                  textAlign: _i == 0 || _i == 1 ? pw.TextAlign.left : pw.TextAlign.right,
-                  style: pw.TextStyle(fontSize: 6, fontWeight: pw.FontWeight.normal),
+                (_i) => pw.Column(
+                  mainAxisSize: pw.MainAxisSize.max,
+                  crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                  children: [
+                    pw.Text(
+                      items[_itemIndex][_i],
+                      textDirection: pw.TextDirection.ltr,
+                      maxLines: 2,
+                      textAlign: _i == 0 || _i == 1 ? pw.TextAlign.left : pw.TextAlign.right,
+                      style: pw.TextStyle(fontSize: 6, fontWeight: pw.FontWeight.normal),
+                    ),
+                    if (_i == 1)
+                      pw.Text(
+                        arabicLabel[_itemIndex],
+                        textDirection: pw.TextDirection.rtl,
+                        maxLines: 2,
+                        style: pw.TextStyle(fontSize: 6, fontWeight: pw.FontWeight.normal, font: arabicFont),
+                      )
+                    else
+                      pw.Text('')
+                  ],
                 ),
               ));
       }),

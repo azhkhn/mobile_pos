@@ -527,7 +527,7 @@ class ScreenSalesInvoice extends StatelessWidget {
       'Total Amount\n المبلغ الإجمالي',
     ];
     int i = 0;
-    final List<List<String>> data = saleItems.map((item) {
+    final List<List<String>> items = saleItems.map((item) {
       i++;
       final num exclusiveAmount;
       if (item.vatMethod == 'Inclusive') {
@@ -548,9 +548,11 @@ class ScreenSalesInvoice extends StatelessWidget {
       ];
     }).toList();
 
-    log('items == ' + data.toString());
+    final List<String> arabicLabel = saleItems.map((item) => item.productNameArabic.toString()).toList();
 
-    final int tableLength = data.length + 1;
+    log('items == ' + items.toString());
+
+    final int tableLength = items.length + 1;
     log('Table Length == $tableLength');
 
     return Table(
@@ -565,34 +567,55 @@ class ScreenSalesInvoice extends StatelessWidget {
         5: FractionColumnWidth(0.15),
       },
       children: List<TableRow>.generate(tableLength, (index) {
-        return index == 0
-            ? TableRow(
-                decoration: const BoxDecoration(
-                  color: Color(0xFFE0E0E0),
-                ),
-                children: List.generate(
-                  headers.length,
-                  (_i) => Padding(
-                    padding: kPadding2,
-                    child: Text(
-                      headers[_i],
-                      textAlign: _i == 0 || _i == 1 ? TextAlign.left : TextAlign.right,
-                      style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ))
-            : TableRow(
-                children: List.generate(
+        final int _itemIndex = index - 1;
+        if (index == 0) {
+          return TableRow(
+              decoration: const BoxDecoration(
+                color: Color(0xFFE0E0E0),
+              ),
+              children: List.generate(
                 headers.length,
                 (_i) => Padding(
                   padding: kPadding2,
                   child: Text(
-                    data[index - 1][_i],
+                    headers[_i],
                     textAlign: _i == 0 || _i == 1 ? TextAlign.left : TextAlign.right,
-                    style: const TextStyle(fontSize: 7, fontWeight: FontWeight.normal),
+                    style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
                   ),
                 ),
               ));
+        } else {
+          return TableRow(
+              children: List.generate(
+            headers.length,
+            (_i) => Padding(
+              padding: kPadding2,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    items[_itemIndex][_i],
+                    textAlign: _i == 0 || _i == 1 ? TextAlign.left : TextAlign.right,
+                    maxLines: 2,
+                    style: const TextStyle(fontSize: 7, fontWeight: FontWeight.normal),
+                  ),
+                  if (_i == 1)
+                    Text(
+                      arabicLabel[_itemIndex],
+                      textDirection: TextDirection.rtl,
+                      maxLines: 2,
+                      style: const TextStyle(
+                        fontSize: 7,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    )
+                ],
+              ),
+            ),
+          ));
+        }
       }),
     );
   }

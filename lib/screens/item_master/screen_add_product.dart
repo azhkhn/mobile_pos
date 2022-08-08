@@ -37,6 +37,7 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 final _selectedImageProvider = StateProvider.autoDispose<File?>((ref) => null);
 final _productTypeProvider = StateProvider.autoDispose<String?>((ref) => null);
 final _vatMethodProvider = StateProvider.autoDispose<String?>((ref) => null);
+final _isLoadedProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 class ScreenAddProduct extends ConsumerWidget {
   ScreenAddProduct({Key? key, this.from = false, this.itemMasterModel}) : super(key: key);
@@ -111,8 +112,9 @@ class ScreenAddProduct extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (itemMasterModel != null) getProductDetails(itemMasterModel!, ref);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final bool _isLoaded = ref.watch(_isLoadedProvider);
+      if (itemMasterModel != null && !_isLoaded) await getProductDetails(itemMasterModel!, ref);
     });
     final Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
@@ -761,7 +763,7 @@ class ScreenAddProduct extends ConsumerWidget {
   }
 
   //========== Fetch Product Details ==========
-  void getProductDetails(ItemMasterModel product, WidgetRef ref) async {
+  Future<void> getProductDetails(ItemMasterModel product, WidgetRef ref) async {
     //retieving values from Database to TextFields
 
     log('Product == ' + product.toString());
@@ -790,6 +792,8 @@ class ScreenAddProduct extends ConsumerWidget {
     if (await File(product.itemImage!).exists()) {
       ref.read(_selectedImageProvider.notifier).state = File(product.itemImage!);
     }
+
+    ref.read(_isLoadedProvider.notifier).state = true;
   }
 
 //=== === === === === Reset Item Master === === === === ===

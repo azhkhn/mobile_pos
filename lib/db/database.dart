@@ -44,7 +44,7 @@ class EzDatabase {
     const dbName = 'user.db';
     final dbPath = await getDatabasesPath();
     final dbFile = join(dbPath, dbName);
-    return await openDatabase(dbFile, version: 2, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(dbFile, version: 6, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -57,70 +57,28 @@ class EzDatabase {
     // const idLogin = 'INTEGER NOT NULL';
     const intNotNull = 'INTEGER NOT NULL';
 
-    // //========== Table Cash Register ==========
-    // await db.execute('''CREATE TABLE $tableCashRegister (
-    //   ${CashRegisterFields.id} $idAuto,
-    //   ${CashRegisterFields.dateTime} $textNotNull,
-    //   ${CashRegisterFields.amount} $textNotNull,
-    //   ${CashRegisterFields.userId} $intNotNull,
-    //   ${CashRegisterFields.action} $textNotNull)''');
+    // await db.execute("ALTER TABLE $tableSalesItems ADD COLUMN ${SalesItemsFields.productNameArabic} $textNotNull DEFAULT ''");
+    // await db.execute("ALTER TABLE $tableSalesReturnItems ADD COLUMN ${SalesReturnItemsFields.productNameArabic} $textNotNull DEFAULT ''");
 
-//     await db.execute('DROP TABLE IF EXISTS $tableUser');
-//     await db.execute('DROP TABLE IF EXISTS $tableLogin');
-//     await db.execute('DROP TABLE IF EXISTS $tableGroup');
-//     await db.execute('DROP TABLE IF EXISTS $tablePermission');
+    // final _saleItems = await db.query(tableSalesItems);
 
-// //========== Table Users ==========
-//     await db.execute('''CREATE TABLE $tableUser (
-//       ${UserFields.id} $idAuto,
-//       ${UserFields.groupId} $intNotNull,
-//       ${UserFields.shopName} $textNotNull,
-//       ${UserFields.countryName} $textNotNull,
-//       ${UserFields.shopCategory} $textNotNull,
-//       ${UserFields.name} $textNull,
-//       ${UserFields.nameArabic} $textNull,
-//       ${UserFields.address} $textNull,
-//       ${UserFields.mobileNumber} $textNotNull,
-//       ${UserFields.email} $textNull,
-//       ${UserFields.username} $textNotNull,
-//       ${UserFields.password} $textNotNull,
-//       ${UserFields.status} $intNotNull,
-//       ${UserFields.document} $textNull)''');
+    // final List<SalesItemsModel> soldItems = _saleItems.map((json) => SalesItemsModel.fromJson(json)).toList();
 
-// //========== Table Login ==========
-//     await db.execute('''CREATE TABLE $tableLogin (
-//       ${UserFields.id} $idLogin,
-//       ${UserFields.groupId} $intNotNull,
-//       ${UserFields.shopName} $textNotNull,
-//       ${UserFields.countryName} $textNotNull,
-//       ${UserFields.shopCategory} $textNotNull,
-//       ${UserFields.name} $textNull,
-//       ${UserFields.nameArabic} $textNull,
-//       ${UserFields.address} $textNull,
-//       ${UserFields.mobileNumber} $textNotNull,
-//       ${UserFields.email} $textNull,
-//       ${UserFields.username} $textNotNull,
-//       ${UserFields.password} $textNotNull,
-//       ${UserFields.status} $intNotNull,
-//       ${UserFields.document} $textNull)''');
+    // for (SalesItemsModel soldItem in soldItems) {
+    //   final itemNameArabic = await ItemMasterDatabase.instance.getProductById(soldItem.productId).then((item) => item.itemNameArabic);
+    //   final updatedSaleItems = soldItem.copyWith(productNameArabic: itemNameArabic);
+    //   await db.update(tableSalesItems, updatedSaleItems.toJson(), where: '${SalesItemsFields.id} = ?', whereArgs: [soldItem.id]);
+    // }
 
-// //========== Table Group ==========
-//     await db.execute('''CREATE TABLE $tableGroup (
-//       ${GroupFields.id} $idAuto,
-//       ${GroupFields.name} $textNotNull,
-//       ${GroupFields.description} $textNotNull)''');
+    // final _salesReturnItems = await db.query(tableSalesItems);
 
-// //========== Table Permission ==========
-//     await db.execute('''CREATE TABLE $tablePermission (
-//       ${PermissionFields.id} $idAuto,
-//       ${PermissionFields.groupId} $intNotNull,
-//       ${PermissionFields.user} $textNotNull,
-//       ${PermissionFields.sale} $textNotNull,
-//       ${PermissionFields.purchase} $textNotNull,
-//       ${PermissionFields.returns} $textNotNull,
-//       ${PermissionFields.products} $textNotNull,
-//       ${PermissionFields.customer} $textNotNull,
-//       ${PermissionFields.supplier} $textNotNull)''');
+    // final List<SalesReturnItemsModel> returnedItems = _salesReturnItems.map((json) => SalesReturnItemsModel.fromJson(json)).toList();
+
+    // for (SalesReturnItemsModel returnedItem in returnedItems) {
+    //   final itemNameArabic = await ItemMasterDatabase.instance.getProductById(returnedItem.productId).then((item) => item.itemNameArabic);
+    //   final updatedSaleItems = returnedItem.copyWith(productNameArabic: itemNameArabic);
+    //   await db.update(tableSalesReturnItems, updatedSaleItems.toJson(), where: '${SalesReturnItemsFields.id} = ?', whereArgs: [returnedItem.id]);
+    // }
 
     await db.execute("DROP TABLE IF EXISTS $tableSales");
     await db.execute("DROP TABLE IF EXISTS $tableSalesItems");
@@ -162,6 +120,7 @@ class EzDatabase {
       ${SalesItemsFields.productId} $intNotNull,
       ${SalesItemsFields.productType} $textNotNull,
       ${SalesItemsFields.productName} $textNotNull,
+      ${SalesItemsFields.productNameArabic} $textNotNull,
       ${SalesItemsFields.categoryId} $intNotNull,
       ${SalesItemsFields.productCode} $textNotNull,
       ${SalesItemsFields.unitPrice} $textNotNull,
@@ -286,6 +245,7 @@ class EzDatabase {
       ${SalesReturnItemsFields.productId} $intNotNull,
       ${SalesReturnItemsFields.productType} $textNotNull,
       ${SalesReturnItemsFields.productName} $textNotNull,
+      ${SalesReturnItemsFields.productNameArabic} $textNotNull,
       ${SalesReturnItemsFields.categoryId} $intNotNull,
       ${SalesReturnItemsFields.productCode} $textNotNull,
       ${SalesReturnItemsFields.unitPrice} $textNotNull,
@@ -602,6 +562,7 @@ class EzDatabase {
       ${SalesItemsFields.productId} $intNotNull,
       ${SalesItemsFields.productType} $textNotNull,
       ${SalesItemsFields.productName} $textNotNull,
+      ${SalesItemsFields.productNameArabic} $textNotNull,
       ${SalesItemsFields.categoryId} $intNotNull,
       ${SalesItemsFields.productCode} $textNotNull,
       ${SalesItemsFields.unitPrice} $textNotNull,
@@ -709,6 +670,7 @@ class EzDatabase {
       ${SalesReturnItemsFields.productId} $intNotNull,
       ${SalesReturnItemsFields.productType} $textNotNull,
       ${SalesReturnItemsFields.productName} $textNotNull,
+      ${SalesReturnItemsFields.productNameArabic} $textNotNull,
       ${SalesReturnItemsFields.categoryId} $intNotNull,
       ${SalesReturnItemsFields.productCode} $textNotNull,
       ${SalesReturnItemsFields.unitPrice} $textNotNull,

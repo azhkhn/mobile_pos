@@ -96,24 +96,21 @@ class _ScreenBarcodeState extends State<ScreenBarcode> {
                         ),
                       );
                     },
-                    onSuggestionSelected: (ItemMasterModel suggestion) async {
-                      final itemId = suggestion.id;
+                    onSuggestionSelected: (ItemMasterModel selectedItem) async {
                       _productController.clear();
 
-                      final _selectedItem = await _itemMasterDB.getProductById(itemId!);
-
                       for (var i = 0; i < itemNotifier.value.length; i++) {
-                        if (_selectedItem.first.id == itemNotifier.value[i].id) {
+                        if (selectedItem.id == itemNotifier.value[i].id) {
                           final num qty = num.parse(_quantityControllers[i].text);
                           _quantityControllers[i].text = (qty + 1).toString();
                           return;
                         }
                       }
                       _quantityControllers.add(TextEditingController(text: '1'));
-                      itemNotifier.value.add(_selectedItem.first);
+                      itemNotifier.value.add(selectedItem);
                       itemNotifier.notifyListeners();
 
-                      log(suggestion.itemName);
+                      log(selectedItem.itemName);
                     },
                   ),
                   kHeight10,

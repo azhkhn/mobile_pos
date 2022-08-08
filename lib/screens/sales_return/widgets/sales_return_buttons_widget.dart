@@ -347,6 +347,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
         final String productType = SalesReturnSideWidget.selectedProductsNotifier.value[i].productType,
             productCode = SalesReturnSideWidget.selectedProductsNotifier.value[i].itemCode,
             productName = SalesReturnSideWidget.selectedProductsNotifier.value[i].itemName,
+            productNameArabic = SalesReturnSideWidget.selectedProductsNotifier.value[i].itemNameArabic,
             productCost = SalesReturnSideWidget.selectedProductsNotifier.value[i].itemCost,
             unitPrice = SalesReturnSideWidget.selectedProductsNotifier.value[i].sellingPrice,
             netUnitPrice = vatMethod == 'Inclusive'
@@ -388,6 +389,7 @@ class SalesReturnButtonsWidget extends StatelessWidget {
           productType: productType,
           productCode: productCode,
           productName: productName,
+          productNameArabic: productNameArabic,
           categoryId: categoryId,
           productCost: productCost,
           netUnitPrice: netUnitPrice,

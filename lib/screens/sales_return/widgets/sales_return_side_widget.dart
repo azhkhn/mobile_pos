@@ -626,8 +626,7 @@ class SalesReturnSideWidget extends StatelessWidget {
     //==================== Adding sold items to UI ====================
     for (var index = 0; index < soldItems.length; index++) {
       SalesItemsModel soldItem = soldItems[index];
-      final List<ItemMasterModel> items = await ItemMasterDatabase.instance.getProductById(soldItem.productId);
-      final ItemMasterModel item = items.first;
+      final ItemMasterModel item = await ItemMasterDatabase.instance.getProductById(soldItem.productId);
 
       final List<SalesReturnItemsModel> returnedItems =
           salesReturnedItems.where((returnedItem) => returnedItem.productId == soldItem.productId).toList();

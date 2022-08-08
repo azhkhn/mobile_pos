@@ -515,6 +515,7 @@ class PaymentButtonsWidget extends ConsumerWidget {
         final String productType = SaleSideWidget.selectedProductsNotifier.value[i].productType,
             productCode = SaleSideWidget.selectedProductsNotifier.value[i].itemCode,
             productName = SaleSideWidget.selectedProductsNotifier.value[i].itemName,
+            productNameArabic = SaleSideWidget.selectedProductsNotifier.value[i].itemNameArabic,
             productCost = SaleSideWidget.selectedProductsNotifier.value[i].itemCost,
             unitPrice = SaleSideWidget.selectedProductsNotifier.value[i].sellingPrice,
             netUnitPrice = vatMethod == 'Inclusive'
@@ -534,6 +535,7 @@ class PaymentButtonsWidget extends ConsumerWidget {
         log(' Product Type == $productType');
         log(' Product Code == $productCode');
         log(' Product Name == $productName');
+        log(' Product Name Arabic == $productNameArabic');
         log(' Product Category id == $categoryId');
         log(' Product Cost == $productCost');
         log(' Net Unit Price == $netUnitPrice');
@@ -552,6 +554,7 @@ class PaymentButtonsWidget extends ConsumerWidget {
           productType: productType,
           productCode: productCode,
           productName: productName,
+          productNameArabic: productNameArabic,
           categoryId: categoryId,
           productCost: productCost,
           netUnitPrice: netUnitPrice,

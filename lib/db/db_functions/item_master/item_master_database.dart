@@ -79,7 +79,7 @@ class ItemMasterDatabase {
   }
 
   //========== Get Product By Id ==========
-  Future<List<ItemMasterModel>> getProductById(int id) async {
+  Future<ItemMasterModel> getProductById(int id) async {
     final db = await dbInstance.database;
     final _result = await db.query(
       tableItemMaster,
@@ -88,7 +88,7 @@ class ItemMasterDatabase {
     );
     log('Products by $id === $_result');
     final _items = _result.map((json) => ItemMasterModel.fromJson(json)).toList();
-    return _items;
+    return _items.first;
   }
 
   //========== Get Product By ItemCode ==========

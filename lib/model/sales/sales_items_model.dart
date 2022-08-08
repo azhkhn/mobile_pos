@@ -12,6 +12,7 @@ class SalesItemsModel with _$SalesItemsModel {
     required String productType,
     required String productCode,
     required String productName,
+    required String productNameArabic,
     required int categoryId,
     required String productCost,
     required String netUnitPrice,
@@ -38,6 +39,7 @@ class SalesItemsFields {
   static const productType = 'productType';
   static const productCode = 'productCode';
   static const productName = 'productName';
+  static const productNameArabic = 'productNameArabic';
   static const categoryId = 'categoryId';
   static const productCost = 'productCost';
   static const netUnitPrice = 'netUnitPrice';
