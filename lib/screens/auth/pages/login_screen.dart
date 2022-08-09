@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/images.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
@@ -51,7 +52,7 @@ class ScreenLogin extends StatelessWidget {
                 SizedBox(
                   child: Center(
                     child: Image.asset(
-                      'assets/images/pos.png',
+                      kLogo,
                       width: _screenSise.width / 2.5,
                       // height: _screenSise.width / 3,
                     ),

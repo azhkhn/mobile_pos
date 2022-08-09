@@ -28,6 +28,7 @@ const EdgeInsets kClearTextIconPadding = EdgeInsets.only(top: 5, bottom: 5, righ
 const EdgeInsets kPadding0 = EdgeInsets.all(0);
 const EdgeInsets kPadding1 = EdgeInsets.all(1);
 const EdgeInsets kPadding2 = EdgeInsets.all(2);
+const EdgeInsets kPadding3 = EdgeInsets.all(3);
 const EdgeInsets kPadding5 = EdgeInsets.all(5);
 const EdgeInsets kPadding8 = EdgeInsets.all(8);
 const EdgeInsets kPadding10 = EdgeInsets.all(10);

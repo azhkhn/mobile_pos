@@ -44,7 +44,7 @@ class EzDatabase {
     const dbName = 'user.db';
     final dbPath = await getDatabasesPath();
     final dbFile = join(dbPath, dbName);
-    return await openDatabase(dbFile, version: 6, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(dbFile, version: 10, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -142,7 +142,7 @@ class EzDatabase {
       ${TransactionsField.transactionType} $textNotNull,
       ${TransactionsField.dateTime} $textNotNull,
       ${TransactionsField.amount} $textNotNull,
-      ${TransactionsField.status} $textNotNull,
+      ${TransactionsField.paymentMethod} $textNotNull,
       ${TransactionsField.description} $textNull,
       ${TransactionsField.salesId} $intNull,
       ${TransactionsField.purchaseId} $intNull,
@@ -584,7 +584,7 @@ class EzDatabase {
       ${TransactionsField.transactionType} $textNotNull,
       ${TransactionsField.dateTime} $textNotNull,
       ${TransactionsField.amount} $textNotNull,
-      ${TransactionsField.status} $textNotNull,
+      ${TransactionsField.paymentMethod} $textNotNull,
       ${TransactionsField.description} $textNull,
       ${TransactionsField.salesId} $intNull,
       ${TransactionsField.purchaseId} $intNull,

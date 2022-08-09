@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
+import 'package:shop_ez/screens/transaction/sales_transaction/widgets/transaction_sale_payment_widget.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
@@ -16,13 +18,13 @@ import 'package:shop_ez/screens/transaction/purchase_transaction/widgets/transac
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 
-class TransactionScreenPurchase extends StatelessWidget {
+class TransactionScreenPurchase extends ConsumerWidget {
   const TransactionScreenPurchase({Key? key, required this.purchaseModel}) : super(key: key);
 
   final PurchaseModel purchaseModel;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBarWidget(title: 'Add Paymnet'),
       body: SafeArea(
@@ -61,7 +63,7 @@ class TransactionScreenPurchase extends StatelessWidget {
                           submitText: 'Submit',
                           submitAction: () async {
                             Navigator.pop(ctx);
-                            final PurchaseModel? updatedPurchase = await addTransaction(context, purchase: purchaseModel);
+                            final PurchaseModel? updatedPurchase = await addTransaction(context, ref, purchase: purchaseModel);
                             if (updatedPurchase != null) {
                               _formState.reset();
                               TransactionPurchaseDetailsTable.balanceNotifier.value = 0;
@@ -137,7 +139,7 @@ class TransactionScreenPurchase extends StatelessWidget {
     );
   }
 
-  Future<PurchaseModel?> addTransaction(BuildContext context, {required final PurchaseModel purchase}) async {
+  Future<PurchaseModel?> addTransaction(BuildContext context, WidgetRef ref, {required final PurchaseModel purchase}) async {
     try {
       final TransactionDatabase transactionDatabase = TransactionDatabase.instance;
       final PurchaseDatabase purchaseDatabase = PurchaseDatabase.instance;
@@ -148,6 +150,7 @@ class TransactionScreenPurchase extends StatelessWidget {
       final num _paying = Converter.amountRounder(num.parse(TransactionPurchasePayment.amountController.text.trim()));
       final num _updatedPaid = Converter.amountRounder(_paid + _paying);
       final num _updatedBalance = Converter.amountRounder(_payable - _paying);
+      final String _paymentMethod = ref.read(TransactionSalePayment.payingByProvider);
 
       // log('_payable = $_payable');
       // log('_paid = $_paid');
@@ -160,7 +163,7 @@ class TransactionScreenPurchase extends StatelessWidget {
         transactionType: 'Expense',
         dateTime: _dateTime,
         amount: _paying.toString(),
-        status: purchase.paymentStatus,
+        paymentMethod: _paymentMethod,
         description: 'Transaction ${purchase.id}',
         purchaseId: purchase.id,
         supplierId: purchase.supplierId,

@@ -583,7 +583,7 @@ class PaymentButtonsWidget extends ConsumerWidget {
           transactionType: 'Income',
           dateTime: dateTime,
           amount: paid,
-          status: paymentStatus,
+          paymentMethod: paymentType,
           description: 'Transaction $salesId',
           salesId: salesId,
           customerId: customerId,

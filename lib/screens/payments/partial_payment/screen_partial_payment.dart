@@ -86,7 +86,7 @@ class PartialPayment extends ConsumerWidget {
                     onPressed: () {
                       final _formState = PaymentTypeWidget.formKey.currentState!;
                       if (_formState.validate()) {
-                        final String _paid = PaymentTypeWidget.amountController.text.toString();
+                        final String _paid = ref.read(PaymentTypeWidget.amountProvider).text;
 
                         final String _balance = PaymentDetailsTableWidget.balanceNotifier.value.toString();
                         final String _totalPayable = paymentDetails['totalPayable'].toString();
@@ -100,7 +100,7 @@ class PartialPayment extends ConsumerWidget {
                         log('Balance = $_balance');
                         log('Payment Status = $_paymentStatus');
 
-                        final String _paymentType = PaymentTypeWidget.payingByController!;
+                        final String _paymentType = PaymentTypeWidget.payingByController ?? '';
 
                         final String? _paymentNote =
                             PaymentTypeWidget.payingNoteController.text == '' ? null : PaymentTypeWidget.payingNoteController.text;
@@ -108,9 +108,13 @@ class PartialPayment extends ConsumerWidget {
                           context: context,
                           builder: (ctx) {
                             return AlertDialog(
-                              title: const Text(
-                                'Partial Payment',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              title: Text(
+                                _paymentStatus == 'Paid'
+                                    ? 'Full Payment'
+                                    : _paymentStatus == 'Partial'
+                                        ? 'Partial Payment'
+                                        : 'Credit Payment',
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               content: Text(purchase ? 'Do you want to add this purchase?' : 'Do you want to add this sale?'),
                               actions: [
@@ -141,7 +145,7 @@ class PartialPayment extends ConsumerWidget {
                                       }
 
                                       PaymentTypeWidget.payingNoteController.clear();
-                                      PaymentTypeWidget.amountController.clear();
+                                      ref.refresh(PaymentTypeWidget.amountProvider);
                                       PaymentTypeWidget.payingByController = null;
 
                                       if (salesModel != null) {

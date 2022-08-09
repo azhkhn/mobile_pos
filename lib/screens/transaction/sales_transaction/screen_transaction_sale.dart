@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
+import 'package:shop_ez/screens/home/widgets/home_card_widget.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
@@ -16,13 +18,13 @@ import 'package:shop_ez/screens/transaction/sales_transaction/widgets/transactio
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 
-class TransactionScreenSale extends StatelessWidget {
+class TransactionScreenSale extends ConsumerWidget {
   const TransactionScreenSale({Key? key, required this.salesModel}) : super(key: key);
 
   final SalesModel salesModel;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBarWidget(title: 'Add Paymnet'),
       body: SafeArea(
@@ -61,7 +63,7 @@ class TransactionScreenSale extends StatelessWidget {
                           submitText: 'Submit',
                           submitAction: () async {
                             Navigator.pop(ctx);
-                            final SalesModel? updatedSale = await addTransaction(context, sale: salesModel);
+                            final SalesModel? updatedSale = await addTransaction(context, ref, sale: salesModel);
                             if (updatedSale != null) {
                               _formState.reset();
                               TransactionSaleDetailsTable.balanceNotifier.value = 0;
@@ -136,7 +138,8 @@ class TransactionScreenSale extends StatelessWidget {
     );
   }
 
-  Future<SalesModel?> addTransaction(BuildContext context, {required final SalesModel sale}) async {
+  //==== ==== ==== ==== ==== Add Transaction ==== ==== ==== ==== ====
+  Future<SalesModel?> addTransaction(BuildContext context, WidgetRef ref, {required final SalesModel sale}) async {
     try {
       final TransactionDatabase transactionDatabase = TransactionDatabase.instance;
       final SalesDatabase salesDatabase = SalesDatabase.instance;
@@ -147,6 +150,7 @@ class TransactionScreenSale extends StatelessWidget {
       final num _paying = Converter.amountRounder(num.parse(TransactionSalePayment.amountController.text.trim()));
       final num _updatedPaid = Converter.amountRounder(_paid + _paying);
       final num _updatedBalance = Converter.amountRounder(_payable - _paying);
+      final String _paymentMethod = ref.read(TransactionSalePayment.payingByProvider);
 
       // log('_payable = $_payable');
       // log('_paid = $_paid');
@@ -159,7 +163,7 @@ class TransactionScreenSale extends StatelessWidget {
         transactionType: 'Income',
         dateTime: _dateTime,
         amount: _paying.toString(),
-        status: sale.paymentStatus,
+        paymentMethod: _paymentMethod,
         description: 'Transaction ${sale.id}',
         salesId: sale.id,
         customerId: sale.customerId,
@@ -177,7 +181,7 @@ class TransactionScreenSale extends StatelessWidget {
       //-------------------- Update Sale with Sales Return --------------------
       await salesDatabase.updateSaleBySalesId(sale: updatedSale);
       kSnackBar(context: context, content: 'Transaction added successfully', success: true);
-
+      ref.refresh(HomeCardWidget.homeCardProvider);
       return updatedSale;
     } catch (e) {
       log(e.toString());

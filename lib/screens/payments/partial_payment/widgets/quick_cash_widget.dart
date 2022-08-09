@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_type_widget.dart';
@@ -9,7 +10,7 @@ import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_type_wi
 import '../../../../core/constant/sizes.dart';
 import '../../../../widgets/button_widgets/material_button_widget.dart';
 
-class QuickCashWidget extends StatelessWidget {
+class QuickCashWidget extends ConsumerWidget {
   const QuickCashWidget({
     required this.totalPayable,
     Key? key,
@@ -20,7 +21,7 @@ class QuickCashWidget extends StatelessWidget {
   final bool isVertical;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,8 +41,8 @@ class QuickCashWidget extends StatelessWidget {
                         flex: 2,
                         child: CustomMaterialBtton(
                           onPressed: () {
-                            // PaymentTypeWidget.amountController.text = '$totalPayable';
-                            PaymentTypeWidget.amountController.text = Converter.amountRounderString(totalPayable);
+                            // ref.read(PaymentTypeWidget.amountProvider.notifier).state.text= '$totalPayable';
+                            ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = Converter.amountRounderString(totalPayable);
                             log('total payable == ' + Converter.amountRounderString(totalPayable));
 
                             return PaymentTypeWidget(
@@ -57,7 +58,7 @@ class QuickCashWidget extends StatelessWidget {
                       Expanded(
                         child: CustomMaterialBtton(
                           onPressed: () {
-                            PaymentTypeWidget.amountController.text = totalPayable > 10 ? '10' : '$totalPayable';
+                            ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 10 ? '10' : '$totalPayable';
                             return PaymentTypeWidget(
                               totalPayable: totalPayable,
                             ).amountChanged(totalPayable > 10 ? '10' : '$totalPayable');
@@ -71,7 +72,7 @@ class QuickCashWidget extends StatelessWidget {
                       Expanded(
                         child: CustomMaterialBtton(
                           onPressed: () {
-                            PaymentTypeWidget.amountController.text = totalPayable > 20 ? '20' : '$totalPayable';
+                            ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 20 ? '20' : '$totalPayable';
                             return PaymentTypeWidget(
                               totalPayable: totalPayable,
                             ).amountChanged(totalPayable > 20 ? '20' : '$totalPayable');
@@ -85,7 +86,7 @@ class QuickCashWidget extends StatelessWidget {
                       Expanded(
                         child: CustomMaterialBtton(
                           onPressed: () {
-                            PaymentTypeWidget.amountController.text = totalPayable > 50 ? '50' : '$totalPayable';
+                            ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 50 ? '50' : '$totalPayable';
                             return PaymentTypeWidget(
                               totalPayable: totalPayable,
                             ).amountChanged(totalPayable > 50 ? '50' : '$totalPayable');
@@ -104,7 +105,7 @@ class QuickCashWidget extends StatelessWidget {
                         flex: 1,
                         child: CustomMaterialBtton(
                           onPressed: () {
-                            PaymentTypeWidget.amountController.text = totalPayable > 100 ? '100' : '$totalPayable';
+                            ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 100 ? '100' : '$totalPayable';
                             return PaymentTypeWidget(
                               totalPayable: totalPayable,
                             ).amountChanged(totalPayable > 100 ? '100' : '$totalPayable');
@@ -119,7 +120,7 @@ class QuickCashWidget extends StatelessWidget {
                         flex: 1,
                         child: CustomMaterialBtton(
                           onPressed: () {
-                            PaymentTypeWidget.amountController.text = totalPayable > 500 ? '500' : '$totalPayable';
+                            ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 500 ? '500' : '$totalPayable';
                             return PaymentTypeWidget(
                               totalPayable: totalPayable,
                             ).amountChanged(totalPayable > 500 ? '500' : '$totalPayable');
@@ -134,7 +135,7 @@ class QuickCashWidget extends StatelessWidget {
                         flex: 1,
                         child: CustomMaterialBtton(
                           onPressed: () {
-                            PaymentTypeWidget.amountController.text = totalPayable > 1000 ? '1000' : '$totalPayable';
+                            ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 1000 ? '1000' : '$totalPayable';
                             return PaymentTypeWidget(
                               totalPayable: totalPayable,
                             ).amountChanged(totalPayable > 1000 ? '1000' : '$totalPayable');
@@ -149,7 +150,7 @@ class QuickCashWidget extends StatelessWidget {
                         flex: 1,
                         child: CustomMaterialBtton(
                           onPressed: () {
-                            PaymentTypeWidget.amountController.text = totalPayable > 5000 ? '5000' : '$totalPayable';
+                            ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 5000 ? '5000' : '$totalPayable';
                             return PaymentTypeWidget(
                               totalPayable: totalPayable,
                             ).amountChanged(totalPayable > 5000 ? '5000' : '$totalPayable');
@@ -164,7 +165,7 @@ class QuickCashWidget extends StatelessWidget {
                         flex: 1,
                         child: CustomMaterialBtton(
                           onPressed: () {
-                            PaymentTypeWidget.amountController.clear();
+                            ref.refresh(PaymentTypeWidget.amountProvider);
                             return PaymentTypeWidget(
                               totalPayable: totalPayable,
                             ).amountChanged('0');
@@ -185,8 +186,8 @@ class QuickCashWidget extends StatelessWidget {
                     flex: 6,
                     child: CustomMaterialBtton(
                       onPressed: () {
-                        // PaymentTypeWidget.amountController.text = '$totalPayable';
-                        PaymentTypeWidget.amountController.text = Converter.amountRounderString(totalPayable);
+                        // ref.read(PaymentTypeWidget.amountProvider.notifier).state.text= '$totalPayable';
+                        ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = Converter.amountRounderString(totalPayable);
                         log('total payable == ' + Converter.amountRounderString(totalPayable));
                         return PaymentTypeWidget(
                           totalPayable: totalPayable,
@@ -202,7 +203,7 @@ class QuickCashWidget extends StatelessWidget {
                     flex: 3,
                     child: CustomMaterialBtton(
                       onPressed: () {
-                        PaymentTypeWidget.amountController.text = totalPayable > 10 ? '10' : '$totalPayable';
+                        ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 10 ? '10' : '$totalPayable';
                         return PaymentTypeWidget(
                           totalPayable: totalPayable,
                         ).amountChanged(totalPayable > 10 ? '10' : '$totalPayable');
@@ -217,7 +218,7 @@ class QuickCashWidget extends StatelessWidget {
                     flex: 3,
                     child: CustomMaterialBtton(
                       onPressed: () {
-                        PaymentTypeWidget.amountController.text = totalPayable > 20 ? '20' : '$totalPayable';
+                        ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 20 ? '20' : '$totalPayable';
                         return PaymentTypeWidget(
                           totalPayable: totalPayable,
                         ).amountChanged(totalPayable > 20 ? '20' : '$totalPayable');
@@ -232,7 +233,7 @@ class QuickCashWidget extends StatelessWidget {
                     flex: 3,
                     child: CustomMaterialBtton(
                       onPressed: () {
-                        PaymentTypeWidget.amountController.text = totalPayable > 50 ? '50' : '$totalPayable';
+                        ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 50 ? '50' : '$totalPayable';
                         return PaymentTypeWidget(
                           totalPayable: totalPayable,
                         ).amountChanged(totalPayable > 50 ? '50' : '$totalPayable');
@@ -247,7 +248,7 @@ class QuickCashWidget extends StatelessWidget {
                     flex: 4,
                     child: CustomMaterialBtton(
                       onPressed: () {
-                        PaymentTypeWidget.amountController.text = totalPayable > 100 ? '100' : '$totalPayable';
+                        ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 100 ? '100' : '$totalPayable';
                         return PaymentTypeWidget(
                           totalPayable: totalPayable,
                         ).amountChanged(totalPayable > 100 ? '100' : '$totalPayable');
@@ -262,7 +263,7 @@ class QuickCashWidget extends StatelessWidget {
                     flex: 4,
                     child: CustomMaterialBtton(
                       onPressed: () {
-                        PaymentTypeWidget.amountController.text = totalPayable > 500 ? '500' : '$totalPayable';
+                        ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 500 ? '500' : '$totalPayable';
                         return PaymentTypeWidget(
                           totalPayable: totalPayable,
                         ).amountChanged(totalPayable > 500 ? '500' : '$totalPayable');
@@ -277,7 +278,7 @@ class QuickCashWidget extends StatelessWidget {
                     flex: 4,
                     child: CustomMaterialBtton(
                       onPressed: () {
-                        PaymentTypeWidget.amountController.text = totalPayable > 1000 ? '1000' : '$totalPayable';
+                        ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 1000 ? '1000' : '$totalPayable';
                         return PaymentTypeWidget(
                           totalPayable: totalPayable,
                         ).amountChanged(totalPayable > 1000 ? '1000' : '$totalPayable');
@@ -292,7 +293,7 @@ class QuickCashWidget extends StatelessWidget {
                     flex: 4,
                     child: CustomMaterialBtton(
                       onPressed: () {
-                        PaymentTypeWidget.amountController.text = totalPayable > 5000 ? '5000' : '$totalPayable';
+                        ref.read(PaymentTypeWidget.amountProvider.notifier).state.text = totalPayable > 5000 ? '5000' : '$totalPayable';
                         return PaymentTypeWidget(
                           totalPayable: totalPayable,
                         ).amountChanged(totalPayable > 5000 ? '5000' : '$totalPayable');
@@ -307,7 +308,7 @@ class QuickCashWidget extends StatelessWidget {
                     flex: 4,
                     child: CustomMaterialBtton(
                       onPressed: () {
-                        PaymentTypeWidget.amountController.clear();
+                        ref.refresh(PaymentTypeWidget.amountProvider);
                         return PaymentTypeWidget(
                           totalPayable: totalPayable,
                         ).amountChanged('0');

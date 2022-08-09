@@ -472,7 +472,14 @@ class ScreenAddExpense extends ConsumerWidget {
       );
 
       final _transactionModel = TransactionsModel(
-          category: 'Expense', transactionType: 'Expense', dateTime: date, amount: amount, status: 'Paid', description: note, payBy: payBy);
+        category: 'Expense',
+        transactionType: 'Expense',
+        dateTime: date,
+        amount: amount,
+        paymentMethod: paymentMethod,
+        description: note,
+        payBy: payBy,
+      );
 
       try {
         await expenseDB.createExpense(_expenseModel);

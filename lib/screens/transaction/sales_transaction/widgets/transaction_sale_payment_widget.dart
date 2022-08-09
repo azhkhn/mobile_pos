@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/validators/validators.dart';
 import 'package:shop_ez/screens/transaction/sales_transaction/widgets/transaction_sale_details_table.dart';
@@ -12,7 +13,7 @@ import '../../../../widgets/text_field_widgets/text_field_widgets.dart';
 //========== DropDown Items ==========
 const List types = ['Cash', 'Bank'];
 
-class TransactionSalePayment extends StatelessWidget {
+class TransactionSalePayment extends ConsumerWidget {
   const TransactionSalePayment({
     required this.totalPayable,
     Key? key,
@@ -23,15 +24,16 @@ class TransactionSalePayment extends StatelessWidget {
   //========== Global Keys ==========
   static final GlobalKey<FormState> formKey = GlobalKey();
 
-  //========== DropDown Controllers ==========
-  static String? payingByController;
+  static final payingByProvider = StateProvider.autoDispose<String>((ref) {
+    return 'Cash';
+  });
 
   //========== Text Editing Controllers ==========
   static final amountController = TextEditingController();
   static final payingNoteController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       amountController.text = totalPayable.toString();
       amountChanged(totalPayable.toString());
@@ -44,7 +46,6 @@ class TransactionSalePayment extends StatelessWidget {
       onWillPop: () async {
         amountController.clear();
         payingNoteController.clear();
-        payingByController = null;
         return true;
       },
       child: Container(
@@ -96,35 +97,39 @@ class TransactionSalePayment extends StatelessWidget {
                     //========== Type DropDown ==========
                     Flexible(
                       flex: 1,
-                      child: DropdownButtonFormField(
-                        isExpanded: true,
-                        decoration: const InputDecoration(
-                          constraints: BoxConstraints(maxHeight: 45),
-                          fillColor: kWhite,
-                          filled: true,
-                          isDense: true,
-                          errorStyle: TextStyle(fontSize: 0.01),
-                          contentPadding: EdgeInsets.all(10),
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          label: Text('Paying By *', style: TextStyle(color: klabelColorBlack)),
-                          border: OutlineInputBorder(),
-                        ),
-                        value: types.first,
-                        items: types
-                            .map((values) => DropdownMenuItem<String>(
-                                  value: values,
-                                  child: Text(values),
-                                ))
-                            .toList(),
-                        onChanged: (value) {
-                          payingByController = value.toString();
-                          log(payingByController!);
-                        },
-                        validator: (value) {
-                          if (value == null) {
-                            return 'This field is required*';
-                          }
-                          return null;
+                      child: Consumer(
+                        builder: (context, ref, _) {
+                          ref.watch(payingByProvider);
+                          return DropdownButtonFormField(
+                            isExpanded: true,
+                            decoration: const InputDecoration(
+                              constraints: BoxConstraints(maxHeight: 45),
+                              fillColor: kWhite,
+                              filled: true,
+                              isDense: true,
+                              errorStyle: TextStyle(fontSize: 0.01),
+                              contentPadding: EdgeInsets.all(10),
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              label: Text('Paying By *', style: TextStyle(color: klabelColorBlack)),
+                              border: OutlineInputBorder(),
+                            ),
+                            value: types.first,
+                            items: types
+                                .map((values) => DropdownMenuItem<String>(
+                                      value: values,
+                                      child: Text(values),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              ref.read(payingByProvider.notifier).state = value.toString();
+                            },
+                            validator: (value) {
+                              if (value == null) {
+                                return 'This field is required*';
+                              }
+                              return null;
+                            },
+                          );
                         },
                       ),
                     ),

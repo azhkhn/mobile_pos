@@ -11,7 +11,7 @@ class TransactionsField {
   static const transactionType = 'transactionType';
   static const dateTime = 'dateTime';
   static const amount = 'amount';
-  static const status = 'status';
+  static const paymentMethod = 'paymentMethod';
   static const description = 'description';
   static const salesId = 'salesId';
   static const purchaseId = 'purchaseId';
@@ -30,7 +30,7 @@ class TransactionsModel with _$TransactionsModel {
     required String transactionType,
     required String dateTime,
     required String amount,
-    required String status,
+    String? paymentMethod,
     String? description,
     int? salesId,
     int? purchaseId,

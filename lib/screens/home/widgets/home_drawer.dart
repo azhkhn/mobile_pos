@@ -10,21 +10,21 @@ import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:sizer/sizer.dart';
 
 const List drawerListItemImage = [
-  'assets/images/sales_module.png',
-  'assets/images/stock_module.png',
-  'assets/images/purchase.png',
-  'assets/images/offers.png',
-  'assets/images/item_master.png',
-  'assets/images/manage_user.png',
-  'assets/images/manage_user.png',
-  'assets/images/purchase.png',
-  'assets/images/item_master.png',
-  'assets/images/sales_module.png',
-  'assets/images/transportation.png',
-  'assets/images/settings_module.png',
-  'assets/images/stock_module.png',
-  'assets/images/manage_user.png',
-  'assets/images/stock_module.png',
+  'assets/images/home/pos.png',
+  'assets/images/home/sales.png',
+  'assets/images/home/purchases.png',
+  'assets/images/home/expenses.png',
+  'assets/images/home/item_master.png',
+  'assets/images/home/manage_customers.png',
+  'assets/images/home/manage_suppliers.png',
+  'assets/images/home/manage_categories.png',
+  'assets/images/home/manage_brands.png',
+  'assets/images/home/manage_databases.png',
+  'assets/images/home/reports.png',
+  'assets/images/home/device_mode.png',
+  'assets/images/home/about_software.png',
+  'assets/images/home/terms_and_conditions.png',
+  'assets/images/home/privacy_policy.png',
 ];
 
 const List drawerListItem = [
@@ -124,15 +124,15 @@ class DrawerItemsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       dense: true,
-      leading: index != 11
-          ? Image(
-              fit: BoxFit.scaleDown,
-              image: AssetImage(drawerListItemImage[index]),
-            )
-          : const IconButton(
-              icon: Icon(Icons.devices, color: kBlue),
-              onPressed: null,
-            ),
+      leading: FractionallySizedBox(
+        heightFactor: .5,
+        widthFactor: .1,
+        child: Image(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          image: AssetImage(drawerListItemImage[index]),
+        ),
+      ),
       title: Text(
         drawerListItem[index],
         style: TextStyle(color: kTextColorBlack, fontSize: 8.sp),

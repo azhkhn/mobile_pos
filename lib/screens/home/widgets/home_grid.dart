@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:sizer/sizer.dart';
 
 const List homeGridIcons = [
-  'assets/images/stock_module.png',
-  'assets/images/sales_module.png',
-  'assets/images/item_master.png',
-  'assets/images/manage_user.png',
-  'assets/images/purchase.png',
-  'assets/images/offers.png',
-  'assets/images/stock_module.png',
-  'assets/images/transportation.png',
-  'assets/images/database.png',
+  'assets/images/home/pos.png',
+  'assets/images/home/sales.png',
+  'assets/images/home/item_master.png',
+  'assets/images/home/manage_users.png',
+  'assets/images/home/purchases.png',
+  'assets/images/home/expenses.png',
+  'assets/images/home/stocks.png',
+  'assets/images/home/reports.png',
+  'assets/images/home/manage_databases.png',
 ];
 
 const List homeGridName = [
@@ -44,7 +45,7 @@ class HomeGrid extends ConsumerWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 3,
       child: Container(
-        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(20.0)),
+        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.1), borderRadius: BorderRadius.circular(20.0)),
         child: InkWell(
           onTap: () async {
             switch (index) {
@@ -82,29 +83,63 @@ class HomeGrid extends ConsumerWidget {
               default:
             }
           },
-          child: GridTile(
-            footer: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  homeGridName[index],
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  style: TextStyle(
-                    fontSize: 7.sp,
-                    fontWeight: FontWeight.bold,
+
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: FractionallySizedBox(
+                  widthFactor: .5,
+                  heightFactor: .5,
+                  alignment: Alignment.center,
+                  child: Image(image: AssetImage(homeGridIcons[index])),
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: kPadding5,
+                    child: Text(
+                      homeGridName[index],
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 6.sp,
+                        fontWeight: FontWeight.bold,
+                        color: kBlack,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-            child: Image(
-              color: index == 8 ? kTeal400 : null,
-              image: AssetImage(
-                homeGridIcons[index],
-              ),
-            ),
+            ],
           ),
+          // child: GridTile(
+          //   footer: Padding(
+          //     padding: const EdgeInsets.all(5.0),
+          //     child: FittedBox(
+          //       fit: BoxFit.scaleDown,
+          //       child: Text(
+          //         homeGridName[index],
+          //         textAlign: TextAlign.center,
+          //         maxLines: 1,
+          //         style: TextStyle(
+          //           fontSize: 7.sp,
+          //           fontWeight: FontWeight.bold,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          //   child: Image(
+          //     color: index == 8 ? kTeal400 : null,
+          //     image: AssetImage(
+          //       homeGridIcons[index],
+          //     ),
+          //   ),
+          // ),
         ),
       ),
     );

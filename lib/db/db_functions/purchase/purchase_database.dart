@@ -115,12 +115,8 @@ class PurchaseDatabase {
     final _result = await db.query(tablePurchase);
     // db.delete(tablePurchase);
     log('Fetching purchases from the database');
-    if (_result.isNotEmpty) {
-      final _purchases = _result.map((json) => PurchaseModel.fromJson(json)).toList();
-      return _purchases;
-    } else {
-      throw 'Purchases is Empty!';
-    }
+    final _purchases = _result.map((json) => PurchaseModel.fromJson(json)).toList();
+    return _purchases;
   }
 
   //========== Get Purchases Date ==========

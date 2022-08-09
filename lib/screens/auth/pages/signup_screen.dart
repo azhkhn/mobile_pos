@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/images.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/connection/connection.dart';
@@ -87,7 +88,7 @@ class ScreenSignUp extends ConsumerWidget {
               SizedBox(
                 child: Center(
                   child: Image.asset(
-                    'assets/images/pos.png',
+                    kLogo,
                     width: SizerUtil.width / 5,
                     // height: SizerUtil.width / 3,
                   ),

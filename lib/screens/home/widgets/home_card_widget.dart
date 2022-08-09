@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
+import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/model/transactions/transactions_model.dart';
 
 import '../../../core/constant/colors.dart';
 
@@ -16,24 +18,26 @@ class HomeCardWidget extends ConsumerWidget {
 
   static final homeCardProvider = FutureProvider<List<num>>((ref) async {
     log('Updating Sales Card..');
-    final List<SalesModel> sales = await SalesDatabase.instance.getAllSales();
+    final List<TransactionsModel> salesTransactions = await TransactionDatabase.instance.getAllSalesTransactions();
     num _todaySale = 0;
     num _todaysCash = 0;
     num _totalCash = 0;
 
-    final List<SalesModel> _todaySales = sales.where((sale) {
-      final DateTime soldDate = DateTime.parse(sale.dateTime);
+    final List<SalesModel> _todaySales = await SalesDatabase.instance.getSalesByDay(DateTime.now());
+
+    final List<TransactionsModel> _todaysTransactions = salesTransactions.where((transaction) {
+      final DateTime soldDate = DateTime.parse(transaction.dateTime);
       return Converter.isSameDate(DateTime.now(), soldDate);
     }).toList();
 
     _todaySale = _todaySales.length;
 
-    for (var i = 0; i < _todaySales.length; i++) {
-      _todaysCash += num.parse(_todaySales[i].grantTotal);
+    for (TransactionsModel sale in _todaysTransactions) {
+      if (sale.paymentMethod == 'Cash') _todaysCash += num.parse(sale.amount);
     }
 
-    for (var i = 0; i < sales.length; i++) {
-      _totalCash += num.parse(sales[i].grantTotal);
+    for (TransactionsModel sale in salesTransactions) {
+      if (sale.paymentMethod == 'Cash') _totalCash += num.parse(sale.amount);
     }
 
     return [_todaySale, _todaysCash, _totalCash];

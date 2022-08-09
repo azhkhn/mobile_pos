@@ -2,6 +2,7 @@ import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/images.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
@@ -108,7 +109,7 @@ class ScreenHome extends StatelessWidget {
             decoration: BoxDecoration(
               image: DecorationImage(
                 fit: isThermal ? BoxFit.fill : BoxFit.cover,
-                image: const AssetImage('assets/images/home.jpg'),
+                image: const AssetImage(kHomeImage),
               ),
             ),
             child: Padding(

@@ -349,7 +349,7 @@ class PurchaseButtonsWidget extends ConsumerWidget {
           transactionType: 'Expense',
           dateTime: dateTime,
           amount: paid,
-          status: paymentStatus,
+          paymentMethod: paymentType,
           description: 'Transaction Completed Successfully!',
           purchaseId: purchaseId,
           supplierId: supplierId,
@@ -365,7 +365,7 @@ class PurchaseButtonsWidget extends ConsumerWidget {
         content: "Purchase Added Successfully!",
       );
 
-      PaymentTypeWidget.amountController.clear();
+      ref.refresh(PaymentTypeWidget.amountProvider);
 
       await const PurchaseSideWidget().resetPurchase(ref, notify: true);
 

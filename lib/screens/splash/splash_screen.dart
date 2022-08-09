@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/images.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
@@ -40,7 +41,7 @@ class ScreenSplash extends StatelessWidget {
           child: FractionallySizedBox(
             widthFactor: .45,
             child: Image.asset(
-              'assets/images/pos.png',
+              kLogo,
             ),
           ),
         ),

@@ -11,9 +11,11 @@ import 'package:shop_ez/core/utils/device/date_time.dart';
 import 'package:shop_ez/db/db_functions/expense/expense_database.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
+import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/model/transactions/transactions_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
@@ -33,10 +35,15 @@ final _summaryFutureProvider = FutureProvider.autoDispose<List<Map<String, num>>
   final DateTime _today = DateTime.now();
 
   final List<SalesModel> sales = await SalesDatabase.instance.getSalesByDay(_today);
+  final List<TransactionsModel> salesTransactions = await TransactionDatabase.instance.getAllSalesTransactionsByDay(_today);
+
   final List<PurchaseModel> purchases = await PurchaseDatabase.instance.getPurchasesByDay(_today);
+  final List<TransactionsModel> purchasesTransactions = await TransactionDatabase.instance.getAllPurchasesTransactionsByDay(_today);
+
   final List<ExpenseModel> expenses = await ExpenseDatabase.instance.getExpensesByDay(_today);
 
-  return await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
+  return await _getSummaries(
+      sales: sales, salesTransaction: salesTransactions, purchases: purchases, purchasesTransaction: purchasesTransactions, expenses: expenses);
 });
 
 class ScreenOperationSummary extends StatelessWidget {
@@ -86,12 +93,24 @@ class ScreenOperationSummary extends StatelessWidget {
                                   ref.read(_fromDateProvider.notifier).state = null;
                                   if (ref.read(_toDateProvider) != null) {
                                     final List<SalesModel> sales = await SalesDatabase.instance.getSalesByDate(toDate: ref.read(_toDateProvider));
+                                    final List<TransactionsModel> salesTransactions =
+                                        await TransactionDatabase.instance.getSalesTransactionsByDate(toDate: ref.read(_toDateProvider));
+
                                     final List<PurchaseModel> purchases =
                                         await PurchaseDatabase.instance.getPurchasesByDate(toDate: ref.read(_toDateProvider));
+                                    final List<TransactionsModel> purchasesTransactions =
+                                        await TransactionDatabase.instance.getPurchasesTransactionsByDate(toDate: ref.read(_toDateProvider));
+
                                     final List<ExpenseModel> expenses =
                                         await ExpenseDatabase.instance.getExpensesByDate(toDate: ref.read(_toDateProvider));
-                                    ref.read(_summaryProvider.notifier).state =
-                                        await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
+
+                                    ref.read(_summaryProvider.notifier).state = await _getSummaries(
+                                      sales: sales,
+                                      salesTransaction: salesTransactions,
+                                      purchases: purchases,
+                                      purchasesTransaction: purchasesTransactions,
+                                      expenses: expenses,
+                                    );
                                   } else {
                                     final reset = ref.read(_summaryFutureProvider);
                                     ref.read(_summaryProvider.notifier).state = reset.asData!.value;
@@ -114,13 +133,23 @@ class ScreenOperationSummary extends StatelessWidget {
 
                                 final List<SalesModel> sales =
                                     await SalesDatabase.instance.getSalesByDate(fromDate: _fromDate, toDate: ref.read(_toDateProvider));
+                                final List<TransactionsModel> salesTransactions = await TransactionDatabase.instance
+                                    .getSalesTransactionsByDate(fromDate: _fromDate, toDate: ref.read(_toDateProvider));
+
                                 final List<PurchaseModel> purchases =
                                     await PurchaseDatabase.instance.getPurchasesByDate(fromDate: _fromDate, toDate: ref.read(_toDateProvider));
+                                final List<TransactionsModel> purchasesTransactions = await TransactionDatabase.instance
+                                    .getPurchasesTransactionsByDate(fromDate: _fromDate, toDate: ref.read(_toDateProvider));
+
                                 final List<ExpenseModel> expenses =
                                     await ExpenseDatabase.instance.getExpensesByDate(fromDate: _fromDate, toDate: ref.read(_toDateProvider));
 
-                                ref.read(_summaryProvider.notifier).state =
-                                    await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
+                                ref.read(_summaryProvider.notifier).state = await _getSummaries(
+                                    sales: sales,
+                                    salesTransaction: salesTransactions,
+                                    purchases: purchases,
+                                    purchasesTransaction: purchasesTransactions,
+                                    expenses: expenses);
                               }
                             },
                           ),
@@ -148,12 +177,23 @@ class ScreenOperationSummary extends StatelessWidget {
 
                                   if (ref.read(_fromDateProvider) != null) {
                                     final List<SalesModel> sales = await SalesDatabase.instance.getSalesByDate(fromDate: ref.read(_fromDateProvider));
+                                    final List<TransactionsModel> salesTransactions =
+                                        await TransactionDatabase.instance.getSalesTransactionsByDate(fromDate: ref.read(_fromDateProvider));
+
                                     final List<PurchaseModel> purchases =
                                         await PurchaseDatabase.instance.getPurchasesByDate(fromDate: ref.read(_fromDateProvider));
+                                    final List<TransactionsModel> purchasesTransactions =
+                                        await TransactionDatabase.instance.getPurchasesTransactionsByDate(fromDate: ref.read(_fromDateProvider));
+
                                     final List<ExpenseModel> expenses =
                                         await ExpenseDatabase.instance.getExpensesByDate(fromDate: ref.read(_fromDateProvider));
-                                    ref.read(_summaryProvider.notifier).state =
-                                        await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
+                                    ref.read(_summaryProvider.notifier).state = await _getSummaries(
+                                      sales: sales,
+                                      salesTransaction: salesTransactions,
+                                      purchases: purchases,
+                                      purchasesTransaction: purchasesTransactions,
+                                      expenses: expenses,
+                                    );
                                   } else {
                                     final reset = ref.read(_summaryFutureProvider);
                                     ref.read(_summaryProvider.notifier).state = reset.asData!.value;
@@ -176,13 +216,25 @@ class ScreenOperationSummary extends StatelessWidget {
 
                                 final List<SalesModel> sales =
                                     await SalesDatabase.instance.getSalesByDate(fromDate: ref.read(_fromDateProvider), toDate: _toDate);
+                                final List<TransactionsModel> salesTransactions = await TransactionDatabase.instance
+                                    .getSalesTransactionsByDate(fromDate: ref.read(_fromDateProvider), toDate: _toDate);
+
                                 final List<PurchaseModel> purchases =
                                     await PurchaseDatabase.instance.getPurchasesByDate(fromDate: ref.read(_fromDateProvider), toDate: _toDate);
+
+                                final List<TransactionsModel> purchasesTransactions = await TransactionDatabase.instance
+                                    .getPurchasesTransactionsByDate(fromDate: ref.read(_fromDateProvider), toDate: _toDate);
+
                                 final List<ExpenseModel> expenses =
                                     await ExpenseDatabase.instance.getExpensesByDate(fromDate: ref.read(_fromDateProvider), toDate: _toDate);
 
-                                ref.read(_summaryProvider.notifier).state =
-                                    await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
+                                ref.read(_summaryProvider.notifier).state = await _getSummaries(
+                                  sales: sales,
+                                  salesTransaction: salesTransactions,
+                                  purchases: purchases,
+                                  purchasesTransaction: purchasesTransactions,
+                                  expenses: expenses,
+                                );
                               }
                             },
                           ),
@@ -337,7 +389,9 @@ class ScreenOperationSummary extends StatelessWidget {
 //==== ==== ==== ==== ==== Get Summaries ==== ==== ==== ==== ====
 Future<List<Map<String, num>>> _getSummaries({
   required final List<SalesModel> sales,
+  required final List<TransactionsModel> salesTransaction,
   required final List<PurchaseModel> purchases,
+  required final List<TransactionsModel> purchasesTransaction,
   required final List<ExpenseModel> expenses,
 }) async {
   final List<num> totalAmount = [];
@@ -350,10 +404,14 @@ Future<List<Map<String, num>>> _getSummaries({
   //== == == == == Sales Summary == == == == ==
   for (SalesModel sale in sales) {
     totalAmount.add(num.parse(sale.grantTotal));
-    if (sale.paymentType == 'Cash') cashAmount.add(num.parse(sale.paid));
-    if (sale.paymentType == 'Bank') bankAmount.add(num.parse(sale.paid));
     vatAmount.add(num.parse(sale.vatAmount));
     receivable.add(num.parse(sale.balance));
+  }
+
+  //== == == == == Sales Transactions Summary == == == == ==
+  for (TransactionsModel transaction in salesTransaction) {
+    if (transaction.paymentMethod == 'Cash') cashAmount.add(num.parse(transaction.amount));
+    if (transaction.paymentMethod == 'Bank') bankAmount.add(num.parse(transaction.amount));
   }
 
   final Map<String, num> saleSummary = {
@@ -373,10 +431,14 @@ Future<List<Map<String, num>>> _getSummaries({
   //== == == == == Purchases Summary == == == == ==
   for (PurchaseModel purchase in purchases) {
     totalAmount.add(num.parse(purchase.grantTotal));
-    if (purchase.paymentType == 'Cash') cashAmount.add(num.parse(purchase.paid));
-    if (purchase.paymentType == 'Bank') bankAmount.add(num.parse(purchase.paid));
     vatAmount.add(num.parse(purchase.vatAmount));
     payable.add(num.parse(purchase.balance));
+  }
+
+  //== == == == == Purchases Transactions Summary == == == == ==
+  for (TransactionsModel transaction in purchasesTransaction) {
+    if (transaction.paymentMethod == 'Cash') cashAmount.add(num.parse(transaction.amount));
+    if (transaction.paymentMethod == 'Bank') bankAmount.add(num.parse(transaction.amount));
   }
 
   final Map<String, num> purchasesSummary = {
