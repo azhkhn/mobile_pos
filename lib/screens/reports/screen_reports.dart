@@ -14,6 +14,8 @@ class ScreenReports extends StatelessWidget {
         child: ItemScreenPaddingWidget(
           child: GridView.count(
             crossAxisCount: 3,
+            mainAxisSpacing: 5,
+            crossAxisSpacing: 5,
             children: List.generate(11, (index) => ReportsGrid(index: index)),
           ),
         ),
