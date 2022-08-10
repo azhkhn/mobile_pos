@@ -14,10 +14,12 @@ import 'package:shop_ez/db/db_functions/cash_register/cash_register_database.dar
 import 'package:shop_ez/db/db_functions/expense/expense_database.dart';
 import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
 import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
+import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
 import 'package:shop_ez/model/cash_register/cash_register_model.dart';
 import 'package:shop_ez/model/expense/expense_model.dart';
 import 'package:shop_ez/model/purchase/purchase_model.dart';
 import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:shop_ez/model/transactions/transactions_model.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
@@ -34,10 +36,15 @@ final summaryFutureProvider = FutureProvider.autoDispose<List<Map<String, num>>>
   final DateTime _date = DateTime.parse(_cashModel!.dateTime);
 
   final List<SalesModel> sales = await SalesDatabase.instance.getNewSales(_date);
+  final List<TransactionsModel> salesTransactions = await TransactionDatabase.instance.getCashRegisterSalesTransactions(_date);
+
   final List<PurchaseModel> purchases = await PurchaseDatabase.instance.getNewPurchases(_date);
+  final List<TransactionsModel> purchasesTransactions = await TransactionDatabase.instance.getCashRegisterPurchasesTransactions(_date);
+
   final List<ExpenseModel> expenses = await ExpenseDatabase.instance.getNewExpense(_date);
 
-  return await _getSummaries(sales: sales, purchases: purchases, expenses: expenses);
+  return await _getSummaries(
+      sales: sales, salesTransaction: salesTransactions, purchases: purchases, purchasesTransaction: purchasesTransactions, expenses: expenses);
 });
 
 class ScreenCashRegister extends StatelessWidget {
@@ -282,7 +289,10 @@ class ScreenCashRegister extends StatelessWidget {
                           },
                         );
                       },
-                      error: (_, __) => const Center(child: Text('Something went wrong!')),
+                      error: (e, __) {
+                        log('', error: e);
+                        return const Center(child: Text('Something went wrong!'));
+                      },
                       loading: () => const SingleChildScrollView(),
                     );
                   },
@@ -311,7 +321,9 @@ class ScreenCashRegister extends StatelessWidget {
 //==== ==== ==== ==== ==== Get Summaries ==== ==== ==== ==== ====
 Future<List<Map<String, num>>> _getSummaries({
   required final List<SalesModel> sales,
+  required final List<TransactionsModel> salesTransaction,
   required final List<PurchaseModel> purchases,
+  required final List<TransactionsModel> purchasesTransaction,
   required final List<ExpenseModel> expenses,
 }) async {
   final List<num> totalAmount = [];
@@ -324,10 +336,14 @@ Future<List<Map<String, num>>> _getSummaries({
   //== == == == == Sales Summary == == == == ==
   for (SalesModel sale in sales) {
     totalAmount.add(num.parse(sale.grantTotal));
-    if (sale.paymentType == 'Cash') cashAmount.add(num.parse(sale.paid));
-    if (sale.paymentType == 'Bank') bankAmount.add(num.parse(sale.paid));
     vatAmount.add(num.parse(sale.vatAmount));
     receivable.add(num.parse(sale.balance));
+  }
+
+  //== == == == == Sales Transactions Summary == == == == ==
+  for (TransactionsModel transaction in salesTransaction) {
+    if (transaction.paymentMethod == 'Cash') cashAmount.add(num.parse(transaction.amount));
+    if (transaction.paymentMethod == 'Bank') bankAmount.add(num.parse(transaction.amount));
   }
 
   final Map<String, num> saleSummary = {
@@ -347,10 +363,14 @@ Future<List<Map<String, num>>> _getSummaries({
   //== == == == == Purchases Summary == == == == ==
   for (PurchaseModel purchase in purchases) {
     totalAmount.add(num.parse(purchase.grantTotal));
-    if (purchase.paymentType == 'Cash') cashAmount.add(num.parse(purchase.paid));
-    if (purchase.paymentType == 'Bank') bankAmount.add(num.parse(purchase.paid));
     vatAmount.add(num.parse(purchase.vatAmount));
     payable.add(num.parse(purchase.balance));
+  }
+
+  //== == == == == Purchases Transactions Summary == == == == ==
+  for (TransactionsModel transaction in purchasesTransaction) {
+    if (transaction.paymentMethod == 'Cash') cashAmount.add(num.parse(transaction.amount));
+    if (transaction.paymentMethod == 'Bank') bankAmount.add(num.parse(transaction.amount));
   }
 
   final Map<String, num> purchasesSummary = {
