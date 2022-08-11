@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
+import 'package:shop_ez/core/constant/images.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
@@ -178,9 +179,23 @@ class DrawerItemsWidget extends StatelessWidget {
           case 11:
             OrientationMode.changeDeviceMode(context);
             break;
+          case 12:
+            showAboutSoftware(context);
+            break;
           default:
         }
       },
+    );
+  }
+
+  //==================== About Software ====================
+  void showAboutSoftware(BuildContext context) {
+    showAboutDialog(
+      context: context,
+      applicationIcon: Image.asset(kPosLogo, scale: 6),
+      applicationName: 'MobilePOS',
+      applicationVersion: 'Version 1.0.0',
+      children: [const Image(image: AssetImage(kAppLogo), fit: BoxFit.cover)],
     );
   }
 }

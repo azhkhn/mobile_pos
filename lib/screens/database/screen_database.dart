@@ -105,7 +105,7 @@ class ScreenDatabase extends StatelessWidget {
               onPressed: () => Navigator.pushNamed(context, routeDatabaseList),
               buttonText: "Databases",
               fittedText: true,
-              icon: const ImageIcon(AssetImage('assets/images/database.png'), color: kWhite),
+              icon: const ImageIcon(AssetImage('assets/images/icons/database.png'), color: kWhite),
             ),
           ],
         ),
