@@ -105,39 +105,47 @@ class ScreenHome extends StatelessWidget {
 
         //========== Background Image ==========
         body: SafeArea(
-          child: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                fit: isThermal ? BoxFit.fill : BoxFit.cover,
-                image: const AssetImage(kHomeImage),
+          child: Column(
+            children: [
+              Expanded(
+                flex: 6,
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: isThermal ? BoxFit.fill : BoxFit.fitWidth,
+                      scale: 1,
+                      image: const AssetImage(kHomeImage),
+                    ),
+                  ),
+                ),
               ),
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(top: 20.h),
-              child: Column(
-                children: [
-                  //========== Home Card Widget ==========
-                  const HomeCardWidget(),
+              Expanded(
+                flex: 19,
+                child: Column(
+                  children: [
+                    //========== Home Card Widget ==========
+                    const HomeCardWidget(),
 
-                  //========== Home GridView Widget ==========
-                  Expanded(
-                    child: GridView.count(
-                      padding: const EdgeInsets.all(10),
-                      crossAxisCount: 3,
-                      mainAxisSpacing: _screenSize.width / 50,
-                      crossAxisSpacing: _screenSize.width / 50,
-                      children: List.generate(
-                        9,
-                        (index) => HomeGrid(
-                          index: index,
-                          screenSize: _screenSize,
+                    //========== Home GridView Widget ==========
+                    Expanded(
+                      child: GridView.count(
+                        padding: const EdgeInsets.all(10),
+                        crossAxisCount: 3,
+                        mainAxisSpacing: _screenSize.width / 50,
+                        crossAxisSpacing: _screenSize.width / 50,
+                        children: List.generate(
+                          9,
+                          (index) => HomeGrid(
+                            index: index,
+                            screenSize: _screenSize,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
         floatingActionButton: FloatingAddOptions(isDialOpen: isDialOpen),

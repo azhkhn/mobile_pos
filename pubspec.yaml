@@ -61,10 +61,15 @@ dev_dependencies:
   build_runner: ^2.1.10
   flutter_lints: ^1.0.0
   flutter_native_splash: ^2.1.0
+  flutter_launcher_icons: ^0.10.0
   freezed: ^2.0.3
   json_serializable: ^6.1.6
 flutter_native_splash:
   background_image: 'assets/images/splash.png'
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo.png"
   flutter_test:
     sdk: flutter
 
@@ -84,6 +89,7 @@ flutter:
     - assets/images/reports/
     - assets/images/home/
     - assets/images/icons/
+    
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
