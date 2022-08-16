@@ -34,9 +34,7 @@ class HomeGrid extends ConsumerWidget {
   const HomeGrid({
     Key? key,
     required this.index,
-    required this.screenSize,
   }) : super(key: key);
-  final Size screenSize;
   final int index;
 
   @override
@@ -83,7 +81,6 @@ class HomeGrid extends ConsumerWidget {
               default:
             }
           },
-
           child: Stack(
             children: [
               Align(
@@ -117,29 +114,6 @@ class HomeGrid extends ConsumerWidget {
               ),
             ],
           ),
-          // child: GridTile(
-          //   footer: Padding(
-          //     padding: const EdgeInsets.all(5.0),
-          //     child: FittedBox(
-          //       fit: BoxFit.scaleDown,
-          //       child: Text(
-          //         homeGridName[index],
-          //         textAlign: TextAlign.center,
-          //         maxLines: 1,
-          //         style: TextStyle(
-          //           fontSize: 7.sp,
-          //           fontWeight: FontWeight.bold,
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          //   child: Image(
-          //     color: index == 8 ? kTeal400 : null,
-          //     image: AssetImage(
-          //       homeGridIcons[index],
-          //     ),
-          //   ),
-          // ),
         ),
       ),
     );

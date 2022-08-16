@@ -38,9 +38,8 @@ class VerifyUserNotifier extends StateNotifier<AsyncValue<int?>> {
   void get stopLoading => state = const AsyncData(null);
 }
 
-final _verifyUserProvider = StateNotifierProvider.autoDispose<VerifyUserNotifier, AsyncValue<int?>>((ref) {
-  return VerifyUserNotifier();
-});
+final _verifyUserProvider = StateNotifierProvider.autoDispose<VerifyUserNotifier, AsyncValue<int?>>((ref) => VerifyUserNotifier());
+final absorbPointerProvider = StateProvider<bool>((ref) => false);
 
 class ScreenSignUp extends ConsumerWidget {
   ScreenSignUp({Key? key}) : super(key: key);
@@ -61,252 +60,249 @@ class ScreenSignUp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final bool isclickable = ref.watch(absorbPointerProvider);
     return Scaffold(
-      body: Stack(
-        children: [
-          ClipPath(
-            clipper: WaveClip(),
-            child: Container(
-              width: SizerUtil.width,
-              height: SizerUtil.height / 2,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    mainColor,
-                    gradiantColor,
-                  ],
+      body: AbsorbPointer(
+        absorbing: isclickable,
+        child: Stack(
+          children: [
+            ClipPath(
+              clipper: WaveClip(),
+              child: Container(
+                width: SizerUtil.width,
+                height: SizerUtil.height / 2,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      mainColor,
+                      gradiantColor,
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              //========== Top Image ==========
-              SizedBox(
-                child: Center(
-                  child: Image.asset(
-                    kLogo,
-                    width: SizerUtil.width / 5,
-                    // height: SizerUtil.width / 3,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                //========== Top Image ==========
+                SizedBox(
+                  child: Center(
+                    child: Image.asset(
+                      kLogo,
+                      width: SizerUtil.width / 5,
+                      // height: SizerUtil.width / 3,
+                    ),
                   ),
+                  height: SizerUtil.height / 4,
                 ),
-                height: SizerUtil.height / 4,
-              ),
 
-              //========== SignUp Feilds ==========
-              Expanded(
-                child: Padding(
-                  //========== Dividing Screen Half and Half ==========
-                  padding: EdgeInsets.only(
-                    right: SizerUtil.width * 0.05,
-                    left: SizerUtil.width * 0.05,
-                    top: SizerUtil.width * 0.10,
-                    bottom: SizerUtil.width * 0.10,
-                  ),
-                  child: SingleChildScrollView(
-                    child: Form(
-                      key: _formStateKey,
-                      child: Flex(
-                        direction: Axis.vertical,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          //========== Shop Name Field ==========
-                          TextFeildWidget(
-                            controller: shopNameController,
-                            labelText: 'Shop Name *',
-                            textInputType: TextInputType.text,
-                            prefixIcon: const Icon(
-                              Icons.business,
-                              color: Colors.black,
-                            ),
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'This field is required*';
-                              }
-                              return null;
-                            },
-                          ),
-
-                          //========== Country Name Field ==========
-                          TextFeildWidget(
-                            controller: countryNameController,
-                            labelText: 'Country *',
-                            textInputType: TextInputType.text,
-                            prefixIcon: const Icon(
-                              Icons.flag,
-                              color: Colors.black,
-                            ),
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'This field is required*';
-                              }
-                              return null;
-                            },
-                          ),
-
-                          //========== Shop Category DropDown Button ==========
-                          DropdownButtonFormField(
-                            decoration: const InputDecoration(
-                              label: Text(
-                                'Shop Category *',
-                                style: TextStyle(color: klabelColorGrey),
-                              ),
-                              prefixIcon: Icon(
-                                Icons.store,
+                //========== SignUp Feilds ==========
+                Expanded(
+                  child: Padding(
+                    //========== Dividing Screen Half and Half ==========
+                    padding: EdgeInsets.only(
+                      right: SizerUtil.width * 0.05,
+                      left: SizerUtil.width * 0.05,
+                      top: SizerUtil.width * 0.10,
+                      bottom: SizerUtil.width * 0.10,
+                    ),
+                    child: SingleChildScrollView(
+                      child: Form(
+                        key: _formStateKey,
+                        child: Flex(
+                          direction: Axis.vertical,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            //========== Shop Name Field ==========
+                            TextFeildWidget(
+                              controller: shopNameController,
+                              labelText: 'Shop Name *',
+                              textInputType: TextInputType.text,
+                              prefixIcon: const Icon(
+                                Icons.business,
                                 color: Colors.black,
                               ),
-                              contentPadding: EdgeInsets.all(10),
-                            ),
-                            isExpanded: true,
-                            items: items.map((String item) {
-                              return DropdownMenuItem<String>(
-                                value: item,
-                                child: Text(item),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              shopCategoryController.text = value.toString();
-                            },
-                            validator: (value) {
-                              if (value == null || shopCategoryController.text.isEmpty) {
-                                return 'This field is required*';
-                              }
-                              return null;
-                            },
-                          ),
-
-                          //========== Mobile Number Field ==========
-                          TextFeildWidget(
-                            controller: mobileNumberController,
-                            labelText: 'Mobile Number *',
-                            textInputType: TextInputType.phone,
-                            prefixIcon: const Icon(
-                              Icons.smartphone,
-                              color: Colors.black,
-                            ),
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'This field is required*';
-                              } else if (!RegExp(r'^(?:[+0][1-9])?[0-9]{10,12}$').hasMatch(value)) {
-                                if (value.length != 10) {
-                                  return 'Mobile number must 10 digits';
-                                } else {
-                                  return 'Please enter a valid Phone Number';
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'This field is required*';
                                 }
-                              }
-
-                              return null;
-                            },
-                          ),
-
-                          //========== Email Field ==========
-                          TextFeildWidget(
-                            controller: emailController,
-                            labelText: 'Email',
-                            textInputType: TextInputType.emailAddress,
-                            prefixIcon: const Icon(
-                              Icons.email,
-                              color: Colors.black,
-                            ),
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
                                 return null;
-                              } else {
-                                // Check if the entered email has the right format
-                                if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
-                                  return 'Please enter a valid Email';
-                                }
-                              }
-                              // Return null if the entered email is valid
-                              return null;
-                            },
-                          ),
-
-                          //========== Username Field ==========
-                          TextFeildWidget(
-                            controller: usernameController,
-                            labelText: 'Username *',
-                            textInputType: TextInputType.text,
-                            prefixIcon: const Icon(
-                              Icons.person,
-                              color: Colors.black,
+                              },
                             ),
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            validator: (value) => Validators.usernameValidator(value),
-                          ),
 
-                          //========== Password Field ==========
-                          ValueListenableBuilder(
-                              valueListenable: obscureStateNotifier,
-                              builder: (context, bool obscure, _) {
-                                return TextFeildWidget(
-                                  controller: passwordController,
-                                  labelText: 'Password *',
-                                  textInputType: TextInputType.text,
-                                  obscureText: !obscure,
-                                  prefixIcon: const Icon(
-                                    Icons.security,
-                                    color: Colors.black,
-                                  ),
-                                  suffixIcon: IconButton(
-                                    color: Colors.black,
-                                    onPressed: () {
-                                      obscureStateNotifier.value = !obscure;
-                                    },
-                                    icon: !obscureStateNotifier.value ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
-                                  ),
-                                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                                  validator: (value) => Validators.passwordValidator(value),
+                            //========== Country Name Field ==========
+                            TextFeildWidget(
+                              controller: countryNameController,
+                              labelText: 'Country *',
+                              textInputType: TextInputType.text,
+                              prefixIcon: const Icon(
+                                Icons.flag,
+                                color: Colors.black,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'This field is required*';
+                                }
+                                return null;
+                              },
+                            ),
+
+                            //========== Shop Category DropDown Button ==========
+                            DropdownButtonFormField(
+                              decoration: const InputDecoration(
+                                label: Text(
+                                  'Shop Category *',
+                                  style: TextStyle(color: klabelColorGrey),
+                                ),
+                                prefixIcon: Icon(Icons.store, color: Colors.black),
+                                contentPadding: EdgeInsets.all(10),
+                              ),
+                              isExpanded: true,
+                              items: items.map((String item) {
+                                return DropdownMenuItem<String>(
+                                  value: item,
+                                  child: Text(item),
                                 );
-                              }),
+                              }).toList(),
+                              onChanged: (value) {
+                                shopCategoryController.text = value.toString();
+                              },
+                              validator: (value) {
+                                if (value == null || shopCategoryController.text.isEmpty) {
+                                  return 'This field is required*';
+                                }
+                                return null;
+                              },
+                            ),
 
-                          //========== Confirm Password Field ==========
-                          ValueListenableBuilder(
-                              valueListenable: obscureStateConfirmNotifier,
-                              builder: (context, bool obscure, _) {
-                                return TextFeildWidget(
-                                  labelText: 'Confirm Password *',
-                                  textInputType: TextInputType.text,
-                                  obscureText: !obscure,
-                                  prefixIcon: const Icon(
-                                    Icons.security,
-                                    color: Colors.black,
-                                  ),
-                                  suffixIcon: IconButton(
-                                    color: Colors.black,
-                                    onPressed: () {
-                                      obscureStateConfirmNotifier.value = !obscure;
+                            //========== Mobile Number Field ==========
+                            TextFeildWidget(
+                              controller: mobileNumberController,
+                              labelText: 'Mobile Number *',
+                              textInputType: TextInputType.phone,
+                              prefixIcon: const Icon(
+                                Icons.smartphone,
+                                color: Colors.black,
+                              ),
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'This field is required*';
+                                } else if (!RegExp(r'^(?:[+0][1-9])?[0-9]{10,12}$').hasMatch(value)) {
+                                  if (value.length != 10) {
+                                    return 'Mobile number must 10 digits';
+                                  } else {
+                                    return 'Please enter a valid Phone Number';
+                                  }
+                                }
+
+                                return null;
+                              },
+                            ),
+
+                            //========== Email Field ==========
+                            TextFeildWidget(
+                              controller: emailController,
+                              labelText: 'Email',
+                              textInputType: TextInputType.emailAddress,
+                              prefixIcon: const Icon(Icons.email, color: Colors.black),
+                              textCapitalization: TextCapitalization.none,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return null;
+                                } else {
+                                  // Check if the entered email has the right format
+                                  if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                                    return 'Please enter a valid Email';
+                                  }
+                                }
+                                // Return null if the entered email is valid
+                                return null;
+                              },
+                            ),
+
+                            //========== Username Field ==========
+                            TextFeildWidget(
+                              controller: usernameController,
+                              labelText: 'Username *',
+                              textInputType: TextInputType.text,
+                              prefixIcon: const Icon(Icons.person, color: Colors.black),
+                              textCapitalization: TextCapitalization.none,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              validator: (value) => Validators.usernameValidator(value),
+                            ),
+
+                            //========== Password Field ==========
+                            ValueListenableBuilder(
+                                valueListenable: obscureStateNotifier,
+                                builder: (context, bool obscure, _) {
+                                  return TextFeildWidget(
+                                    controller: passwordController,
+                                    labelText: 'Password *',
+                                    textInputType: TextInputType.text,
+                                    obscureText: !obscure,
+                                    prefixIcon: const Icon(
+                                      Icons.security,
+                                      color: Colors.black,
+                                    ),
+                                    suffixIcon: IconButton(
+                                      color: Colors.black,
+                                      onPressed: () {
+                                        obscureStateNotifier.value = !obscure;
+                                      },
+                                      icon: !obscureStateNotifier.value ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
+                                    ),
+                                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                                    validator: (value) => Validators.passwordValidator(value),
+                                  );
+                                }),
+
+                            //========== Confirm Password Field ==========
+                            ValueListenableBuilder(
+                                valueListenable: obscureStateConfirmNotifier,
+                                builder: (context, bool obscure, _) {
+                                  return TextFeildWidget(
+                                    labelText: 'Confirm Password *',
+                                    textInputType: TextInputType.text,
+                                    obscureText: !obscure,
+                                    prefixIcon: const Icon(
+                                      Icons.security,
+                                      color: Colors.black,
+                                    ),
+                                    suffixIcon: IconButton(
+                                      color: Colors.black,
+                                      onPressed: () {
+                                        obscureStateConfirmNotifier.value = !obscure;
+                                      },
+                                      icon: !obscure ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
+                                    ),
+                                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                                    validator: (value) {
+                                      if (passwordController.text == value) {
+                                        return null;
+                                      } else {
+                                        return "Password do not match";
+                                      }
                                     },
-                                    icon: !obscure ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
-                                  ),
-                                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                                  validator: (value) {
-                                    if (passwordController.text == value) {
-                                      return null;
-                                    } else {
-                                      return "Password do not match";
-                                    }
-                                  },
-                                );
-                              }),
-                          kHeight20,
+                                  );
+                                }),
+                            kHeight20,
 
-                          //========== SignUp Buttons and Actions ==========
-                          signUpButton(context, ref)
-                        ],
+                            //========== SignUp Buttons and Actions ==========
+                            signUpButton(context, ref)
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -376,9 +372,16 @@ class ScreenSignUp extends ConsumerWidget {
               final _state = ref.watch(_verifyUserProvider);
 
               ref.listen(_verifyUserProvider, (previous, AsyncValue<int?> next) {
-                next.whenOrNull(
+                next.when(
                   error: (error, stackTrace) {
+                    ref.read(absorbPointerProvider.notifier).state = false;
                     kSnackBar(context: context, error: true, content: 'Something went wrong. Please try again later');
+                  },
+                  data: (int? data) {
+                    ref.read(absorbPointerProvider.notifier).state = false;
+                  },
+                  loading: () {
+                    ref.read(absorbPointerProvider.notifier).state = true;
                   },
                 );
               });
@@ -467,7 +470,10 @@ class ScreenSignUp extends ConsumerWidget {
       }
     } else if (_userStatus == 1) {
       log('User not found!');
-      await showDialog(context: context, builder: (ctx) => const ContactUsPopup(headline: 'User not found. Please Contact Admin for Membership.'));
+      await showDialog(
+          context: context,
+          builder: (ctx) =>
+              const ContactUsPopup(headline: 'User not found. Please make sure you entered registered phone number. Contact Admin for Membership.'));
     } else if (_userStatus == 2) {
       log('User verification failed. Secret Key does not match!');
       kSnackBar(

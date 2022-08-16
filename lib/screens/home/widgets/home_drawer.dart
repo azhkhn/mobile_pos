@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/images.dart';
@@ -61,8 +59,8 @@ class HomeDrawer extends StatelessWidget {
       children: [
         InkWell(
             child: UserAccountsDrawerHeader(
-              currentAccountPicture: businessProfile != null && businessProfile?.logo != ''
-                  ? CircleAvatar(backgroundImage: FileImage(File(businessProfile!.logo)))
+              currentAccountPicture: businessProfile != null
+                  ? CircleAvatar(backgroundImage: MemoryImage(businessProfile!.logo))
                   : FittedBox(
                       child: Stack(
                         children: [

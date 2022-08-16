@@ -1,11 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
 import 'package:shop_ez/db/db_functions/busiess_profile/business_profile_database.dart';
@@ -27,8 +27,7 @@ class BusinessProfile extends StatefulWidget {
 
 class _BusinessProfileState extends State<BusinessProfile> {
   //========== Image File Path ==========
-  File? image, selectedImage;
-  File? oldImage;
+  Uint8List? selectedImage;
 
   //========== Database Instances ==========
   final businessProfileDB = BusinessProfileDatabase.instance;
@@ -316,7 +315,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
                       InkWell(
                         onTap: () => imagePopUp(context),
                         child: selectedImage != null
-                            ? Image.file(
+                            ? Image.memory(
                                 selectedImage!,
                                 width: _screenSize.width / 2.5,
                                 height: _screenSize.width / 2.5,
@@ -396,8 +395,7 @@ class _BusinessProfileState extends State<BusinessProfile> {
 
       final _imageCropped = await imageCropper(imageFile);
       if (_imageCropped == null) return;
-      selectedImage = _imageCropped;
-      log('selected Image = $selectedImage');
+      selectedImage = _imageCropped.readAsBytesSync();
 
       setState(() {});
 
@@ -432,8 +430,8 @@ class _BusinessProfileState extends State<BusinessProfile> {
         countryArabic,
         vatNumber,
         phoneNumber,
-        email,
-        logo;
+        email;
+    final Uint8List logo;
 
     //Retieving values from TextFields
     business = _businessNameController.text.trim();
@@ -450,43 +448,28 @@ class _BusinessProfileState extends State<BusinessProfile> {
     vatNumber = _vatNumberController.text.trim();
     phoneNumber = _phoneNumberController.text.trim();
     email = _emailController.text.trim();
-    if (selectedImage != null && oldImage == null) {
-      //========== Getting Directory Path ==========
-      final Directory extDir = await getApplicationDocumentsDirectory();
-      String dirPath = extDir.path;
-      final fileName = DateTime.now().microsecondsSinceEpoch.toString();
-      // final fileName = basename(selectedImage!.path);
-      final String filePath = '$dirPath/$fileName.jpg';
-      log('filePath = $filePath');
-
-      //========== Coping Image to new path ==========
-      image = await selectedImage!.copy(filePath);
-      logo = image!.path;
-    } else if (selectedImage != null) {
-      logo = selectedImage!.path;
-    } else {
-      logo = '';
-    }
+    logo = selectedImage!;
 
     //========== Validating Text Form Fields ==========
     final _formState = _formKey.currentState!;
     if (_formState.validate()) {
       final _businessProfileModel = BusinessProfileModel(
-          business: business,
-          businessArabic: businessArabic,
-          billerName: billerName,
-          address: address,
-          addressArabic: addressArabic,
-          city: city,
-          cityArabic: cityArabic,
-          state: state,
-          stateArabic: stateArabic,
-          country: country,
-          countryArabic: countryArabic,
-          vatNumber: vatNumber,
-          phoneNumber: phoneNumber,
-          email: email,
-          logo: logo);
+        business: business,
+        businessArabic: businessArabic,
+        billerName: billerName,
+        address: address,
+        addressArabic: addressArabic,
+        city: city,
+        cityArabic: cityArabic,
+        state: state,
+        stateArabic: stateArabic,
+        country: country,
+        countryArabic: countryArabic,
+        vatNumber: vatNumber,
+        phoneNumber: phoneNumber,
+        email: email,
+        logo: logo,
+      );
 
       try {
         await businessProfileDB.createBusinessProfile(_businessProfileModel);
@@ -542,10 +525,8 @@ class _BusinessProfileState extends State<BusinessProfile> {
       _vatNumberController.text = _businessProfileModel.vatNumber;
       _phoneNumberController.text = _businessProfileModel.phoneNumber;
       _emailController.text = _businessProfileModel.email;
-      if (_businessProfileModel.logo != '') {
-        selectedImage = File(_businessProfileModel.logo);
-        oldImage = File(_businessProfileModel.logo);
-      }
+
+      selectedImage = _businessProfileModel.logo;
 
       setState(() {});
     }

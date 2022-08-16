@@ -1,6 +1,5 @@
 import 'dart:core';
 import 'dart:developer' show log;
-import 'dart:io' show File;
 import 'dart:typed_data' show ByteData, Uint8List;
 
 import 'package:flutter/services.dart' show ByteData, rootBundle;
@@ -50,8 +49,7 @@ class PdfSalesReceipt {
     final businessProfile = await UserUtils.instance.businessProfile;
     final customer = await CustomerDatabase.instance.getCustomerById(sale.customerId);
 
-    final String businessLogo = businessProfile.logo;
-    final Uint8List logoBytes = await File(businessLogo).readAsBytes();
+    final Uint8List logoBytes = businessProfile.logo;
     final pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
 
     //========== Pdf Preview ==========

@@ -5,6 +5,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shop_ez/core/constant/colors.dart';
@@ -14,16 +15,17 @@ import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
+import 'package:shop_ez/screens/home/widgets/home_card_widget.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
 import 'package:sqflite/sqflite.dart';
 
-class ScreenDatabase extends StatelessWidget {
+class ScreenDatabase extends ConsumerWidget {
   const ScreenDatabase({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBarWidget(title: 'Manage Database'),
       body: Card(
@@ -56,7 +58,7 @@ class ScreenDatabase extends StatelessWidget {
                           submitColor: ContstantTexts.kColorEditText,
                           submitAction: () async {
                             Navigator.pop(ctx);
-                            return await requestPermission(context, action: 'backup');
+                            return await requestPermission(context, ref, action: 'backup');
                           },
                         ),
                       );
@@ -83,7 +85,7 @@ class ScreenDatabase extends StatelessWidget {
                           submitText: 'Select',
                           submitAction: () async {
                             Navigator.pop(ctx);
-                            return await requestPermission(context, action: 'restore');
+                            return await requestPermission(context, ref, action: 'restore');
                           },
                         ),
                       );
@@ -151,7 +153,7 @@ class ScreenDatabase extends StatelessWidget {
   }
 
 //==================== Restore Database ====================
-  Future<void> restoreDatabase(BuildContext context) async {
+  Future<void> restoreDatabase(BuildContext context, WidgetRef ref) async {
     final String databasesPath = await getDatabasesPath();
     final String dbPath = join(databasesPath, 'user.db');
 
@@ -185,6 +187,7 @@ class ScreenDatabase extends StatelessWidget {
               log('Database restored successfully');
               kSnackBar(context: context, update: true, content: 'Database restored successfully');
               await UserUtils.instance.reloadUserDetails();
+              ref.refresh(HomeCardWidget.homeCardProvider);
             },
           ),
         );
@@ -199,7 +202,7 @@ class ScreenDatabase extends StatelessWidget {
   }
 
   //==================== Permission Handler ====================
-  Future<void> requestPermission(BuildContext context, {required final String action}) async {
+  Future<void> requestPermission(BuildContext context, WidgetRef ref, {required final String action}) async {
     final AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
     final num osVersion = num.parse(androidInfo.version.release!);
     log('Android OS Version = $osVersion');
@@ -238,7 +241,7 @@ class ScreenDatabase extends StatelessWidget {
     if (action == 'backup') {
       backupDatabase(context);
     } else {
-      restoreDatabase(context);
+      restoreDatabase(context, ref);
     }
   }
 }

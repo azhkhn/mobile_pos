@@ -13,6 +13,7 @@ import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/core/utils/user/user.dart';
+import 'package:shop_ez/screens/home/widgets/home_card_widget.dart';
 import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
 import 'package:sizer/sizer.dart';
@@ -115,6 +116,7 @@ class ScreenDatabaseList extends ConsumerWidget {
                                         log('Database restored successfully');
                                         kSnackBar(context: context, update: true, content: 'Database restored successfully');
                                         await UserUtils.instance.reloadUserDetails();
+                                        ref.refresh(HomeCardWidget.homeCardProvider);
                                       },
                                     ),
                                   );

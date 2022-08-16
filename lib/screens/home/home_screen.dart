@@ -38,7 +38,6 @@ class ScreenHome extends StatelessWidget {
     } else {
       log("You're Using a Phone!");
     }
-    final Size _screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         if (isDialOpen.value) {
@@ -107,12 +106,16 @@ class ScreenHome extends StatelessWidget {
         body: SafeArea(
           child: Column(
             children: [
+              Container(
+                color: mainColor,
+                // height: 2.sp,
+              ),
               Expanded(
-                flex: 6,
+                flex: 20,
                 child: Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      fit: isThermal ? BoxFit.fill : BoxFit.fitWidth,
+                      fit: isThermal ? BoxFit.fill : BoxFit.fill,
                       scale: 1,
                       image: const AssetImage(kHomeImage),
                     ),
@@ -120,7 +123,7 @@ class ScreenHome extends StatelessWidget {
                 ),
               ),
               Expanded(
-                flex: 19,
+                flex: 70,
                 child: Column(
                   children: [
                     //========== Home Card Widget ==========
@@ -131,14 +134,11 @@ class ScreenHome extends StatelessWidget {
                       child: GridView.count(
                         padding: const EdgeInsets.all(10),
                         crossAxisCount: 3,
-                        mainAxisSpacing: _screenSize.width / 50,
-                        crossAxisSpacing: _screenSize.width / 50,
+                        mainAxisSpacing: SizerUtil.width / 50,
+                        crossAxisSpacing: SizerUtil.width / 50,
                         children: List.generate(
                           9,
-                          (index) => HomeGrid(
-                            index: index,
-                            screenSize: _screenSize,
-                          ),
+                          (index) => HomeGrid(index: index),
                         ),
                       ),
                     ),

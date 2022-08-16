@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 const String tableBusinessProfile = 'business_profile';
 
 class BusinessProfileFields {
@@ -34,8 +36,8 @@ class BusinessProfileModel {
       countryArabic,
       vatNumber,
       phoneNumber,
-      email,
-      logo;
+      email;
+  final Uint8List logo;
 
   BusinessProfileModel({
     this.id = 0,
@@ -75,8 +77,7 @@ class BusinessProfileModel {
         BusinessProfileFields.logo: logo,
       };
 
-  static BusinessProfileModel fromJson(Map<String, Object?> json) =>
-      BusinessProfileModel(
+  static BusinessProfileModel fromJson(Map<String, Object?> json) => BusinessProfileModel(
         id: json[BusinessProfileFields.id] as int,
         business: json[BusinessProfileFields.business] as String,
         businessArabic: json[BusinessProfileFields.businessArabic] as String,
@@ -92,6 +93,6 @@ class BusinessProfileModel {
         vatNumber: json[BusinessProfileFields.vatNumber] as String,
         phoneNumber: json[BusinessProfileFields.phoneNumber] as String,
         email: json[BusinessProfileFields.email] as String,
-        logo: json[BusinessProfileFields.logo] as String,
+        logo: json[BusinessProfileFields.logo] as Uint8List,
       );
 }

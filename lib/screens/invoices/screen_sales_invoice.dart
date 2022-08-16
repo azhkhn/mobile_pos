@@ -170,7 +170,7 @@ class ScreenSalesInvoice extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(child: buildEnglishCompanyInfo(businessProfileModel)),
-            Expanded(child: SizedBox(height: 40, width: 40, child: Image.file(File(businessProfileModel.logo)))),
+            Expanded(child: SizedBox(height: 40, width: 40, child: Image.memory(businessProfileModel.logo))),
             Expanded(child: buildArabicCompanyInfo(businessProfileModel))
           ],
         ),

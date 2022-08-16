@@ -48,8 +48,7 @@ class PdfSalesInvoice {
     final businessProfile = await UserUtils.instance.businessProfile;
     final customer = await CustomerDatabase.instance.getCustomerById(sale.customerId);
 
-    final businessLogo = businessProfile.logo;
-    final logoBytes = await File(businessLogo).readAsBytes();
+    final logoBytes = businessProfile.logo;
     final pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
 
     //========== Pdf Preview ==========
