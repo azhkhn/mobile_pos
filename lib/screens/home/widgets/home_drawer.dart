@@ -7,6 +7,7 @@ import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/device/device.dart';
 import 'package:shop_ez/model/business_profile/business_profile_model.dart';
 import 'package:sizer/sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const List drawerListItemImage = [
   'assets/images/home/pos.png',
@@ -179,6 +180,12 @@ class DrawerItemsWidget extends StatelessWidget {
             break;
           case 12:
             showAboutSoftware(context);
+            break;
+          case 13:
+            launchUrl(Uri.parse('https://cignes.com/mobile-POS/'));
+            break;
+          case 14:
+            launchUrl(Uri.parse('https://cignes.com/mobile-POS/'));
             break;
           default:
         }

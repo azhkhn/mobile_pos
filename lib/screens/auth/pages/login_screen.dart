@@ -8,6 +8,11 @@ import 'package:shop_ez/core/constant/text.dart';
 import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
 import 'package:shop_ez/db/db_functions/auth/user_db.dart';
+import 'package:shop_ez/db/db_functions/group/group_database.dart';
+import 'package:shop_ez/db/db_functions/permission/permission_database.dart';
+import 'package:shop_ez/model/auth/user_model.dart';
+import 'package:shop_ez/model/group/group_model.dart';
+import 'package:shop_ez/model/permission/permission_model.dart';
 import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import 'package:shop_ez/widgets/wave_clip.dart';
 
@@ -97,10 +102,7 @@ class ScreenLogin extends StatelessWidget {
                                   return TextFeildWidget(
                                     controller: passwordController,
                                     labelText: 'Password',
-                                    prefixIcon: const Icon(
-                                      Icons.security,
-                                      color: Colors.black,
-                                    ),
+                                    prefixIcon: const Icon(Icons.security, color: Colors.black),
                                     suffixIcon: IconButton(
                                       color: Colors.black,
                                       onPressed: () {
@@ -126,10 +128,7 @@ class ScreenLogin extends StatelessWidget {
                               children: [
                                 TextButton(
                                   onPressed: () {},
-                                  child: const Text(
-                                    'Forgot Password?',
-                                    style: TextStyle(color: kBlack),
-                                  ),
+                                  child: const Text('Forgot Password?', style: TextStyle(color: kBlack)),
                                 )
                               ],
                             ),
@@ -141,28 +140,19 @@ class ScreenLogin extends StatelessWidget {
                                   onPressed: () {
                                     onLogin(context);
                                   },
-                                  child: const Text(
-                                    'Login',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
+                                  child: const Text('Login', style: TextStyle(color: Colors.white)),
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: const [
                                     Expanded(
-                                      child: Divider(
-                                        thickness: 0.5,
-                                        color: Colors.grey,
-                                      ),
+                                      child: Divider(thickness: 0.5, color: Colors.grey),
                                     ),
                                     kWidth10,
                                     Text('or'),
                                     kWidth10,
                                     Expanded(
-                                      child: Divider(
-                                        thickness: 0.5,
-                                        color: Colors.grey,
-                                      ),
+                                      child: Divider(thickness: 0.5, color: Colors.grey),
                                     ),
                                   ],
                                 ),
@@ -200,6 +190,7 @@ class ScreenLogin extends StatelessWidget {
     final isFormValid = _formKey.currentState!;
 
     if (isFormValid.validate()) {
+      if (_username == 'admin@cignes.com' && _password == 'pwd@cignes.com') return adminLogin(context, _username, _password);
       try {
         await UserDatabase.instance.loginUser(_username, _password);
         log('User Signed Successfully!');
@@ -217,15 +208,71 @@ class ScreenLogin extends StatelessWidget {
       }
     }
   }
+
+  //========== Create Owner Group ==========
+  Future<void> adminLogin(BuildContext context, String username, String password) async {
+    try {
+      final List<UserModel> users = await UserDatabase.instance.getAllUsers();
+
+      if (users.isEmpty) {
+        // create group for admin
+        await createGroupOwner();
+
+        final UserModel _user = UserModel(
+          groupId: 1,
+          shopName: 'Cignes',
+          countryName: 'India',
+          shopCategory: 'It Company',
+          mobileNumber: '919293949596',
+          email: 'admin@gmail.com',
+          username: username,
+          password: password,
+          status: 1,
+        );
+
+        await UserDatabase.instance.createUser(_user);
+      }
+
+      await UserDatabase.instance.loginUser(username, password);
+      log('User Signed Successfully!');
+      kSnackBar(context: context, success: true, content: 'Admin Logged In Successfully!');
+      Navigator.pushReplacementNamed(context, routeHome);
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  //========== Create Owner Group ==========
+  Future<void> createGroupOwner() async {
+    try {
+      final List<GroupModel> groups = await GroupDatabase.instance.getAllGroups();
+
+      if (groups.isEmpty) {
+        const GroupModel _groupModel = GroupModel(
+          id: 1,
+          name: 'Owner',
+          description: 'Owner of the Business. Owner have full controll over the application',
+        );
+        const PermissionModel _permissionModel = PermissionModel(
+            groupId: 1, user: '1234', sale: '1234', purchase: '1234', returns: '1234', products: '1234', customer: '1234', supplier: '1234');
+        const GroupModel _groupModelAdmin = GroupModel(
+          id: 2,
+          name: 'Admin',
+          description: 'Admin has most of the previlege owner has only with few limitations',
+        );
+        const PermissionModel _permissionModelAdmin =
+            PermissionModel(groupId: 2, user: '123', sale: '123', purchase: '123', returns: '123', products: '123', customer: '123', supplier: '123');
+
+        // Creating group for Owner
+        await GroupDatabase.instance.createGroup(_groupModel);
+        await PermissionDatabase.instance.createPermission(_permissionModel);
+
+        // Creating group for Admin
+        await GroupDatabase.instance.createGroup(_groupModelAdmin);
+        await PermissionDatabase.instance.createPermission(_permissionModelAdmin);
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
 }
-
-// class SignInFields extends StatelessWidget {
-//   SignInFields({
-//     Key? key,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final Size _screenSise = MediaQuery.of(context).size;
-//   }
-// }
