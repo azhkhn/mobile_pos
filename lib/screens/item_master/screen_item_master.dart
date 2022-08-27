@@ -15,7 +15,16 @@ class ScreenItemMaster extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: 'Item Master'),
+      appBar: AppBarWidget(
+        title: 'Item Master',
+        actions: [
+          IconButton(
+            onPressed: () => Navigator.pushNamed(context, routeBarcode),
+            icon: const Icon(Icons.qr_code),
+            tooltip: 'Barcode Generator',
+          ),
+        ],
+      ),
       body: ItemScreenPaddingWidget(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

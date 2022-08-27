@@ -127,7 +127,7 @@ class ScreenAddGroup extends StatelessWidget {
 
                   Column(
                     children: [
-                      const Text('Group Permission',
+                      const Text('Group Permissions',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontStyle: FontStyle.italic,

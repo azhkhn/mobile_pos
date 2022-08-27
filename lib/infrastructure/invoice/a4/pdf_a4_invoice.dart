@@ -21,7 +21,7 @@ class PdfSalesInvoice {
   // static Future<List<File>> generate({SalesModel? salesModel, SalesReturnModal? salesReturnModal, bool isReturn = false}) async {
   static Future<File> generate({SalesModel? salesModel, SalesReturnModal? salesReturnModal, bool isReturn = false}) async {
     final pdf = pw.Document();
-    final pdfPreview = pw.Document();
+    // final pdfPreview = pw.Document();
     final dynamic sale;
     final dynamic items;
 
@@ -35,15 +35,8 @@ class PdfSalesInvoice {
       items = await SalesItemsDatabase.instance.getSalesItemBySaleId(sale.id!);
     }
 
-    // ByteData _bytes = await rootBundle.load('assets/images/invoice_logo.png');
-    // final logoBytes = _bytes.buffer.asUint8List();
-    // pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
-
     ByteData data = await rootBundle.load("assets/fonts/ibm_plex_sans_arabic.ttf");
     final arabicFont = pw.Font.ttf(data);
-
-    // final emojiFont = await PdfGoogleFonts.notoColorEmoji();
-    // final arabicFont = await PdfGoogleFonts.iBMPlexSansArabicBold();
 
     final businessProfile = await UserUtils.instance.businessProfile;
     final customer = await CustomerDatabase.instance.getCustomerById(sale.customerId);
@@ -51,26 +44,26 @@ class PdfSalesInvoice {
     final logoBytes = businessProfile.logo;
     final pw.MemoryImage logoImage = pw.MemoryImage(logoBytes);
 
-    //========== Pdf Preview ==========
-    pdfPreview.addPage(pw.MultiPage(
-      margin: const pw.EdgeInsets.all(30),
-      pageFormat: PdfPageFormat.a4,
-      textDirection: pw.TextDirection.rtl,
-      crossAxisAlignment: pw.CrossAxisAlignment.center,
-      build: (context) {
-        return [
-          buildHeader2(businessProfileModel: businessProfile, arabicFont: arabicFont, logoImage: logoImage),
-          pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
-          buildTitle(arabicFont, businessProfile, isReturn, sale),
-          pw.SizedBox(height: .005 * PdfPageFormat.a4.availableHeight),
-          buildCustomerInfo(arabicFont, sale, customer, isReturn),
-          pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
-          buildInvoice(items, arabicFont),
-          pw.Divider(),
-          buildTotal(sale, arabicFont),
-        ];
-      },
-    ));
+    // //========== Pdf Preview ==========
+    // pdfPreview.addPage(pw.MultiPage(
+    //   margin: const pw.EdgeInsets.all(30),
+    //   pageFormat: PdfPageFormat.a4,
+    //   textDirection: pw.TextDirection.rtl,
+    //   crossAxisAlignment: pw.CrossAxisAlignment.center,
+    //   build: (context) {
+    //     return [
+    //       buildHeader2(businessProfileModel: businessProfile, arabicFont: arabicFont, logoImage: logoImage),
+    //       pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
+    //       buildTitle(arabicFont, businessProfile, isReturn, sale),
+    //       pw.SizedBox(height: .005 * PdfPageFormat.a4.availableHeight),
+    //       buildCustomerInfo(arabicFont, sale, customer, isReturn),
+    //       pw.SizedBox(height: .01 * PdfPageFormat.a4.availableHeight),
+    //       buildInvoice(items, arabicFont),
+    //       pw.Divider(),
+    //       buildTotal(sale, arabicFont),
+    //     ];
+    //   },
+    // ));
 
     //========== Pdf Save ==========
     pdf.addPage(pw.MultiPage(
@@ -741,23 +734,13 @@ class PdfSalesInvoice {
     pw.TextStyle? titleStyle,
     bool unite = false,
   }) {
-    final style = titleStyle ??
-        pw.TextStyle(
-          fontWeight: pw.FontWeight.bold,
-          font: arabicFont,
-          fontSize: 10,
-        );
+    final style = titleStyle ?? pw.TextStyle(fontWeight: pw.FontWeight.bold, font: arabicFont, fontSize: 10);
 
     return pw.Container(
       width: width,
       child: pw.Row(
         children: [
-          pw.Expanded(
-              child: pw.Text(
-            title,
-            textDirection: pw.TextDirection.rtl,
-            style: style,
-          )),
+          pw.Expanded(child: pw.Text(title, textDirection: pw.TextDirection.rtl, style: style)),
           pw.Text(value, style: unite ? style : null),
         ],
       ),

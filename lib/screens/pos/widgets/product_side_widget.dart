@@ -160,12 +160,11 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
   @override
   Widget build(BuildContext context) {
     final Size _screenSize = MediaQuery.of(context).size;
-    final bool isSmall = DeviceUtil.isSmall;
     // _builderModel = null;
     return SizedBox(
       width: widget.isVertical ? double.infinity : _screenSize.width / 1.9,
       height: widget.isVertical
-          ? isSmall
+          ? isThermal
               ? _screenSize.height / 2.60
               : _screenSize.height / 2.25
           : double.infinity,
@@ -218,7 +217,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                 },
                               ),
                             ),
-                            contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
+                            contentPadding: EdgeInsets.all(isThermal ? 8 : 10),
                             hintText: 'Search product by name/code',
                             hintStyle: kText_10_12,
                             border: const OutlineInputBorder(),
@@ -266,7 +265,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                         icon: Icon(
                           Icons.qr_code,
                           color: Colors.blue,
-                          size: isSmall ? 22 : 25,
+                          size: isThermal ? 22 : 25,
                         ),
                       ),
                     ),
@@ -307,7 +306,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                       },
                                     ),
                                   ),
-                                  contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
+                                  contentPadding: EdgeInsets.all(isThermal ? 8 : 10),
 
                                   hintText: 'Customer',
                                   hintStyle: kText_10_12,
@@ -367,7 +366,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                                 icon: Icon(
                                   Icons.visibility,
                                   color: Colors.blue,
-                                  size: isSmall ? 22 : 25,
+                                  size: isThermal ? 22 : 25,
                                 )),
                           ),
                         ),
@@ -400,7 +399,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
                               icon: Icon(
                                 Icons.person_add,
                                 color: Colors.blue,
-                                size: isSmall ? 22 : 25,
+                                size: isThermal ? 22 : 25,
                               ),
                             ),
                           ),
@@ -415,7 +414,7 @@ class _ProductSideWidgetState extends State<ProductSideWidget> {
           Padding(
             padding: widget.isVertical ? const EdgeInsets.only(top: 4.0, bottom: 2.0) : const EdgeInsets.only(bottom: 5),
             child: SizedBox(
-              height: isSmall ? 22 : 30,
+              height: isThermal ? 22 : 30,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

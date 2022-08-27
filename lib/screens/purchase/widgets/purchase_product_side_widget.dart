@@ -56,520 +56,526 @@ class PurchaseProductSideWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SizedBox(
-      width: isVertical ? double.infinity : SizerUtil.width / 1.9,
-      height: isVertical ? SizerUtil.height / 2.25 : double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          //==================== Search & Filter ====================
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //========== Get All Products Search Field ==========
-                  Flexible(
-                    flex: 9,
-                    child: TypeAheadField(
-                      minCharsForSuggestions: 0,
-                      debounceDuration: const Duration(milliseconds: 500),
-                      hideSuggestionsOnKeyboardHide: true,
-                      textFieldConfiguration: TextFieldConfiguration(
-                          controller: _productController,
-                          onTap: () {},
-                          style: kText_10_12,
-                          decoration: InputDecoration(
-                            fillColor: Colors.white,
-                            filled: true,
-                            isDense: true,
-                            suffixIconConstraints: const BoxConstraints(
-                              minWidth: 10,
-                              minHeight: 10,
-                            ),
-                            suffixIcon: Padding(
-                              padding: kClearTextIconPadding,
-                              child: InkWell(
-                                child: const Icon(Icons.clear, size: 15),
-                                onTap: () async {
-                                  _productController.clear();
-                                  ref.read(builderModelProvider.notifier).state = null;
-                                  ref.read(itemsProvider.notifier).state = _stableItemsList;
-                                },
-                              ),
-                            ),
-                            contentPadding: EdgeInsets.all(isThermal ? 8 : 10),
-                            hintText: 'Search product by name/code',
-                            hintStyle: kText_10_12,
-                            border: const OutlineInputBorder(),
-                          )),
-                      noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
-                      suggestionsCallback: (pattern) async {
-                        return ItemMasterDatabase.instance.getProductSuggestions(pattern);
-                      },
-                      itemBuilder: (context, ItemMasterModel suggestion) {
-                        return ListTile(
-                          title: Text(
-                            suggestion.itemName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+    return Expanded(
+      child: SizedBox(
+        width: isVertical ? double.infinity : SizerUtil.width / 1.9,
+        height: isVertical
+            ? isThermal
+                ? SizerUtil.height / 2.60
+                : SizerUtil.height / 2.25
+            : double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            //==================== Search & Filter ====================
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    //========== Get All Products Search Field ==========
+                    Flexible(
+                      flex: 9,
+                      child: TypeAheadField(
+                        minCharsForSuggestions: 0,
+                        debounceDuration: const Duration(milliseconds: 500),
+                        hideSuggestionsOnKeyboardHide: true,
+                        textFieldConfiguration: TextFieldConfiguration(
+                            controller: _productController,
+                            onTap: () {},
                             style: kText_10_12,
-                          ),
-                        );
-                      },
-                      onSuggestionSelected: (ItemMasterModel selectedItem) async {
-                        _productController.clear();
-
-                        ref.read(builderModelProvider.notifier).state = null;
-                        ref.read(itemsProvider.notifier).state = [selectedItem];
-
-                        log(selectedItem.itemName);
-                      },
-                    ),
-                  ),
-
-                  kWidth5,
-                  //========== Barcode Scanner Button ==========
-                  Flexible(
-                    flex: 1,
-                    child: FittedBox(
-                      child: IconButton(
-                        padding: const EdgeInsets.all(5),
-                        alignment: Alignment.center,
-                        constraints: const BoxConstraints(
-                          minHeight: 20,
-                          maxHeight: 20,
-                        ),
-                        onPressed: () async => await onBarcodeScan(ref),
-                        icon: Icon(
-                          Icons.qr_code,
-                          color: Colors.blue,
-                          size: isThermal ? 22 : 25,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              kHeight3,
-              isVertical
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //========== Get All Supplier Search Field ==========
-                        Flexible(
-                          flex: 6,
-                          child: TypeAheadField(
-                            minCharsForSuggestions: 0,
-                            debounceDuration: const Duration(milliseconds: 500),
-                            hideSuggestionsOnKeyboardHide: true,
-                            textFieldConfiguration: TextFieldConfiguration(
-                                controller: PurchaseSideWidget.supplierController,
-                                style: kText_10_12,
-                                decoration: InputDecoration(
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  isDense: true,
-                                  suffixIconConstraints: const BoxConstraints(
-                                    minWidth: 10,
-                                    minHeight: 10,
-                                  ),
-                                  suffixIcon: Padding(
-                                    padding: kClearTextIconPadding,
-                                    child: InkWell(
-                                      child: const Icon(Icons.clear, size: 15),
-                                      onTap: () {
-                                        PurchaseSideWidget.supplierNotifier.value = null;
-                                        PurchaseSideWidget.supplierController.clear();
-                                      },
-                                    ),
-                                  ),
-                                  contentPadding: EdgeInsets.all(isThermal ? 8 : 10),
-                                  hintText: 'Supplier',
-                                  hintStyle: kText_10_12,
-                                  border: const OutlineInputBorder(),
-                                )),
-                            noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No supplier Found!'))),
-                            suggestionsCallback: (pattern) async {
-                              return SupplierDatabase.instance.getSupplierSuggestions(pattern);
-                            },
-                            itemBuilder: (context, SupplierModel suggestion) {
-                              return ListTile(
-                                title: Text(
-                                  suggestion.supplierName,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: kText_10_12,
-                                ),
-                              );
-                            },
-                            onSuggestionSelected: (SupplierModel suggestion) {
-                              PurchaseSideWidget.supplierController.text = suggestion.supplierName;
-                              PurchaseSideWidget.supplierNotifier.value = suggestion;
-                              log(suggestion.supplierName);
-                            },
-                          ),
-                        ),
-                        kWidth5,
-
-                        Flexible(
-                          flex: 4,
-                          child: TextFeildWidget(
-                            labelText: 'Ref No',
-                            isHint: true,
-                            isDense: true,
-                            suffixIconConstraints: const BoxConstraints(
-                              minWidth: 10,
-                              minHeight: 10,
-                            ),
-                            suffixIcon: Padding(
-                              padding: kClearTextIconPadding,
-                              child: InkWell(
-                                child: const Icon(Icons.clear, size: 15),
-                                onTap: () {
-                                  PurchaseSideWidget.referenceNumberController.clear();
-                                },
+                            decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              isDense: true,
+                              suffixIconConstraints: const BoxConstraints(
+                                minWidth: 10,
+                                minHeight: 10,
                               ),
+                              suffixIcon: Padding(
+                                padding: kClearTextIconPadding,
+                                child: InkWell(
+                                  child: const Icon(Icons.clear, size: 15),
+                                  onTap: () async {
+                                    _productController.clear();
+                                    ref.read(builderModelProvider.notifier).state = null;
+                                    ref.read(itemsProvider.notifier).state = _stableItemsList;
+                                  },
+                                ),
+                              ),
+                              contentPadding: EdgeInsets.all(isThermal ? 8 : 10),
+                              hintText: 'Search product by name/code',
+                              hintStyle: kText_10_12,
+                              border: const OutlineInputBorder(),
+                            )),
+                        noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
+                        suggestionsCallback: (pattern) async {
+                          return ItemMasterDatabase.instance.getProductSuggestions(pattern);
+                        },
+                        itemBuilder: (context, ItemMasterModel suggestion) {
+                          return ListTile(
+                            title: Text(
+                              suggestion.itemName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: kText_10_12,
                             ),
-                            controller: PurchaseSideWidget.referenceNumberController,
-                            textStyle: kText_10_12,
-                            inputBorder: const OutlineInputBorder(),
-                            textInputType: TextInputType.text,
-                            constraints: const BoxConstraints(maxHeight: 40),
-                            hintStyle: kText_10_12,
-                            contentPadding: EdgeInsets.all(isThermal ? 8 : 10),
-                            errorStyle: true,
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                          ),
-                        ),
-                        kWidth5,
-
-                        //========== View supplier Button ==========
-                        Flexible(
-                          flex: 1,
-                          child: FittedBox(
-                            child: IconButton(
-                                padding: const EdgeInsets.all(5),
-                                alignment: Alignment.center,
-                                constraints: const BoxConstraints(
-                                  minHeight: 20,
-                                  maxHeight: 20,
-                                ),
-                                onPressed: () {
-                                  if (PurchaseSideWidget.supplierNotifier.value != null) {
-                                    log('${PurchaseSideWidget.supplierNotifier}');
-
-                                    showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        backgroundColor: kTransparentColor,
-                                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                                        builder: (context) => DismissibleWidget(
-                                              context: context,
-                                              child: CustomBottomSheetWidget(
-                                                model: PurchaseSideWidget.supplierNotifier.value,
-                                                supplier: true,
-                                              ),
-                                            ));
-                                  } else {
-                                    kSnackBar(context: context, content: 'Please select any Supplier to show details!');
-                                  }
-                                },
-                                icon: Icon(
-                                  Icons.visibility,
-                                  color: Colors.blue,
-                                  size: isThermal ? 25 : 25,
-                                )),
-                          ),
-                        ),
-
-                        //========== Add supplier Button ==========
-                        Flexible(
-                          flex: 1,
-                          child: FittedBox(
-                            child: IconButton(
-                                padding: const EdgeInsets.all(5),
-                                alignment: Alignment.center,
-                                constraints: const BoxConstraints(
-                                  minHeight: 20,
-                                  maxHeight: 20,
-                                ),
-                                onPressed: () async {
-                                  // OrientationMode.isLandscape = false;
-                                  // await OrientationMode.toPortrait();
-                                  final addedSupplier = await Navigator.pushNamed(context, routeAddSupplier, arguments: true);
-
-                                  if (addedSupplier is SupplierModel) {
-                                    PurchaseSideWidget.supplierController.text = addedSupplier.contactName;
-                                    PurchaseSideWidget.supplierNotifier.value = addedSupplier;
-                                    log(addedSupplier.supplierName);
-                                  }
-
-                                  // await OrientationMode.toLandscape();
-                                },
-                                icon: Icon(
-                                  Icons.person_add,
-                                  color: Colors.blue,
-                                  size: isThermal ? 25 : 25,
-                                )),
-                          ),
-                        ),
-                      ],
-                    )
-                  : kNone,
-            ],
-          ),
-
-          //==================== Quick Filter Buttons ====================
-          Padding(
-            padding: isVertical ? const EdgeInsets.only(top: 4.0, bottom: 2.0) : const EdgeInsets.only(bottom: 5),
-            child: SizedBox(
-              height: isThermal ? 22 : 30,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 4,
-                    child: CustomMaterialBtton(
-                        color: Colors.blue,
-                        onPressed: () async {
-                          ref.read(builderModelProvider.notifier).state = 0;
-
-                          if (categories.isNotEmpty) {
-                            log('loading Categories..');
-                            ref.read(itemsProvider.notifier).state = categories;
-                          } else {
-                            log('fetching Categories..');
-                            categories = await CategoryDatabase.instance.getAllCategories();
-                            ref.read(itemsProvider.notifier).state = categories;
-                          }
+                          );
                         },
-                        padding: kPadding0,
-                        fontSize: 10,
-                        buttonText: 'Categories'),
-                  ),
-                  kWidth5,
-                  Expanded(
-                    flex: 5,
-                    child: CustomMaterialBtton(
-                        onPressed: () async {
-                          ref.read(builderModelProvider.notifier).state = 1;
-                          if (subCategories.isNotEmpty) {
-                            ref.read(itemsProvider.notifier).state = subCategories;
-                          } else {
-                            subCategories = await SubCategoryDatabase.instance.getAllSubCategories();
-                            ref.read(itemsProvider.notifier).state = subCategories;
-                          }
+                        onSuggestionSelected: (ItemMasterModel selectedItem) async {
+                          _productController.clear();
+
+                          ref.read(builderModelProvider.notifier).state = null;
+                          ref.read(itemsProvider.notifier).state = [selectedItem];
+
+                          log(selectedItem.itemName);
                         },
-                        padding: kPadding0,
-                        fontSize: 10,
-                        color: Colors.orange,
-                        buttonText: 'Sub Categories'),
-                  ),
-                  kWidth5,
-                  Expanded(
-                    flex: 3,
-                    child: CustomMaterialBtton(
-                      onPressed: () async {
-                        ref.read(builderModelProvider.notifier).state = 2;
-                        if (brands.isNotEmpty) {
-                          ref.read(itemsProvider.notifier).state = brands;
-                        } else {
-                          brands = await BrandDatabase.instance.getAllBrands();
-                          ref.read(itemsProvider.notifier).state = brands;
-                        }
-                      },
-                      padding: kPadding0,
-                      color: Colors.indigo,
-                      fontSize: 10,
-                      buttonText: 'Brands',
+                      ),
                     ),
-                  ),
-                  kWidth5,
-                  Expanded(
-                    flex: 2,
-                    child: MaterialButton(
-                      onPressed: () async {
-                        _productController.clear();
-                        ref.read(builderModelProvider.notifier).state = null;
-                        ref.read(itemsProvider.notifier).state = _stableItemsList;
-                      },
-                      color: Colors.blue,
-                      child: const FittedBox(
-                        fit: BoxFit.fitHeight,
-                        child: Icon(
-                          Icons.rotate_left,
-                          color: kWhite,
+
+                    kWidth5,
+                    //========== Barcode Scanner Button ==========
+                    Flexible(
+                      flex: 1,
+                      child: FittedBox(
+                        child: IconButton(
+                          padding: const EdgeInsets.all(5),
+                          alignment: Alignment.center,
+                          constraints: const BoxConstraints(
+                            minHeight: 20,
+                            maxHeight: 20,
+                          ),
+                          onPressed: () async => await onBarcodeScan(ref),
+                          icon: Icon(
+                            Icons.qr_code,
+                            color: Colors.blue,
+                            size: isThermal ? 22 : 25,
+                          ),
                         ),
                       ),
                     ),
-                  )
-                ],
+                  ],
+                ),
+                kHeight3,
+                isVertical
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          //========== Get All Supplier Search Field ==========
+                          Flexible(
+                            flex: 6,
+                            child: TypeAheadField(
+                              minCharsForSuggestions: 0,
+                              debounceDuration: const Duration(milliseconds: 500),
+                              hideSuggestionsOnKeyboardHide: true,
+                              textFieldConfiguration: TextFieldConfiguration(
+                                  controller: PurchaseSideWidget.supplierController,
+                                  style: kText_10_12,
+                                  decoration: InputDecoration(
+                                    fillColor: Colors.white,
+                                    filled: true,
+                                    isDense: true,
+                                    suffixIconConstraints: const BoxConstraints(
+                                      minWidth: 10,
+                                      minHeight: 10,
+                                    ),
+                                    suffixIcon: Padding(
+                                      padding: kClearTextIconPadding,
+                                      child: InkWell(
+                                        child: const Icon(Icons.clear, size: 15),
+                                        onTap: () {
+                                          PurchaseSideWidget.supplierNotifier.value = null;
+                                          PurchaseSideWidget.supplierController.clear();
+                                        },
+                                      ),
+                                    ),
+                                    contentPadding: EdgeInsets.all(isThermal ? 8 : 10),
+                                    hintText: 'Supplier',
+                                    hintStyle: kText_10_12,
+                                    border: const OutlineInputBorder(),
+                                  )),
+                              noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No supplier Found!'))),
+                              suggestionsCallback: (pattern) async {
+                                return SupplierDatabase.instance.getSupplierSuggestions(pattern);
+                              },
+                              itemBuilder: (context, SupplierModel suggestion) {
+                                return ListTile(
+                                  title: Text(
+                                    suggestion.supplierName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: kText_10_12,
+                                  ),
+                                );
+                              },
+                              onSuggestionSelected: (SupplierModel suggestion) {
+                                PurchaseSideWidget.supplierController.text = suggestion.supplierName;
+                                PurchaseSideWidget.supplierNotifier.value = suggestion;
+                                log(suggestion.supplierName);
+                              },
+                            ),
+                          ),
+                          kWidth5,
+
+                          Flexible(
+                            flex: 4,
+                            child: TextFeildWidget(
+                              labelText: 'Ref No',
+                              isHint: true,
+                              isDense: true,
+                              suffixIconConstraints: const BoxConstraints(
+                                minWidth: 10,
+                                minHeight: 10,
+                              ),
+                              suffixIcon: Padding(
+                                padding: kClearTextIconPadding,
+                                child: InkWell(
+                                  child: const Icon(Icons.clear, size: 15),
+                                  onTap: () {
+                                    PurchaseSideWidget.referenceNumberController.clear();
+                                  },
+                                ),
+                              ),
+                              controller: PurchaseSideWidget.referenceNumberController,
+                              textStyle: kText_10_12,
+                              inputBorder: const OutlineInputBorder(),
+                              textInputType: TextInputType.text,
+                              constraints: const BoxConstraints(maxHeight: 40),
+                              hintStyle: kText_10_12,
+                              contentPadding: EdgeInsets.all(isThermal ? 8 : 10),
+                              errorStyle: true,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                            ),
+                          ),
+                          kWidth5,
+
+                          //========== View supplier Button ==========
+                          Flexible(
+                            flex: 1,
+                            child: FittedBox(
+                              child: IconButton(
+                                  padding: const EdgeInsets.all(5),
+                                  alignment: Alignment.center,
+                                  constraints: const BoxConstraints(
+                                    minHeight: 20,
+                                    maxHeight: 20,
+                                  ),
+                                  onPressed: () {
+                                    if (PurchaseSideWidget.supplierNotifier.value != null) {
+                                      log('${PurchaseSideWidget.supplierNotifier}');
+
+                                      showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          backgroundColor: kTransparentColor,
+                                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                                          builder: (context) => DismissibleWidget(
+                                                context: context,
+                                                child: CustomBottomSheetWidget(
+                                                  model: PurchaseSideWidget.supplierNotifier.value,
+                                                  supplier: true,
+                                                ),
+                                              ));
+                                    } else {
+                                      kSnackBar(context: context, content: 'Please select any Supplier to show details!');
+                                    }
+                                  },
+                                  icon: Icon(
+                                    Icons.visibility,
+                                    color: Colors.blue,
+                                    size: isThermal ? 25 : 25,
+                                  )),
+                            ),
+                          ),
+
+                          //========== Add supplier Button ==========
+                          Flexible(
+                            flex: 1,
+                            child: FittedBox(
+                              child: IconButton(
+                                  padding: const EdgeInsets.all(5),
+                                  alignment: Alignment.center,
+                                  constraints: const BoxConstraints(
+                                    minHeight: 20,
+                                    maxHeight: 20,
+                                  ),
+                                  onPressed: () async {
+                                    // OrientationMode.isLandscape = false;
+                                    // await OrientationMode.toPortrait();
+                                    final addedSupplier = await Navigator.pushNamed(context, routeAddSupplier, arguments: true);
+
+                                    if (addedSupplier is SupplierModel) {
+                                      PurchaseSideWidget.supplierController.text = addedSupplier.contactName;
+                                      PurchaseSideWidget.supplierNotifier.value = addedSupplier;
+                                      log(addedSupplier.supplierName);
+                                    }
+
+                                    // await OrientationMode.toLandscape();
+                                  },
+                                  icon: Icon(
+                                    Icons.person_add,
+                                    color: Colors.blue,
+                                    size: isThermal ? 25 : 25,
+                                  )),
+                            ),
+                          ),
+                        ],
+                      )
+                    : kNone,
+              ],
+            ),
+
+            //==================== Quick Filter Buttons ====================
+            Padding(
+              padding: isVertical ? const EdgeInsets.only(top: 4.0, bottom: 2.0) : const EdgeInsets.only(bottom: 5),
+              child: SizedBox(
+                height: isThermal ? 22 : 30,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: CustomMaterialBtton(
+                          color: Colors.blue,
+                          onPressed: () async {
+                            ref.read(builderModelProvider.notifier).state = 0;
+
+                            if (categories.isNotEmpty) {
+                              log('loading Categories..');
+                              ref.read(itemsProvider.notifier).state = categories;
+                            } else {
+                              log('fetching Categories..');
+                              categories = await CategoryDatabase.instance.getAllCategories();
+                              ref.read(itemsProvider.notifier).state = categories;
+                            }
+                          },
+                          padding: kPadding0,
+                          fontSize: 10,
+                          buttonText: 'Categories'),
+                    ),
+                    kWidth5,
+                    Expanded(
+                      flex: 5,
+                      child: CustomMaterialBtton(
+                          onPressed: () async {
+                            ref.read(builderModelProvider.notifier).state = 1;
+                            if (subCategories.isNotEmpty) {
+                              ref.read(itemsProvider.notifier).state = subCategories;
+                            } else {
+                              subCategories = await SubCategoryDatabase.instance.getAllSubCategories();
+                              ref.read(itemsProvider.notifier).state = subCategories;
+                            }
+                          },
+                          padding: kPadding0,
+                          fontSize: 10,
+                          color: Colors.orange,
+                          buttonText: 'Sub Categories'),
+                    ),
+                    kWidth5,
+                    Expanded(
+                      flex: 3,
+                      child: CustomMaterialBtton(
+                        onPressed: () async {
+                          ref.read(builderModelProvider.notifier).state = 2;
+                          if (brands.isNotEmpty) {
+                            ref.read(itemsProvider.notifier).state = brands;
+                          } else {
+                            brands = await BrandDatabase.instance.getAllBrands();
+                            ref.read(itemsProvider.notifier).state = brands;
+                          }
+                        },
+                        padding: kPadding0,
+                        color: Colors.indigo,
+                        fontSize: 10,
+                        buttonText: 'Brands',
+                      ),
+                    ),
+                    kWidth5,
+                    Expanded(
+                      flex: 2,
+                      child: MaterialButton(
+                        onPressed: () async {
+                          _productController.clear();
+                          ref.read(builderModelProvider.notifier).state = null;
+                          ref.read(itemsProvider.notifier).state = _stableItemsList;
+                        },
+                        color: Colors.blue,
+                        child: const FittedBox(
+                          fit: BoxFit.fitHeight,
+                          child: Icon(
+                            Icons.rotate_left,
+                            color: kWhite,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
 
-          //========================================                      ========================================
-          //======================================== Product Listing Grid ========================================
-          //========================================                      ========================================
-          Expanded(
-            flex: isVertical ? 1 : 1,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Consumer(
-                builder: (context, ref, _) {
-                  final _futureProducts = ref.watch(_futureProductsProvider);
+            //========================================                      ========================================
+            //======================================== Product Listing Grid ========================================
+            //========================================                      ========================================
+            Expanded(
+              flex: isVertical ? 1 : 1,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final _futureProducts = ref.watch(_futureProductsProvider);
 
-                  return _futureProducts.when(
-                      loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (_, __) => const Center(child: Text('No items found')),
-                      data: (items) {
-                        log('Future Provider() => called!');
-                        _stableItemsList = items;
-                        return Consumer(
-                          builder: (context, ref, _) {
-                            log('Items Provider() => called!');
+                    return _futureProducts.when(
+                        loading: () => const Center(child: CircularProgressIndicator()),
+                        error: (_, __) => const Center(child: Text('No items found')),
+                        data: (items) {
+                          log('Future Provider() => called!');
+                          _stableItemsList = items;
+                          return Consumer(
+                            builder: (context, ref, _) {
+                              log('Items Provider() => called!');
 
-                            List<dynamic> _itemList = ref.watch(itemsProvider);
+                              List<dynamic> _itemList = ref.watch(itemsProvider);
 
-                            final _isLoaded = ref.read(_isLoadedProvider.notifier);
-                            // log('isLoaded = ${_isLoaded.state}');
+                              final _isLoaded = ref.read(_isLoadedProvider.notifier);
+                              // log('isLoaded = ${_isLoaded.state}');
 
-                            if (!_isLoaded.state) {
-                              _itemList = items;
-                              WidgetsBinding.instance.addPostFrameCallback((_) => _isLoaded.state = true);
-                            }
+                              if (!_isLoaded.state) {
+                                _itemList = items;
+                                WidgetsBinding.instance.addPostFrameCallback((_) => _isLoaded.state = true);
+                              }
 
-                            return _itemList.isNotEmpty
-                                ? GridView.builder(
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: isVertical ? 4 : 5,
-                                      childAspectRatio: (1 / .75),
-                                    ),
-                                    itemCount: _itemList.length,
-                                    itemBuilder: (context, index) {
-                                      return InkWell(
-                                        onTap: () async {
-                                          final int? _builderModel = ref.read(builderModelProvider);
-                                          if (_builderModel == 0) {
-                                            log(_itemList[index].category);
-                                            final categoryId = _itemList[index].id;
-                                            ref.read(builderModelProvider.notifier).state = null;
-                                            ref.read(itemsProvider.notifier).state =
-                                                await ItemMasterDatabase.instance.getProductByCategoryId(categoryId);
-                                          } else if (_builderModel == 1) {
-                                            log(_itemList[index].subCategory);
-                                            final subCategoryId = _itemList[index].id;
-                                            ref.read(builderModelProvider.notifier).state = null;
-                                            ref.read(itemsProvider.notifier).state =
-                                                await ItemMasterDatabase.instance.getProductBySubCategoryId(subCategoryId);
-                                          } else if (_builderModel == 2) {
-                                            log(_itemList[index].brand);
-                                            final brandId = _itemList[index].id;
-                                            ref.read(builderModelProvider.notifier).state = null;
-                                            ref.read(itemsProvider.notifier).state = await ItemMasterDatabase.instance.getProductByBrandId(brandId);
-                                          } else {
-//===================================== if the Product Already Added ====================================
-                                            isProductAlreadyAdded(ref, _itemList, index);
-//=======================================================================================================
+                              return _itemList.isNotEmpty
+                                  ? GridView.builder(
+                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: isVertical ? 4 : 5,
+                                        childAspectRatio: (1 / .75),
+                                      ),
+                                      itemCount: _itemList.length,
+                                      itemBuilder: (context, index) {
+                                        return InkWell(
+                                          onTap: () async {
+                                            final int? _builderModel = ref.read(builderModelProvider);
+                                            if (_builderModel == 0) {
+                                              log(_itemList[index].category);
+                                              final categoryId = _itemList[index].id;
+                                              ref.read(builderModelProvider.notifier).state = null;
+                                              ref.read(itemsProvider.notifier).state =
+                                                  await ItemMasterDatabase.instance.getProductByCategoryId(categoryId);
+                                            } else if (_builderModel == 1) {
+                                              log(_itemList[index].subCategory);
+                                              final subCategoryId = _itemList[index].id;
+                                              ref.read(builderModelProvider.notifier).state = null;
+                                              ref.read(itemsProvider.notifier).state =
+                                                  await ItemMasterDatabase.instance.getProductBySubCategoryId(subCategoryId);
+                                            } else if (_builderModel == 2) {
+                                              log(_itemList[index].brand);
+                                              final brandId = _itemList[index].id;
+                                              ref.read(builderModelProvider.notifier).state = null;
+                                              ref.read(itemsProvider.notifier).state = await ItemMasterDatabase.instance.getProductByBrandId(brandId);
+                                            } else {
+                                              //===================================== if the Product Already Added ====================================
+                                              isProductAlreadyAdded(ref, _itemList, index);
+                                              //=======================================================================================================
 
-                                            PurchaseSideWidget.totalQuantityNotifier.value++;
-                                          }
-                                        },
-                                        child: Card(
-                                          elevation: 10,
-                                          child: Padding(
-                                              padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-                                              child: ref.read(builderModelProvider) == null
-                                                  ? Column(
-                                                      children: [
-                                                        Expanded(
-                                                          flex: 4,
-                                                          child: Text(
-                                                            _itemList[index].itemName ?? '',
+                                              PurchaseSideWidget.totalQuantityNotifier.value++;
+                                            }
+                                          },
+                                          child: Card(
+                                            elevation: 10,
+                                            child: Padding(
+                                                padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                                                child: ref.read(builderModelProvider) == null
+                                                    ? Column(
+                                                        children: [
+                                                          Expanded(
+                                                            flex: 4,
+                                                            child: Text(
+                                                              _itemList[index].itemName ?? '',
+                                                              textAlign: TextAlign.center,
+                                                              softWrap: true,
+                                                              style: kItemsTextStyle,
+                                                              overflow: TextOverflow.ellipsis,
+                                                              maxLines: 2,
+                                                            ),
+                                                          ),
+                                                          const Spacer(),
+                                                          Expanded(
+                                                            flex: 2,
+                                                            child: Text(
+                                                              'Qty : ' + _itemList[index].openingStock,
+                                                              textAlign: TextAlign.center,
+                                                              style: TextStyle(
+                                                                fontSize: DeviceUtil.isTablet ? 10 : 8,
+                                                                color: num.parse(_itemList[index].openingStock) <= 0 ? kTextErrorColor : kTextColor,
+                                                              ),
+                                                              maxLines: 1,
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            flex: 2,
+                                                            child: Text(
+                                                              Converter.currency.format(num.tryParse(_itemList[index].itemCost)),
+                                                              style: kItemsTextStyle,
+                                                              maxLines: 1,
+                                                            ),
+                                                          )
+                                                        ],
+                                                      )
+                                                    : Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Text(
+                                                            ref.read(builderModelProvider) == 0
+                                                                ? _itemList[index].category
+                                                                : ref.read(builderModelProvider) == 1
+                                                                    ? _itemList[index].subCategory
+                                                                    : ref.read(builderModelProvider) == 2
+                                                                        ? _itemList[index].brand
+                                                                        : '',
                                                             textAlign: TextAlign.center,
                                                             softWrap: true,
                                                             style: kItemsTextStyle,
                                                             overflow: TextOverflow.ellipsis,
-                                                            maxLines: 2,
+                                                            maxLines: ref.read(builderModelProvider) == 0 &&
+                                                                    _itemList[index].category.toString().contains(' ')
+                                                                ? 2
+                                                                : ref.read(builderModelProvider) == 1 &&
+                                                                        _itemList[index].subCategory.toString().contains(' ')
+                                                                    ? 2
+                                                                    : ref.read(builderModelProvider) == 2 &&
+                                                                            _itemList[index].brand.toString().contains(' ')
+                                                                        ? 2
+                                                                        : 1,
                                                           ),
-                                                        ),
-                                                        const Spacer(),
-                                                        Expanded(
-                                                          flex: 2,
-                                                          child: Text(
-                                                            'Qty : ' + _itemList[index].openingStock,
-                                                            textAlign: TextAlign.center,
-                                                            style: TextStyle(
-                                                              fontSize: DeviceUtil.isTablet ? 10 : 8,
-                                                              color: num.parse(_itemList[index].openingStock) <= 0 ? kTextErrorColor : kTextColor,
-                                                            ),
-                                                            maxLines: 1,
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          flex: 2,
-                                                          child: Text(
-                                                            Converter.currency.format(num.tryParse(_itemList[index].itemCost)),
-                                                            style: kItemsTextStyle,
-                                                            maxLines: 1,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    )
-                                                  : Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text(
-                                                          ref.read(builderModelProvider) == 0
-                                                              ? _itemList[index].category
-                                                              : ref.read(builderModelProvider) == 1
-                                                                  ? _itemList[index].subCategory
-                                                                  : ref.read(builderModelProvider) == 2
-                                                                      ? _itemList[index].brand
-                                                                      : '',
-                                                          textAlign: TextAlign.center,
-                                                          softWrap: true,
-                                                          style: kItemsTextStyle,
-                                                          overflow: TextOverflow.ellipsis,
-                                                          maxLines: ref.read(builderModelProvider) == 0 &&
-                                                                  _itemList[index].category.toString().contains(' ')
-                                                              ? 2
-                                                              : ref.read(builderModelProvider) == 1 &&
-                                                                      _itemList[index].subCategory.toString().contains(' ')
-                                                                  ? 2
-                                                                  : ref.read(builderModelProvider) == 2 &&
-                                                                          _itemList[index].brand.toString().contains(' ')
-                                                                      ? 2
-                                                                      : 1,
-                                                        ),
-                                                      ],
-                                                    )),
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : const Center(
-                                    child: Text('No items found'),
-                                  );
-                          },
-                        );
-                      });
-                },
+                                                        ],
+                                                      )),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : const Center(
+                                      child: Text('No items found'),
+                                    );
+                            },
+                          );
+                        });
+                  },
+                ),
               ),
             ),
-          ),
-          //== == == == == Provider Listeners == == == == ==
-          Consumer(builder: (context, ref, _) {
-            ref.watch(_isLoadedProvider);
-            ref.watch(builderModelProvider);
-            return kNone;
-          }),
-        ],
+            //== == == == == Provider Listeners == == == == ==
+            Consumer(builder: (context, ref, _) {
+              ref.watch(_isLoadedProvider);
+              ref.watch(builderModelProvider);
+              return kNone;
+            }),
+          ],
+        ),
       ),
     );
   }

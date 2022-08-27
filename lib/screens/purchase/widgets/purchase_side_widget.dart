@@ -25,6 +25,7 @@ import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
+import 'package:sizer/sizer.dart';
 
 class SelectedProductsNotifier extends StateNotifier<List<ItemMasterModel>> {
   SelectedProductsNotifier() : super([]);
@@ -88,9 +89,6 @@ class PurchaseSideWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Size _screenSize = MediaQuery.of(context).size;
-    final bool isSmall = DeviceUtil.isSmall;
-
     return WillPopScope(
       onWillPop: () async {
         if (ref.read(selectedProductProvider).isEmpty) {
@@ -112,7 +110,7 @@ class PurchaseSideWidget extends ConsumerWidget {
       },
       child: Expanded(
         child: SizedBox(
-          width: isVertical ? double.infinity : _screenSize.width / 2.5,
+          width: isVertical ? double.infinity : SizerUtil.width / 2.5,
           height: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,7 +148,7 @@ class PurchaseSideWidget extends ConsumerWidget {
                                       },
                                     ),
                                   ),
-                                  contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
+                                  contentPadding: EdgeInsets.all(isThermal ? 8 : 10),
                                   hintText: 'Supplier',
                                   hintStyle: kText_10_12,
                                   border: const OutlineInputBorder(),
@@ -203,7 +201,7 @@ class PurchaseSideWidget extends ConsumerWidget {
                             textInputType: TextInputType.text,
                             constraints: const BoxConstraints(maxHeight: 40),
                             hintStyle: kText_10_12,
-                            contentPadding: EdgeInsets.all(isSmall ? 8 : 10),
+                            contentPadding: EdgeInsets.all(isThermal ? 8 : 10),
                             errorStyle: true,
                             autovalidateMode: AutovalidateMode.onUserInteraction,
                           ),
@@ -242,7 +240,7 @@ class PurchaseSideWidget extends ConsumerWidget {
                                 icon: Icon(
                                   Icons.visibility,
                                   color: Colors.blue,
-                                  size: isSmall ? 25 : 25,
+                                  size: isThermal ? 25 : 25,
                                 )),
                           ),
                         ),
@@ -274,7 +272,7 @@ class PurchaseSideWidget extends ConsumerWidget {
                                 icon: Icon(
                                   Icons.person_add,
                                   color: Colors.blue,
-                                  size: isSmall ? 25 : 25,
+                                  size: isThermal ? 25 : 25,
                                 )),
                           ),
                         ),
@@ -310,7 +308,7 @@ class PurchaseSideWidget extends ConsumerWidget {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                 color: Colors.white,
-                                height: isSmall ? 25 : 30,
+                                height: isThermal ? 25 : 30,
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   _product.itemName,
@@ -324,7 +322,7 @@ class PurchaseSideWidget extends ConsumerWidget {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                 color: Colors.white,
-                                height: isSmall ? 25 : 30,
+                                height: isThermal ? 25 : 30,
                                 alignment: Alignment.topCenter,
                                 child: TextFormField(
                                   controller: costNotifier.value[index],
@@ -359,7 +357,7 @@ class PurchaseSideWidget extends ConsumerWidget {
                               //==================== Quantity ====================
                               Container(
                                 color: Colors.white,
-                                height: isSmall ? 25 : 30,
+                                height: isThermal ? 25 : 30,
                                 alignment: Alignment.topCenter,
                                 child: TextFormField(
                                   controller: quantityNotifier.value[index],
@@ -416,7 +414,7 @@ class PurchaseSideWidget extends ConsumerWidget {
                               Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                   color: Colors.white,
-                                  height: isSmall ? 25 : 30,
+                                  height: isThermal ? 25 : 30,
                                   alignment: Alignment.center,
                                   child: ValueListenableBuilder(
                                       valueListenable: subTotalNotifier,
@@ -431,7 +429,7 @@ class PurchaseSideWidget extends ConsumerWidget {
                               //==================== Delete Icon ====================
                               Container(
                                   color: Colors.white,
-                                  height: isSmall ? 25 : 30,
+                                  height: isThermal ? 25 : 30,
                                   alignment: Alignment.center,
                                   child: IconButton(
                                     onPressed: () {
@@ -450,7 +448,7 @@ class PurchaseSideWidget extends ConsumerWidget {
                                     },
                                     icon: Icon(
                                       Icons.close,
-                                      size: isSmall ? 12 : 16,
+                                      size: isThermal ? 12 : 16,
                                     ),
                                   ))
                             ]);

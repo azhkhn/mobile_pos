@@ -182,10 +182,10 @@ class DrawerItemsWidget extends StatelessWidget {
             showAboutSoftware(context);
             break;
           case 13:
-            launchUrl(Uri.parse('https://cignes.com/mobile-POS/'));
+            launchUrl(Uri.parse('https://cignes.com/mobile-POS/terms_conditions.html'));
             break;
           case 14:
-            launchUrl(Uri.parse('https://cignes.com/mobile-POS/'));
+            launchUrl(Uri.parse('https://cignes.com/mobile-POS/privacy_policy.html'));
             break;
           default:
         }

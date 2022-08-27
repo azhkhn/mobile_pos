@@ -1,391 +1,294 @@
-// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
-
-import 'dart:developer';
+// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member, must_be_immutable
 
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 import 'package:shop_ez/core/constant/colors.dart';
 import 'package:shop_ez/core/constant/sizes.dart';
 import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
+import 'package:shop_ez/core/routes/router.dart';
 import 'package:shop_ez/core/utils/converters/converters.dart';
 import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
 import 'package:shop_ez/model/item_master/item_master_model.dart';
+import 'package:shop_ez/screens/item_master/widgets/item_card_widget.dart';
 import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/container/background_container_widget.dart';
-import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
 
-class ScreenBarcode extends StatefulWidget {
-  const ScreenBarcode({Key? key}) : super(key: key);
+class ScreenBarcode extends StatelessWidget {
+  ScreenBarcode({Key? key}) : super(key: key);
 
-  @override
-  State<ScreenBarcode> createState() => _ScreenBarcodeState();
-}
+  //==================== TextEditing Controllers ====================
+  final TextEditingController productController = TextEditingController();
 
-class _ScreenBarcodeState extends State<ScreenBarcode> {
-//========== TextEditing Controllers ==========
-  final _productController = TextEditingController();
-  final List<TextEditingController> _quantityControllers = [];
+  //==================== Value Notifiers ====================
+  final ValueNotifier<int?> itemIdNotifier = ValueNotifier(null);
+  final ValueNotifier<List<ItemMasterModel>> productsNotifier = ValueNotifier([]);
 
-//========== FocusNodes ==========
-  final FocusNode _productFocusNode = FocusNode();
-
-//========== Database Instances ==========
-  final ItemMasterDatabase _itemMasterDB = ItemMasterDatabase.instance;
-
-//========== Value Notifiers ==========
-  final ValueNotifier<List<ItemMasterModel>> itemNotifier = ValueNotifier([]);
+  //==================== List Items ====================
+  List<ItemMasterModel> itemsList = [];
 
   @override
   Widget build(BuildContext context) {
-    final bool _isTablet = DeviceUtil.isTablet;
     return Scaffold(
-      appBar: AppBarWidget(title: 'Barcode'),
-      body: BackgroundContainerWidget(
-        child: ItemScreenPaddingWidget(
-          child: Stack(
+        appBar: AppBarWidget(title: 'Barcode Generator'),
+        body: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
             children: [
-              Column(
+              //==================== Search & Filter ====================
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  kHeight10,
-                  //==================== Product Search Bar ====================
-                  TypeAheadField(
-                    minCharsForSuggestions: 0,
-                    debounceDuration: const Duration(milliseconds: 500),
-                    hideSuggestionsOnKeyboardHide: true,
-                    textFieldConfiguration: TextFieldConfiguration(
-                        controller: _productController,
-                        focusNode: _productFocusNode,
-                        style: const TextStyle(fontSize: 12),
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          isDense: true,
-                          suffixIconConstraints: const BoxConstraints(
-                            minWidth: 10,
-                            minHeight: 10,
-                          ),
-                          suffixIcon: Padding(
-                            padding: kClearTextIconPadding,
-                            child: InkWell(
-                              child: const Icon(Icons.clear, size: 15),
-                              onTap: () async {
-                                _productController.clear();
-                              },
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Select Product',
-                          hintStyle: const TextStyle(fontSize: 12),
-                          border: const OutlineInputBorder(),
-                        )),
-                    noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
-                    suggestionsCallback: (pattern) async {
-                      return _itemMasterDB.getProductSuggestions(pattern);
-                    },
-                    itemBuilder: (context, ItemMasterModel suggestion) {
-                      return Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          suggestion.itemName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: _isTablet ? 12 : 10),
-                        ),
-                      );
-                    },
-                    onSuggestionSelected: (ItemMasterModel selectedItem) async {
-                      _productController.clear();
-
-                      for (var i = 0; i < itemNotifier.value.length; i++) {
-                        if (selectedItem.id == itemNotifier.value[i].id) {
-                          final num qty = num.parse(_quantityControllers[i].text);
-                          _quantityControllers[i].text = (qty + 1).toString();
-                          return;
-                        }
-                      }
-                      _quantityControllers.add(TextEditingController(text: '1'));
-                      itemNotifier.value.add(selectedItem);
-                      itemNotifier.notifyListeners();
-
-                      log(selectedItem.itemName);
-                    },
-                  ),
-                  kHeight10,
-
-                  //========== ListTile Header ==========
-                  ListTile(
-                      title: Row(
-                        children: const [
-                          Expanded(
-                            flex: 3,
-                            child: Text(
-                              'Product',
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              'Quantity',
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                      trailing: const Icon(
-                        Icons.delete,
-                      )),
-
-                  const Divider(height: 1, color: kBlack),
-
+                  //========== Get All Suppliers Search Field ==========
                   Flexible(
-                    child: ValueListenableBuilder(
-                        valueListenable: itemNotifier,
-                        builder: (context, List<ItemMasterModel> items, _) {
-                          return ListView.separated(
-                              itemBuilder: (ctx, index) {
-                                final item = items[index];
-                                return Card(
-                                  elevation: 10,
-                                  child: ListTile(
-                                      title: Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 3,
-                                            child: Text(
-                                              item.itemName,
-                                              style: const TextStyle(fontSize: 10),
-                                              overflow: TextOverflow.ellipsis,
-                                              softWrap: false,
-                                            ),
-                                          ),
-                                          kWidth5,
-                                          Expanded(
-                                            child: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                              color: Colors.white,
-                                              height: 30,
-                                              alignment: Alignment.topCenter,
-                                              child: TextFormField(
-                                                controller: _quantityControllers[index],
-                                                keyboardType: TextInputType.number,
-                                                textAlign: TextAlign.center,
-                                                maxLines: 1,
-                                                decoration: const InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  isDense: true,
-                                                  contentPadding: EdgeInsets.symmetric(vertical: 10),
-                                                ),
-                                                style: TextStyle(fontSize: DeviceUtil.isTablet ? 10 : 10, color: kBlack),
-                                                onChanged: (value) {},
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      trailing: IconButton(
-                                        icon: const Icon(Icons.delete),
-                                        color: Colors.black26,
-                                        constraints: const BoxConstraints(maxWidth: 30),
-                                        onPressed: () {
-                                          _quantityControllers.removeAt(index);
-                                          itemNotifier.value.removeAt(index);
-                                          itemNotifier.notifyListeners();
-                                        },
-                                      )),
-                                );
-                              },
-                              separatorBuilder: (ctx, index) => const SizedBox(),
-                              itemCount: itemNotifier.value.length);
-                        }),
-                  )
+                    flex: 8,
+                    child: TypeAheadField(
+                      minCharsForSuggestions: 0,
+                      debounceDuration: const Duration(milliseconds: 500),
+                      hideSuggestionsOnKeyboardHide: true,
+                      textFieldConfiguration: TextFieldConfiguration(
+                          controller: productController,
+                          style: const TextStyle(fontSize: 12),
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            isDense: true,
+                            suffixIconConstraints: const BoxConstraints(
+                              minWidth: 10,
+                              minHeight: 10,
+                            ),
+                            suffixIcon: Padding(
+                              padding: kClearTextIconPadding,
+                              child: InkWell(
+                                child: const Icon(Icons.clear, size: 15),
+                                onTap: () async {
+                                  productController.clear();
+
+                                  if (itemsList.isNotEmpty) {
+                                    productsNotifier.value = itemsList;
+                                  } else {
+                                    productsNotifier.value = await ItemMasterDatabase.instance.getAllItems();
+                                  }
+                                },
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.all(10),
+                            hintText: 'Product',
+                            hintStyle: const TextStyle(fontSize: 12),
+                            border: const OutlineInputBorder(),
+                          )),
+                      noItemsFoundBuilder: (context) => const SizedBox(height: 50, child: Center(child: Text('No Product Found!'))),
+                      suggestionsCallback: (pattern) async {
+                        return itemsList
+                            .where((item) {
+                              return item.itemName.toLowerCase().contains(pattern.toLowerCase()) || item.itemCode.contains(pattern);
+                            })
+                            .toList()
+                            .take(10);
+                      },
+                      itemBuilder: (context, ItemMasterModel suggestion) {
+                        return ListTile(
+                          title: Text(
+                            suggestion.itemName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: kText_10_12,
+                          ),
+                        );
+                      },
+                      onSuggestionSelected: (ItemMasterModel suggestion) {
+                        productsNotifier.value = [suggestion];
+                      },
+                    ),
+                  ),
+                  kWidth5,
+
+                  //========== Add Product Button ==========
+                  Flexible(
+                    flex: 1,
+                    child: FittedBox(
+                      child: IconButton(
+                        padding: const EdgeInsets.all(5),
+                        alignment: Alignment.center,
+                        constraints: const BoxConstraints(
+                          minHeight: 30,
+                          maxHeight: 30,
+                        ),
+                        onPressed: () async {
+                          final ItemMasterModel? addedProduct =
+                              await Navigator.pushNamed(context, routeAddProduct, arguments: {'from': true}) as ItemMasterModel;
+
+                          if (addedProduct != null) {
+                            productsNotifier.value.add(addedProduct);
+                            itemsList.add(addedProduct);
+                            productsNotifier.notifyListeners();
+                          }
+                        },
+                        icon: const Icon(
+                          Icons.playlist_add,
+                          color: Colors.blue,
+                          size: 25,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
 
-              //==================== Print Button ====================
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: MaterialButton(
-                      onPressed: () => onPrint(),
-                      color: mainColor,
-                      minWidth: double.infinity,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(
-                            Icons.print_outlined,
-                            color: kWhite,
-                          ),
-                          kWidth5,
-                          Text(
-                            'Print',
-                            style: TextStyle(color: kWhite),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )),
+              kHeight10,
+
+              //========== List Items ==========
+              Expanded(
+                child: FutureBuilder(
+                    future: ItemMasterDatabase.instance.getAllItems(),
+                    builder: (context, AsyncSnapshot<List<ItemMasterModel>> snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return const Center(child: CircularProgressIndicator());
+                        case ConnectionState.done:
+
+                        default:
+                          if (!snapshot.hasData) {
+                            return const Center(child: Text('Products is Empty!'));
+                          }
+                          productsNotifier.value = snapshot.data!;
+
+                          if (itemsList.isEmpty) {
+                            itemsList = snapshot.data!;
+                          }
+                          return ValueListenableBuilder(
+                              valueListenable: productsNotifier,
+                              builder: (context, List<ItemMasterModel> items, _) {
+                                return items.isNotEmpty
+                                    ? ListView.builder(
+                                        itemCount: items.length,
+                                        itemBuilder: (BuildContext context, int index) {
+                                          return InkWell(
+                                            child: ItemCardWidget(
+                                              index: index,
+                                              product: items[index],
+                                            ),
+                                            onTap: () async {
+                                              // Preview Barcode
+                                              await barcodePreview(context, product: items[index]);
+                                            },
+                                          );
+                                        },
+                                      )
+                                    : const Center(child: Text('Products is Empty!'));
+                              });
+                      }
+                    }),
+              ),
             ],
           ),
+        ));
+  }
+
+//==================== Barcode Preview ====================
+  Future<void> barcodePreview(BuildContext context, {required ItemMasterModel product}) async {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text('Preview!', style: kText12, textAlign: TextAlign.center),
+            kHeight5,
+            //===== Barcode Preview =====
+            Card(
+              shadowColor: mainColor,
+              elevation: 5,
+              child: Padding(
+                padding: kPadding10,
+                child: BarcodeWidget(
+                  data: product.itemCode,
+                  barcode: Barcode.code128(),
+                  width: 200,
+                  height: 100,
+                  textPadding: 5,
+                ),
+              ),
+            ),
+            //===== Item Name & Item Price =====
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Text('Name: ', style: kText12Lite),
+                      Text(
+                        product.itemName,
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text('Price: ', style: kText12Lite),
+                      FittedBox(
+                        child: Text(
+                          Converter.currency.format(num.parse(product.sellingPrice)),
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton.icon(
+            onPressed: () async => await printBarcode(itemCode: product.itemCode),
+            icon: const Icon(Icons.print_outlined),
+            label: const Text('Print'),
+          ),
+        ],
       ),
     );
   }
 
-  void onPrint() {
-    final items = itemNotifier.value;
-    final quantities = _quantityControllers;
-    num totalQuantity = 0;
+  //========== Print Barcode ==========
+  Future<void> printBarcode({required String itemCode}) async {
+    final pw.Document pdf = pw.Document();
 
-    if (items.isNotEmpty) {
-      for (var i = 0; i < quantities.length; i++) {
-        totalQuantity += num.parse(quantities[i].value.text);
-      }
+    //========== Pdf Generation ==========
+    pdf.addPage(
+      pw.Page(
+        margin: const pw.EdgeInsets.all(30),
+        pageFormat: PdfPageFormat.a4,
+        textDirection: pw.TextDirection.rtl,
+        build: (context) {
+          return pw.BarcodeWidget(
+            data: itemCode,
+            barcode: Barcode.code128(),
+            width: PdfPageFormat.inch * 1.469,
+            height: PdfPageFormat.inch * 1.02,
+            textPadding: 5,
+          );
+        },
+      ),
+    );
 
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          // contentPadding: const EdgeInsets.all(20),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Preview!',
-                style: kText12,
-              ),
-              kHeight5,
-              Card(
-                shadowColor: mainColor,
-                elevation: 5,
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            BarcodeWidget(
-                              data: items.first.itemCode,
-                              barcode: Barcode.code128(),
-                              width: 200,
-                              height: 100,
-                              textPadding: 5,
-                            ),
-                            kHeight5,
-                            Text(
-                              items.first.itemName,
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                              maxLines: 2,
-                              textAlign: TextAlign.center,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            FittedBox(
-                              child: Text(
-                                Converter.currency.format(num.parse(items.first.sellingPrice)),
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              kHeight15,
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Expanded(
-                        flex: 3,
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            'Total Products',
-                            style: kText12Bold,
-                            textAlign: TextAlign.start,
-                          ),
-                        ),
-                      ),
-                      const Text(
-                        ' :  ',
-                        style: kText12Bold,
-                        textAlign: TextAlign.start,
-                      ),
-                      Expanded(
-                        flex: 4,
-                        child: Text(
-                          '${items.length}',
-                          style: kText12Bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Expanded(
-                        flex: 3,
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            'Total Quantity',
-                            style: kText12Bold,
-                            textAlign: TextAlign.start,
-                          ),
-                        ),
-                      ),
-                      const Text(
-                        ' :  ',
-                        style: kText12Bold,
-                        textAlign: TextAlign.start,
-                      ),
-                      Expanded(
-                        flex: 4,
-                        child: Text(
-                          '$totalQuantity',
-                          style: kText12Bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            TextButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.print_outlined),
-              label: const Text('Print'),
-            ),
-          ],
-        ),
-      );
-    } else {
-      _productFocusNode.requestFocus();
-      kSnackBar(
-        context: context,
-        content: 'Please select any Product!',
-      );
-    }
+    //========== Pdf Print ==========
+    await Printing.layoutPdf(
+      name: 'barcode',
+      onLayout: (PdfPageFormat format) async => await pdf.save(),
+    );
   }
 }

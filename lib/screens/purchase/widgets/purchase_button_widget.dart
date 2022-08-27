@@ -35,16 +35,6 @@ class PurchaseButtonsWidget extends ConsumerWidget {
     Size _screenSize = MediaQuery.of(context).size;
     final bool isSmall = DeviceUtil.isSmall;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      try {
-        // await PurchaseDatabase.instance.getAllPurchases();
-        // await PurchaseItemsDatabase.instance.getAllPurchaseItems();
-        // await TransactionDatabase.instance.getAllTransactions();
-      } catch (e) {
-        log(e.toString());
-      }
-    });
-
     return Column(
       children: [
         Container(

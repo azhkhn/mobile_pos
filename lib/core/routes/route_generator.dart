@@ -157,7 +157,7 @@ class RouteGenerator {
       case routeVat:
         return MaterialPageRoute(builder: (_) => VatScreen());
       case routeBarcode:
-        return MaterialPageRoute(builder: (_) => const ScreenBarcode());
+        return MaterialPageRoute(builder: (_) => ScreenBarcode());
 
       //======================================================================================
       //===================================== Customers ======================================
