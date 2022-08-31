@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/routes/router.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/routes/router.dart';
 
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
-import 'package:shop_ez/widgets/container/background_container_widget.dart';
-import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/widgets/button_widgets/material_button_widget.dart';
+import 'package:mobile_pos/widgets/container/background_container_widget.dart';
+import 'package:mobile_pos/widgets/padding_widget/item_screen_padding_widget.dart';
 
 class ScreenUserManage extends StatelessWidget {
   const ScreenUserManage({

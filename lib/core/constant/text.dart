@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/utils/device/device.dart';
 import 'package:sizer/sizer.dart';
 
 //==================== Constant Text ====================

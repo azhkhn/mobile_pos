@@ -4,16 +4,16 @@ import 'dart:convert';
 import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/db/db_functions/brand/brand_database.dart';
-import 'package:shop_ez/db/db_functions/category/category_db.dart';
-import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
-import 'package:shop_ez/db/db_functions/sub_category/sub_category_db.dart';
-import 'package:shop_ez/model/brand/brand_model.dart';
-import 'package:shop_ez/model/category/category_model.dart';
-import 'package:shop_ez/screens/stock/screen_stock.dart';
-import 'package:shop_ez/widgets/dropdown_field_widget/dropdown_field_widget.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/db/db_functions/brand/brand_database.dart';
+import 'package:mobile_pos/db/db_functions/category/category_db.dart';
+import 'package:mobile_pos/db/db_functions/item_master/item_master_database.dart';
+import 'package:mobile_pos/db/db_functions/sub_category/sub_category_db.dart';
+import 'package:mobile_pos/model/brand/brand_model.dart';
+import 'package:mobile_pos/model/category/category_model.dart';
+import 'package:mobile_pos/screens/stock/screen_stock.dart';
+import 'package:mobile_pos/widgets/dropdown_field_widget/dropdown_field_widget.dart';
 
 class StockFilterBottomSheet extends StatelessWidget {
   StockFilterBottomSheet({

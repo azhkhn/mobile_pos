@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/screens/sales_return/widgets/sales_return_side_widget.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/screens/sales_return/widgets/sales_return_side_widget.dart';
+import 'package:mobile_pos/core/utils/device/device.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
 
 class SalesReturn extends StatelessWidget {
   const SalesReturn({Key? key}) : super(key: key);

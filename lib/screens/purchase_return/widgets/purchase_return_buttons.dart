@@ -1,22 +1,22 @@
 import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
-import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
-import 'package:shop_ez/core/utils/user/user.dart';
-import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
-import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
-import 'package:shop_ez/db/db_functions/purchase_return/purchase_return_database.dart';
-import 'package:shop_ez/db/db_functions/purchase_return/purchase_return_items_database.dart';
-import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
-import 'package:shop_ez/model/purchase/purchase_model.dart';
-import 'package:shop_ez/model/purchase_return/purchase_return_items_modal.dart';
-import 'package:shop_ez/model/purchase_return/purchase_return_modal.dart';
-import 'package:shop_ez/model/transactions/transactions_model.dart';
-import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_product_side.dart';
-import 'package:shop_ez/screens/purchase_return/widgets/purchase_return_side.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/utils/device/device.dart';
+import 'package:mobile_pos/widgets/alertdialog/custom_alert.dart';
+import 'package:mobile_pos/core/utils/snackbar/snackbar.dart';
+import 'package:mobile_pos/core/utils/user/user.dart';
+import 'package:mobile_pos/db/db_functions/item_master/item_master_database.dart';
+import 'package:mobile_pos/db/db_functions/purchase/purchase_database.dart';
+import 'package:mobile_pos/db/db_functions/purchase_return/purchase_return_database.dart';
+import 'package:mobile_pos/db/db_functions/purchase_return/purchase_return_items_database.dart';
+import 'package:mobile_pos/db/db_functions/transactions/transactions_database.dart';
+import 'package:mobile_pos/model/purchase/purchase_model.dart';
+import 'package:mobile_pos/model/purchase_return/purchase_return_items_modal.dart';
+import 'package:mobile_pos/model/purchase_return/purchase_return_modal.dart';
+import 'package:mobile_pos/model/transactions/transactions_model.dart';
+import 'package:mobile_pos/screens/purchase_return/widgets/purchase_return_product_side.dart';
+import 'package:mobile_pos/screens/purchase_return/widgets/purchase_return_side.dart';
 
 import '../../../core/constant/sizes.dart';
 import '../../../core/utils/converters/converters.dart';

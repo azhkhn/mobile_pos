@@ -2,9 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/core/utils/validators/validators.dart';
-import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_details_table_widget.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/core/utils/validators/validators.dart';
+import 'package:mobile_pos/screens/payments/partial_payment/widgets/payment_details_table_widget.dart';
 
 import '../../../../core/constant/colors.dart';
 import '../../../../core/constant/sizes.dart';

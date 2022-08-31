@@ -1,6 +1,6 @@
 import 'dart:developer';
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/purchase_return/purchase_return_modal.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/purchase_return/purchase_return_modal.dart';
 
 class PurchaseReturnDatabase {
   static final PurchaseReturnDatabase instance = PurchaseReturnDatabase._init();

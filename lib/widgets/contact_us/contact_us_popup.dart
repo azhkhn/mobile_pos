@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/widgets/alertdialog/custom_alert.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactUsPopup extends StatelessWidget {

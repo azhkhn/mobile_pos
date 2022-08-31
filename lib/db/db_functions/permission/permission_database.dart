@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/permission/permission_model.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/permission/permission_model.dart';
 
 class PermissionDatabase {
   static final PermissionDatabase instance = PermissionDatabase._init();

@@ -3,17 +3,17 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/core/utils/device/date_time.dart';
-import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
-import 'package:shop_ez/screens/reports/pages/sales_tax_report/widgets/sales_tax_report_card.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
-import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/routes/router.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/core/utils/device/date_time.dart';
+import 'package:mobile_pos/db/db_functions/sales/sales_database.dart';
+import 'package:mobile_pos/model/sales/sales_model.dart';
+import 'package:mobile_pos/screens/reports/pages/sales_tax_report/widgets/sales_tax_report_card.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/widgets/padding_widget/item_screen_padding_widget.dart';
+import 'package:mobile_pos/widgets/text_field_widgets/text_field_widgets.dart';
 
 class ScreenSalesTaxReport extends StatelessWidget {
   ScreenSalesTaxReport({

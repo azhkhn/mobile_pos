@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/converters/converters.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
 
 class TaxSummaryCard extends StatelessWidget {
   const TaxSummaryCard({

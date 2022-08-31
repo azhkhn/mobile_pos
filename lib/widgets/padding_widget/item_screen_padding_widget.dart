@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
 
 class ItemScreenPaddingWidget extends StatelessWidget {
   const ItemScreenPaddingWidget({

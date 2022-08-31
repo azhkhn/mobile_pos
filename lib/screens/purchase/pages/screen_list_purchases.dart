@@ -4,18 +4,18 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
-import 'package:shop_ez/model/purchase/purchase_model.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/routes/router.dart';
+import 'package:mobile_pos/db/db_functions/purchase/purchase_database.dart';
+import 'package:mobile_pos/model/purchase/purchase_model.dart';
 
-import 'package:shop_ez/screens/purchase/widgets/purchase_card_widget.dart';
-import 'package:shop_ez/screens/purchase/widgets/purchase_list_filter.dart';
-import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
+import 'package:mobile_pos/screens/purchase/widgets/purchase_card_widget.dart';
+import 'package:mobile_pos/screens/purchase/widgets/purchase_list_filter.dart';
+import 'package:mobile_pos/widgets/alertdialog/custom_popup_options.dart';
 
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/widgets/padding_widget/item_screen_padding_widget.dart';
 
 final AutoDisposeFutureProvider<List<PurchaseModel>> futurePurchasesProvider = FutureProvider.autoDispose<List<PurchaseModel>>((ref) async {
   final List<PurchaseModel> purchasesList = await PurchaseDatabase.instance.getAllPurchases();

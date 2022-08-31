@@ -8,17 +8,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
-import 'package:shop_ez/core/utils/user/user.dart';
-import 'package:shop_ez/screens/home/widgets/home_card_widget.dart';
-import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/routes/router.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/core/utils/snackbar/snackbar.dart';
+import 'package:mobile_pos/core/utils/user/user.dart';
+import 'package:mobile_pos/screens/home/widgets/home_card_widget.dart';
+import 'package:mobile_pos/widgets/alertdialog/custom_alert.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/widgets/button_widgets/material_button_widget.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ScreenDatabase extends ConsumerWidget {

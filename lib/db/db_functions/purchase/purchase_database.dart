@@ -1,7 +1,7 @@
 import 'dart:developer';
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/purchase/purchase_model.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/purchase/purchase_model.dart';
 
 class PurchaseDatabase {
   static final PurchaseDatabase instance = PurchaseDatabase._init();

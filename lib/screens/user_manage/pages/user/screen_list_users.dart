@@ -3,19 +3,19 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/user/user.dart';
-import 'package:shop_ez/db/db_functions/auth/user_db.dart';
-import 'package:shop_ez/db/db_functions/group/group_database.dart';
-import 'package:shop_ez/model/auth/user_model.dart';
-import 'package:shop_ez/model/group/group_model.dart';
-import 'package:shop_ez/screens/user_manage/widgets/user_card_widget.dart';
-import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/container/background_container_widget.dart';
-import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/routes/router.dart';
+import 'package:mobile_pos/core/utils/user/user.dart';
+import 'package:mobile_pos/db/db_functions/auth/user_db.dart';
+import 'package:mobile_pos/db/db_functions/group/group_database.dart';
+import 'package:mobile_pos/model/auth/user_model.dart';
+import 'package:mobile_pos/model/group/group_model.dart';
+import 'package:mobile_pos/screens/user_manage/widgets/user_card_widget.dart';
+import 'package:mobile_pos/widgets/alertdialog/custom_popup_options.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/widgets/container/background_container_widget.dart';
+import 'package:mobile_pos/widgets/padding_widget/item_screen_padding_widget.dart';
 
 class ScreenUserList extends StatelessWidget {
   ScreenUserList({

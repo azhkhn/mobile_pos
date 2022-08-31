@@ -1,19 +1,19 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/routes/route_generator.dart';
-import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/core/utils/user/user.dart';
-import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
-import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
-import 'package:shop_ez/model/cash_register/cash_register_model.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
-import 'package:shop_ez/model/transactions/transactions_model.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/container/background_container_widget.dart';
-import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/routes/route_generator.dart';
+import 'package:mobile_pos/core/routes/router.dart';
+import 'package:mobile_pos/core/utils/device/device.dart';
+import 'package:mobile_pos/core/utils/user/user.dart';
+import 'package:mobile_pos/db/db_functions/sales/sales_database.dart';
+import 'package:mobile_pos/db/db_functions/transactions/transactions_database.dart';
+import 'package:mobile_pos/model/cash_register/cash_register_model.dart';
+import 'package:mobile_pos/model/sales/sales_model.dart';
+import 'package:mobile_pos/model/transactions/transactions_model.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/widgets/container/background_container_widget.dart';
+import 'package:mobile_pos/widgets/padding_widget/item_screen_padding_widget.dart';
 
 import '../../../core/constant/sizes.dart';
 import '../widgets/sales_options_card.dart';

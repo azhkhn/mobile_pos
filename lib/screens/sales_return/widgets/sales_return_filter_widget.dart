@@ -5,14 +5,14 @@ import 'dart:developer' show log;
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
-import 'package:shop_ez/db/db_functions/sales_return/sales_return_database.dart';
-import 'package:shop_ez/model/customer/customer_model.dart';
-import 'package:shop_ez/model/sales_return/sales_return_model.dart';
-import 'package:shop_ez/screens/sales_return/pages/screen_sales_return_list.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/utils/device/device.dart';
+import 'package:mobile_pos/db/db_functions/customer/customer_database.dart';
+import 'package:mobile_pos/db/db_functions/sales_return/sales_return_database.dart';
+import 'package:mobile_pos/model/customer/customer_model.dart';
+import 'package:mobile_pos/model/sales_return/sales_return_model.dart';
+import 'package:mobile_pos/screens/sales_return/pages/screen_sales_return_list.dart';
 
 class SalesReturnListFilter extends StatelessWidget {
   SalesReturnListFilter({Key? key}) : super(key: key);

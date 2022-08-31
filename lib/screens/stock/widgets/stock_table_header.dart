@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
 
 import '../../../core/utils/device/device.dart';
 
@@ -30,10 +30,7 @@ class StockTableHeader extends StatelessWidget {
               'Name',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: DeviceUtil.isTablet ? 13 : 12,
-                  color: kWhite,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: DeviceUtil.isTablet ? 13 : 12, color: kWhite, fontWeight: FontWeight.bold),
               minFontSize: 12,
               maxFontSize: 13,
             ),
@@ -46,10 +43,7 @@ class StockTableHeader extends StatelessWidget {
               'Category',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: DeviceUtil.isTablet ? 13 : 12,
-                  color: kWhite,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: DeviceUtil.isTablet ? 13 : 12, color: kWhite, fontWeight: FontWeight.bold),
               minFontSize: 12,
               maxFontSize: 13,
             ),
@@ -62,10 +56,7 @@ class StockTableHeader extends StatelessWidget {
               'Cost',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: DeviceUtil.isTablet ? 13 : 12,
-                  color: kWhite,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: DeviceUtil.isTablet ? 13 : 12, color: kWhite, fontWeight: FontWeight.bold),
               minFontSize: 12,
               maxFontSize: 13,
             ),
@@ -78,10 +69,7 @@ class StockTableHeader extends StatelessWidget {
               'Price',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: DeviceUtil.isTablet ? 13 : 12,
-                  color: kWhite,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: DeviceUtil.isTablet ? 13 : 12, color: kWhite, fontWeight: FontWeight.bold),
               minFontSize: 12,
               maxFontSize: 13,
             ),
@@ -94,10 +82,7 @@ class StockTableHeader extends StatelessWidget {
               'Quantity',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: DeviceUtil.isTablet ? 13 : 12,
-                  color: kWhite,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: DeviceUtil.isTablet ? 13 : 12, color: kWhite, fontWeight: FontWeight.bold),
               minFontSize: 12,
               maxFontSize: 13,
             ),

@@ -1,20 +1,20 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/images.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
-import 'package:shop_ez/db/db_functions/auth/user_db.dart';
-import 'package:shop_ez/db/db_functions/group/group_database.dart';
-import 'package:shop_ez/db/db_functions/permission/permission_database.dart';
-import 'package:shop_ez/model/auth/user_model.dart';
-import 'package:shop_ez/model/group/group_model.dart';
-import 'package:shop_ez/model/permission/permission_model.dart';
-import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
-import 'package:shop_ez/widgets/wave_clip.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/images.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/routes/router.dart';
+import 'package:mobile_pos/core/utils/snackbar/snackbar.dart';
+import 'package:mobile_pos/db/db_functions/auth/user_db.dart';
+import 'package:mobile_pos/db/db_functions/group/group_database.dart';
+import 'package:mobile_pos/db/db_functions/permission/permission_database.dart';
+import 'package:mobile_pos/model/auth/user_model.dart';
+import 'package:mobile_pos/model/group/group_model.dart';
+import 'package:mobile_pos/model/permission/permission_model.dart';
+import 'package:mobile_pos/widgets/text_field_widgets/text_field_widgets.dart';
+import 'package:mobile_pos/widgets/wave_clip.dart';
 
 class ScreenLogin extends StatelessWidget {
   ScreenLogin({Key? key}) : super(key: key);

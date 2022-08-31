@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/model/customer/customer_model.dart';
+import 'package:mobile_pos/model/customer/customer_model.dart';
 
 import '../../../core/constant/sizes.dart';
 import '../../../core/constant/text.dart';

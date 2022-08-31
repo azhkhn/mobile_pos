@@ -1,6 +1,6 @@
 {
-    "name": "shop_ez",
-    "short_name": "shop_ez",
+    "name": "mobile_pos",
+    "short_name": "mobile_pos",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

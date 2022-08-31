@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/group/group_model.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/group/group_model.dart';
 
 class GroupDatabase {
   static final GroupDatabase instance = GroupDatabase._init();

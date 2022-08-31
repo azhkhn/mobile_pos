@@ -6,18 +6,18 @@ import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:pdf/pdf.dart' show PdfColors, PdfPageFormat;
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart' show PdfGoogleFonts;
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/core/utils/user/user.dart';
-import 'package:shop_ez/core/utils/vat/vat.dart';
-import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
-import 'package:shop_ez/db/db_functions/sales/sales_items_database.dart';
-import 'package:shop_ez/db/db_functions/sales_return/sales_return_items_database.dart';
-import 'package:shop_ez/infrastructure/invoice/utils/e-invoice_generate.dart';
-import 'package:shop_ez/model/business_profile/business_profile_model.dart';
-import 'package:shop_ez/model/customer/customer_model.dart';
-import 'package:shop_ez/model/sales/sales_items_model.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
-import 'package:shop_ez/model/sales_return/sales_return_model.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/core/utils/user/user.dart';
+import 'package:mobile_pos/core/utils/vat/vat.dart';
+import 'package:mobile_pos/db/db_functions/customer/customer_database.dart';
+import 'package:mobile_pos/db/db_functions/sales/sales_items_database.dart';
+import 'package:mobile_pos/db/db_functions/sales_return/sales_return_items_database.dart';
+import 'package:mobile_pos/infrastructure/invoice/utils/e-invoice_generate.dart';
+import 'package:mobile_pos/model/business_profile/business_profile_model.dart';
+import 'package:mobile_pos/model/customer/customer_model.dart';
+import 'package:mobile_pos/model/sales/sales_items_model.dart';
+import 'package:mobile_pos/model/sales/sales_model.dart';
+import 'package:mobile_pos/model/sales_return/sales_return_model.dart';
 
 class PdfSalesReceipt {
   static Future<pw.Document> generate({SalesModel? salesModel, SalesReturnModal? salesReturnModal, bool isReturn = false}) async {

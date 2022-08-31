@@ -1,12 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
-import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
-import 'package:shop_ez/model/purchase/purchase_model.dart';
-import 'package:shop_ez/model/transactions/transactions_model.dart';
+import 'package:mobile_pos/core/routes/router.dart';
+import 'package:mobile_pos/core/utils/device/device.dart';
+import 'package:mobile_pos/db/db_functions/purchase/purchase_database.dart';
+import 'package:mobile_pos/db/db_functions/transactions/transactions_database.dart';
+import 'package:mobile_pos/model/purchase/purchase_model.dart';
+import 'package:mobile_pos/model/transactions/transactions_model.dart';
 
 import '../../../core/constant/colors.dart';
 import '../../../core/constant/sizes.dart';

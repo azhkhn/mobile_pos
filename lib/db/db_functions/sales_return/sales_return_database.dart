@@ -1,6 +1,6 @@
 import 'dart:developer';
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/sales_return/sales_return_model.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/sales_return/sales_return_model.dart';
 
 class SalesReturnDatabase {
   static final SalesReturnDatabase instance = SalesReturnDatabase._init();
@@ -11,8 +11,8 @@ class SalesReturnDatabase {
   Future<List> createSalesReturn(SalesReturnModal _salesReturnModel) async {
     final db = await dbInstance.database;
 
-    final _saleReturn = await db.rawQuery(
-        '''select * from $tableSalesReturn where ${SalesReturnFields.invoiceNumber} = "${_salesReturnModel.invoiceNumber}"''');
+    final _saleReturn =
+        await db.rawQuery('''select * from $tableSalesReturn where ${SalesReturnFields.invoiceNumber} = "${_salesReturnModel.invoiceNumber}"''');
 
     if (_saleReturn.isNotEmpty) {
       throw 'Invoice Number Already Exist!';
@@ -26,8 +26,7 @@ class SalesReturnDatabase {
         log('Recent id == $_recentSaleId');
 
         final String _invoiceNumber = 'SR-${_recentSaleId! + 1}';
-        final _newSale =
-            _salesReturnModel.copyWith(invoiceNumber: _invoiceNumber);
+        final _newSale = _salesReturnModel.copyWith(invoiceNumber: _invoiceNumber);
         log('New Invoice Number == $_invoiceNumber');
 
         final id = await db.insert(tableSalesReturn, _newSale.toJson());
@@ -90,15 +89,11 @@ class SalesReturnDatabase {
   // }
 
   //========== Get All Sales Return By Query ==========
-  Future<List<SalesReturnModal>> getSalesReturnByInvoiceSuggestions(
-      String pattern) async {
+  Future<List<SalesReturnModal>> getSalesReturnByInvoiceSuggestions(String pattern) async {
     final db = await dbInstance.database;
-    final res = await db.rawQuery(
-        '''select * from $tableSalesReturn where ${SalesReturnFields.invoiceNumber} LIKE "%$pattern%"''');
+    final res = await db.rawQuery('''select * from $tableSalesReturn where ${SalesReturnFields.invoiceNumber} LIKE "%$pattern%"''');
 
-    List<SalesReturnModal> list = res.isNotEmpty
-        ? res.map((c) => SalesReturnModal.fromJson(c)).toList()
-        : [];
+    List<SalesReturnModal> list = res.isNotEmpty ? res.map((c) => SalesReturnModal.fromJson(c)).toList() : [];
 
     return list;
   }
@@ -112,9 +107,7 @@ class SalesReturnDatabase {
       whereArgs: [id],
     );
 
-    List<SalesReturnModal> list = res.isNotEmpty
-        ? res.map((c) => SalesReturnModal.fromJson(c)).toList()
-        : [];
+    List<SalesReturnModal> list = res.isNotEmpty ? res.map((c) => SalesReturnModal.fromJson(c)).toList() : [];
 
     return list;
   }
@@ -126,8 +119,7 @@ class SalesReturnDatabase {
     // db.delete(tableSalesReturnReturn);
     log('Sales Returns == $_result');
     if (_result.isNotEmpty) {
-      final _salesReturn =
-          _result.map((json) => SalesReturnModal.fromJson(json)).toList();
+      final _salesReturn = _result.map((json) => SalesReturnModal.fromJson(json)).toList();
       return _salesReturn;
     } else {
       throw 'Sales Return is Empty!';

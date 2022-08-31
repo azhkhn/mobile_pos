@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/screens/pos/widgets/product_side_widget.dart';
-import 'package:shop_ez/screens/pos/widgets/sale_side_widget.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/utils/device/device.dart';
+import 'package:mobile_pos/screens/pos/widgets/product_side_widget.dart';
+import 'package:mobile_pos/screens/pos/widgets/sale_side_widget.dart';
 
 import '../../core/constant/colors.dart';
 

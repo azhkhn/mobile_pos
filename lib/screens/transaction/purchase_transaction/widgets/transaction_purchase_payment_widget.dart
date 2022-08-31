@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/core/utils/validators/validators.dart';
-import 'package:shop_ez/screens/transaction/purchase_transaction/widgets/transaction_purchase_details_table.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/core/utils/validators/validators.dart';
+import 'package:mobile_pos/screens/transaction/purchase_transaction/widgets/transaction_purchase_details_table.dart';
 
 import '../../../../core/constant/colors.dart';
 import '../../../../core/constant/sizes.dart';

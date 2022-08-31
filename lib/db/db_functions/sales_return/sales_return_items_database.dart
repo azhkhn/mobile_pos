@@ -1,6 +1,6 @@
 import 'dart:developer';
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/sales_return/sales_return_items_model.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/sales_return/sales_return_items_model.dart';
 
 class SalesReturnItemsDatabase {
   static final SalesReturnItemsDatabase instance = SalesReturnItemsDatabase._init();

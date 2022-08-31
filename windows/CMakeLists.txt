@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(shop_ez LANGUAGES CXX)
+project(mobile_pos LANGUAGES CXX)
 
-set(BINARY_NAME "shop_ez")
+set(BINARY_NAME "mobile_pos")
 
 cmake_policy(SET CMP0063 NEW)
 

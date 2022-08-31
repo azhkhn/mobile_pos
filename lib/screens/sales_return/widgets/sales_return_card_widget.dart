@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:shop_ez/model/sales_return/sales_return_model.dart';
+import 'package:mobile_pos/model/sales_return/sales_return_model.dart';
 
 import '../../../core/constant/sizes.dart';
 import '../../../core/constant/text.dart';

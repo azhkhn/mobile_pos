@@ -1,10 +1,10 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member, must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/model/transactions/transactions_model.dart';
-import 'package:shop_ez/screens/reports/pages/pending_payment/pages/screen_account_payable.dart';
-import 'package:shop_ez/screens/reports/pages/pending_payment/pages/screen_account_receivable.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/model/transactions/transactions_model.dart';
+import 'package:mobile_pos/screens/reports/pages/pending_payment/pages/screen_account_payable.dart';
+import 'package:mobile_pos/screens/reports/pages/pending_payment/pages/screen_account_receivable.dart';
 
 class ScreenPendingInvoice extends StatelessWidget {
   ScreenPendingInvoice({Key? key}) : super(key: key);

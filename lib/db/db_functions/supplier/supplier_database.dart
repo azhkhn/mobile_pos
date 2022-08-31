@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/supplier/supplier_model.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/supplier/supplier_model.dart';
 
 class SupplierDatabase {
   static final SupplierDatabase instance = SupplierDatabase._init();

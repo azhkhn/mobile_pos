@@ -3,17 +3,17 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/icons.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/validators/validators.dart';
-import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
-import 'package:shop_ez/model/vat/vat_model.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
-import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
-import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/icons.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/utils/validators/validators.dart';
+import 'package:mobile_pos/db/db_functions/vat/vat_database.dart';
+import 'package:mobile_pos/model/vat/vat_model.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/widgets/button_widgets/material_button_widget.dart';
+import 'package:mobile_pos/widgets/padding_widget/item_screen_padding_widget.dart';
+import 'package:mobile_pos/widgets/text_field_widgets/text_field_widgets.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../core/utils/snackbar/snackbar.dart';

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/screens/item_master/screen_add_product.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/routes/router.dart';
+import 'package:mobile_pos/core/utils/device/device.dart';
+import 'package:mobile_pos/screens/item_master/screen_add_product.dart';
 import 'package:sizer/sizer.dart';
 
 class FloatingAddOptionsAddProduct extends ConsumerWidget {

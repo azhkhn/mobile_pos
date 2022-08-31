@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shop_ez/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
 
 class TextFeildWidget extends StatelessWidget {
   const TextFeildWidget(

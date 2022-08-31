@@ -1,8 +1,8 @@
 import 'dart:developer';
 
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/expense/expense_model.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/expense/expense_model.dart';
 
 class ExpenseDatabase {
   static final ExpenseDatabase instance = ExpenseDatabase._init();

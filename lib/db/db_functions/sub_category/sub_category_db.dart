@@ -3,8 +3,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/sub-category/sub_category_model.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/sub-category/sub_category_model.dart';
 
 class SubCategoryDatabase {
   static final SubCategoryDatabase instance = SubCategoryDatabase._init();

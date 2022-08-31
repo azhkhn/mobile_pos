@@ -2,8 +2,8 @@
 
 import 'dart:developer' show log;
 import 'package:flutter/material.dart';
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/expense/expense_category_model.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/expense/expense_category_model.dart';
 
 class ExpenseCategoryDatabase {
   static final ExpenseCategoryDatabase instance = ExpenseCategoryDatabase._init();

@@ -4,19 +4,19 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
-import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
-import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
-import 'package:shop_ez/model/customer/customer_model.dart';
-import 'package:shop_ez/model/supplier/supplier_model.dart';
-import 'package:shop_ez/model/transactions/transactions_model.dart';
-import 'package:shop_ez/screens/reports/pages/transactions_report/widgets/transactions_report_card.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
-import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/db/db_functions/customer/customer_database.dart';
+import 'package:mobile_pos/db/db_functions/supplier/supplier_database.dart';
+import 'package:mobile_pos/db/db_functions/transactions/transactions_database.dart';
+import 'package:mobile_pos/model/customer/customer_model.dart';
+import 'package:mobile_pos/model/supplier/supplier_model.dart';
+import 'package:mobile_pos/model/transactions/transactions_model.dart';
+import 'package:mobile_pos/screens/reports/pages/transactions_report/widgets/transactions_report_card.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/widgets/padding_widget/item_screen_padding_widget.dart';
+import 'package:mobile_pos/widgets/text_field_widgets/text_field_widgets.dart';
 
 class ScreenTransactionsReport extends StatelessWidget {
   ScreenTransactionsReport({Key? key}) : super(key: key);

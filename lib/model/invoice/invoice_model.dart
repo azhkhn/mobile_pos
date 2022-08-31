@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:mobile_pos/model/sales/sales_model.dart';
 
 part 'invoice_model.freezed.dart';
 part 'invoice_model.g.dart';
@@ -17,8 +17,7 @@ class InvoiceItemModel with _$InvoiceItemModel {
     required String totalAmount,
   }) = _InvoiceItem;
 
-  factory InvoiceItemModel.fromJson(Map<String, dynamic> json) =>
-      _$InvoiceItemModelFromJson(json);
+  factory InvoiceItemModel.fromJson(Map<String, dynamic> json) => _$InvoiceItemModelFromJson(json);
 }
 
 class InvoiceModel {

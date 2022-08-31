@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/utils/converters/converters.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
 import '../../../../core/utils/device/device.dart';
 
 class PaymentDetailsTableWidget extends StatelessWidget {

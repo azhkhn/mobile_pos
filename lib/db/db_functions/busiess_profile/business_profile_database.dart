@@ -1,6 +1,6 @@
 import 'dart:developer';
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/business_profile/business_profile_model.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/business_profile/business_profile_model.dart';
 
 class BusinessProfileDatabase {
   static final BusinessProfileDatabase instance = BusinessProfileDatabase._init();

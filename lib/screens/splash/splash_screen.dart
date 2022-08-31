@@ -4,12 +4,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/images.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/db/db_functions/auth/user_db.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/images.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/routes/router.dart';
+import 'package:mobile_pos/core/utils/device/device.dart';
+import 'package:mobile_pos/db/db_functions/auth/user_db.dart';
 
 class ScreenSplash extends StatelessWidget {
   ScreenSplash({Key? key}) : super(key: key);

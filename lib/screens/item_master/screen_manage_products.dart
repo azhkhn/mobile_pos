@@ -4,14 +4,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/db/db_functions/item_master/item_master_database.dart';
-import 'package:shop_ez/model/item_master/item_master_model.dart';
-import 'package:shop_ez/screens/item_master/widgets/item_card_widget.dart';
-import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/routes/router.dart';
+import 'package:mobile_pos/db/db_functions/item_master/item_master_database.dart';
+import 'package:mobile_pos/model/item_master/item_master_model.dart';
+import 'package:mobile_pos/screens/item_master/widgets/item_card_widget.dart';
+import 'package:mobile_pos/widgets/alertdialog/custom_popup_options.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
 
 class ScreenManageProducts extends StatelessWidget {
   ScreenManageProducts({Key? key}) : super(key: key);

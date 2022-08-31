@@ -4,14 +4,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/db/db_functions/purchase/purchase_database.dart';
-import 'package:shop_ez/model/purchase/purchase_model.dart';
-import 'package:shop_ez/screens/purchase/widgets/purchase_card_widget.dart';
-import 'package:shop_ez/screens/reports/pages/purchases_report/widgets/purchases_report_filter.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/db/db_functions/purchase/purchase_database.dart';
+import 'package:mobile_pos/model/purchase/purchase_model.dart';
+import 'package:mobile_pos/screens/purchase/widgets/purchase_card_widget.dart';
+import 'package:mobile_pos/screens/reports/pages/purchases_report/widgets/purchases_report_filter.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/widgets/padding_widget/item_screen_padding_widget.dart';
 
 //==================== Providers ====================
 final AutoDisposeStateProvider<bool> _filterProvider = StateProvider.autoDispose<bool>((ref) => false);

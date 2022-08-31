@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/model/expense/expense_model.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/model/expense/expense_model.dart';
 
 class ExpenseCard extends StatelessWidget {
   const ExpenseCard({Key? key, required this.index, required this.expense}) : super(key: key);

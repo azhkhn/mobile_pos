@@ -2,8 +2,8 @@
 
 import 'dart:developer' show log;
 import 'package:flutter/material.dart';
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/category/category_model.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/category/category_model.dart';
 
 class CategoryDatabase {
   static final CategoryDatabase instance = CategoryDatabase._init();

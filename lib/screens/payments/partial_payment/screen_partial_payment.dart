@@ -2,13 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
-import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_details_table_widget.dart';
-import 'package:shop_ez/screens/payments/partial_payment/widgets/quick_cash_widget.dart';
-import 'package:shop_ez/screens/pos/widgets/payment_buttons_widget.dart';
-import 'package:shop_ez/screens/purchase/widgets/purchase_button_widget.dart';
-import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
+import 'package:mobile_pos/core/utils/snackbar/snackbar.dart';
+import 'package:mobile_pos/model/sales/sales_model.dart';
+import 'package:mobile_pos/screens/payments/partial_payment/widgets/payment_details_table_widget.dart';
+import 'package:mobile_pos/screens/payments/partial_payment/widgets/quick_cash_widget.dart';
+import 'package:mobile_pos/screens/pos/widgets/payment_buttons_widget.dart';
+import 'package:mobile_pos/screens/purchase/widgets/purchase_button_widget.dart';
+import 'package:mobile_pos/widgets/button_widgets/material_button_widget.dart';
 import '../../../core/constant/sizes.dart';
 import 'widgets/payment_type_widget.dart';
 

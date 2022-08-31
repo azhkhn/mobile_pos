@@ -1,8 +1,8 @@
 import 'dart:developer' show log;
 
-import 'package:shop_ez/core/utils/user/user.dart';
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/cash_register/cash_register_model.dart';
+import 'package:mobile_pos/core/utils/user/user.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/cash_register/cash_register_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class CashRegisterDatabase {

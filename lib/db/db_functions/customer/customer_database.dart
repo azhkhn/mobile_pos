@@ -1,5 +1,5 @@
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/customer/customer_model.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/customer/customer_model.dart';
 import 'dart:developer' show log;
 
 class CustomerDatabase {

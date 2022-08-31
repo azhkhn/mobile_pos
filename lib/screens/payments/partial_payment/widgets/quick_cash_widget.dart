@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/screens/payments/partial_payment/widgets/payment_type_widget.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/screens/payments/partial_payment/widgets/payment_type_widget.dart';
 
 import '../../../../core/constant/sizes.dart';
 import '../../../../widgets/button_widgets/material_button_widget.dart';

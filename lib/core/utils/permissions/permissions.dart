@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/utils/snackbar/snackbar.dart';
 
 class PermissionUtils {
   static Future<bool> requestPermission(BuildContext context, {required PermissionWithService permission}) async {

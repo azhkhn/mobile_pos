@@ -1,4 +1,4 @@
-# shop_ez
+# mobile_pos
 
 A new Flutter project.
 

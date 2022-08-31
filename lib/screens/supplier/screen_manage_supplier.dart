@@ -4,18 +4,18 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
-import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
-import 'package:shop_ez/model/supplier/supplier_model.dart';
-import 'package:shop_ez/screens/pos/widgets/custom_bottom_sheet_widget.dart';
-import 'package:shop_ez/screens/supplier/widgets/supplier_card_widget.dart';
-import 'package:shop_ez/widgets/alertdialog/custom_popup_options.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/gesture_dismissible_widget/dismissible_widget.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/routes/router.dart';
+import 'package:mobile_pos/core/utils/snackbar/snackbar.dart';
+import 'package:mobile_pos/db/db_functions/supplier/supplier_database.dart';
+import 'package:mobile_pos/model/supplier/supplier_model.dart';
+import 'package:mobile_pos/screens/pos/widgets/custom_bottom_sheet_widget.dart';
+import 'package:mobile_pos/screens/supplier/widgets/supplier_card_widget.dart';
+import 'package:mobile_pos/widgets/alertdialog/custom_popup_options.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/widgets/gesture_dismissible_widget/dismissible_widget.dart';
 
 class SupplierManageScreen extends StatelessWidget {
   SupplierManageScreen({Key? key}) : super(key: key);

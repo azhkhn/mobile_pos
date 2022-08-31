@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shop_ez/core/routes/route_generator.dart';
-import 'package:shop_ez/core/routes/router.dart';
-import 'package:shop_ez/db/database.dart';
+import 'package:mobile_pos/core/routes/route_generator.dart';
+import 'package:mobile_pos/core/routes/router.dart';
+import 'package:mobile_pos/db/database.dart';
 import 'package:sizer/sizer.dart';
 
 void main() async {

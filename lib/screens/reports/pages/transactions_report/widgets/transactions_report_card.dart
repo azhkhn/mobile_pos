@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/db/db_functions/customer/customer_database.dart';
-import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
-import 'package:shop_ez/model/customer/customer_model.dart';
-import 'package:shop_ez/model/supplier/supplier_model.dart';
-import 'package:shop_ez/model/transactions/transactions_model.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/core/utils/device/device.dart';
+import 'package:mobile_pos/db/db_functions/customer/customer_database.dart';
+import 'package:mobile_pos/db/db_functions/supplier/supplier_database.dart';
+import 'package:mobile_pos/model/customer/customer_model.dart';
+import 'package:mobile_pos/model/supplier/supplier_model.dart';
+import 'package:mobile_pos/model/transactions/transactions_model.dart';
 
 class TransactionsReportCard extends StatelessWidget {
   TransactionsReportCard({Key? key, required this.index, required this.transactionsModel}) : super(key: key);

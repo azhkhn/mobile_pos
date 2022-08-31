@@ -1,7 +1,7 @@
-import 'package:shop_ez/db/database.dart';
+import 'package:mobile_pos/db/database.dart';
 import 'dart:developer' show log;
 
-import 'package:shop_ez/model/item_master/item_master_model.dart';
+import 'package:mobile_pos/model/item_master/item_master_model.dart';
 
 class ItemMasterDatabase {
   static final ItemMasterDatabase instance = ItemMasterDatabase._init();

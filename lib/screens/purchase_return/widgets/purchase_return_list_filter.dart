@@ -5,14 +5,14 @@ import 'dart:developer' show log;
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/device/device.dart';
-import 'package:shop_ez/db/db_functions/purchase_return/purchase_return_database.dart';
-import 'package:shop_ez/db/db_functions/supplier/supplier_database.dart';
-import 'package:shop_ez/model/purchase_return/purchase_return_modal.dart';
-import 'package:shop_ez/model/supplier/supplier_model.dart';
-import 'package:shop_ez/screens/purchase_return/pages/screen_purchase_return_list.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/utils/device/device.dart';
+import 'package:mobile_pos/db/db_functions/purchase_return/purchase_return_database.dart';
+import 'package:mobile_pos/db/db_functions/supplier/supplier_database.dart';
+import 'package:mobile_pos/model/purchase_return/purchase_return_modal.dart';
+import 'package:mobile_pos/model/supplier/supplier_model.dart';
+import 'package:mobile_pos/screens/purchase_return/pages/screen_purchase_return_list.dart';
 
 class PurchaseReturnListFilter extends StatelessWidget {
   PurchaseReturnListFilter({Key? key}) : super(key: key);

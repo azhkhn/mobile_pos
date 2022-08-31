@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'dart:typed_data' show BytesBuilder, Uint8List;
 import 'dart:convert' show Base64Encoder, utf8;
 
-import 'package:shop_ez/core/utils/converters/converters.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
 
 class EInvoiceGenerator {
   static String getEInvoiceCode({

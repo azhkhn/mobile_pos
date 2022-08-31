@@ -3,9 +3,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/utils/vat/vat.dart';
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/vat/vat_model.dart';
+import 'package:mobile_pos/core/utils/vat/vat.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/vat/vat_model.dart';
 
 class VatDatabase {
   static final VatDatabase instance = VatDatabase._init();

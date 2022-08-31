@@ -2,21 +2,21 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/screens/home/widgets/home_card_widget.dart';
-import 'package:shop_ez/widgets/alertdialog/custom_alert.dart';
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
-import 'package:shop_ez/db/db_functions/sales/sales_database.dart';
-import 'package:shop_ez/db/db_functions/transactions/transactions_database.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
-import 'package:shop_ez/model/transactions/transactions_model.dart';
-import 'package:shop_ez/screens/transaction/sales_transaction/widgets/transaction_sale_details_table.dart';
-import 'package:shop_ez/screens/transaction/sales_transaction/widgets/transaction_sale_payment_widget.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/screens/home/widgets/home_card_widget.dart';
+import 'package:mobile_pos/widgets/alertdialog/custom_alert.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/core/utils/snackbar/snackbar.dart';
+import 'package:mobile_pos/db/db_functions/sales/sales_database.dart';
+import 'package:mobile_pos/db/db_functions/transactions/transactions_database.dart';
+import 'package:mobile_pos/model/sales/sales_model.dart';
+import 'package:mobile_pos/model/transactions/transactions_model.dart';
+import 'package:mobile_pos/screens/transaction/sales_transaction/widgets/transaction_sale_details_table.dart';
+import 'package:mobile_pos/screens/transaction/sales_transaction/widgets/transaction_sale_payment_widget.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/widgets/button_widgets/material_button_widget.dart';
 
 class TransactionScreenSale extends ConsumerWidget {
   const TransactionScreenSale({Key? key, required this.salesModel}) : super(key: key);

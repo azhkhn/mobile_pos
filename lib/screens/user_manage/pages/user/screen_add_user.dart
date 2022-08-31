@@ -4,20 +4,20 @@ import 'dart:convert' show jsonDecode, jsonEncode;
 import 'dart:developer' show log;
 
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/snackbar/snackbar.dart';
-import 'package:shop_ez/core/utils/user/user.dart';
-import 'package:shop_ez/core/utils/validators/validators.dart';
-import 'package:shop_ez/db/db_functions/auth/user_db.dart';
-import 'package:shop_ez/db/db_functions/group/group_database.dart';
-import 'package:shop_ez/model/auth/user_model.dart';
-import 'package:shop_ez/model/group/group_model.dart';
-import 'package:shop_ez/widgets/app_bar/app_bar_widget.dart';
-import 'package:shop_ez/widgets/button_widgets/material_button_widget.dart';
-import 'package:shop_ez/widgets/dropdown_field_widget/dropdown_field_widget.dart';
-import 'package:shop_ez/widgets/padding_widget/item_screen_padding_widget.dart';
-import 'package:shop_ez/widgets/text_field_widgets/text_field_widgets.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/utils/snackbar/snackbar.dart';
+import 'package:mobile_pos/core/utils/user/user.dart';
+import 'package:mobile_pos/core/utils/validators/validators.dart';
+import 'package:mobile_pos/db/db_functions/auth/user_db.dart';
+import 'package:mobile_pos/db/db_functions/group/group_database.dart';
+import 'package:mobile_pos/model/auth/user_model.dart';
+import 'package:mobile_pos/model/group/group_model.dart';
+import 'package:mobile_pos/widgets/app_bar/app_bar_widget.dart';
+import 'package:mobile_pos/widgets/button_widgets/material_button_widget.dart';
+import 'package:mobile_pos/widgets/dropdown_field_widget/dropdown_field_widget.dart';
+import 'package:mobile_pos/widgets/padding_widget/item_screen_padding_widget.dart';
+import 'package:mobile_pos/widgets/text_field_widgets/text_field_widgets.dart';
 
 class ScreenAddUser extends StatelessWidget {
   ScreenAddUser({

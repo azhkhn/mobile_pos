@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:shop_ez/core/routes/router.dart';
+import 'package:mobile_pos/core/routes/router.dart';
 
 class ExpenseFloatingAddOptions extends StatelessWidget {
   const ExpenseFloatingAddOptions({

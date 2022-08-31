@@ -1,9 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/model/purchase/purchase_model.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/model/purchase/purchase_model.dart';
 
 class PurchaseTaxCardWidget extends StatelessWidget {
   const PurchaseTaxCardWidget({

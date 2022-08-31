@@ -1,8 +1,8 @@
 import 'dart:developer';
 
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/db/database.dart';
-import 'package:shop_ez/model/sales/sales_model.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/db/database.dart';
+import 'package:mobile_pos/model/sales/sales_model.dart';
 
 class SalesDatabase {
   static final SalesDatabase instance = SalesDatabase._init();

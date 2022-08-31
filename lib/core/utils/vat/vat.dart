@@ -1,8 +1,8 @@
 import 'dart:developer';
 
-import 'package:shop_ez/core/utils/converters/converters.dart';
-import 'package:shop_ez/db/db_functions/vat/vat_database.dart';
-import 'package:shop_ez/model/vat/vat_model.dart';
+import 'package:mobile_pos/core/utils/converters/converters.dart';
+import 'package:mobile_pos/db/db_functions/vat/vat_database.dart';
+import 'package:mobile_pos/model/vat/vat_model.dart';
 
 class VatCalculator {
 //==================== Calculate Exclusive Amount from Inclusive Amount ====================

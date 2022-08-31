@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
 
 class CustomBottomSheetWidget extends StatelessWidget {
   const CustomBottomSheetWidget({Key? key, this.supplier = false, this.model}) : super(key: key);

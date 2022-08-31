@@ -1,14 +1,14 @@
 import 'dart:developer' show log;
-import 'package:shop_ez/db/db_functions/busiess_profile/business_profile_database.dart';
-import 'package:shop_ez/db/db_functions/auth/user_db.dart';
-import 'package:shop_ez/db/db_functions/cash_register/cash_register_database.dart';
-import 'package:shop_ez/db/db_functions/group/group_database.dart';
-import 'package:shop_ez/db/db_functions/permission/permission_database.dart';
-import 'package:shop_ez/model/business_profile/business_profile_model.dart';
-import 'package:shop_ez/model/cash_register/cash_register_model.dart';
-import 'package:shop_ez/model/group/group_model.dart';
-import 'package:shop_ez/model/permission/permission_model.dart';
-import 'package:shop_ez/screens/home/home_screen.dart';
+import 'package:mobile_pos/db/db_functions/busiess_profile/business_profile_database.dart';
+import 'package:mobile_pos/db/db_functions/auth/user_db.dart';
+import 'package:mobile_pos/db/db_functions/cash_register/cash_register_database.dart';
+import 'package:mobile_pos/db/db_functions/group/group_database.dart';
+import 'package:mobile_pos/db/db_functions/permission/permission_database.dart';
+import 'package:mobile_pos/model/business_profile/business_profile_model.dart';
+import 'package:mobile_pos/model/cash_register/cash_register_model.dart';
+import 'package:mobile_pos/model/group/group_model.dart';
+import 'package:mobile_pos/model/permission/permission_model.dart';
+import 'package:mobile_pos/screens/home/home_screen.dart';
 import '../../../model/auth/user_model.dart';
 
 class UserUtils {

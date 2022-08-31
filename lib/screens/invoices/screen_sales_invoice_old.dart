@@ -6,10 +6,10 @@
 // import 'package:pdf/pdf.dart' show PdfPageFormat;
 // import 'package:pdf/widgets.dart' as pw;
 // import 'package:printing/printing.dart' show PdfPreview, Printing;
-// import 'package:shop_ez/api/invoice/a4/pdf_a4_invoice.dart';
-// import 'package:shop_ez/api/invoice/receipt/pdf_receipt_invoice.dart';
-// import 'package:shop_ez/model/sales/sales_model.dart';
-// import 'package:shop_ez/model/sales_return/sales_return_model.dart';
+// import 'package:mobile_pos/api/invoice/a4/pdf_a4_invoice.dart';
+// import 'package:mobile_pos/api/invoice/receipt/pdf_receipt_invoice.dart';
+// import 'package:mobile_pos/model/sales/sales_model.dart';
+// import 'package:mobile_pos/model/sales_return/sales_return_model.dart';
 // import '../../../widgets/app_bar/app_bar_widget.dart';
 
 // class ScreenSalesInvoice extends StatelessWidget {

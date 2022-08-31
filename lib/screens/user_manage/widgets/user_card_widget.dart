@@ -1,11 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:shop_ez/core/constant/colors.dart';
-import 'package:shop_ez/core/constant/sizes.dart';
-import 'package:shop_ez/core/constant/text.dart';
-import 'package:shop_ez/core/utils/user/user.dart';
-import 'package:shop_ez/model/auth/user_model.dart';
-import 'package:shop_ez/model/group/group_model.dart';
+import 'package:mobile_pos/core/constant/colors.dart';
+import 'package:mobile_pos/core/constant/sizes.dart';
+import 'package:mobile_pos/core/constant/text.dart';
+import 'package:mobile_pos/core/utils/user/user.dart';
+import 'package:mobile_pos/model/auth/user_model.dart';
+import 'package:mobile_pos/model/group/group_model.dart';
 
 class UserCardwidget extends StatelessWidget {
   const UserCardwidget({
