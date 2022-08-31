@@ -448,12 +448,14 @@ class _BusinessProfileState extends State<BusinessProfile> {
     vatNumber = _vatNumberController.text.trim();
     phoneNumber = _phoneNumberController.text.trim();
     email = _emailController.text.trim();
-    logo = selectedImage!;
 
     //========== Validating Text Form Fields ==========
     final _formState = _formKey.currentState!;
     if (_formState.validate()) {
-      final _businessProfileModel = BusinessProfileModel(
+      if (selectedImage == null) return kSnackBar(context: context, error: true, content: 'Upload your business logo');
+      logo = selectedImage!;
+
+      final BusinessProfileModel _businessProfileModel = BusinessProfileModel(
         business: business,
         businessArabic: businessArabic,
         billerName: billerName,
