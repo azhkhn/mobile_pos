@@ -48,7 +48,7 @@ class EzDatabase {
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
-    log('==================== UPGRADING DATABSE TO NEW VERSION ====================');
+    log('==================== UPGRADING DATABASE TO NEW VERSION ====================');
 
     // const idAuto = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     // const idNotNull = 'INTEGER NOT NULL';
@@ -367,7 +367,7 @@ class EzDatabase {
       ${GroupFields.name} $textNotNull,
       ${GroupFields.description} $textNotNull)''');
 
-    //========== Table Permission ==========
+//========== Table Permission ==========
     await db.execute('''CREATE TABLE $tablePermission (
       ${PermissionFields.id} $idAuto,
       ${PermissionFields.groupId} $intNotNull,
@@ -464,7 +464,7 @@ class EzDatabase {
       ${ItemMasterFields.alertQuantity} $textNotNull,
       ${ItemMasterFields.itemImage} $textNotNull)''');
 
-    //========== Table Expense ==========
+//========== Table Expense ==========
     await db.execute('''CREATE TABLE $tableExpense (
       ${ExpenseFields.id} $idAuto,
       ${ExpenseFields.expenseCategory} $textNotNull,

@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           title: "MobilePOS",
           debugShowCheckedModeBanner: false,
+          showPerformanceOverlay: true,
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
